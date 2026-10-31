@@ -1,7 +1,8 @@
 import { CountUp, BobbingGhost } from '@/components/GhostAnimations';
 import { monthRangeLabel } from '@/lib/ghostFees/format';
 import { useState } from 'react';
-import { FileText, Share2 } from 'lucide-react';
+import { FileText, Share2, Trash2 } from 'lucide-react';
+import DetectionInfo from './DetectionInfo';
 import { shareResult } from '@/lib/ghostFees/shareCard';
 import HoursLine from './HoursLine';
 
@@ -13,7 +14,7 @@ function sourceLine(fileNames) {
   return `${label} · ${pdf ? 'uploaded privately to read' : 'checked in your browser'}`;
 }
 
-export default function LeakTotal({ total, months, from, to, monthlyIncome, leakCount = 0, fileNames = [] }) {
+export default function LeakTotal({ total, months, from, to, monthlyIncome, leakCount = 0, fileNames = [], onClearData }) {
   const range = monthRangeLabel(from, to);
   const source = sourceLine(fileNames);
   const [shareState, setShareState] = useState('idle');
@@ -58,17 +59,30 @@ export default function LeakTotal({ total, months, from, to, monthlyIncome, leak
       <p className="mt-2 max-w-md text-[12.5px] leading-relaxed text-muted-foreground/80">
         Real charges from your own statement. Nothing guessed, nothing projected.
       </p>
-      {leakCount > 0 && (
-        <button
-          type="button"
-          onClick={share}
-          disabled={shareState === 'working'}
-          className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-4 py-2 text-[13px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
-        >
-          <Share2 className="h-4 w-4" />
-          {shareState === 'downloaded' ? 'Saved! Post it anywhere' : 'Share my result'}
-        </button>
-      )}
+      <div className="mt-5 flex flex-wrap gap-3">
+        {leakCount > 0 && (
+          <button
+            type="button"
+            onClick={share}
+            disabled={shareState === 'working'}
+            className="inline-flex items-center gap-2 rounded-2xl border border-primary/50 bg-primary/10 px-5 py-3 text-[14.5px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
+          >
+            <Share2 className="h-4 w-4" />
+            {shareState === 'downloaded' ? 'Saved! Post it anywhere' : 'Share my result'}
+          </button>
+        )}
+        {onClearData && (
+          <button
+            type="button"
+            onClick={onClearData}
+            className="inline-flex items-center gap-2 rounded-2xl border border-[#ff6b8a]/50 bg-[#ff6b8a]/10 px-5 py-3 text-[14.5px] font-bold text-[#ff9db1] transition-colors hover:bg-[#ff6b8a] hover:text-white"
+          >
+            <Trash2 className="h-4 w-4" />
+            Clear my data
+          </button>
+        )}
+        <DetectionInfo className="inline-flex items-center gap-2 rounded-2xl border border-[#5ee6c8]/40 bg-[#5ee6c8]/10 px-5 py-3 text-[14.5px] font-bold text-[#5ee6c8] transition-colors hover:bg-[#5ee6c8] hover:text-[#10241f]" />
+      </div>
     </section>
   );
 }

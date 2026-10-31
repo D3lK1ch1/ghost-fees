@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
-import DetectionInfo from './DetectionInfo';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
@@ -166,6 +165,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             monthlyIncome={analysis.monthlyIncome}
             leakCount={leaks.length}
             fileNames={fileNames}
+            onClearData={() => setConfirmClear(true)}
           />
         ) : (
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
@@ -178,9 +178,6 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             {fileNames.some((name) => /\.pdf$/i.test(name)) && ' PDFs are uploaded privately so they can be read.'}
           </span>
         </p>
-        <div className="mt-2 flex justify-end">
-          <DetectionInfo />
-        </div>
 
         <FileErrors errors={fileErrors} />
 
