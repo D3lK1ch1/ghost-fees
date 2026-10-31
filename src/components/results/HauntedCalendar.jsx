@@ -54,8 +54,8 @@ export default function HauntedCalendar({ leaks, subscriptions }) {
 
   return (
     <section className="mt-4 grid gap-5 lg:grid-cols-[1fr_320px]">
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-[#140c26] p-4 sm:p-6">
-        <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 animate-moon-glow rounded-full bg-[#f5efe0]/90" />
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-[#140c26] p-4 sm:p-6 lg:self-start">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 animate-moon-glow rounded-full bg-[#f5efe0]/80" />
         <div className="relative flex items-center justify-between gap-3">
           <button
             type="button"

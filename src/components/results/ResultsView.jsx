@@ -83,6 +83,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   return (
     <div className="relative min-h-screen">
       <NightSky />
+      <div className="relative z-10">
       <BrandHeader
         right={(
           <button
@@ -94,6 +95,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           </button>
         )}
       />
+      </div>
 
       <main className="relative mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
