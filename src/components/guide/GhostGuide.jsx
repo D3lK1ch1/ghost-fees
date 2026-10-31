@@ -16,6 +16,7 @@ const ACTION_LABELS = {
   show_transactions: 'Show the transactions',
   open_house: 'Open the haunted house',
   open_calendar: 'Open the calendar',
+  open_path: 'Open my goal path',
   open_emails: 'See all email templates',
   scroll_feedback: 'Take me there',
 };
@@ -56,14 +57,15 @@ function answer(question, analysis) {
       leak: creep,
     };
   }
-  if (/first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text)) {
-    const target = leaks.find((item) => item.action);
+  if (/goals?|steps?|first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text)) {
+    const verb = { cancel: 'Cancel', refund: 'Get a refund for', waive: 'Ask the bank to waive' };
+    const goals = leaks.slice(0, 4).map((item, i) => `${i + 1}. ${verb[item.action] || 'Check'} ${nameOf(item)} (${money(item.amount)})`);
+    const more = leaks.length > 4 ? ` Plus ${leaks.length - 4} more.` : '';
     return {
-      reply: target
-        ? `Here's a simple plan. 1. Send the email for ${nameOf(target)}, your biggest fixable ghost (${money(target.amount)}). 2. Add reminders so renewals don't sneak up on you. 3. Bust each ghost in the Haunted House once it's sorted.`
-        : 'Here\'s a simple plan. 1. Add reminders so renewals don\'t sneak up on you. 2. Bust each ghost in the Haunted House once you\'ve dealt with it.',
-      action: target ? 'draft_email' : 'open_calendar',
-      leak: target,
+      reply: leaks.length
+        ? `I've laid out your goals, biggest first: ${goals.join(' ')}.${more} Each one has 3 steps: open the email, send it, then check it worked. Add your reminders too, and tick goals off to walk up to the ghost-free house.`
+        : 'No ghosts to chase. Add your reminders so renewals never sneak up on you.',
+      action: leaks.length ? 'open_path' : 'open_calendar',
     };
   }
   if (/remind|calendar|renew/.test(text)) {
@@ -123,6 +125,7 @@ function summaryFor(analysis) {
 function starterChips(analysis) {
   const biggest = analysis.leaks[0];
   return [
+    'Make my goals',
     'What should I do first?',
     'Which ghost costs the most?',
     'Set up reminders',
