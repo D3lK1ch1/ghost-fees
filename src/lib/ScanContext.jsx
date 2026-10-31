@@ -83,7 +83,7 @@ export function ScanProvider({ children }) {
             else if (Array.isArray(data.transactions) && data.transactions.length) lists.push(data.transactions);
             else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
-            throw new Error('Only CSV or PDF files are supported.');
+            throw new Error("This isn't a CSV or PDF.");
           }
         } catch (error) {
           errors.push({

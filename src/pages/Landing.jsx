@@ -32,7 +32,8 @@ export default function Landing() {
   };
 
   const handleFiles = (event) => {
-    const picked = Array.from(event.target.files || []).filter((file) => /\.(csv|pdf)$/i.test(file.name));
+    // Unsupported files go through too, so the error screen can name them.
+    const picked = Array.from(event.target.files || []);
     event.target.value = '';
     if (picked.length) scan(picked, false);
   };
@@ -55,9 +56,9 @@ export default function Landing() {
   } else {
     content = (
     <div className="min-h-screen">
-      <BrandHeader />
+      <BrandHeader right={<span className="text-[13px] font-bold text-muted-foreground">Takes about a minute</span>} />
       {fileErrors.length > 0 ? (
-        <UploadErrors onSample={() => scan([], true)} />
+        <UploadErrors errors={fileErrors} onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
       ) : (
         <>
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
