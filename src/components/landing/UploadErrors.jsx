@@ -1,5 +1,4 @@
-import { AlertCircle, Upload } from 'lucide-react';
-import GhostMark from '@/components/site/GhostMark';
+import { AlertCircle } from 'lucide-react';
 
 export default function UploadErrors({ errors = [], onSample }) {
   return (
