@@ -6,6 +6,9 @@ import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
+import HouseGhost from './HouseGhost';
+
+const PAY_PRESETS = [25, 35, 50];
 
 const ACTIONS = {
   cancel: { label: 'Draft cancel email', Icon: Mail },
@@ -78,8 +81,9 @@ function useTween(value) {
 }
 
 function Room({ room, leaks, cleared, active, onSelect, className, delay = 0 }) {
-  const left = leaks.filter((leak) => !cleared.has(leak.id)).length;
-  const size = leaks.length > 3 ? 'h-9 w-9' : leaks.length > 1 ? 'h-12 w-12' : 'h-16 w-16';
+  const haunting = leaks.filter((leak) => !cleared.has(leak.id));
+  const left = haunting.length;
+  const size = left > 3 ? 'h-12 w-12' : left > 1 ? 'h-14 w-14' : 'h-20 w-20';
 
   return (
     <button
@@ -109,19 +113,33 @@ function Room({ room, leaks, cleared, active, onSelect, className, delay = 0 }) 
           active ? 'bg-primary text-primary-foreground' : 'bg-[#170f2a]/80 text-[#e6defa]',
         )}
       >
-        {room.label} · {leaks.length ? `${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}` : 'empty'}
+        {room.label} · {left ? `${left} ${left === 1 ? 'ghost' : 'ghosts'}` : leaks.length ? 'clear' : 'empty'}
       </span>
 
-      <span className="flex flex-1 flex-wrap items-end justify-center gap-3 pt-3">
+      {room.key === 'basement' && (
+        <>
+          <span className="pointer-events-none absolute bottom-3 left-4 flex animate-window-flicker gap-1.5" style={{ animationDelay: '1s' }}>
+            <span className="h-1.5 w-2.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
+            <span className="h-1.5 w-2.5 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary))]" />
+          </span>
+          <span className="pointer-events-none absolute bottom-4 right-5 flex animate-window-flicker gap-1.5" style={{ animationDelay: '2.6s' }}>
+            <span className="h-1.5 w-2 rounded-full bg-[#e6defa] shadow-[0_0_8px_#fff]" />
+            <span className="h-1.5 w-2 rounded-full bg-[#e6defa] shadow-[0_0_8px_#fff]" />
+          </span>
+        </>
+      )}
+
+      <span className="flex flex-1 flex-wrap items-end justify-around gap-3 px-4 pt-3">
         {leaks.map((leak, index) => (
-          cleared.has(leak.id) ? (
-            <Check key={leak.id} className="h-7 w-7 animate-poof text-[#ffcf73] drop-shadow-[0_0_10px_#ffcf73]" strokeWidth={3} />
-          ) : (
+          cleared.has(leak.id) ? null : (
             <span key={leak.id} className="animate-bob" style={{ animationDelay: `${index * 0.4}s` }}>
-              <GhostMark className={cn(size, 'text-[#e8e2f2] drop-shadow-[0_0_10px_rgba(255,255,255,0.18)]')} eyeColor="#1a1230" />
+              <HouseGhost room={room.key} index={index} className={size} />
             </span>
           )
         ))}
+        {leaks.length > 0 && !left && (
+          <Check className="h-8 w-8 animate-poof self-center text-[#ffcf73] drop-shadow-[0_0_10px_#ffcf73]" strokeWidth={3} />
+        )}
       </span>
     </button>
   );
@@ -133,11 +151,13 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const [roomKey, setRoomKey] = useState(() => (leaks[0] ? roomOf(leaks[0]) : null));
   const [line, setLine] = useState(null);
   const [unit, setUnit] = useState('money');
+  const derivedPay = hourlyFromMonthly(monthlyIncome);
+  const [pay, setPay] = useState(derivedPay || 35);
 
   const guide = GUIDES[guideKey];
-  const hourly = hourlyFromMonthly(monthlyIncome);
-  const inHours = unit === 'hours' && hourly > 0;
-  const show = (value) => (inHours ? `${hoursOfWork(value, hourly)} h` : money(value));
+  const inHours = unit === 'hours';
+  const show = (value) => (inHours ? `${hoursOfWork(value, pay)} hrs` : money(value));
+  const payOptions = [...new Set([derivedPay, ...PAY_PRESETS].filter(Boolean))];
 
   const clearedSet = new Set(cleared);
   const total = leaks.reduce((sum, leak) => sum + leak.amount, 0);
@@ -154,9 +174,10 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const types = [];
   leaks.forEach((leak) => {
     const type = types.find((item) => item.badge === leak.badge);
-    if (type) { type.count += 1; type.amount += leak.amount; } else types.push({ badge: leak.badge, count: 1, amount: leak.amount });
+    const live = clearedSet.has(leak.id) ? 0 : 1;
+    if (type) { type.count += live; type.amount += live * leak.amount; } else types.push({ badge: leak.badge, count: live, amount: live * leak.amount });
   });
-  types.sort((a, b) => b.amount - a.amount);
+  types.sort((a, b) => (b.count > 0) - (a.count > 0) || b.amount - a.amount);
 
   const selectRoom = (key) => {
     setRoomKey(key);
@@ -172,7 +193,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   };
 
   // The line is rebuilt from the current guide, so switching guides re-voices it.
-  const speech = !line ? guide.intro(leaks.length, total)
+  const speech = !line ? guide.intro(leaks.length - cleared.length, total - saved)
     : line.type === 'room' ? guide.room(line.label, line.count, line.amount)
       : line.type === 'bust' ? guide.bust(line.leak, line.left)
         : guide.done(total);
@@ -226,8 +247,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             <p className="font-heading text-[15px] font-semibold text-foreground">
               Ghosts busted {cleared.length}/{leaks.length}
             </p>
-            {hourly > 0 && (
-              <div className="flex rounded-full border border-border bg-background p-0.5">
+            <div className="flex rounded-full border border-border bg-background p-0.5">
                 {[['money', '$'], ['hours', 'Hours of work']].map(([key, label]) => (
                   <button
                     key={key}
@@ -243,7 +263,6 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   </button>
                 ))}
               </div>
-            )}
           </div>
           <p className="mt-3 text-[13px] text-muted-foreground">
             <span className="font-heading text-[1.9rem] font-bold tabular-nums text-primary [text-shadow:0_0_22px_hsl(var(--primary)/0.35)]">
@@ -257,6 +276,44 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
               style={{ width: `${(cleared.length / leaks.length) * 100}%` }}
             />
           </div>
+
+          {inHours && (
+            <div className="mt-4 animate-rise">
+              <div className="flex flex-wrap items-center gap-1.5 text-[12px] text-muted-foreground">
+                Your pay
+                {payOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setPay(option)}
+                    aria-pressed={pay === option}
+                    className={cn(
+                      'rounded-full border px-2.5 py-1 font-bold transition-colors',
+                      pay === option ? 'border-primary text-primary' : 'border-border text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    ${option}/hr{option === derivedPay ? ' (yours)' : ''}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 flex items-end gap-3">
+                <div className="relative flex h-16 w-5 shrink-0 items-end justify-center" aria-hidden="true">
+                  <div
+                    className="w-4 rounded-sm bg-[#f5efe0] transition-[height] duration-700"
+                    style={{ height: `${Math.max(12, ((total - saved) / total) * 100)}%` }}
+                  />
+                  <span
+                    className="absolute h-3.5 w-2.5 animate-flicker rounded-full bg-gradient-to-t from-[#ff7a1a] to-[#ffd27a] shadow-[0_0_12px_#ff9a3c] transition-[bottom] duration-700"
+                    style={{ bottom: `${Math.max(12, ((total - saved) / total) * 100)}%` }}
+                  />
+                </div>
+                <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+                  Your ghosts burned <span className="font-bold text-primary">{hoursOfWork(total, pay)} hours</span> of your work
+                  {months ? ` in ${monthsLabel(months)} months` : ''}. Bust them to get your wax back.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">
@@ -304,10 +361,14 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                         )}
                       >
                         <span className={cn('h-2 w-2 shrink-0 rounded-full', DOTS[type.badge] || 'bg-white/60')} />
-                        <span className="min-w-0 flex-1 font-bold text-foreground">
-                          {type.badge} <span className="font-normal text-muted-foreground">× {type.count}</span>
+                        <span className={cn('min-w-0 flex-1 font-bold', type.count ? 'text-foreground' : 'text-muted-foreground line-through')}>
+                          {type.badge} {type.count > 0 && <span className="font-normal text-muted-foreground">× {type.count}</span>}
                         </span>
-                        <span className="font-bold tabular-nums text-foreground">{show(type.amount)}</span>
+                        {type.count ? (
+                          <span className="font-bold tabular-nums text-foreground">{show(type.amount)}</span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-[11.5px] text-muted-foreground"><span className="line-through">cleared</span><Check className="h-3.5 w-3.5 text-[#5ee6c8]" strokeWidth={3} /></span>
+                        )}
                       </button>
                     </li>
                   );
