@@ -1,7 +1,7 @@
 import GhostMark from '@/components/site/GhostMark';
 
 // Shown instead of the total when a statement has no leaks.
-export default function EmptyState({ fileNames = [], onRestart, onSample }) {
+export default function EmptyState({ fileNames = [], onRestart, onSample, transactionCount = 0, months = 0 }) {
   const file = fileNames.length ? fileNames.join(', ') : 'your statement';
 
   return (
@@ -16,6 +16,15 @@ export default function EmptyState({ fileNames = [], onRestart, onSample }) {
         We checked every transaction in <span className="rounded-md bg-background px-1.5 py-0.5 font-mono text-[13px] font-bold text-foreground">{file}</span>{' '}
         for repeat charges, bank fees and price rises. Nothing spooky.
       </p>
+      {transactionCount > 0 && (
+        <p className="mt-3 max-w-md rounded-xl border border-border bg-background/50 px-4 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
+          We read <span className="font-bold text-foreground">{transactionCount} transactions</span> over{' '}
+          <span className="font-bold text-foreground">{months} {months === 1 ? 'month' : 'months'}</span>.
+          {months < 3
+            ? ' Subscriptions, duplicates and price rises need 3 or more months, so upload a longer statement to catch them.'
+            : ' No fees, repeat charges or price rises turned up in that time.'}
+        </p>
+      )}
 
       <div className="mt-7 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
         <button

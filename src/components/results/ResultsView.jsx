@@ -164,7 +164,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             fileNames={fileNames}
           />
         ) : (
-          <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} />
+          <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
 
         <p className="mt-3 flex items-start gap-2 rounded-2xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-4 py-2.5 text-[12.5px] leading-relaxed text-[#bff5e8]">
