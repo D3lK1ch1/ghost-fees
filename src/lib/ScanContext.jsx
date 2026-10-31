@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { base44 } from '@/api/base44Client';
 import { parseCsv } from '@/lib/ghostFees/parseCsv';
 import { analyse, mergeTransactions } from '@/lib/ghostFees/analyse';
 import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
@@ -38,7 +37,7 @@ export function ScanProvider({ children }) {
     setFileCount(0);
   }, []);
 
-  const runScan = useCallback(async ({ files = [], bankId, useSample = false }) => {
+  const runScan = useCallback(async ({ files = [], useSample = false }) => {
     setFileErrors([]);
     setResults(null);
     setSteps(initialSteps());
@@ -60,15 +59,8 @@ export function ScanProvider({ children }) {
             const rows = parseCsv(await file.text());
             if (!rows.length) throw new Error('No transactions found in this file.');
             lists.push(rows);
-          } else if (/\.pdf$/i.test(file.name)) {
-            const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-            const response = await base44.functions.invoke('parseStatement', { file_uri, bank: bankId });
-            const data = response?.data || {};
-            if (data.error) errors.push({ name: file.name, message: data.error });
-            else if (Array.isArray(data.transactions) && data.transactions.length) lists.push(data.transactions);
-            else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
-            throw new Error('Only PDF or CSV files are supported.');
+            throw new Error('Only CSV files are supported.');
           }
         } catch (error) {
           errors.push({

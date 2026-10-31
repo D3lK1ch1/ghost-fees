@@ -198,10 +198,10 @@ export function parseCsv(text) {
     if (!Number.isFinite(amount)) {
       const debit = columns.debit >= 0 ? parseAmount(row[columns.debit]) : NaN;
       const credit = columns.credit >= 0 ? parseAmount(row[columns.credit]) : NaN;
-      if (Number.isFinite(debit) && Math.abs(debit) > 0) amount = -Math.abs(debit);
-      else if (Number.isFinite(credit) && Math.abs(credit) > 0) amount = Math.abs(credit);
+      if (Number.isFinite(credit) && Math.abs(credit) > 0) amount = Math.abs(credit);
+      else if (Number.isFinite(debit)) amount = -Math.abs(debit);
     }
-    if (!Number.isFinite(amount) || amount === 0) return;
+    if (!Number.isFinite(amount)) return;
 
     let description = columns.description >= 0 ? String(row[columns.description] || '').trim() : '';
     if (!description) {

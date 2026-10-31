@@ -19,12 +19,12 @@ export default function Landing() {
   const scan = async (files, useSample) => {
     setUsedSample(useSample);
     trackEvent('scan_started');
-    const outcome = await runScan({ files, bankId: 'anz', useSample });
+    const outcome = await runScan({ files, useSample });
     if (outcome) trackEvent('scan_finished');
   };
 
   const handleFiles = (event) => {
-    const picked = Array.from(event.target.files || []).filter((file) => /\.(pdf|csv)$/i.test(file.name));
+    const picked = Array.from(event.target.files || []).filter((file) => /\.csv$/i.test(file.name));
     event.target.value = '';
     if (picked.length) scan(picked, false);
   };
@@ -48,16 +48,19 @@ export default function Landing() {
   return (
     <div className="min-h-screen">
       <BrandHeader />
-      <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
+      {fileErrors.length > 0 ? (
+        <UploadErrors onSample={() => scan([], true)} />
+      ) : (
+        <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
+      )}
       <input
         ref={inputRef}
         type="file"
-        accept=".csv,.pdf,text/csv,application/pdf"
+        accept=".csv,text/csv"
         multiple
         className="hidden"
         onChange={handleFiles}
       />
-      {fileErrors.length > 0 && <UploadErrors errors={fileErrors} />}
     </div>
   );
 }

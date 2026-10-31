@@ -11,11 +11,8 @@ export default function Hero({ onSample, onUpload }) {
           Free scan &bull; no sign-up
         </span>
         <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.04] tracking-[-0.035em] text-white sm:text-[3.9rem]">
-          Find the ghosts haunting your bank account
+          Find the ghosts haunting your bank account.
         </h1>
-        <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-muted-foreground">
-          We read your statement and surface the subscriptions, price rises and bank fees you forgot about.
-        </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button
@@ -38,7 +35,7 @@ export default function Hero({ onSample, onUpload }) {
 
         <p className="mt-6 flex items-center gap-2 text-[13px] leading-relaxed text-muted-foreground/80">
           <Lock className="h-3.5 w-3.5 shrink-0" />
-          Your file is processed and never stored.
+          Processed in your browser. Never stored.
         </p>
       </div>
 

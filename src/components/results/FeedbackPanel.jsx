@@ -6,7 +6,7 @@ import ChoiceGroup from './ChoiceGroup';
 
 const inputClass = 'mt-2 w-full rounded-xl border border-white/[0.1] bg-black/25 px-3.5 py-2.5 text-[13.5px] text-white placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none';
 
-export default function FeedbackPanel({ usedSample, leaks, yearlyTotal, selectedLeak }) {
+export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal }) {
   const [foundReal, setFoundReal] = useState('');
   const [wouldPay, setWouldPay] = useState('');
   const [confusion, setConfusion] = useState('');
@@ -19,10 +19,9 @@ export default function FeedbackPanel({ usedSample, leaks, yearlyTotal, selected
       await base44.functions.invoke('submitFeedback', {
         session_id: getSessionId(),
         used_sample: usedSample,
-        leaks_found: leaks.length,
-        yearly_total: Math.round(yearlyTotal * 100) / 100,
+        leaks_found: leaksFound,
+        yearly_total: yearlyTotal,
         found_real: foundReal,
-        most_useful_leak: selectedLeak ? `${selectedLeak.merchant} (${selectedLeak.badge})` : '',
         confusion_text: confusion.trim(),
         would_pay: wouldPay,
         builder_name: builderName.trim(),
@@ -37,31 +36,20 @@ export default function FeedbackPanel({ usedSample, leaks, yearlyTotal, selected
     return (
       <section className="mt-10 rounded-[1.5rem] border border-primary/25 bg-primary/[0.06] p-6 text-center sm:p-8">
         <p className="text-2xl font-semibold text-white">Thanks! 🎃</p>
-        <p className="mt-2 text-[13.5px] text-muted-foreground">Your notes help us find more ghosts.</p>
       </section>
     );
   }
 
   return (
     <section className="mt-10 rounded-[1.5rem] border border-white/[0.08] bg-card/70 p-5 sm:p-7">
-      <h2 className="text-lg font-semibold tracking-tight text-white">Two minutes of honesty?</h2>
-      <p className="mt-1 text-[13px] text-muted-foreground">All optional, but it really helps.</p>
-
       <ChoiceGroup label="Did it find something real?" options={['Yes', 'Kinda', 'No']} value={foundReal} onChange={setFoundReal} />
-
-      <div className="mt-5">
-        <p className="text-[13px] font-medium text-white">Tap the most useful card</p>
-        <p className="mt-1 text-[12.5px] text-muted-foreground">
-          {selectedLeak ? `Selected: ${selectedLeak.merchant}` : 'Tap any card above to pick it.'}
-        </p>
-      </div>
 
       <label className="mt-5 block">
         <span className="text-[13px] font-medium text-white">What confused you or was missing?</span>
         <input
           value={confusion}
           onChange={(event) => setConfusion(event.target.value)}
-          placeholder="One line is plenty"
+          placeholder="Optional"
           className={inputClass}
         />
       </label>
