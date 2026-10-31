@@ -94,6 +94,12 @@ export default function SubscriptionsSection({ subscriptions }) {
           </CardItem>
         ))}
       </CardList>
+
+      <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground/90">
+        <span className="font-bold text-foreground/90">Know your rights:</span> from 1 July 2027, cancelling a subscription
+        must be as easy as signing up. You can report subscription traps to the{' '}
+        <a href="https://www.accc.gov.au/" target="_blank" rel="noreferrer" className="font-bold text-primary underline underline-offset-4">ACCC</a>.
+      </p>
     </section>
   );
 }
