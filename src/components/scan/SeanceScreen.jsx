@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import { cn } from '@/lib/utils';
+import { money } from '@/lib/ghostFees/format';
 
 const LINES = ['Placing the statement on the table…', 'Asking the spirits about merchants…'];
 const LINE_MS = 500;
 const TOTAL_MS = 1500;
+const TICK_MS = 230;
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const LIT = new Set(['G', 'H', 'O', 'S', 'T']);
@@ -22,10 +24,11 @@ function Candle({ className }) {
   );
 }
 
-// Séance scan screen: the table, the board, the planchette. This screen alone
-// controls the timing — calls onDone once, then keeps the last line on screen.
-export default function SeanceScreen({ lastLine = 'Ghost detected', onDone, onCancel }) {
+// Séance scan screen: the table, the board, the planchette. Once results arrive, the
+// ghosts are counted up one by one, then onDone is called once.
+export default function SeanceScreen({ lastLine = 'Ghost detected', leaks = null, onDone, onCancel }) {
   const [line, setLine] = useState(0);
+  const [tick, setTick] = useState(-1);
   const done = useRef(onDone);
   const final = useRef(lastLine);
   done.current = onDone;
@@ -34,20 +37,42 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', onDone, onCa
   useEffect(() => {
     if (reducedMotion()) {
       setLine(2);
-      done.current?.();
       return undefined;
     }
 
     const timers = [
       setTimeout(() => setLine(1), LINE_MS),
-      setTimeout(() => {
-        setLine(2);
-        done.current?.();
-      }, TOTAL_MS),
+      setTimeout(() => setLine(2), TOTAL_MS),
     ];
 
     return () => timers.forEach((timer) => clearTimeout(timer));
   }, []);
+
+  // Smallest ghost first so the running total climbs.
+  const ordered = leaks ? [...leaks].sort((a, b) => a.amount - b.amount) : null;
+  const count = ordered ? ordered.length : 0;
+
+  useEffect(() => {
+    if (line < 2 || !ordered) return undefined;
+    if (!count || reducedMotion()) {
+      done.current?.();
+      return undefined;
+    }
+    let step = 0;
+    setTick(0);
+    const timer = setInterval(() => {
+      step += 1;
+      if (step < count) setTick(step);
+      else {
+        clearInterval(timer);
+        setTimeout(() => done.current?.(), 600);
+      }
+    }, TICK_MS);
+    return () => clearInterval(timer);
+  }, [line, count]);
+
+  const running = ordered && tick >= 0 ? ordered.slice(0, tick + 1).reduce((sum, leak) => sum + leak.amount, 0) : 0;
+  const current = ordered && tick >= 0 ? ordered[tick] : null;
 
   const text = line >= 2 ? lastLine : LINES[line];
 
@@ -107,6 +132,17 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', onDone, onCa
         <p className="mt-6 font-retro text-[24px] leading-none text-[#ffc27a]" aria-live="polite">
           {text}
         </p>
+
+        {current && (
+          <div className="mt-5 animate-rise">
+            <p className="font-heading text-[2.8rem] font-bold leading-none tabular-nums text-primary [text-shadow:0_0_24px_hsl(var(--primary)/0.4)]">
+              {money(running)}
+            </p>
+            <p key={current.id} className="mt-2 animate-rise text-[13.5px] text-muted-foreground">
+              Ghost {tick + 1} of {count}: <span className="font-bold text-foreground">{current.title || current.merchant}</span>
+            </p>
+          </div>
+        )}
 
         <p className="mt-6 text-[13px] text-muted-foreground">
           The board only reads the file you picked. Nothing is stored.

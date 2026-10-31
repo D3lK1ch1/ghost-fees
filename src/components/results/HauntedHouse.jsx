@@ -174,8 +174,12 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
 
       <span className="flex flex-1 flex-wrap items-end justify-around gap-3 px-4 pt-3">
         {leaks.map((leak, index) => (
-          cleared.has(leak.id) ? null : (
-            <span key={leak.id} className="animate-bob" style={{ animationDelay: `${index * 0.4}s` }}>
+          cleared.has(leak.id) && !flying.has(leak.id) ? null : (
+            <span
+              key={leak.id}
+              className={flying.has(leak.id) ? 'animate-fly-away' : 'animate-bob'}
+              style={flying.has(leak.id) ? undefined : { animationDelay: `${index * 0.4}s` }}
+            >
               <HouseGhost room={room.key} index={index} className={size} />
             </span>
           )

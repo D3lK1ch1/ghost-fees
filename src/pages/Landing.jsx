@@ -47,6 +47,7 @@ export default function Landing() {
     content = (
       <SeanceScreen
         lastLine={results && results.leaks.length === 0 ? 'No ghosts found' : 'Ghost detected'}
+        leaks={results ? results.leaks : null}
         onDone={handleScanDone}
         onCancel={reset}
       />
