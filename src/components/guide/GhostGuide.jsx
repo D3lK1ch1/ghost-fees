@@ -44,7 +44,7 @@ function answer(question, analysis) {
     return { reply: `I only show money already lost in your statement: ${money(total)} in ${months}. I don't guess or project future amounts.` };
   }
   if (/\b(rent|groceries|grocery|transport|salary|wage|bills?)\b|not (here|there|shown|listed)/.test(text)) {
-    return { reply: 'Rent, groceries, transport, transfers and pay are left out on purpose. They are normal spending, not leaks. I only flag fees, forgotten subscriptions, trials, duplicates, overlaps and price rises.' };
+    return { reply: 'Rent, groceries, transport, transfers and pay are left out on purpose. They are normal spending, not leaks. I only flag bank fees, free trials that turned paid, duplicate charges and price rises.' };
   }
   if (/stor|saved?|privacy|private|data|keep/.test(text)) {
     return { reply: 'Your statement is never stored. CSVs are read in your browser. PDFs are read once, then deleted. This chat is not saved either.' };

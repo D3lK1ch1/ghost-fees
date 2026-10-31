@@ -63,7 +63,8 @@ export function ScanProvider({ children }) {
     const names = [];
 
     if (useSample) {
-      lists.push(parseCsv(SAMPLE_CSV).map((row) => ({ ...row, source: 'sample statement' })));
+      lists.push(parseCsv(SAMPLE_CSV).map((row) => ({ ...row, source: 'Sample statement' })));
+      names.push('Sample statement');
     } else {
       for (const file of files) {
         try {
@@ -96,7 +97,7 @@ export function ScanProvider({ children }) {
       }
     }
 
-    const transactions = mergeTransactions(lists, names);
+    const transactions = mergeTransactions(lists);
 
     if (!transactions.length) {
       setFileErrors(errors.length ? errors : [{ name: 'Statement', message: 'We could not find any transactions in that file.' }]);

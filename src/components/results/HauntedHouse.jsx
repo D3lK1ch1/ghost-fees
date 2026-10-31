@@ -201,16 +201,28 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const [flying, setFlying] = useState([]);
   const [soundOn, setSoundOn] = useState(false);
   const sceneRef = useRef(null);
-  const tilt = (x, y) => {
-    if (prefersReduced()) return;
-    sceneRef.current?.style.setProperty('--tx', String(x));
-    sceneRef.current?.style.setProperty('--ty', String(y));
-  };
   const [roomKey, setRoomKey] = useState(() => (leaks[0] ? roomOf(leaks[0]) : null));
   const [line, setLine] = useState(null);
   const [unit, setUnit] = useState('money');
   const derivedPay = hourlyFromMonthly(monthlyIncome);
   const [pay, setPay] = useState(derivedPay || 35);
+
+  // Tilt the house a little toward the pointer (or the phone's tilt) for a 3D feel.
+  const tilt = (x, y) => {
+    const scene = sceneRef.current;
+    if (!scene || prefersReduced()) return;
+    scene.style.setProperty('--tx', Math.max(-1, Math.min(1, x)).toFixed(3));
+    scene.style.setProperty('--ty', Math.max(-1, Math.min(1, y)).toFixed(3));
+  };
+
+  useEffect(() => {
+    const onOrient = (event) => {
+      if (event.gamma == null) return;
+      tilt(event.gamma / 30, (event.beta - 45) / 30);
+    };
+    window.addEventListener('deviceorientation', onOrient);
+    return () => window.removeEventListener('deviceorientation', onOrient);
+  }, []);
 
   const guide = GUIDES[guideKey];
   const inHours = unit === 'hours';

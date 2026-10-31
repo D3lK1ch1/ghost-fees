@@ -88,4 +88,3 @@ User: ${question}`,
     return Response.json({ error: error?.message || 'The spirits went quiet.' }, { status: 500 });
   }
 }
-}

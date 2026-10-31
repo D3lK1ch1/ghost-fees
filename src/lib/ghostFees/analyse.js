@@ -205,6 +205,7 @@ function merchantLeak(key, list) {
     const more = extras.length > 3 ? ` and ${extras.length - 3} more` : '';
     parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'} (${dates}${more}).`);
   }
+
   const creepBigger = creep && creep.amount >= dupAmount;
 
   return {
