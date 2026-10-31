@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const LINES = ['Placing the statement on the table…', 'Asking the spirits about merchants…'];
 const LINE_MS = 500;
-const TOTAL_MS = 1600;
+const TOTAL_MS = 1500;
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const LIT = new Set(['G', 'H', 'O', 'S', 'T']);
@@ -22,8 +22,8 @@ function Candle({ className }) {
   );
 }
 
-// Séance scan screen: the table, the board, the planchette. Same timeline as the
-// old scan screen — calls onDone once, then keeps the last line on screen.
+// Séance scan screen: the table, the board, the planchette. This screen alone
+// controls the timing — calls onDone once, then keeps the last line on screen.
 export default function SeanceScreen({ lastLine = 'Ghost detected', onDone, onCancel }) {
   const [line, setLine] = useState(0);
   const done = useRef(onDone);

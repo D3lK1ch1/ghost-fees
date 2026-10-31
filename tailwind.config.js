@@ -141,11 +141,6 @@ module.exports = {
   				'0%, 100%': { boxShadow: '0 0 50px rgba(245,239,224,0.35)' },
   				'50%': { boxShadow: '0 0 80px rgba(245,239,224,0.6)' }
   			},
-  			'fly-away': {
-  				'0%': { transform: 'translate(0, 0) rotate(0) scale(1)', opacity: '1' },
-  				'30%': { transform: 'translate(-8px, 6px) rotate(-8deg) scale(1.1)', opacity: '1' },
-  				'100%': { transform: 'translate(90px, -140px) rotate(25deg) scale(0.4)', opacity: '0' }
-  			},
   			poof: {
   				'0%': { opacity: '0', transform: 'scale(0.4) rotate(-20deg)' },
   				'50%': { opacity: '1', transform: 'scale(1.3) rotate(8deg)' },
@@ -185,7 +180,6 @@ module.exports = {
   			'fog-drift': 'fog-drift 14s ease-in-out infinite',
   			'bat-fly': 'bat-fly 11s linear infinite',
   			'moon-glow': 'moon-glow 5s ease-in-out infinite',
-  			'fly-away': 'fly-away 0.9s cubic-bezier(0.5, 0, 0.75, 0) forwards',
   			poof: 'poof 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) both',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
