@@ -11,7 +11,9 @@
         "scan_started",
         "scan_finished",
         "cancel_email_clicked",
-        "feedback_submitted"
+        "feedback_submitted",
+        "guide_opened",
+        "guide_message"
       ]
     },
     "created_at": {
