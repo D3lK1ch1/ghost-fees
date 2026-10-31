@@ -80,7 +80,10 @@ export default function LeakCard({ leak, onDraft }) {
               )}
             >
               <span className="w-[62px] shrink-0 tabular-nums text-[#5b5275]">{rowDate(row.date)}</span>
-              <span className="min-w-0 flex-1 truncate">{row.description}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate">{row.description}</span>
+                {row.source && <span className="block truncate text-[11px] text-[#7a7094]">from {row.source}</span>}
+              </span>
               <span className={cn('shrink-0 tabular-nums', row.wasted ? 'font-bold text-[#8a3b00]' : 'text-[#5b5275]')}>
                 {money(row.amount)}
               </span>

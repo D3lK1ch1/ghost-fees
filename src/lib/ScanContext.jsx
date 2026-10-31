@@ -102,7 +102,7 @@ export function ScanProvider({ children }) {
       }
     }
 
-    const transactions = mergeTransactions(lists);
+    const transactions = mergeTransactions(lists, names);
 
     if (!transactions.length) {
       setFileErrors(errors.length ? errors : [{ name: 'Statement', message: 'We could not find any transactions in that file.' }]);

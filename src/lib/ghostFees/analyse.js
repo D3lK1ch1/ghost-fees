@@ -73,12 +73,14 @@ function monthSpan(transactions) {
 
 // Combine files, dropping rows that already appeared in an earlier file.
 // Repeats inside one file are real repeat charges, so they stay.
-export function mergeTransactions(lists) {
+// With several files, each row remembers which file it came from.
+export function mergeTransactions(lists, names = []) {
   const seenBefore = new Set();
   const merged = [];
 
-  lists.forEach((list) => {
+  lists.forEach((list, listIndex) => {
     const seenHere = new Set();
+    const source = lists.length > 1 ? names[listIndex] || null : null;
     (list || []).forEach((item) => {
       const amount = round2(item.amount);
       if (!item.date || !item.description || !Number.isFinite(amount)) return;
@@ -90,6 +92,7 @@ export function mergeTransactions(lists) {
         description: String(item.description).trim(),
         amount,
         clean: cleanMerchant(item.description),
+        source,
       });
     });
     seenHere.forEach((key) => seenBefore.add(key));
@@ -110,6 +113,7 @@ function statementRow(item, wasted, wastedAmount) {
     amount: round2(item.value),
     wasted,
     wastedAmount: wasted ? round2(wastedAmount) : 0,
+    source: item.source || null,
   };
 }
 
@@ -294,7 +298,11 @@ function merchantLeak(key, list) {
 
   const parts = [];
   if (creep) parts.push(`Was ${money(creep.oldPrice)}, now ${money(creep.newPrice)} (+${money(creep.rise)}/mo) since ${shortDate(creep.since)}.`);
-  if (extras.length) parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'}.`);
+  if (extras.length) {
+    const dates = extras.slice(0, 3).map((item) => shortDate(item.date)).join(', ');
+    const more = extras.length > 3 ? ` and ${extras.length - 3} more` : '';
+    parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'} (${dates}${more}).`);
+  }
   const creepBigger = creep && creep.amount >= dupAmount;
 
   return {
