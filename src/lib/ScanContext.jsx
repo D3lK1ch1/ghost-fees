@@ -35,6 +35,7 @@ export function ScanProvider({ children }) {
   const [transactions, setTransactions] = useState(null);
   const [windowMonths, setWindowMonths] = useState(0);
   const [fileErrors, setFileErrors] = useState([]);
+  const [fileNames, setFileNames] = useState([]);
 
   const advance = useCallback((index) => {
     setSteps((current) => current.map((_, i) => (i < index ? 'done' : i === index ? 'active' : 'pending')));
@@ -46,6 +47,7 @@ export function ScanProvider({ children }) {
     setTransactions(null);
     setWindowMonths(0);
     setFileErrors([]);
+    setFileNames([]);
     setSteps(initialSteps());
     setProgress(0);
     setTransactionCount(0);
@@ -64,9 +66,11 @@ export function ScanProvider({ children }) {
 
     const lists = [];
     const errors = [];
+    const names = [];
 
     if (useSample) {
       lists.push(parseCsv(SAMPLE_CSV));
+      names.push('Sample statement');
       await wait(600);
     } else {
       for (const file of files) {
@@ -75,12 +79,16 @@ export function ScanProvider({ children }) {
             const rows = parseCsv(await file.text());
             if (!rows.length) throw new Error('No transactions found in this file.');
             lists.push(rows);
+            names.push(file.name);
           } else if (/\.pdf$/i.test(file.name)) {
             const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
             const response = await base44.functions.invoke('parseStatement', { file_uri });
             const data = response?.data || {};
             if (data.error) errors.push({ name: file.name, message: data.error });
-            else if (Array.isArray(data.transactions) && data.transactions.length) lists.push(data.transactions);
+            else if (Array.isArray(data.transactions) && data.transactions.length) {
+              lists.push(data.transactions);
+              names.push(file.name);
+            }
             else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
             throw new Error("This isn't a CSV or PDF.");
@@ -114,6 +122,7 @@ export function ScanProvider({ children }) {
     setSteps(Array.from({ length: STEP_COUNT }, () => 'done'));
     setProgress(100);
     setFileErrors(errors);
+    setFileNames(names);
     setTransactions(transactions);
     setStatus('done');
     return analysis;
@@ -134,9 +143,10 @@ export function ScanProvider({ children }) {
     windowMonths,
     setWindowMonths,
     fileErrors,
+    fileNames,
     runScan,
     reset,
-  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, runScan, reset]);
+  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, fileNames, runScan, reset]);
 
   return <ScanContext.Provider value={value}>{children}</ScanContext.Provider>;
 }

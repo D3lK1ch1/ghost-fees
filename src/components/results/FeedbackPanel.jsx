@@ -7,7 +7,7 @@ import { CapturedJar } from '@/components/GhostAnimations';
 
 const inputClass = 'mt-2 w-full rounded-xl border border-white/[0.1] bg-black/25 px-3.5 py-2.5 text-[13.5px] text-white placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none';
 
-export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal }) {
+export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mostUseful }) {
   const [foundReal, setFoundReal] = useState('');
   const [wouldPay, setWouldPay] = useState('');
   const [confusion, setConfusion] = useState('');
@@ -26,6 +26,7 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal }) {
         confusion_text: confusion.trim(),
         would_pay: wouldPay,
         builder_name: builderName.trim(),
+        most_useful_leak: mostUseful ? `${mostUseful.title || mostUseful.merchant} (${mostUseful.badge})` : '',
       });
       setState('done');
     } catch {
@@ -44,6 +45,22 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal }) {
   return (
     <section className="mt-10 rounded-[1.5rem] border border-white/[0.08] bg-card/70 p-5 sm:p-7">
       <ChoiceGroup label="Did it find something real?" options={['Yes', 'Kinda', 'No']} value={foundReal} onChange={setFoundReal} />
+
+      {leaksFound > 0 && (
+        <div className="mt-5">
+          <span className="text-[13px] font-medium text-white">Tap the most useful card above</span>
+          {mostUseful ? (
+            <p className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px] text-muted-foreground">
+              <span className="rounded-full bg-primary px-3 py-1 text-[12.5px] font-bold text-primary-foreground">
+                {mostUseful.title || mostUseful.merchant}
+              </span>
+              Tap another to change
+            </p>
+          ) : (
+            <p className="mt-2 text-[12.5px] text-muted-foreground">Optional. It tells us which ghosts matter most.</p>
+          )}
+        </div>
+      )}
 
       <label className="mt-5 block">
         <span className="text-[13px] font-medium text-white">What confused you or was missing?</span>

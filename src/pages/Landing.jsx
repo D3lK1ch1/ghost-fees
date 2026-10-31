@@ -52,7 +52,7 @@ export default function Landing() {
       />
     );
   } else if (analysisReady) {
-    content = <ResultsView analysis={results} usedSample={usedSample} onRestart={reset} />;
+    content = <ResultsView analysis={results} usedSample={usedSample} onRestart={reset} onSample={() => scan([], true)} />;
   } else {
     content = (
     <div className="min-h-screen">

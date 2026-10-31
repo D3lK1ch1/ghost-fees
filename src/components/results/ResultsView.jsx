@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
+import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
@@ -26,13 +27,21 @@ const WINDOWS = [
   { value: 3, label: 'Last 3 months' },
 ];
 
-export default function ResultsView({ analysis, usedSample, onRestart }) {
+export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
-  const { windowMonths, setWindowMonths } = useScan();
+  const { windowMonths, setWindowMonths, fileNames } = useScan();
   const [emailLeak, setEmailLeak] = useState(null);
   const [view, setView] = useState('cards');
   const [guideKey, setGuideKey] = useState('penny');
   const [pulseId, setPulseId] = useState(null);
+  const [mostUsefulId, setMostUsefulId] = useState(null);
+  const mostUseful = leaks.find((leak) => leak.id === mostUsefulId) || null;
+
+  // Tapping a card (not one of its buttons) marks it as the most useful for feedback.
+  const pickCard = (event, leak) => {
+    if (event.target.closest('button, a')) return;
+    setMostUsefulId((current) => (current === leak.id ? null : leak.id));
+  };
 
   const openEmail = (leak) => {
     trackEvent('cancel_email_clicked');
@@ -86,13 +95,19 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
           </label>
         </div>
 
-        <LeakTotal
-          total={total}
-          months={analysis.monthSpan}
-          from={analysis.firstDate}
-          to={analysis.lastDate}
-          monthlyIncome={analysis.monthlyIncome}
-        />
+        {leaks.length ? (
+          <LeakTotal
+            total={total}
+            months={analysis.monthSpan}
+            from={analysis.firstDate}
+            to={analysis.lastDate}
+            monthlyIncome={analysis.monthlyIncome}
+            leakCount={leaks.length}
+            fileNames={fileNames}
+          />
+        ) : (
+          <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} />
+        )}
 
         {!enoughHistory && (
           <div className="mt-4 rounded-2xl border border-[#ffb37c]/25 bg-[#ffb37c]/[0.06] px-4 py-3.5 text-[13px] leading-relaxed text-[#ffb37c]">
@@ -131,8 +146,18 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
                   <CardItem key={leak.id} index={index}>
                     <div
                       id={`leak-${leak.id}`}
-                      className={cn('h-full rounded-2xl transition-shadow duration-500', pulseId === leak.id && 'animate-pulse shadow-[0_0_0_3px_hsl(var(--primary))]')}
+                      onClick={(event) => pickCard(event, leak)}
+                      className={cn(
+                        'relative h-full cursor-pointer rounded-3xl transition-shadow duration-500',
+                        mostUsefulId === leak.id && 'shadow-[0_0_0_3px_hsl(var(--primary)),0_0_24px_hsl(var(--primary)/0.35)]',
+                        pulseId === leak.id && 'animate-pulse shadow-[0_0_0_3px_hsl(var(--primary))]',
+                      )}
                     >
+                      {mostUsefulId === leak.id && (
+                        <span className="absolute -top-2.5 left-4 z-10 animate-poof rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-primary-foreground shadow">
+                          Most useful
+                        </span>
+                      )}
                       <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                     </div>
                   </CardItem>
@@ -140,18 +165,14 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
               </CardList>
             )}
           </>
-        ) : (
-          <p className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4 text-[13px] text-muted-foreground">
-            No ghosts found in this statement.
-          </p>
-        )}
+        ) : null}
 
         <PossessedReceipt leaks={leaks} />
 
         <SubscriptionsSection subscriptions={subscriptions} />
 
         <div id="feedback" className="scroll-mt-6">
-          <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} />
+          <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} mostUseful={mostUseful} />
         </div>
       </main>
 
