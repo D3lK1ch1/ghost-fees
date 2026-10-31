@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, MessagesSquare, Receipt, Repeat, Route } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
@@ -44,12 +44,20 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const { leaks, subscriptions, total, enoughHistory } = analysis;
   const { windowMonths, setWindowMonths, fileErrors, fileNames } = useScan();
   const [emailLeak, setEmailLeak] = useState(null);
-  const [tab, setTab] = useState('ghosts');
+  const [tab, setTab] = useState(() => {
+    const linked = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
+    return TABS.some((item) => item.key === linked) ? linked : 'ghosts';
+  });
   const [guideOpen, setGuideOpen] = useState(0);
   // Shared between the Haunted House and the goal path. Never stored.
   const [cleared, setCleared] = useState([]);
   const [remindersDone, setRemindersDone] = useState(false);
   const current = TABS.find((item) => item.key === tab);
+
+  // Keep the address bar on the open tab so the link can be shared.
+  useEffect(() => {
+    if (leaks.length) window.history.replaceState(null, '', `#${tab}`);
+  }, [tab, leaks.length]);
   const [guideKey, setGuideKey] = useState('penny');
   const [pulseId, setPulseId] = useState(null);
   const [mostUsefulId, setMostUsefulId] = useState(null);
