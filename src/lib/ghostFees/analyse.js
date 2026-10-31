@@ -229,7 +229,7 @@ function merchantLeak(key, list) {
   const isSubscription = months.length >= 3 && amounts.length <= 2 && !overCap && !isRent;
 
   const subscription = isSubscription
-    ? { id: `m:${key}`, merchant, monthly: round2(latest.value) }
+    ? { id: `m:${key}`, merchant, monthly: round2(latest.value), lastDate: latest.date }
     : null;
 
   // Trial converted: everything paid after the free charge was wasted.
