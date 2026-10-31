@@ -1,29 +1,35 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
-import HowItWorks from '@/components/landing/HowItWorks';
-import UploadPanel from '@/components/scan/UploadPanel';
+import UploadErrors from '@/components/landing/UploadErrors';
 import ScanningScreen from '@/components/scan/ScanningScreen';
+import ResultsView from '@/components/results/ResultsView';
 import { useScan } from '@/lib/ScanContext';
+import { trackEvent } from '@/lib/session';
 
 export default function Landing() {
-  const navigate = useNavigate();
-  const { status, steps, progress, transactionCount, fileCount, fileErrors, runScan, reset } = useScan();
-  const [files, setFiles] = useState([]);
-  const [bankId, setBankId] = useState('anz');
+  const { status, steps, progress, transactionCount, fileCount, fileErrors, results, runScan, reset } = useScan();
+  const [usedSample, setUsedSample] = useState(false);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     reset();
   }, [reset]);
 
-  const startScan = async (useSample) => {
-    const outcome = await runScan({ files, bankId, useSample });
-    if (outcome) navigate('/results');
-    else setFiles([]);
+  const scan = async (files, useSample) => {
+    setUsedSample(useSample);
+    trackEvent('scan_started');
+    const outcome = await runScan({ files, bankId: 'anz', useSample });
+    if (outcome) trackEvent('scan_finished');
   };
 
-  if (status === 'scanning' || status === 'done') {
+  const handleFiles = (event) => {
+    const picked = Array.from(event.target.files || []).filter((file) => /\.(pdf|csv)$/i.test(file.name));
+    event.target.value = '';
+    if (picked.length) scan(picked, false);
+  };
+
+  if (status === 'scanning') {
     return (
       <ScanningScreen
         steps={steps}
@@ -35,38 +41,23 @@ export default function Landing() {
     );
   }
 
-  const scrollToUpload = () => {
-    document.getElementById('upload')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
+  if (status === 'done' && results) {
+    return <ResultsView analysis={results} usedSample={usedSample} onRestart={reset} />;
+  }
 
   return (
     <div className="min-h-screen">
-      <BrandHeader
-        right={(
-          <a
-            href="#how-it-works"
-            className="rounded-xl px-3 py-2 text-[13.5px] font-medium text-muted-foreground transition-colors hover:text-white"
-          >
-            How it works
-          </a>
-        )}
+      <BrandHeader />
+      <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".csv,.pdf,text/csv,application/pdf"
+        multiple
+        className="hidden"
+        onChange={handleFiles}
       />
-
-      <Hero onSample={() => startScan(true)} onUpload={scrollToUpload} />
-
-      <div className="mt-16 sm:mt-20">
-        <UploadPanel
-          bankId={bankId}
-          onBankChange={setBankId}
-          files={files}
-          onFilesChange={setFiles}
-          onScan={() => startScan(false)}
-          onSample={() => startScan(true)}
-          errors={fileErrors}
-        />
-      </div>
-
-      <HowItWorks />
+      {fileErrors.length > 0 && <UploadErrors errors={fileErrors} />}
     </div>
   );
 }

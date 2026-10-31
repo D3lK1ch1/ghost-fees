@@ -1,0 +1,26 @@
+{
+  "name": "Event",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "scan_started",
+        "scan_finished",
+        "cancel_email_clicked",
+        "feedback_submitted"
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "session_id",
+    "event_type"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "name": "Feedback",
+  "type": "object",
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Random id for the anonymous scan session"
+    },
+    "used_sample": {
+      "type": "boolean",
+      "default": false
+    },
+    "leaks_found": {
+      "type": "number",
+      "default": 0
+    },
+    "yearly_total": {
+      "type": "number",
+      "default": 0
+    },
+    "found_real": {
+      "type": "string",
+      "enum": [
+        "Yes",
+        "Kinda",
+        "No"
+      ]
+    },
+    "most_useful_leak": {
+      "type": "string"
+    },
+    "confusion_text": {
+      "type": "string"
+    },
+    "would_pay": {
+      "type": "string",
+      "enum": [
+        "Yes",
+        "Maybe",
+        "No"
+      ]
+    },
+    "builder_name": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "session_id"
+  ]
+}
