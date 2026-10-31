@@ -47,7 +47,7 @@ function answer(question, analysis) {
     return { reply: 'Rent, groceries, transport, transfers and pay are left out on purpose. They are normal spending, not leaks. I only flag bank fees, free trials that turned paid, duplicate charges and price rises.' };
   }
   if (/stor|saved?|privacy|private|data|keep/.test(text)) {
-    return { reply: 'Your statement is never stored. CSVs are read in your browser. PDFs are read once, then deleted. This chat is not saved either.' };
+    return { reply: 'CSVs are read in your browser and never leave it. PDFs are uploaded to private storage so they can be read. Your results and this chat are not saved either.' };
   }
   if (/creep|price (rise|increase)|went up|go up/.test(text)) {
     const creep = leaks.find((leak) => leak.priceRise);

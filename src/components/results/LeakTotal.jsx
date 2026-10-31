@@ -10,7 +10,7 @@ function sourceLine(fileNames) {
   if (!fileNames.length) return null;
   const label = fileNames.length > 2 ? `${fileNames[0]} + ${fileNames.length - 1} more` : fileNames.join(', ');
   const pdf = fileNames.some((name) => /\.pdf$/i.test(name));
-  return `${label} · ${pdf ? 'read once, then deleted' : 'checked in your browser'}`;
+  return `${label} · ${pdf ? 'uploaded privately to read' : 'checked in your browser'}`;
 }
 
 export default function LeakTotal({ total, months, from, to, monthlyIncome, leakCount = 0, fileNames = [] }) {

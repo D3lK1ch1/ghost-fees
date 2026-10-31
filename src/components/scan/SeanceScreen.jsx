@@ -145,7 +145,7 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', leaks = null
         )}
 
         <p className="mt-6 text-[13px] text-muted-foreground">
-          The board only reads the file you picked. Nothing is stored.
+          The board only reads the file you picked. CSVs never leave your browser.
         </p>
       </main>
     </div>
