@@ -105,7 +105,7 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
             </div>
 
             {view === 'house' ? (
-              <HauntedHouse leaks={leaks} onDraft={openEmail} />
+              <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} />
             ) : (
               <CardList className="mt-4 grid gap-3 sm:grid-cols-2">
                 {leaks.map((leak, index) => (

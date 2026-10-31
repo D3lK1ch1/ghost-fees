@@ -3,6 +3,8 @@ import { Check, Flame, Landmark, Mail, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
+import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 
 const ACTIONS = {
@@ -44,9 +46,17 @@ function useTween(value) {
 }
 
 // One room per leak, biggest first. Busting is kept in this component only.
-export default function HauntedHouse({ leaks, onDraft }) {
+export default function HauntedHouse({ leaks, onDraft, monthlyIncome }) {
   const [cleared, setCleared] = useState([]);
   const [selectedId, setSelectedId] = useState(leaks[0]?.id ?? null);
+  const [guideKey, setGuideKey] = useState('penny');
+  const [line, setLine] = useState(null);
+  const [unit, setUnit] = useState('money');
+
+  const guide = GUIDES[guideKey];
+  const hourly = hourlyFromMonthly(monthlyIncome);
+  const inHours = unit === 'hours' && hourly > 0;
+  const show = (value) => (inHours ? `${hoursOfWork(value, hourly)} h` : money(value));
 
   const clearedSet = new Set(cleared);
   const total = leaks.reduce((sum, leak) => sum + leak.amount, 0);
@@ -65,7 +75,21 @@ export default function HauntedHouse({ leaks, onDraft }) {
     setCleared((current) => (current.includes(leak.id) ? current : [...current, leak.id]));
     const after = leaks.find((item) => item.id !== leak.id && !clearedSet.has(item.id));
     if (after) setSelectedId(after.id);
+    const left = leaks.length - cleared.length - (clearedSet.has(leak.id) ? 0 : 1);
+    setLine(left > 0 ? { type: 'bust', leak, left } : { type: 'done' });
   };
+
+  const pick = (leak) => {
+    setSelectedId(leak.id);
+    setLine({ type: 'pick', leak });
+  };
+
+  // The line is rebuilt from the current guide, so switching guides re-voices it.
+  const speech = !line
+    ? guide.intro(leaks.length, total)
+    : line.type === 'pick' ? guide.pick(line.leak)
+      : line.type === 'bust' ? guide.bust(line.leak, line.left)
+        : guide.done(total);
 
   const action = selected ? ACTIONS[selected.action] : null;
 
@@ -80,7 +104,7 @@ export default function HauntedHouse({ leaks, onDraft }) {
         </div>
         <div className="shrink-0 text-right">
           <p className="font-heading text-[2rem] font-bold leading-none tabular-nums text-primary [text-shadow:0_0_22px_hsl(var(--primary)/0.35)]">
-            {money(shown)}
+            {show(shown)}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
             {remaining > 0 ? 'still haunting you' : 'nothing left haunting you'}
@@ -95,8 +119,57 @@ export default function HauntedHouse({ leaks, onDraft }) {
         />
       </div>
       <p className="mt-2 font-retro text-[15px] text-[#ffc27a]">
-        {cleared.length} of {leaks.length} rooms cleared · {money(total - remaining)} exorcised
+        Ghosts busted {cleared.length}/{leaks.length} · {show(total - remaining)} exorcised
       </p>
+
+      <div className="mt-4 flex flex-wrap items-start gap-3">
+        <div className="flex items-center gap-1.5" role="group" aria-label="Pick your ghost guide">
+          {GUIDE_KEYS.map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setGuideKey(key)}
+              aria-pressed={guideKey === key}
+              aria-label={`${GUIDES[key].name}, ${GUIDES[key].role}`}
+              title={GUIDES[key].name}
+              className={cn(
+                'rounded-xl border-2 p-1.5 transition-colors',
+                guideKey === key ? 'border-primary bg-card' : 'border-border bg-card/40 hover:border-primary/50',
+              )}
+            >
+              <span className="block" style={{ color: GUIDES[key].color }}>
+                <GhostMark className="h-7 w-7" eyeColor="#1a1230" />
+              </span>
+            </button>
+          ))}
+        </div>
+        <p
+          key={speech}
+          aria-live="polite"
+          className="relative min-w-0 flex-1 animate-rise rounded-2xl rounded-tl-sm border border-border bg-card px-3.5 py-2.5 text-[13.5px] leading-relaxed text-foreground"
+        >
+          <span className="font-bold" style={{ color: guide.color }}>{guide.name}: </span>
+          {speech}
+        </p>
+        {hourly > 0 && (
+          <div className="flex rounded-full border border-border bg-card/60 p-0.5">
+            {[['money', '$'], ['hours', 'Hours of work']].map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setUnit(key)}
+                aria-pressed={unit === key}
+                className={cn(
+                  'rounded-full px-3 py-1.5 text-[12px] font-bold transition-colors',
+                  unit === key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground',
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_300px]">
         <div>
@@ -120,7 +193,7 @@ export default function HauntedHouse({ leaks, onDraft }) {
                   <button
                     key={leak.id}
                     type="button"
-                    onClick={() => setSelectedId(leak.id)}
+                    onClick={() => pick(leak)}
                     aria-label={`${leak.title || leak.merchant}, ${leak.badge}, ${money(leak.amount)}${done ? ', cleared' : ''}`}
                     className={cn(
                       'relative rounded-xl border-2 p-2.5 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
@@ -152,7 +225,7 @@ export default function HauntedHouse({ leaks, onDraft }) {
                       {leak.title || leak.merchant}
                     </p>
                     <p className="mt-0.5 truncate text-[11.5px] text-[#ffc27a]">
-                      {money(leak.amount)} · {leak.badge}
+                      {show(leak.amount)} · {leak.badge}
                     </p>
                   </button>
                 );
@@ -209,7 +282,7 @@ export default function HauntedHouse({ leaks, onDraft }) {
           {cleared.length > 0 && (
             <button
               type="button"
-              onClick={() => { setCleared([]); setSelectedId(leaks[0].id); }}
+              onClick={() => { setCleared([]); setSelectedId(leaks[0].id); setLine(null); }}
               className="mt-3 text-[12px] font-bold text-[#5b5275] underline underline-offset-4"
             >
               Reset the house
