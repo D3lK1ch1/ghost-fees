@@ -45,3 +45,29 @@ export function downloadReminder(subscription) {
   link.click();
   URL.revokeObjectURL(url);
 }
+
+// The next date a subscription should charge, rolled forward from its last charge.
+export function nextChargeDate(lastDate, today = new Date()) {
+  const remind = nextReminderDate(lastDate, today);
+  if (!remind) return null;
+  const charge = new Date(remind);
+  charge.setUTCDate(charge.getUTCDate() + 2);
+  return charge;
+}
+
+// One calendar file with a reminder for every subscription.
+export function downloadAllReminders(subscriptions) {
+  const today = new Date();
+  const events = subscriptions
+    .map((item) => buildIcs(item, today))
+    .filter(Boolean)
+    .map((ics) => ics.slice(ics.indexOf('BEGIN:VEVENT'), ics.indexOf('END:VCALENDAR')).trim());
+  if (!events.length) return;
+  const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Ghost Fees//Reminder//EN', ...events, 'END:VCALENDAR'].join('\r\n');
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'ghost-fees-reminders.ics';
+  link.click();
+  URL.revokeObjectURL(url);
+}
