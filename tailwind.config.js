@@ -69,6 +69,14 @@ module.exports = {
   			mono: ['var(--font-mono)']
   		},
   		keyframes: {
+  			float: {
+  				'0%, 100%': { transform: 'translateY(0) rotate(-1deg)' },
+  				'50%': { transform: 'translateY(-10px) rotate(1.5deg)' }
+  			},
+  			rise: {
+  				from: { opacity: '0', transform: 'translateY(14px)' },
+  				to: { opacity: '1', transform: 'translateY(0)' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -87,6 +95,8 @@ module.exports = {
   			}
   		},
   		animation: {
+  			float: 'float 6s ease-in-out infinite',
+  			rise: 'rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
