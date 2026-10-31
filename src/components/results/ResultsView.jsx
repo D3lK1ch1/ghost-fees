@@ -23,14 +23,14 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
           <button
             type="button"
             onClick={onRestart}
-            className="rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[13px] font-medium text-white transition-colors hover:border-white/25"
+            className="text-[13px] font-bold text-primary underline underline-offset-4"
           >
-            Start over
+            Scan another statement
           </button>
         )}
       />
 
-      <main className="mx-auto w-full max-w-3xl px-5 pb-24 sm:px-8">
+      <main className="mx-auto w-full max-w-5xl px-5 pb-24 sm:px-8">
         <LeakTotal total={total} months={analysis.monthSpan} />
 
         {!enoughHistory && (
@@ -40,7 +40,7 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
         )}
 
         {leaks.length ? (
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {leaks.map((leak) => (
               <LeakCard key={leak.id} leak={leak} onDraft={() => openEmail(leak)} />
             ))}

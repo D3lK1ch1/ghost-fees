@@ -4,43 +4,43 @@
 
 @layer base {
   :root {
-    --background: 250 19% 6%;
-    --foreground: 0 0% 100%;
-    --card: 250 19% 12%;
-    --card-foreground: 0 0% 100%;
-    --popover: 250 20% 11%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 158 97% 71%;
-    --primary-foreground: 250 30% 6%;
-    --secondary: 250 16% 18%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 250 16% 16%;
-    --muted-foreground: 253 11% 67%;
-    --accent: 250 16% 20%;
-    --accent-foreground: 0 0% 100%;
+    --background: 258 47% 11%;
+    --foreground: 40 33% 94%;
+    --card: 258 38% 15%;
+    --card-foreground: 40 33% 94%;
+    --popover: 258 38% 14%;
+    --popover-foreground: 40 33% 94%;
+    --primary: 30 100% 62%;
+    --primary-foreground: 258 50% 8%;
+    --secondary: 258 30% 20%;
+    --secondary-foreground: 40 33% 94%;
+    --muted: 258 30% 18%;
+    --muted-foreground: 258 22% 72%;
+    --accent: 258 30% 22%;
+    --accent-foreground: 40 33% 94%;
     --destructive: 0 84% 71%;
     --destructive-foreground: 0 0% 6%;
-    --border: 250 14% 22%;
-    --input: 250 14% 24%;
-    --ring: 158 97% 71%;
-    --chart-1: 158 97% 71%;
-    --chart-2: 25 100% 74%;
+    --border: 258 25% 24%;
+    --input: 258 25% 26%;
+    --ring: 30 100% 62%;
+    --chart-1: 30 100% 62%;
+    --chart-2: 158 97% 71%;
     --chart-3: 262 45% 55%;
     --chart-4: 43 96% 60%;
     --chart-5: 0 84% 71%;
     --radius: 1rem;
-    --font-heading: "Outfit", ui-sans-serif, system-ui, sans-serif;
-    --font-body: "Outfit", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: "Fredoka", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Fredoka", ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --sidebar-background: 250 19% 8%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 158 97% 71%;
-    --sidebar-primary-foreground: 250 30% 6%;
-    --sidebar-accent: 250 16% 16%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 250 14% 20%;
-    --sidebar-ring: 158 97% 71%;
+    --sidebar-background: 258 47% 9%;
+    --sidebar-foreground: 40 33% 94%;
+    --sidebar-primary: 30 100% 62%;
+    --sidebar-primary-foreground: 258 50% 8%;
+    --sidebar-accent: 258 30% 18%;
+    --sidebar-accent-foreground: 40 33% 94%;
+    --sidebar-border: 258 25% 22%;
+    --sidebar-ring: 30 100% 62%;
   }
 }
 
@@ -55,6 +55,10 @@
 
   body {
     @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3 {
+    @apply font-heading;
   }
 
   ::selection {
