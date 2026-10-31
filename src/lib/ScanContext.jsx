@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { parseCsv } from '@/lib/ghostFees/parseCsv';
 import { analyse, mergeTransactions } from '@/lib/ghostFees/analyse';
 import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
+import { sourceLabel } from '@/lib/ghostFees/detectBank';
 
 const STEP_COUNT = 4;
 
@@ -76,10 +77,11 @@ export function ScanProvider({ children }) {
       for (const file of files) {
         try {
           if (/\.csv$/i.test(file.name)) {
-            const rows = parseCsv(await file.text());
+            const text = await file.text();
+            const rows = parseCsv(text);
             if (!rows.length) throw new Error('No transactions found in this file.');
             lists.push(rows);
-            names.push(file.name);
+            names.push(sourceLabel(file.name, text));
           } else if (/\.pdf$/i.test(file.name)) {
             const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
             const response = await base44.functions.invoke('parseStatement', { file_uri });
@@ -87,7 +89,7 @@ export function ScanProvider({ children }) {
             if (data.error) errors.push({ name: file.name, message: data.error });
             else if (Array.isArray(data.transactions) && data.transactions.length) {
               lists.push(data.transactions);
-              names.push(file.name);
+              names.push(sourceLabel(file.name));
             }
             else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
