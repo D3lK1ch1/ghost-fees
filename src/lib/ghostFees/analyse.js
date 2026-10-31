@@ -197,6 +197,7 @@ function overlapLeaks(groups) {
       caption: `${money(monthly)}/mo all up`,
       reason: `${names.join(', ')} all charge you each month. The extra ones come to ${money(droppedMonthly)}/mo.`,
       action: 'cancel',
+      droppedKeys: dropped.map((member) => member.key),
       targets: dropped.map((member) => ({
         merchant: displayName(member.key),
         monthly: round2(latestValue(member)),
@@ -255,33 +256,6 @@ function merchantLeak(key, list) {
     }
   }
 
-  // Price creep: exactly two prices, the higher one replacing the lower one.
-  if (months.length >= 3 && amounts.length === 2) {
-    const [oldPrice, newPrice] = amounts;
-    const firstNewIndex = list.findIndex((item) => item.value === newPrice);
-    const oldAfterNew = list.slice(firstNewIndex + 1).some((item) => item.value === oldPrice);
-    if (firstNewIndex > 0 && !oldAfterNew) {
-      const newCharges = list.filter((item) => item.value === newPrice).length;
-      const rise = round2(newPrice - oldPrice);
-      const since = list[firstNewIndex].date;
-      return {
-        leak: {
-          id: `m:${key}`,
-          merchant,
-          badge: 'Price creep',
-          amount: round2(rise * newCharges),
-          monthly: newPrice,
-          priceRise: { oldPrice, newPrice, since },
-          caption: `extra since ${shortDate(since)}`,
-          reason: `Was ${money(oldPrice)}, now ${money(newPrice)} (+${money(rise)}/mo) since ${shortDate(since)}.`,
-          action: isSubscription ? 'cancel' : null,
-          rows: list.map((item) => statementRow(item, item.value === newPrice, rise)),
-        },
-        subscription,
-      };
-    }
-  }
-
   // Duplicate: the same amount charged twice within 2 days. Only the extras count.
   const extraIndexes = new Set();
   for (let i = 0; i < list.length; i += 1) {
@@ -294,24 +268,55 @@ function merchantLeak(key, list) {
     }
   }
   const extras = [...extraIndexes].map((index) => list[index]);
-  if (extras.length) {
-    return {
-      leak: {
-        id: `m:${key}`,
-        merchant,
-        badge: 'Duplicate',
-        amount: sumValues(extras),
-        monthly: round2(extras[0].value),
-        caption: `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}`,
-        reason: `${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'}.`,
-        action: 'refund',
-        rows: list.map((item, index) => statementRow(item, extraIndexes.has(index), item.value)),
-      },
-      subscription,
-    };
+  const dupAmount = sumValues(extras);
+
+  // Price creep: exactly two prices among the non-duplicate charges, the higher replacing the lower.
+  const regular = list.filter((_, index) => !extraIndexes.has(index));
+  const regularAmounts = distinctAmounts(regular);
+  let creep = null;
+  if (distinctMonths(regular).length >= 3 && regularAmounts.length === 2) {
+    const [oldPrice, newPrice] = regularAmounts;
+    const firstNewIndex = regular.findIndex((item) => item.value === newPrice);
+    const oldAfterNew = regular.slice(firstNewIndex + 1).some((item) => item.value === oldPrice);
+    if (firstNewIndex > 0 && !oldAfterNew) {
+      const rise = round2(newPrice - oldPrice);
+      creep = {
+        oldPrice,
+        newPrice,
+        rise,
+        since: regular[firstNewIndex].date,
+        amount: round2(rise * regular.filter((item) => item.value === newPrice).length),
+      };
+    }
   }
 
-  return { leak: null, subscription };
+  if (!creep && !extras.length) return { leak: null, subscription };
+
+  const parts = [];
+  if (creep) parts.push(`Was ${money(creep.oldPrice)}, now ${money(creep.newPrice)} (+${money(creep.rise)}/mo) since ${shortDate(creep.since)}.`);
+  if (extras.length) parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'}.`);
+  const creepBigger = creep && creep.amount >= dupAmount;
+
+  return {
+    leak: {
+      id: `m:${key}`,
+      merchant,
+      badge: creep && !extras.length ? 'Price creep' : !creep ? 'Duplicate' : creepBigger ? 'Price creep' : 'Duplicate',
+      extraBadge: creep && extras.length ? (creepBigger ? 'Duplicate' : 'Price creep') : null,
+      amount: round2((creep ? creep.amount : 0) + dupAmount),
+      monthly: creep ? creep.newPrice : round2(extras[0].value),
+      priceRise: creep ? { oldPrice: creep.oldPrice, newPrice: creep.newPrice, since: creep.since } : null,
+      caption: creep && !extras.length ? `extra since ${shortDate(creep.since)}` : extras.length && !creep ? `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}` : 'extra charges',
+      reason: parts.join(' '),
+      action: extras.length ? 'refund' : (isSubscription ? 'cancel' : null),
+      rows: list.map((item, index) => {
+        if (extraIndexes.has(index)) return statementRow(item, true, item.value);
+        if (creep && item.value === creep.newPrice) return statementRow(item, true, creep.rise);
+        return statementRow(item, false, 0);
+      }),
+    },
+    subscription,
+  };
 }
 
 export function analyse(transactions) {
@@ -325,7 +330,8 @@ export function analyse(transactions) {
     .filter((item) => item.amount <= 0)
     .forEach((item) => {
       const upper = item.description.toUpperCase();
-      if (HARD_EXCLUDE_RE.test(upper)) return;
+      // A fee is a fee even when its description mentions a withdrawal ("ATM WITHDRAWAL FEE").
+      if (HARD_EXCLUDE_RE.test(upper) && !/\bFEES?\b/.test(upper)) return;
       const debit = { ...item, value: Math.abs(item.amount) };
       if (BORROWING_RE.test(upper)) push(borrowGroups, item.clean || 'BORROWING COST', debit);
       else if (SURCHARGE_RE.test(upper)) push(surchargeGroups, item.clean || 'SURCHARGE', debit);
@@ -357,7 +363,13 @@ export function analyse(transactions) {
     if (result.subscription) subscriptions.push(result.subscription);
   });
 
-  leaks.push(...overlapLeaks(groups));
+  const overlaps = overlapLeaks(groups);
+  // Their charges are already counted in full on the overlap card, so drop their own cards.
+  const covered = new Set(overlaps.flatMap((leak) => leak.droppedKeys.map((key) => `m:${key}`)));
+  for (let i = leaks.length - 1; i >= 0; i -= 1) {
+    if (covered.has(leaks[i].id)) leaks.splice(i, 1);
+  }
+  leaks.push(...overlaps);
 
   leaks.forEach((leak) => { leak.months = span; });
   subscriptions.forEach((item) => { item.months = span; });
