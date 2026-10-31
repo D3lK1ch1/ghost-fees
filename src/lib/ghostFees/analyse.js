@@ -54,12 +54,14 @@ function monthSpan(transactions) {
 
 // Combine files, dropping rows that already appeared in an earlier file.
 // Repeats inside one file are real repeat charges, so they stay.
-export function mergeTransactions(lists) {
+// With several files, each row remembers which file it came from.
+export function mergeTransactions(lists, names = []) {
   const seenBefore = new Set();
   const merged = [];
 
-  lists.forEach((list) => {
+  lists.forEach((list, listIndex) => {
     const seenHere = new Set();
+    const source = lists.length > 1 ? names[listIndex] || null : null;
     (list || []).forEach((item) => {
       const amount = round2(item.amount);
       if (!item.date || !item.description || !Number.isFinite(amount)) return;
@@ -94,6 +96,7 @@ function statementRow(item, wasted, wastedAmount) {
     source: item.source || null,
     wasted,
     wastedAmount: wasted ? round2(wastedAmount) : 0,
+    source: item.source || null,
   };
 }
 
@@ -129,7 +132,7 @@ function merchantLeak(key, list) {
   const isSubscription = months.length >= 3 && amounts.length <= 2 && !overCap && !isRent;
 
   const subscription = isSubscription
-    ? { id: `m:${key}`, merchant, monthly: round2(latest.value) }
+    ? { id: `m:${key}`, merchant, monthly: round2(latest.value), lastDate: latest.date }
     : null;
 
   // Trial converted: everything paid after the free charge was wasted.
@@ -216,8 +219,28 @@ function merchantLeak(key, list) {
       subscription,
     };
   }
+  const creepBigger = creep && creep.amount >= dupAmount;
 
-  return { leak: null, subscription };
+  return {
+    leak: {
+      id: `m:${key}`,
+      merchant,
+      badge: creep && !extras.length ? 'Price creep' : !creep ? 'Duplicate' : creepBigger ? 'Price creep' : 'Duplicate',
+      extraBadge: creep && extras.length ? (creepBigger ? 'Duplicate' : 'Price creep') : null,
+      amount: round2((creep ? creep.amount : 0) + dupAmount),
+      monthly: creep ? creep.newPrice : round2(extras[0].value),
+      priceRise: creep ? { oldPrice: creep.oldPrice, newPrice: creep.newPrice, since: creep.since } : null,
+      caption: creep && !extras.length ? `extra since ${shortDate(creep.since)}` : extras.length && !creep ? `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}` : 'extra charges',
+      reason: parts.join(' '),
+      action: extras.length ? 'refund' : (isSubscription ? 'cancel' : null),
+      rows: list.map((item, index) => {
+        if (extraIndexes.has(index)) return statementRow(item, true, item.value);
+        if (creep && item.value === creep.newPrice) return statementRow(item, true, creep.rise);
+        return statementRow(item, false, 0);
+      }),
+    },
+    subscription,
+  };
 }
 
 export function analyse(transactions) {

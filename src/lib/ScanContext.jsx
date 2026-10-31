@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { parseCsv } from '@/lib/ghostFees/parseCsv';
 import { analyse, mergeTransactions } from '@/lib/ghostFees/analyse';
 import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
+import { sourceLabel } from '@/lib/ghostFees/detectBank';
 
 const STEP_COUNT = 4;
 
@@ -33,12 +34,14 @@ export function ScanProvider({ children }) {
   const [transactions, setTransactions] = useState(null);
   const [windowMonths, setWindowMonths] = useState(0);
   const [fileErrors, setFileErrors] = useState([]);
+  const [fileNames, setFileNames] = useState([]);
 
   const reset = useCallback(() => {
     setStatus('idle');
     setTransactions(null);
     setWindowMonths(0);
     setFileErrors([]);
+    setFileNames([]);
     setSteps(initialSteps());
     setProgress(0);
     setTransactionCount(0);
@@ -57,6 +60,7 @@ export function ScanProvider({ children }) {
 
     const lists = [];
     const errors = [];
+    const names = [];
 
     if (useSample) {
       lists.push(parseCsv(SAMPLE_CSV).map((row) => ({ ...row, source: 'sample statement' })));
@@ -64,7 +68,8 @@ export function ScanProvider({ children }) {
       for (const file of files) {
         try {
           if (/\.csv$/i.test(file.name)) {
-            const rows = parseCsv(await file.text());
+            const text = await file.text();
+            const rows = parseCsv(text);
             if (!rows.length) throw new Error('No transactions found in this file.');
             lists.push(rows.map((row) => ({ ...row, source: file.name })));
           } else if (/\.pdf$/i.test(file.name)) {
@@ -73,10 +78,14 @@ export function ScanProvider({ children }) {
             const data = response?.data || {};
             if (data.error) errors.push({ name: file.name, message: data.error });
             else if (Array.isArray(data.transactions) && data.transactions.length) {
+              lists.push(data.transactions);
+              names.push(sourceLabel(file.name));
+            }
+            else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
               lists.push(data.transactions.map((row) => ({ ...row, source: file.name })));
             } else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
-            throw new Error('Only CSV or PDF files are supported.');
+            throw new Error("This isn't a CSV or PDF.");
           }
         } catch (error) {
           errors.push({
@@ -87,7 +96,7 @@ export function ScanProvider({ children }) {
       }
     }
 
-    const transactions = mergeTransactions(lists);
+    const transactions = mergeTransactions(lists, names);
 
     if (!transactions.length) {
       setFileErrors(errors.length ? errors : [{ name: 'Statement', message: 'We could not find any transactions in that file.' }]);
@@ -101,6 +110,7 @@ export function ScanProvider({ children }) {
     setSteps(Array.from({ length: STEP_COUNT }, () => 'done'));
     setProgress(100);
     setFileErrors(errors);
+    setFileNames(names);
     setTransactions(transactions);
     setStatus('done');
     return analysis;
@@ -121,9 +131,10 @@ export function ScanProvider({ children }) {
     windowMonths,
     setWindowMonths,
     fileErrors,
+    fileNames,
     runScan,
     reset,
-  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, runScan, reset]);
+  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, fileNames, runScan, reset]);
 
   return <ScanContext.Provider value={value}>{children}</ScanContext.Provider>;
 }

@@ -33,6 +33,11 @@ export default function LeakCard({ leak, onDraft }) {
           <BadgePop className={cn('mt-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.badge])}>
             {leak.badge}
           </BadgePop>
+          {leak.extraBadge && (
+            <BadgePop delay={0.75} className={cn('ml-1.5 mt-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.extraBadge])}>
+              {leak.extraBadge}
+            </BadgePop>
+          )}
         </div>
         <div className="shrink-0 text-right">
           <div className="font-heading text-[1.7rem] font-bold leading-none tabular-nums">{money(leak.amount)}</div>

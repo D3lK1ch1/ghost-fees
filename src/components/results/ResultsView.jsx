@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
+import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
@@ -9,6 +10,7 @@ import FileErrors from './FileErrors';
 import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import SiteFooter from '@/components/site/SiteFooter';
+import GhostGuide from '@/components/guide/GhostGuide';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
@@ -26,15 +28,41 @@ const WINDOWS = [
   { value: 3, label: 'Last 3 months' },
 ];
 
-export default function ResultsView({ analysis, usedSample, onRestart }) {
+export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
   const { windowMonths, setWindowMonths, fileErrors } = useScan();
   const [emailLeak, setEmailLeak] = useState(null);
   const [view, setView] = useState('cards');
+  const [guideKey, setGuideKey] = useState('penny');
+  const [pulseId, setPulseId] = useState(null);
+  const [mostUsefulId, setMostUsefulId] = useState(null);
+  const mostUseful = leaks.find((leak) => leak.id === mostUsefulId) || null;
+
+  // Tapping a card (not one of its buttons) marks it as the most useful for feedback.
+  const pickCard = (event, leak) => {
+    if (event.target.closest('button, a')) return;
+    setMostUsefulId((current) => (current === leak.id ? null : leak.id));
+  };
 
   const openEmail = (leak) => {
     trackEvent('cancel_email_clicked');
     setEmailLeak(leak);
+  };
+
+  // Guide actions only run after the user taps the button under a reply.
+  const onGuideAction = (action, leak) => {
+    if (action === 'draft_email' && leak) openEmail(leak);
+    if (action === 'open_house') {
+      setView('house');
+      setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+    if ((action === 'open_leak' || action === 'show_transactions') && leak) {
+      setView('cards');
+      setPulseId(leak.id);
+      setTimeout(() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+      setTimeout(() => setPulseId(null), 2400);
+    }
+    if (action === 'scroll_feedback') document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -68,13 +96,19 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
           </label>
         </div>
 
-        <LeakTotal
-          total={total}
-          months={analysis.monthSpan}
-          from={analysis.firstDate}
-          to={analysis.lastDate}
-          monthlyIncome={analysis.monthlyIncome}
-        />
+        {leaks.length ? (
+          <LeakTotal
+            total={total}
+            months={analysis.monthSpan}
+            from={analysis.firstDate}
+            to={analysis.lastDate}
+            monthlyIncome={analysis.monthlyIncome}
+            leakCount={leaks.length}
+            fileNames={fileNames}
+          />
+        ) : (
+          <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} />
+        )}
 
         <FileErrors errors={fileErrors} />
 
@@ -86,7 +120,7 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
 
         {leaks.length ? (
           <>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <div id="ghosts" className="mt-6 flex scroll-mt-6 flex-wrap items-center justify-between gap-3">
               <h2 className="font-heading text-lg font-semibold text-foreground">
                 {leaks.length} {leaks.length === 1 ? 'ghost' : 'ghosts'}, biggest first
               </h2>
@@ -108,33 +142,48 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
             </div>
 
             {view === 'house' ? (
-              <HauntedHouse leaks={leaks} onDraft={openEmail} />
+              <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} />
             ) : (
               <CardList className="mt-4 grid gap-3 sm:grid-cols-2">
                 {leaks.map((leak, index) => (
                   <CardItem key={leak.id} index={index}>
-                    <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
+                    <div
+                      id={`leak-${leak.id}`}
+                      onClick={(event) => pickCard(event, leak)}
+                      className={cn(
+                        'relative h-full cursor-pointer rounded-3xl transition-shadow duration-500',
+                        mostUsefulId === leak.id && 'shadow-[0_0_0_3px_hsl(var(--primary)),0_0_24px_hsl(var(--primary)/0.35)]',
+                        pulseId === leak.id && 'animate-pulse shadow-[0_0_0_3px_hsl(var(--primary))]',
+                      )}
+                    >
+                      {mostUsefulId === leak.id && (
+                        <span className="absolute -top-2.5 left-4 z-10 animate-poof rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-primary-foreground shadow">
+                          Most useful
+                        </span>
+                      )}
+                      <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
+                    </div>
                   </CardItem>
                 ))}
               </CardList>
             )}
           </>
-        ) : (
-          <p className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4 text-[13px] text-muted-foreground">
-            No ghosts found in this statement.
-          </p>
-        )}
+        ) : null}
 
         <PossessedReceipt leaks={leaks} />
 
         <SubscriptionsSection subscriptions={subscriptions} />
 
-        <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} />
+        <div id="feedback" className="scroll-mt-6">
+          <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} mostUseful={mostUseful} />
+        </div>
       </main>
 
       <SiteFooter />
 
       <LeakEmailDialog leak={emailLeak} onClose={() => setEmailLeak(null)} />
+
+      <GhostGuide analysis={analysis} guideKey={guideKey} onGuide={setGuideKey} onAction={onGuideAction} />
     </div>
   );
 }

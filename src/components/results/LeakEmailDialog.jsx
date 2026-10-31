@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Check, Copy, Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { money } from '@/lib/ghostFees/format';
+import { money, monthsLabel } from '@/lib/ghostFees/format';
 
 const longDate = (value) => {
   const date = new Date(`${value}T00:00:00Z`);
@@ -90,6 +90,12 @@ export default function LeakEmailDialog({ leak, onClose }) {
           <DialogTitle className="pr-8 font-heading text-lg font-semibold text-foreground">
             {title}
           </DialogTitle>
+          {leak && (
+          <p className="mt-1.5 text-[13px] text-muted-foreground">
+            Fixing this saves <span className="font-bold text-primary">{money(leak.amount)}</span>
+            {leak.months ? ` (found in ${monthsLabel(leak.months)} months)` : ''}. Edit anything before you send.
+          </p>
+          )}
 
           <p className="mt-4 whitespace-pre-wrap rounded-xl border border-border bg-background/60 p-4 text-[13px] leading-relaxed text-foreground/85">
             {body}
