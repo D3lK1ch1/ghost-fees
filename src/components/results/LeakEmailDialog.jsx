@@ -92,8 +92,14 @@ export default function LeakEmailDialog({ leak, onClose }) {
           </DialogTitle>
           {leak && (
           <p className="mt-1.5 text-[13px] text-muted-foreground">
-            Fixing this saves <span className="font-bold text-primary">{money(leak.amount)}</span>
-            {leak.months ? ` (found in ${monthsLabel(leak.months)} months)` : ''}. Edit anything before you send.
+            {leak.badge === 'Subscription' ? (
+              <>Cancelling this frees up <span className="font-bold text-primary">{money(leak.monthly)}</span> a month. Edit anything before you send.</>
+            ) : (
+              <>
+                Fixing this saves <span className="font-bold text-primary">{money(leak.amount)}</span>
+                {leak.months ? ` (found in ${monthsLabel(leak.months)} months)` : ''}. Edit anything before you send.
+              </>
+            )}
           </p>
           )}
 
