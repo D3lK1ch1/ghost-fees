@@ -128,10 +128,9 @@ function Room({ room, leaks, cleared, active, onSelect, className, delay = 0 }) 
 }
 
 // Leaks drawn as ghosts in a five-room house. Busting is kept in this component only.
-export default function HauntedHouse({ leaks, onDraft, monthlyIncome }) {
+export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide }) {
   const [cleared, setCleared] = useState([]);
   const [roomKey, setRoomKey] = useState(() => (leaks[0] ? roomOf(leaks[0]) : null));
-  const [guideKey, setGuideKey] = useState('penny');
   const [line, setLine] = useState(null);
   const [unit, setUnit] = useState('money');
 
@@ -268,7 +267,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome }) {
                 <button
                   key={key}
                   type="button"
-                  onClick={() => setGuideKey(key)}
+                  onClick={() => onGuide?.(key)}
                   aria-pressed={guideKey === key}
                   aria-label={`${GUIDES[key].name}, ${GUIDES[key].role}`}
                   title={GUIDES[key].name}
