@@ -114,7 +114,7 @@ function starterChips(analysis) {
   ].filter(Boolean);
 }
 
-export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
+export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -148,6 +148,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
       setMessages([{ role: 'guide', text: first, chips: chips.slice(0, 3) }]);
     }
   };
+
+  // Lets the page's "Ask a ghost" tab open the chat.
+  useEffect(() => {
+    if (openRequest) openPanel();
+  }, [openRequest]);
 
   const reply = (message) => setMessages((current) => [...current, { role: 'guide', ...message }]);
 
@@ -212,9 +217,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
           aria-label={`Ask ${guide.name}, your ghost guide`}
           className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] animate-rise flex-col rounded-t-3xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-h-[640px] sm:w-[380px] sm:rounded-3xl"
         >
-          <div className="flex items-center gap-3 border-b border-border px-4 py-3">
-            <span className="animate-bob" style={{ color: guide.color }}>
-              <GhostMark className="h-9 w-9" eyeColor="#1a1230" />
+          <div className="flex items-center gap-3 border-b border-border px-4 pb-3 pt-4">
+            <span className="flex h-12 w-11 shrink-0 items-end justify-center overflow-visible pt-2" style={{ color: guide.color }}>
+              <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">{guide.name}</p>
