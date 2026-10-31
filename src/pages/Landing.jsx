@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
+import UseCases from '@/components/landing/UseCases';
 import UploadErrors from '@/components/landing/UploadErrors';
 import ScanningScreen from '@/components/scan/ScanningScreen';
 import ResultsView from '@/components/results/ResultsView';
@@ -51,7 +52,10 @@ export default function Landing() {
       {fileErrors.length > 0 ? (
         <UploadErrors onSample={() => scan([], true)} />
       ) : (
-        <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
+        <>
+          <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
+          <UseCases />
+        </>
       )}
       <input
         ref={inputRef}
