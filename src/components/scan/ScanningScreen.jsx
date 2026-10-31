@@ -33,7 +33,12 @@ export default function ScanningScreen({ steps, progress, transactionCount, file
           <GhostMark className="h-16 w-16 text-white drop-shadow-[0_0_30px_rgba(109,253,201,0.45)]" />
         </div>
 
-        <div className="mt-6 w-full rounded-2xl border border-white/[0.09] bg-card/80 p-4">
+        <p className="mt-6 font-retro text-[15px] uppercase tracking-[0.22em] text-primary/80">
+          scanning frequencies…
+        </p>
+
+        <div className="relative mt-3 w-full overflow-hidden rounded-2xl border border-white/[0.09] bg-card/80 p-4">
+          <div className="pointer-events-none absolute inset-y-0 w-1/3 animate-scan-beam bg-[linear-gradient(90deg,transparent,hsl(var(--primary)/0.18),transparent)]" />
           <div className="flex items-center justify-between text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             <span>your statements</span>
             <span>{transactionCount ? `${transactionCount} rows` : 'reading…'}</span>
@@ -50,7 +55,7 @@ export default function ScanningScreen({ steps, progress, transactionCount, file
           </div>
         </div>
 
-        <h1 className="mt-8 text-3xl font-bold tracking-tight text-white">Hunting ghosts…</h1>
+        <h1 className="mt-8 text-3xl font-bold tracking-tight text-white [text-shadow:0_0_24px_hsl(var(--primary)/0.35)]">Hunting ghosts…</h1>
         <p className="mt-2 text-[13.5px] text-muted-foreground">Usually takes about 10 seconds.</p>
 
         <ul className="mt-8 w-full space-y-3 text-left">

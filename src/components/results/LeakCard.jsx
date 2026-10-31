@@ -25,7 +25,7 @@ export default function LeakCard({ leak, onDraft }) {
     <div className="rounded-3xl bg-[#f5f0e8] p-4 text-[#1b1233] sm:p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h3 className="truncate font-heading text-[17px] font-semibold">{leak.merchant}</h3>
+          <h3 className="truncate font-heading text-[17px] font-semibold">{leak.title || leak.merchant}</h3>
           <span className={cn('mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.badge])}>
             {leak.badge}
           </span>
@@ -67,6 +67,12 @@ export default function LeakCard({ leak, onDraft }) {
             </li>
           ))}
         </ul>
+      )}
+
+      {leak.tip && (
+        <p className="mt-3 rounded-2xl bg-[#1b1233]/[0.05] px-3 py-2 text-[12.5px] font-semibold leading-relaxed text-[#5b5275]">
+          {leak.tip}
+        </p>
       )}
 
       {action && (

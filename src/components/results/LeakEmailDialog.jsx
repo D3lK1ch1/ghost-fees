@@ -14,6 +14,22 @@ function buildEmail(leak) {
 
   const wasted = (leak.rows || []).filter((row) => row.wasted);
 
+  if (leak.targets) {
+    const names = leak.targets.map((target) => target.merchant);
+    return {
+      title: `Cancel ${names.join(' + ')}`,
+      subject: 'Please cancel these subscriptions',
+      body: `Hi,
+
+Please cancel these subscriptions for me:
+${leak.targets.map((target) => `- ${target.merchant}: ${money(target.monthly)} per month`).join('\n')}
+
+Please confirm by email once they are cancelled.
+
+Thanks.`,
+    };
+  }
+
   if (leak.action === 'refund') {
     return {
       title: `Refund request: ${leak.merchant}`,

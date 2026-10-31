@@ -6,7 +6,7 @@ const TAGS = ['Forgotten subscriptions', 'Sneaky fees', 'Price creep'];
 export default function Hero({ onSample, onUpload }) {
   return (
     <section className="mx-auto flex w-full max-w-3xl animate-rise flex-col items-center px-5 pb-16 pt-6 text-center sm:px-8">
-      <div className="rounded-full p-6 shadow-[0_0_80px_hsl(var(--primary)/0.22)]">
+      <div className="animate-float rounded-full p-6 shadow-[0_0_80px_hsl(var(--primary)/0.22)]">
         <GhostMark className="h-24 w-24 text-foreground sm:h-28 sm:w-28" eyeColor="#150e28" />
       </div>
 

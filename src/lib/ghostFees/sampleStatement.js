@@ -16,6 +16,11 @@ function buildSample() {
     add(m, 18, -4.49, 'ICLOUD STORAGE');
     add(m, 20, -29.99, 'ADOBE CREATIVE CLOUD');
     if (m === 2 || m === 4) add(m, 21, -29.99, 'ADOBE CREATIVE CLOUD');
+    add(m, 6, -16.99, 'NETFLIX.COM SYDNEY');
+    add(m, 7, -14.0, 'STAN ENTERTAINMENT');
+    add(m, 27, -9.8, 'INTEREST CHARGED');
+    if (m % 2 === 0) add(m, 28, -1.35, 'CARD SURCHARGE');
+    if (m === 3) add(m, 29, -8, 'AFTERPAY LATE FEE');
   }
   add(1, 9, -21.2, 'UBER EATS AUS');
   add(4, 26, -12, 'LATE PAYMENT FEE');

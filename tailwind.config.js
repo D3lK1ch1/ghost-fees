@@ -64,6 +64,7 @@ module.exports = {
   		},
   		fontFamily: {
   			heading: ['var(--font-heading)'],
+  			retro: ['var(--font-retro)'],
   			body: ['var(--font-body)'],
   			display: ['var(--font-display)'],
   			mono: ['var(--font-mono)']
@@ -76,6 +77,10 @@ module.exports = {
   			rise: {
   				from: { opacity: '0', transform: 'translateY(14px)' },
   				to: { opacity: '1', transform: 'translateY(0)' }
+  			},
+  			'scan-beam': {
+  				'0%': { transform: 'translateX(-140%)' },
+  				'100%': { transform: 'translateX(440%)' }
   			},
   			'accordion-down': {
   				from: {
@@ -97,6 +102,7 @@ module.exports = {
   		animation: {
   			float: 'float 6s ease-in-out infinite',
   			rise: 'rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
+  			'scan-beam': 'scan-beam 1.5s ease-in-out infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}
