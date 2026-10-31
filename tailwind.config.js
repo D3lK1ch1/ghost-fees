@@ -122,6 +122,30 @@ module.exports = {
   				'0%, 100%': { opacity: '1', transform: 'scale(1)' },
   				'50%': { opacity: '0.6', transform: 'scale(0.9)' }
   			},
+  			'window-flicker': {
+  				'0%, 18%, 22%, 60%, 64%, 100%': { opacity: '1' },
+  				'20%, 62%': { opacity: '0.35' }
+  			},
+  			'fog-drift': {
+  				'0%, 100%': { transform: 'translateX(-6%)' },
+  				'50%': { transform: 'translateX(6%)' }
+  			},
+  			'bat-fly': {
+  				'0%': { transform: 'translate(-40px, 30px) scale(0.8)', opacity: '0' },
+  				'10%': { opacity: '1' },
+  				'50%': { transform: 'translate(45vw, -10px) scale(1)' },
+  				'90%': { opacity: '1' },
+  				'100%': { transform: 'translate(90vw, 20px) scale(0.8)', opacity: '0' }
+  			},
+  			'moon-glow': {
+  				'0%, 100%': { boxShadow: '0 0 50px rgba(245,239,224,0.35)' },
+  				'50%': { boxShadow: '0 0 80px rgba(245,239,224,0.6)' }
+  			},
+  			poof: {
+  				'0%': { opacity: '0', transform: 'scale(0.4) rotate(-20deg)' },
+  				'50%': { opacity: '1', transform: 'scale(1.3) rotate(8deg)' },
+  				'100%': { opacity: '1', transform: 'scale(1) rotate(0)' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -152,6 +176,11 @@ module.exports = {
   			'ghost-jar': 'ghost-jar 0.35s 0.9s both',
   			seance: 'seance 3.4s ease-in-out infinite',
   			flicker: 'flicker 1.4s ease-in-out infinite',
+  			'window-flicker': 'window-flicker 4s steps(1, end) infinite',
+  			'fog-drift': 'fog-drift 14s ease-in-out infinite',
+  			'bat-fly': 'bat-fly 11s linear infinite',
+  			'moon-glow': 'moon-glow 5s ease-in-out infinite',
+  			poof: 'poof 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) both',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

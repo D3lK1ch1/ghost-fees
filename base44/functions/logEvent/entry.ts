@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 
-const EVENT_TYPES = ['scan_started', 'scan_finished', 'cancel_email_clicked', 'feedback_submitted'];
+const EVENT_TYPES = ['scan_started', 'scan_finished', 'cancel_email_clicked', 'feedback_submitted', 'guide_opened', 'guide_message'];
 
 export default async function (req) {
   try {
