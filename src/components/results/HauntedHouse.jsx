@@ -198,19 +198,11 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const [flying, setFlying] = useState([]);
   const [soundOn, setSoundOn] = useState(false);
   const sceneRef = useRef(null);
-  const tilt = (x, y) => {
-    if (prefersReduced()) return;
-    sceneRef.current?.style.setProperty('--tx', String(x));
-    sceneRef.current?.style.setProperty('--ty', String(y));
-  };
   const [roomKey, setRoomKey] = useState(() => (leaks[0] ? roomOf(leaks[0]) : null));
   const [line, setLine] = useState(null);
   const [unit, setUnit] = useState('money');
   const derivedPay = hourlyFromMonthly(monthlyIncome);
   const [pay, setPay] = useState(derivedPay || 35);
-  const [flying, setFlying] = useState([]);
-  const [soundOn, setSoundOn] = useState(false);
-  const sceneRef = useRef(null);
 
   // Tilt the house a little toward the pointer (or the phone's tilt) for a 3D feel.
   const tilt = (x, y) => {
