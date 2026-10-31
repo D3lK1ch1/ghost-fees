@@ -53,6 +53,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   // Shared between the Haunted House and the goal path. Never stored.
   const [cleared, setCleared] = useState([]);
   const [remindersDone, setRemindersDone] = useState(false);
+  const [subAnswers, setSubAnswers] = useState({});
+  const [lifeGoal, setLifeGoal] = useState({ name: '', amount: 0 });
+  const cancelSubs = subscriptions.filter((item) => subAnswers[item.id] === 'no');
+  const draftCancel = (item) => openEmail({ id: `sub:${item.id}`, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' });
   const current = TABS.find((item) => item.key === tab);
 
   // Wipes everything from this tab: results, busted ghosts, goals and chat.
@@ -254,12 +258,23 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   onRemindersDone={setRemindersDone}
                   onDraft={openEmail}
                   onOpenHouse={() => setTab('house')}
+                  cancelSubs={cancelSubs}
+                  lifeGoal={lifeGoal}
+                  onLifeGoal={setLifeGoal}
                   guideKey={guideKey}
                 />
               )}
               {tab === 'calendar' && <HauntedCalendar leaks={leaks} subscriptions={subscriptions} />}
               {tab === 'emails' && <EmailsPanel leaks={leaks} onDraft={openEmail} />}
-              {tab === 'subscriptions' && <SubscriptionsSection subscriptions={subscriptions} />}
+              {tab === 'subscriptions' && (
+                <SubscriptionsSection
+                  subscriptions={subscriptions}
+                  answers={subAnswers}
+                  onAnswer={setSubAnswers}
+                  onDraftCancel={draftCancel}
+                  onOpenPath={() => setTab('path')}
+                />
+              )}
               {tab === 'receipt' && <PossessedReceipt leaks={leaks} />}
               {tab === 'feedback' && (
                 <div id="feedback">
