@@ -153,6 +153,14 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
 // Leaks drawn as ghosts in a five-room house. Busting is kept in this component only.
 export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide }) {
   const [cleared, setCleared] = useState([]);
+  const [flying, setFlying] = useState([]);
+  const [soundOn, setSoundOn] = useState(false);
+  const sceneRef = useRef(null);
+  const tilt = (x, y) => {
+    if (prefersReduced()) return;
+    sceneRef.current?.style.setProperty('--tx', String(x));
+    sceneRef.current?.style.setProperty('--ty', String(y));
+  };
   const [roomKey, setRoomKey] = useState(() => (leaks[0] ? roomOf(leaks[0]) : null));
   const [line, setLine] = useState(null);
   const [unit, setUnit] = useState('money');

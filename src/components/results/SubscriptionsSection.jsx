@@ -24,6 +24,8 @@ export default function SubscriptionsSection({ subscriptions }) {
 
   if (!subscriptions.length) return null;
 
+  const gym = subscriptions.find((subscription) => GYM_RE.test(subscription.merchant));
+
   const answer = (id, key) => {
     setAnswers((current) => ({ ...current, [id]: current[id] === key ? undefined : key }));
   };
