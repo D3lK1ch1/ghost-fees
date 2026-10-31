@@ -1,3 +1,4 @@
+import { CardList, CardItem } from '@/components/GhostAnimations';
 import { money } from '@/lib/ghostFees/format';
 
 export default function SubscriptionsSection({ subscriptions }) {
@@ -10,17 +11,17 @@ export default function SubscriptionsSection({ subscriptions }) {
         Your subscriptions and what each one costs a month. Not counted in the total above.
       </p>
 
-      <ul className="mt-3 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
-        {subscriptions.map((subscription) => (
-          <li key={subscription.id} className="flex items-center justify-between gap-4 py-3">
+      <CardList className="mt-3 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
+        {subscriptions.map((subscription, index) => (
+          <CardItem key={subscription.id} index={index} className="flex items-center justify-between gap-4 py-3">
             <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
             <span className="shrink-0 text-[14px] font-semibold tabular-nums text-white">
               {money(subscription.monthly)}
               <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
             </span>
-          </li>
+          </CardItem>
         ))}
-      </ul>
+      </CardList>
     </section>
   );
 }

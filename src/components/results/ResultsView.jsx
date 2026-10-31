@@ -5,6 +5,7 @@ import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
+import { CardList, CardItem } from '@/components/GhostAnimations';
 import { trackEvent } from '@/lib/session';
 
 export default function ResultsView({ analysis, usedSample, onRestart }) {
@@ -40,11 +41,13 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
         )}
 
         {leaks.length ? (
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            {leaks.map((leak) => (
-              <LeakCard key={leak.id} leak={leak} onDraft={() => openEmail(leak)} />
+          <CardList className="mt-4 grid gap-3 sm:grid-cols-2">
+            {leaks.map((leak, index) => (
+              <CardItem key={leak.id} index={index}>
+                <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
+              </CardItem>
             ))}
-          </div>
+          </CardList>
         ) : (
           <p className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] px-4 py-4 text-[13px] text-muted-foreground">
             No ghosts found in this statement.

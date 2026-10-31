@@ -88,6 +88,30 @@ module.exports = {
   			'ghost-fill': {
   				to: { width: '100%' }
   			},
+  			'ghost-card': {
+  				from: { opacity: '0', transform: 'translateY(24px) scale(0.98)' },
+  				to: { opacity: '1', transform: 'none' }
+  			},
+  			'ghost-pop': {
+  				'0%': { opacity: '0', transform: 'scale(0.6)' },
+  				'60%': { opacity: '1', transform: 'scale(1.15)' },
+  				'100%': { opacity: '1', transform: 'scale(1)' }
+  			},
+  			bob: {
+  				'0%, 100%': { transform: 'translateY(0) rotate(0)' },
+  				'25%': { transform: 'translateY(-6px) rotate(-2deg)' },
+  				'50%': { transform: 'translateY(-10px) rotate(0)' },
+  				'75%': { transform: 'translateY(-6px) rotate(2deg)' }
+  			},
+  			'ghost-suck': {
+  				from: { transform: 'translate(var(--sx), var(--sy))' },
+  				to: { transform: 'translate(0, 0) scale(0.3)', opacity: '0' }
+  			},
+  			'ghost-jar': {
+  				'0%': { transform: 'scale(0.9)' },
+  				'60%': { transform: 'scale(1.08)' },
+  				'100%': { transform: 'scale(1)' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -111,6 +135,11 @@ module.exports = {
   			'scan-beam': 'scan-beam 1.5s ease-in-out infinite',
   			'ghost-sweep': 'ghost-sweep 1.5s ease-in-out forwards',
   			'ghost-fill': 'ghost-fill 1.5s linear forwards',
+  			'ghost-card': 'ghost-card 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards',
+  			'ghost-pop': 'ghost-pop 0.4s forwards',
+  			bob: 'bob 3s ease-in-out infinite',
+  			'ghost-suck': 'ghost-suck 0.8s ease-in forwards',
+  			'ghost-jar': 'ghost-jar 0.35s 0.9s both',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

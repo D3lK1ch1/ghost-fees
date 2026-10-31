@@ -3,6 +3,7 @@ import { Loader2, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
 import ChoiceGroup from './ChoiceGroup';
+import { CapturedJar } from '@/components/GhostAnimations';
 
 const inputClass = 'mt-2 w-full rounded-xl border border-white/[0.1] bg-black/25 px-3.5 py-2.5 text-[13.5px] text-white placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none';
 
@@ -35,7 +36,7 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal }) {
   if (state === 'done') {
     return (
       <section className="mt-10 rounded-[1.5rem] border border-primary/25 bg-primary/[0.06] p-6 text-center sm:p-8">
-        <p className="text-2xl font-semibold text-white">Thanks! 🎃</p>
+        <CapturedJar />
       </section>
     );
   }

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
+import GhostMark from '@/components/site/GhostMark';
+import { cn } from '@/lib/utils';
 import { money, moneyWhole } from '@/lib/ghostFees/format';
 
 const LINES = ['Reading statement…', 'Matching merchants…'];
@@ -111,4 +113,84 @@ export function CountUp({ value, duration = COUNT_MS }) {
   }, [value, duration]);
 
   return <span className="tabular-nums">{finished ? money(value) : moneyWhole(shown)}</span>;
+}
+
+// Faint CRT lines over the whole app.
+export function CrtOverlay() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-40 mix-blend-overlay"
+      style={{
+        backgroundImage:
+          'repeating-linear-gradient(to bottom, rgba(255,255,255,0.04) 0 1px, transparent 2px 4px)',
+      }}
+    />
+  );
+}
+
+// Generic staggered list: CardItem children float in one after another.
+export function CardList({ children, className = '' }) {
+  return <div className={className}>{children}</div>;
+}
+
+export function CardItem({ index = 0, children, className = '' }) {
+  return (
+    <div
+      className={cn('animate-ghost-card', className)}
+      style={{ animationDelay: `${0.3 + index * 0.1}s` }}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function BadgePop({ delay = 0.6, children, className = '' }) {
+  return (
+    <span
+      className={cn('inline-block animate-ghost-pop', className)}
+      style={{ animationDelay: `${delay}s` }}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function BobbingGhost({ size = 72 }) {
+  return (
+    <span className="inline-block animate-bob drop-shadow-[0_0_18px_rgba(255,170,60,0.35)]">
+      <span style={{ width: size, height: size }} className="block">
+        <GhostMark className="h-full w-full text-foreground" eyeColor="#150e28" />
+      </span>
+    </span>
+  );
+}
+
+// Shown after a successful feedback submit.
+export function CapturedJar({ message = 'Thanks! Ghosts captured.' }) {
+  const flies = [[-140, -90], [140, -110], [-110, 60], [130, 70]];
+
+  return (
+    <div className="relative mx-auto flex h-[200px] w-full max-w-[380px] flex-col items-center justify-end">
+      {flies.map(([x, y], index) => (
+        <span
+          key={`${x}-${y}`}
+          className="absolute bottom-[70px] w-7 animate-ghost-suck"
+          style={{ '--sx': `${x}px`, '--sy': `${y}px`, animationDelay: `${index * 0.12}s` }}
+        >
+          <GhostMark className="h-7 w-7 text-[#f5efe6]" eyeColor="#150e28" />
+        </span>
+      ))}
+
+      <svg viewBox="0 0 64 72" width="64" height="72" className="animate-ghost-jar">
+        <rect x="18" y="4" width="28" height="8" rx="2" fill="#ffaa3c" />
+        <path d="M14 14h36v46a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="rgba(255,255,255,0.12)" stroke="#f5efe6" strokeWidth="2" />
+        <circle cx="32" cy="44" r="10" fill="rgba(255,170,60,0.35)" />
+      </svg>
+
+      <p className="mt-2.5 animate-rise text-[18px] font-bold text-white" style={{ animationDelay: '1.1s' }}>
+        {message}
+      </p>
+    </div>
+  );
 }

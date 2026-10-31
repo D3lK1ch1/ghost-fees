@@ -1,5 +1,4 @@
-import GhostMark from '@/components/site/GhostMark';
-import { CountUp } from '@/components/GhostAnimations';
+import { CountUp, BobbingGhost } from '@/components/GhostAnimations';
 import { monthRangeLabel } from '@/lib/ghostFees/format';
 
 export default function LeakTotal({ total, months, from, to }) {
@@ -8,7 +7,9 @@ export default function LeakTotal({ total, months, from, to }) {
   return (
     <section className="relative mt-4 overflow-hidden rounded-[2rem] border border-border bg-card p-6 sm:p-9">
       <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-primary/[0.12] blur-3xl" />
-      <GhostMark className="absolute right-5 top-6 h-12 w-12 text-foreground sm:right-9 sm:top-1/2 sm:h-24 sm:w-24 sm:-translate-y-1/2" eyeColor="#150e28" />
+      <div className="absolute right-5 top-6 sm:right-9 sm:top-1/2 sm:-translate-y-1/2">
+        <BobbingGhost size={72} />
+      </div>
       <p className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">You found</p>
       <p className="mt-1 pr-14 font-heading text-[3.6rem] font-bold leading-none text-primary [text-shadow:0_0_28px_hsl(var(--primary)/0.35)] sm:text-[5.5rem]">
         <CountUp value={total} />

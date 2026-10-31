@@ -3,7 +3,7 @@ import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
 import UseCases from '@/components/landing/UseCases';
 import UploadErrors from '@/components/landing/UploadErrors';
-import { ScanScreen } from '@/components/GhostAnimations';
+import { ScanScreen, CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
@@ -38,21 +38,20 @@ export default function Landing() {
   const analysisReady = Boolean(status === 'done' && results);
   const scanning = status === 'scanning' || (analysisReady && !scanDone);
 
+  let content;
+
   if (scanning) {
-    return (
+    content = (
       <ScanScreen
         lastLine={results && results.leaks.length === 0 ? 'No ghosts found' : 'Ghost detected'}
         onDone={handleScanDone}
         onCancel={reset}
       />
     );
-  }
-
-  if (analysisReady) {
-    return <ResultsView analysis={results} usedSample={usedSample} onRestart={reset} />;
-  }
-
-  return (
+  } else if (analysisReady) {
+    content = <ResultsView analysis={results} usedSample={usedSample} onRestart={reset} />;
+  } else {
+    content = (
     <div className="min-h-screen">
       <BrandHeader />
       {fileErrors.length > 0 ? (
@@ -72,5 +71,13 @@ export default function Landing() {
         onChange={handleFiles}
       />
     </div>
+    );
+  }
+
+  return (
+    <>
+      {content}
+      <CrtOverlay />
+    </>
   );
 }

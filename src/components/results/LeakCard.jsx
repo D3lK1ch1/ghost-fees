@@ -3,6 +3,7 @@ import { ChevronDown, Landmark, Mail, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
+import { BadgePop } from '@/components/GhostAnimations';
 
 const ACTIONS = {
   cancel: { label: 'Draft cancel email', Icon: Mail },
@@ -26,9 +27,9 @@ export default function LeakCard({ leak, onDraft }) {
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 className="truncate font-heading text-[17px] font-semibold">{leak.title || leak.merchant}</h3>
-          <span className={cn('mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.badge])}>
+          <BadgePop className={cn('mt-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.badge])}>
             {leak.badge}
-          </span>
+          </BadgePop>
         </div>
         <div className="shrink-0 text-right">
           <div className="font-heading text-[1.7rem] font-bold leading-none tabular-nums">{money(leak.amount)}</div>
