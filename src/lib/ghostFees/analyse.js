@@ -3,6 +3,10 @@ import { money, shortDate } from './format';
 
 const FEE_RE = /\bFEES?\b|\bATM\b|INTERNATIONAL TRANSACTION|LATE PAYMENT|OVERDRAWN/;
 const TRIAL_RE = /TRIAL/;
+// Never a subscription or a price rise: money moved, not spent on a plan.
+const HARD_EXCLUDE_RE = /\bTRANSFER\b|\bSALARY\b|\bWITHDRAWAL\b|TOP ?UP|\bMYKI\b|PUBLIC TRANSPORT/;
+const RENT_RE = /\bRESIDENTIAL\b|\bRENT\b/;
+const MAX_SUBSCRIPTION = 500;
 const DAY = 24 * 60 * 60 * 1000;
 
 export const MIN_MONTHS = 6;
@@ -17,6 +21,18 @@ function dayDiff(from, to) {
 
 function monthKey(date) {
   return date.slice(0, 7);
+}
+
+function sumValues(list) {
+  return round2(list.reduce((sum, item) => sum + item.value, 0));
+}
+
+function distinctMonths(list) {
+  return [...new Set(list.map((item) => monthKey(item.date)))].sort();
+}
+
+function distinctAmounts(list) {
+  return [...new Set(list.map((item) => item.value.toFixed(2)))].map(Number).sort((a, b) => a - b);
 }
 
 // Calendar months from the first to the last transaction, inclusive.
@@ -60,95 +76,116 @@ function push(map, key, item) {
   map.get(key).push(item);
 }
 
-function feeLeak(key, list, span) {
-  const observed = round2(list.reduce((sum, item) => sum + item.value, 0));
-  if (observed <= 0) return null;
+function feeLeak(key, list) {
+  const amount = sumValues(list);
+  if (amount <= 0) return null;
+  const count = list.length;
   return {
     id: `fee:${key}`,
     merchant: titleCase(key),
     badge: 'Bank fee',
-    monthly: round2(observed / Math.max(span, 1)),
-    observed,
-    reason: `${list.length} fee ${list.length === 1 ? 'charge' : 'charges'} in this statement.`,
+    amount,
+    caption: `${count} ${count === 1 ? 'charge' : 'charges'}`,
+    reason: `${count} fee ${count === 1 ? 'charge' : 'charges'} on your statement.`,
+    cancelable: false,
   };
 }
 
+// One merchant's charges. Returns the wasted gap (if any) and, when the
+// merchant is a subscription, its current monthly price.
 function merchantLeak(key, list) {
-  const totals = new Map();
-  list.forEach((item) => totals.set(monthKey(item.date), (totals.get(monthKey(item.date)) || 0) + item.value));
-  const months = [...totals.keys()].sort();
-  const recurring = months.length >= 3;
-  const observed = round2(list.reduce((sum, item) => sum + item.value, 0));
-  const base = { id: `m:${key}`, merchant: titleCase(key), observed };
+  const months = distinctMonths(list);
+  const amounts = distinctAmounts(list);
+  const raw = list.map((item) => item.description.toUpperCase()).join(' | ');
+  const merchant = titleCase(key);
+  const latest = list[list.length - 1];
 
-  // Trial converted
+  if (HARD_EXCLUDE_RE.test(raw)) return { leak: null, subscription: null };
+
+  const overCap = list.some((item) => item.value > MAX_SUBSCRIPTION);
+  const isRent = RENT_RE.test(raw);
+  const isSubscription = months.length >= 3 && amounts.length <= 2 && !overCap && !isRent;
+
+  const subscription = isSubscription
+    ? { id: `m:${key}`, merchant, monthly: round2(latest.value) }
+    : null;
+
+  // Trial converted: everything paid after the free charge was wasted.
   const trialIndex = list.findIndex((item) => item.value === 0 || TRIAL_RE.test(item.description.toUpperCase()));
   if (trialIndex >= 0) {
     const trial = list[trialIndex];
-    const paid = list.filter(
-      (item) => item.date > trial.date && item.value > 0 && !TRIAL_RE.test(item.description.toUpperCase()),
-    );
+    const paid = list.filter((item) => item.date > trial.date && item.value > 0 && !TRIAL_RE.test(item.description.toUpperCase()));
     if (paid.length) {
-      const price = paid[paid.length - 1].value;
+      const price = round2(paid[paid.length - 1].value);
       return {
-        ...base,
-        badge: 'Trial converted',
-        monthly: price,
-        reason: `Free trial on ${shortDate(trial.date)} turned into ${money(price)} charges.`,
+        leak: {
+          id: `m:${key}`,
+          merchant,
+          badge: 'Trial converted',
+          amount: sumValues(paid),
+          monthly: price,
+          caption: 'paid after trial',
+          reason: `Free trial on ${shortDate(trial.date)}, then ${paid.length} paid ${paid.length === 1 ? 'charge' : 'charges'}.`,
+          cancelable: true,
+        },
+        subscription,
       };
     }
   }
 
-  // Price creep: compare the first and latest monthly totals
-  if (recurring) {
-    const first = totals.get(months[0]);
-    const last = totals.get(months[months.length - 1]);
-    const diff = round2(last - first);
-    if (diff >= 0.5) {
-      const changedMonth = months.find((month) => totals.get(month) >= last - 0.005);
-      const changeDate = list.find((item) => monthKey(item.date) === changedMonth)?.date;
+  // Price creep: exactly two prices, the higher one replacing the lower one.
+  if (months.length >= 3 && amounts.length === 2) {
+    const [oldPrice, newPrice] = amounts;
+    const firstNewIndex = list.findIndex((item) => item.value === newPrice);
+    const oldAfterNew = list.slice(firstNewIndex + 1).some((item) => item.value === oldPrice);
+    if (firstNewIndex > 0 && !oldAfterNew) {
+      const newCharges = list.filter((item) => item.value === newPrice).length;
+      const rise = round2(newPrice - oldPrice);
+      const since = list[firstNewIndex].date;
       return {
-        ...base,
-        badge: 'Price creep',
-        monthly: round2(last),
-        reason: `Was ${money(first)}, now ${money(last)} since ${shortDate(changeDate)}.`,
+        leak: {
+          id: `m:${key}`,
+          merchant,
+          badge: 'Price creep',
+          amount: round2(rise * newCharges),
+          monthly: newPrice,
+          caption: `extra since ${shortDate(since)}`,
+          reason: `Was ${money(oldPrice)}, now ${money(newPrice)} (+${money(rise)}/mo) since ${shortDate(since)}.`,
+          cancelable: isSubscription,
+        },
+        subscription,
       };
     }
   }
 
-  // Duplicate: same amount within 2 days, in 2+ different months
-  const dupMonths = new Set();
-  let dupAmount = 0;
-  for (let i = 1; i < list.length; i += 1) {
-    const a = list[i - 1];
-    const b = list[i];
-    if (b.value > 0 && a.value === b.value && dayDiff(a.date, b.date) <= 2) {
-      dupMonths.add(monthKey(b.date));
-      dupAmount = b.value;
+  // Duplicate: the same amount charged twice within 2 days. Only the extras count.
+  const extras = [];
+  for (let i = 0; i < list.length; i += 1) {
+    for (let j = i + 1; j < list.length; j += 1) {
+      if (dayDiff(list[i].date, list[j].date) > 2) break;
+      if (list[i].value > 0 && list[i].value === list[j].value) {
+        extras.push(list[j]);
+        break;
+      }
     }
   }
-  if (dupMonths.size >= 2) {
+  if (extras.length) {
     return {
-      ...base,
-      badge: 'Duplicate',
-      monthly: dupAmount,
-      reason: `Charged ${money(dupAmount)} twice within 2 days in ${dupMonths.size} months.`,
+      leak: {
+        id: `m:${key}`,
+        merchant,
+        badge: 'Duplicate',
+        amount: sumValues(extras),
+        monthly: round2(extras[0].value),
+        caption: `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}`,
+        reason: `${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'}.`,
+        cancelable: isSubscription,
+      },
+      subscription,
     };
   }
 
-  if (recurring) {
-    const sum = [...totals.values()].reduce((a, b) => a + b, 0);
-    const monthly = round2(sum / months.length);
-    if (monthly <= 0) return null;
-    return {
-      ...base,
-      badge: 'Still using this?',
-      monthly,
-      reason: `Charged in ${months.length} different months.`,
-    };
-  }
-
-  return null;
+  return { leak: null, subscription };
 }
 
 export function analyse(transactions) {
@@ -159,27 +196,36 @@ export function analyse(transactions) {
   transactions
     .filter((item) => item.amount <= 0)
     .forEach((item) => {
+      const upper = item.description.toUpperCase();
+      if (HARD_EXCLUDE_RE.test(upper)) return;
       const debit = { ...item, value: Math.abs(item.amount) };
-      if (FEE_RE.test(item.description.toUpperCase())) push(feeGroups, item.clean || 'BANK FEE', debit);
+      if (FEE_RE.test(upper)) push(feeGroups, item.clean || 'BANK FEE', debit);
       else if (item.clean) push(groups, item.clean, debit);
     });
 
   const leaks = [];
+  const subscriptions = [];
+
   feeGroups.forEach((list, key) => {
-    const leak = feeLeak(key, list, span);
+    const leak = feeLeak(key, list);
     if (leak) leaks.push(leak);
   });
+
   groups.forEach((list, key) => {
-    const leak = merchantLeak(key, list);
-    if (leak && leak.observed > 0) leaks.push(leak);
+    const result = merchantLeak(key, list);
+    if (result.leak) leaks.push(result.leak);
+    if (result.subscription) subscriptions.push(result.subscription);
   });
 
   leaks.forEach((leak) => { leak.months = span; });
-  leaks.sort((a, b) => b.observed - a.observed);
+  subscriptions.forEach((item) => { item.months = span; });
+  leaks.sort((a, b) => b.amount - a.amount);
+  subscriptions.sort((a, b) => b.monthly - a.monthly);
 
   return {
     leaks,
-    total: round2(leaks.reduce((sum, leak) => sum + leak.observed, 0)),
+    subscriptions,
+    total: round2(leaks.reduce((sum, leak) => sum + leak.amount, 0)),
     monthSpan: span,
     enoughHistory: span >= MIN_MONTHS,
     transactionCount: transactions.length,

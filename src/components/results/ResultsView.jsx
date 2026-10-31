@@ -2,12 +2,13 @@ import { useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
 import LeakCard from './LeakCard';
+import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
 import CancelEmailDialog from './CancelEmailDialog';
 import { trackEvent } from '@/lib/session';
 
 export default function ResultsView({ analysis, usedSample, onRestart }) {
-  const { leaks, total, enoughHistory } = analysis;
+  const { leaks, subscriptions, total, enoughHistory } = analysis;
   const [emailLeak, setEmailLeak] = useState(null);
 
   const openEmail = (leak) => {
@@ -49,6 +50,8 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
             No ghosts found in this statement.
           </p>
         )}
+
+        <SubscriptionsSection subscriptions={subscriptions} />
 
         <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} />
       </main>

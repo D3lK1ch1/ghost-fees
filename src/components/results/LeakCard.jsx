@@ -18,25 +18,24 @@ export default function LeakCard({ leak, onDraft }) {
         </div>
         <div className="shrink-0 text-right">
           <div className="text-[1.35rem] font-semibold leading-none tabular-nums text-white">
-            {money(leak.monthly)}
-            <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
+            {money(leak.amount)}
           </div>
-          <div className="mt-1.5 text-[12px] text-muted-foreground">
-            {money(leak.observed)} in {leak.months} mo
-          </div>
+          <div className="mt-1.5 text-[12px] text-muted-foreground">{leak.caption}</div>
         </div>
       </div>
 
-      <div className="mt-3.5 border-t border-white/[0.06] pt-3">
-        <button
-          type="button"
-          onClick={onDraft}
-          className="inline-flex items-center gap-2 rounded-xl border border-white/12 px-3.5 py-2 text-[12.5px] font-medium text-white/90 transition-colors hover:border-primary/45 hover:text-primary"
-        >
-          <Mail className="h-3.5 w-3.5" />
-          Draft cancel email
-        </button>
-      </div>
+      {leak.cancelable && (
+        <div className="mt-3.5 border-t border-white/[0.06] pt-3">
+          <button
+            type="button"
+            onClick={onDraft}
+            className="inline-flex items-center gap-2 rounded-xl border border-white/12 px-3.5 py-2 text-[12.5px] font-medium text-white/90 transition-colors hover:border-primary/45 hover:text-primary"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Draft cancel email
+          </button>
+        </div>
+      )}
     </div>
   );
 }
