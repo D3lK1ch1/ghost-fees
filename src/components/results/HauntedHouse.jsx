@@ -132,8 +132,12 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
 
       <span className="flex flex-1 flex-wrap items-end justify-around gap-3 px-4 pt-3">
         {leaks.map((leak, index) => (
-          cleared.has(leak.id) ? null : (
-            <span key={leak.id} className="animate-bob" style={{ animationDelay: `${index * 0.4}s` }}>
+          cleared.has(leak.id) && !flying.has(leak.id) ? null : (
+            <span
+              key={leak.id}
+              className={flying.has(leak.id) ? 'animate-fly-away' : 'animate-bob'}
+              style={flying.has(leak.id) ? undefined : { animationDelay: `${index * 0.4}s` }}
+            >
               <HouseGhost room={room.key} index={index} className={size} />
             </span>
           )
@@ -162,6 +166,26 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const [unit, setUnit] = useState('money');
   const derivedPay = hourlyFromMonthly(monthlyIncome);
   const [pay, setPay] = useState(derivedPay || 35);
+  const [flying, setFlying] = useState([]);
+  const [soundOn, setSoundOn] = useState(false);
+  const sceneRef = useRef(null);
+
+  // Tilt the house a little toward the pointer (or the phone's tilt) for a 3D feel.
+  const tilt = (x, y) => {
+    const scene = sceneRef.current;
+    if (!scene || prefersReduced()) return;
+    scene.style.setProperty('--tx', Math.max(-1, Math.min(1, x)).toFixed(3));
+    scene.style.setProperty('--ty', Math.max(-1, Math.min(1, y)).toFixed(3));
+  };
+
+  useEffect(() => {
+    const onOrient = (event) => {
+      if (event.gamma == null) return;
+      tilt(event.gamma / 30, (event.beta - 45) / 30);
+    };
+    window.addEventListener('deviceorientation', onOrient);
+    return () => window.removeEventListener('deviceorientation', onOrient);
+  }, []);
 
   const guide = GUIDES[guideKey];
   const inHours = unit === 'hours';

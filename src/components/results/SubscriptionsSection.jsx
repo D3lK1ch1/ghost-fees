@@ -30,6 +30,8 @@ export default function SubscriptionsSection({ subscriptions }) {
     setAnswers((current) => ({ ...current, [id]: current[id] === key ? undefined : key }));
   };
 
+  const gym = subscriptions.find((item) => GYM_RE.test(item.merchant));
+
   return (
     <section className="mt-8">
       <h2 className="text-[15px] font-semibold tracking-tight text-white">Still using these?</h2>
@@ -94,6 +96,12 @@ export default function SubscriptionsSection({ subscriptions }) {
           </CardItem>
         ))}
       </CardList>
+
+      <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground/90">
+        <span className="font-bold text-foreground/90">Know your rights:</span> from 1 July 2027, cancelling a subscription
+        must be as easy as signing up. You can report subscription traps to the{' '}
+        <a href="https://www.accc.gov.au/" target="_blank" rel="noreferrer" className="font-bold text-primary underline underline-offset-4">ACCC</a>.
+      </p>
     </section>
   );
 }

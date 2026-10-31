@@ -205,6 +205,16 @@ function merchantLeak(key, list) {
     const more = extras.length > 3 ? ` and ${extras.length - 3} more` : '';
     parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'} (${dates}${more}).`);
   }
+
+  if (!creep && !extras.length) return { leak: null, subscription };
+
+  const parts = [];
+  if (creep) parts.push(`Was ${money(creep.oldPrice)}, now ${money(creep.newPrice)} (+${money(creep.rise)}/mo) since ${shortDate(creep.since)}.`);
+  if (extras.length) {
+    const dates = extras.slice(0, 3).map((item) => shortDate(item.date)).join(', ');
+    const more = extras.length > 3 ? ` and ${extras.length - 3} more` : '';
+    parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'} (${dates}${more}).`);
+  }
   const creepBigger = creep && creep.amount >= dupAmount;
 
   return {
