@@ -3,6 +3,8 @@ import { CardList, CardItem } from '@/components/GhostAnimations';
 import { money } from '@/lib/ghostFees/format';
 import { cn } from '@/lib/utils';
 
+const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|SNAP|F45|CROSSFIT|PILATES|YOGA)\b/i;
+
 const ANSWERS = [
   { key: 'yes', label: 'Yes' },
   { key: 'no', label: 'No' },
@@ -20,6 +22,7 @@ export default function SubscriptionsSection({ subscriptions }) {
   const answeredYes = subscriptions.filter((item) => answers[item.id] === 'yes');
   const answeredCount = subscriptions.filter((item) => answers[item.id]).length;
   const yesMonthly = answeredYes.reduce((sum, item) => sum + item.monthly, 0);
+  const gym = subscriptions.find((item) => GYM_RE.test(item.merchant));
 
   return (
     <section className="mt-8">
@@ -27,6 +30,16 @@ export default function SubscriptionsSection({ subscriptions }) {
       <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
         Your subscriptions and what each one costs a month. Not counted in the total above.
       </p>
+
+      {gym && (
+        <div className="mt-3 flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/[0.07] px-4 py-3">
+          <span className="text-2xl" aria-hidden="true">🏋️</span>
+          <p className="text-[13.5px] leading-relaxed text-foreground">
+            <span className="font-bold">{gym.merchant}: {money(gym.monthly)} a month.</span>{' '}
+            <span className="text-muted-foreground">Been this month?</span>
+          </p>
+        </div>
+      )}
 
       <CardList className="mt-3 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
         {subscriptions.map((subscription, index) => (
@@ -75,6 +88,12 @@ export default function SubscriptionsSection({ subscriptions }) {
           {answeredCount < subscriptions.length && ' Answer the rest to see the full picture.'}
         </p>
       )}
+
+      <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground/90">
+        <span className="font-bold text-foreground/90">Know your rights:</span> from 1 July 2027, cancelling a subscription
+        must be as easy as signing up. You can report subscription traps to the{' '}
+        <a href="https://www.accc.gov.au/" target="_blank" rel="noreferrer" className="font-bold text-primary underline underline-offset-4">ACCC</a>.
+      </p>
     </section>
   );
 }
