@@ -1,4 +1,5 @@
 import GhostMark from '@/components/site/GhostMark';
+import DetectionInfo from './DetectionInfo';
 
 // Shown instead of the total when a statement has no leaks.
 export default function EmptyState({ fileNames = [], onRestart, onSample, transactionCount = 0, months = 0 }) {
@@ -46,7 +47,9 @@ export default function EmptyState({ fileNames = [], onRestart, onSample, transa
         )}
       </div>
 
-      <p className="mt-6 text-[13.5px] text-muted-foreground">
+      <div className="mt-4"><DetectionInfo /></div>
+
+      <p className="mt-4 text-[13.5px] text-muted-foreground">
         Think we missed one?{' '}
         <button
           type="button"
