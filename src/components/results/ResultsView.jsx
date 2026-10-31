@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils';
 const TABS = [
   { key: 'ghosts', label: 'Ghosts', Icon: Ghost, title: 'Your ghosts, biggest first', blurb: 'Each card is one money leak, with the transactions behind it. Tap a card to mark it most useful.' },
   { key: 'house', label: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
-  { key: 'path', label: 'Goal path', Icon: Route, title: 'Your path to a ghost-free house', blurb: 'Every stop is a goal built from your ghosts. Tick them off to walk your lantern up to the house. Busting a ghost in the Haunted House ticks it here too.' },
+  { key: 'path', label: 'Goal path', Icon: Route, title: 'Goal path', blurb: 'One stop per ghost. Walk your lantern up the hill to the ghost-free house.' },
   { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged, and add reminders for the next charges to your own calendar.' },
   { key: 'emails', label: 'Email templates', Icon: Mail, title: 'Email templates', blurb: 'Cancel, refund and fee-waiver emails, ready to edit and send.' },
   { key: 'subscriptions', label: 'Subscriptions', Icon: Repeat, title: 'Still using these?', blurb: 'Your regular subscriptions. Not counted in the total.' },
