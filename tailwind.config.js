@@ -112,6 +112,16 @@ module.exports = {
   				'60%': { transform: 'scale(1.08)' },
   				'100%': { transform: 'scale(1)' }
   			},
+  			seance: {
+  				'0%, 100%': { transform: 'translate(-34px, 10px) rotate(-4deg)' },
+  				'25%': { transform: 'translate(-4px, -12px) rotate(3deg)' },
+  				'50%': { transform: 'translate(28px, 4px) rotate(-2deg)' },
+  				'75%': { transform: 'translate(2px, 16px) rotate(5deg)' }
+  			},
+  			flicker: {
+  				'0%, 100%': { opacity: '1', transform: 'scale(1)' },
+  				'50%': { opacity: '0.6', transform: 'scale(0.9)' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -140,6 +150,8 @@ module.exports = {
   			bob: 'bob 3s ease-in-out infinite',
   			'ghost-suck': 'ghost-suck 0.8s ease-in forwards',
   			'ghost-jar': 'ghost-jar 0.35s 0.9s both',
+  			seance: 'seance 3.4s ease-in-out infinite',
+  			flicker: 'flicker 1.4s ease-in-out infinite',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

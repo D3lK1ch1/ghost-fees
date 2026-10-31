@@ -6,8 +6,10 @@ import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
 import HauntedHouse from './HauntedHouse';
+import PossessedReceipt from './PossessedReceipt';
 import SiteFooter from '@/components/site/SiteFooter';
 import { CardList, CardItem } from '@/components/GhostAnimations';
+import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
 import { cn } from '@/lib/utils';
 
@@ -16,8 +18,16 @@ const VIEWS = [
   { key: 'house', label: 'Haunted House' },
 ];
 
+const WINDOWS = [
+  { value: 0, label: 'All months' },
+  { value: 12, label: 'Last 12 months' },
+  { value: 6, label: 'Last 6 months' },
+  { value: 3, label: 'Last 3 months' },
+];
+
 export default function ResultsView({ analysis, usedSample, onRestart }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
+  const { windowMonths, setWindowMonths } = useScan();
   const [emailLeak, setEmailLeak] = useState(null);
   const [view, setView] = useState('cards');
 
@@ -41,6 +51,22 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
       />
 
       <main className="mx-auto w-full max-w-5xl px-5 pb-24 sm:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="font-retro text-[15px] uppercase tracking-[0.16em] text-primary/80">The reading</p>
+          <label className="flex items-center gap-2 text-[12px] font-bold text-muted-foreground">
+            <span className="sr-only">Statement period</span>
+            <select
+              value={windowMonths}
+              onChange={(event) => setWindowMonths(Number(event.target.value))}
+              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-[12.5px] font-bold text-foreground outline-none focus:border-primary"
+            >
+              {WINDOWS.map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+
         <LeakTotal
           total={total}
           months={analysis.monthSpan}
@@ -95,6 +121,8 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
             No ghosts found in this statement.
           </p>
         )}
+
+        <PossessedReceipt leaks={leaks} />
 
         <SubscriptionsSection subscriptions={subscriptions} />
 

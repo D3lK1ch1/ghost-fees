@@ -12,6 +12,18 @@ function initialSteps() {
   return Array.from({ length: STEP_COUNT }, (_, index) => (index === 0 ? 'active' : 'pending'));
 }
 
+// Keep only the last N months of the statement, counted back from its newest date.
+function withinMonths(transactions, months) {
+  if (!months) return transactions;
+  const dated = transactions.filter((item) => item.date).sort((a, b) => (a.date < b.date ? 1 : -1));
+  if (!dated.length) return transactions;
+  const cutoff = new Date(`${dated[0].date}T00:00:00Z`);
+  cutoff.setUTCDate(1);
+  cutoff.setUTCMonth(cutoff.getUTCMonth() - (months - 1));
+  const floor = cutoff.toISOString().slice(0, 10);
+  return transactions.filter((item) => !item.date || item.date > floor);
+}
+
 const ScanContext = createContext(null);
 
 export function ScanProvider({ children }) {
@@ -20,7 +32,8 @@ export function ScanProvider({ children }) {
   const [progress, setProgress] = useState(0);
   const [transactionCount, setTransactionCount] = useState(0);
   const [fileCount, setFileCount] = useState(0);
-  const [results, setResults] = useState(null);
+  const [transactions, setTransactions] = useState(null);
+  const [windowMonths, setWindowMonths] = useState(0);
   const [fileErrors, setFileErrors] = useState([]);
 
   const advance = useCallback((index) => {
@@ -30,7 +43,8 @@ export function ScanProvider({ children }) {
 
   const reset = useCallback(() => {
     setStatus('idle');
-    setResults(null);
+    setTransactions(null);
+    setWindowMonths(0);
     setFileErrors([]);
     setSteps(initialSteps());
     setProgress(0);
@@ -40,7 +54,8 @@ export function ScanProvider({ children }) {
 
   const runScan = useCallback(async ({ files = [], useSample = false }) => {
     setFileErrors([]);
-    setResults(null);
+    setTransactions(null);
+    setWindowMonths(0);
     setSteps(initialSteps());
     setProgress(4);
     setTransactionCount(0);
@@ -99,10 +114,15 @@ export function ScanProvider({ children }) {
     setSteps(Array.from({ length: STEP_COUNT }, () => 'done'));
     setProgress(100);
     setFileErrors(errors);
-    setResults(analysis);
+    setTransactions(transactions);
     setStatus('done');
     return analysis;
   }, [advance]);
+
+  const results = useMemo(
+    () => (transactions ? analyse(withinMonths(transactions, windowMonths)) : null),
+    [transactions, windowMonths],
+  );
 
   const value = useMemo(() => ({
     status,
@@ -111,10 +131,12 @@ export function ScanProvider({ children }) {
     transactionCount,
     fileCount,
     results,
+    windowMonths,
+    setWindowMonths,
     fileErrors,
     runScan,
     reset,
-  }), [status, steps, progress, transactionCount, fileCount, results, fileErrors, runScan, reset]);
+  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, runScan, reset]);
 
   return <ScanContext.Provider value={value}>{children}</ScanContext.Provider>;
 }

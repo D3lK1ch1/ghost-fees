@@ -3,7 +3,8 @@ import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
 import UseCases from '@/components/landing/UseCases';
 import UploadErrors from '@/components/landing/UploadErrors';
-import { ScanScreen, CrtOverlay } from '@/components/GhostAnimations';
+import SeanceScreen from '@/components/scan/SeanceScreen';
+import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
@@ -43,7 +44,7 @@ export default function Landing() {
 
   if (scanning) {
     content = (
-      <ScanScreen
+      <SeanceScreen
         lastLine={results && results.leaks.length === 0 ? 'No ghosts found' : 'Ghost detected'}
         onDone={handleScanDone}
         onCancel={reset}
