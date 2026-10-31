@@ -5,11 +5,13 @@ export default function UploadErrors({ errors = [], onSample, onUpload }) {
   return (
     <div className="mx-auto mt-10 w-full max-w-lg px-5 text-center sm:px-8">
       <AlertCircle className="mx-auto h-8 w-8 text-[#ff6b6b]" />
-      <h2 className="mt-3 text-2xl font-bold text-white">We couldn&apos;t read that file</h2>
+      <h2 className="mt-3 text-2xl font-bold text-white">
+        {errors.length > 1 ? 'We couldn\u2019t read those files' : 'We couldn\u2019t read that file'}
+      </h2>
 
       <ul className="mt-4 space-y-2 text-left">
-        {errors.map((error) => (
-          <li key={error.name} className="rounded-xl border border-border bg-card/60 px-4 py-3">
+        {errors.map((error, index) => (
+          <li key={`${error.name}-${index}`} className="rounded-xl border border-border bg-card/60 px-4 py-3">
             <span className="inline-block max-w-full truncate rounded-md bg-background px-2 py-0.5 font-mono text-[12.5px] font-bold text-foreground">
               {error.name}
             </span>

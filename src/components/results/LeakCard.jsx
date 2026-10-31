@@ -5,6 +5,7 @@ import { money, shortDate } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 import { CPI, versusCpi } from '@/lib/ghostFees/inflation';
 import { BadgePop } from '@/components/GhostAnimations';
+import LeakSource from './LeakSource';
 
 const ACTIONS = {
   cancel: { label: 'Draft cancel email', Icon: Mail },
@@ -45,6 +46,8 @@ export default function LeakCard({ leak, onDraft }) {
       </div>
       <p className="mt-2 text-[13px] leading-relaxed text-[#5b5275]">{leak.reason}</p>
 
+      <LeakSource dates={leak.dates} sources={leak.sources} />
+
       {rise && (
         <p className="mt-2 text-[12.5px] leading-relaxed text-[#5b5275]">
           Up <strong className="text-[#1b1233]">{rise.percent}%</strong> since {shortDate(leak.priceRise.since)}.
@@ -82,7 +85,9 @@ export default function LeakCard({ leak, onDraft }) {
               <span className="w-[62px] shrink-0 tabular-nums text-[#5b5275]">{rowDate(row.date)}</span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate">{row.description}</span>
-                {row.source && <span className="block truncate text-[11px] text-[#7a7094]">from {row.source}</span>}
+                {row.source && (
+                  <span className="block truncate text-[11px] text-[#5b5275]/80">{row.source}</span>
+                )}
               </span>
               <span className={cn('shrink-0 tabular-nums', row.wasted ? 'font-bold text-[#8a3b00]' : 'text-[#5b5275]')}>
                 {money(row.amount)}

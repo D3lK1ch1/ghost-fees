@@ -1,4 +1,4 @@
-import { Copy, CreditCard, Dumbbell, Landmark, Layers, Percent, Timer, TrendingUp } from 'lucide-react';
+import { Copy, Dumbbell, Landmark, Timer, TrendingUp } from 'lucide-react';
 
 const USE_CASES = [
   {
@@ -26,21 +26,6 @@ const USE_CASES = [
     title: 'Bank fees you can ask back',
     body: 'Monthly account fees, ATM fees, international transaction fees. One polite email often gets them waived.',
   },
-  {
-    Icon: Layers,
-    title: 'Three services doing one job',
-    body: 'Netflix and Stan. Two music apps. Two cloud drives. We line them up so you can pick one.',
-  },
-  {
-    Icon: CreditCard,
-    title: 'Interest and BNPL fees',
-    body: 'Purchase interest, Afterpay and Zip late fees, dishonour fees. Money paid just to borrow.',
-  },
-  {
-    Icon: Percent,
-    title: 'Card surcharges',
-    body: 'Little add-ons bolted onto a payment: card fees, service fees, convenience fees.',
-  },
 ];
 
 export default function UseCases() {
@@ -50,7 +35,7 @@ export default function UseCases() {
         What it finds
       </h2>
       <p className="mx-auto mt-2 max-w-md text-center text-[14.5px] leading-relaxed text-muted-foreground">
-        Eight kinds of money leak, all pulled from your own statement. Nothing guessed, nothing projected.
+        Five kinds of money leak, all pulled from your own statement. Nothing guessed, nothing projected.
       </p>
 
       <div className="mt-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">

@@ -6,6 +6,7 @@ import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
+import FileErrors from './FileErrors';
 import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -29,7 +30,7 @@ const WINDOWS = [
 
 export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
-  const { windowMonths, setWindowMonths, fileNames } = useScan();
+  const { windowMonths, setWindowMonths, fileNames, fileErrors } = useScan();
   const [emailLeak, setEmailLeak] = useState(null);
   const [view, setView] = useState('cards');
   const [guideKey, setGuideKey] = useState('penny');
@@ -109,9 +110,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} />
         )}
 
+        <FileErrors errors={fileErrors} />
+
         {!enoughHistory && (
           <div className="mt-4 rounded-2xl border border-[#ffb37c]/25 bg-[#ffb37c]/[0.06] px-4 py-3.5 text-[13px] leading-relaxed text-[#ffb37c]">
-            Upload 6+ months to catch price rises.
+            Upload at least 3 months to catch subscriptions and price rises.
           </div>
         )}
 
