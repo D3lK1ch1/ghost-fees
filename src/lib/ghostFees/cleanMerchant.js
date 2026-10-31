@@ -14,6 +14,19 @@ export function cleanMerchant(raw) {
     .trim();
 }
 
+// How a merchant reads on screen. Grouping stays exactly as cleaned above;
+// this only drops web noise so "NETFLIX COM" reads as "Netflix".
+const DISPLAY_NOISE_RE = /\b(COM|NET|WWW|CO)\b/g;
+
+export function displayName(key) {
+  return titleCase(
+    String(key || '')
+      .replace(DISPLAY_NOISE_RE, ' ')
+      .replace(/\s+/g, ' ')
+      .trim(),
+  );
+}
+
 export function titleCase(value) {
   return String(value || '')
     .toLowerCase()

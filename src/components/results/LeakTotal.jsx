@@ -1,7 +1,8 @@
 import { CountUp, BobbingGhost } from '@/components/GhostAnimations';
 import { monthRangeLabel } from '@/lib/ghostFees/format';
+import HoursLine from './HoursLine';
 
-export default function LeakTotal({ total, months, from, to }) {
+export default function LeakTotal({ total, months, from, to, monthlyIncome }) {
   const range = monthRangeLabel(from, to);
 
   return (
@@ -21,6 +22,7 @@ export default function LeakTotal({ total, months, from, to }) {
         {range ? `Covering ${range} (${months} ${months === 1 ? 'month' : 'months'}).` : ''}
         {months < 12 ? ' Upload 12 months to catch more price rises.' : ''}
       </p>
+      <HoursLine total={total} monthlyIncome={monthlyIncome} />
       <p className="mt-2 max-w-md text-[12.5px] leading-relaxed text-muted-foreground/80">
         Real charges from your own statement. Nothing guessed, nothing projected.
       </p>

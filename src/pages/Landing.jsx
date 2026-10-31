@@ -5,6 +5,7 @@ import UseCases from '@/components/landing/UseCases';
 import UploadErrors from '@/components/landing/UploadErrors';
 import { ScanScreen, CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
+import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
 
@@ -60,6 +61,7 @@ export default function Landing() {
         <>
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <UseCases />
+          <SiteFooter />
         </>
       )}
       <input

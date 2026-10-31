@@ -1,4 +1,4 @@
-import { cleanMerchant, titleCase } from './cleanMerchant';
+import { cleanMerchant, displayName } from './cleanMerchant';
 import { money, shortDate } from './format';
 
 const FEE_RE = /\bFEES?\b|\bATM\b|INTERNATIONAL TRANSACTION|LATE PAYMENT|OVERDRAWN/;
@@ -18,6 +18,9 @@ const OVERLAP_CATEGORIES = [
 
 // Money lost to borrowing, and fees bolted onto a payment.
 const BORROWING_RE = /INTEREST CHARGED|PURCHASE INTEREST|AFTERPAY LATE|ZIP FEE|ZIP MONTHLY|HUMM FEE|DISHONOUR|OVERDRAWN/;
+
+// Money arriving as pay, used only to show a total as hours of work.
+const INCOME_RE = /\bSALARY\b|\bPAYROLL\b|\bWAGES\b|\bPAY\b/;
 const SURCHARGE_RE = /SURCHARGE|SERVICE FEE|CONVENIENCE FEE|CARD FEE/;
 
 const COST_TYPES = {
@@ -116,7 +119,7 @@ function feeLeak(key, list) {
   const count = list.length;
   return {
     id: `fee:${key}`,
-    merchant: titleCase(key),
+    merchant: displayName(key),
     badge: 'Bank fee',
     amount,
     caption: `${count} ${count === 1 ? 'charge' : 'charges'}`,
@@ -133,7 +136,7 @@ function costLeak(key, list, type) {
   const months = distinctMonths(list).length;
   return {
     id: `${type}:${key}`,
-    merchant: titleCase(key),
+    merchant: displayName(key),
     badge: config.badge,
     amount,
     caption: `${list.length} ${list.length === 1 ? 'charge' : 'charges'}`,
@@ -180,14 +183,14 @@ function overlapLeaks(groups) {
     });
     if (amount <= 0) return;
 
-    const names = members.map((member) => titleCase(member.key));
+    const names = members.map((member) => displayName(member.key));
     const monthly = round2(members.reduce((sum, member) => sum + latestValue(member), 0));
     const droppedMonthly = round2(dropped.reduce((sum, member) => sum + latestValue(member), 0));
 
     leaks.push({
       id: `overlap:${category.key}`,
       title: `${members.length} ${category.label} services`,
-      merchant: titleCase(keep.key),
+      merchant: displayName(keep.key),
       badge: 'Overlap',
       amount: round2(amount),
       monthly: droppedMonthly,
@@ -195,7 +198,7 @@ function overlapLeaks(groups) {
       reason: `${names.join(', ')} all charge you each month. The extra ones come to ${money(droppedMonthly)}/mo.`,
       action: 'cancel',
       targets: dropped.map((member) => ({
-        merchant: titleCase(member.key),
+        merchant: displayName(member.key),
         monthly: round2(latestValue(member)),
       })),
       rows: rows.sort((a, b) => a.date.localeCompare(b.date)),
@@ -211,7 +214,7 @@ function merchantLeak(key, list) {
   const months = distinctMonths(list);
   const amounts = distinctAmounts(list);
   const raw = list.map((item) => item.description.toUpperCase()).join(' | ');
-  const merchant = titleCase(key);
+  const merchant = displayName(key);
   const latest = list[list.length - 1];
 
   if (HARD_EXCLUDE_RE.test(raw)) return { leak: null, subscription: null };
@@ -268,6 +271,7 @@ function merchantLeak(key, list) {
           badge: 'Price creep',
           amount: round2(rise * newCharges),
           monthly: newPrice,
+          priceRise: { oldPrice, newPrice, since },
           caption: `extra since ${shortDate(since)}`,
           reason: `Was ${money(oldPrice)}, now ${money(newPrice)} (+${money(rise)}/mo) since ${shortDate(since)}.`,
           action: isSubscription ? 'cancel' : null,
@@ -362,7 +366,14 @@ export function analyse(transactions) {
 
   const sortedDates = transactions.map((item) => item.date).sort();
 
+  // Pay deposits only, for the "hours of your work" line. Never stored.
+  const pay = transactions.filter((item) => item.amount > 0 && INCOME_RE.test(item.description.toUpperCase()));
+  const monthlyIncome = pay.length && span
+    ? round2(pay.reduce((sum, item) => sum + item.amount, 0) / span)
+    : null;
+
   return {
+    monthlyIncome,
     leaks,
     subscriptions,
     total: round2(leaks.reduce((sum, leak) => sum + leak.amount, 0)),

@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { ChevronDown, Landmark, Mail, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { money } from '@/lib/ghostFees/format';
+import { money, shortDate } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
+import { CPI, versusCpi } from '@/lib/ghostFees/inflation';
 import { BadgePop } from '@/components/GhostAnimations';
 
 const ACTIONS = {
@@ -21,6 +22,7 @@ export default function LeakCard({ leak, onDraft }) {
   const [open, setOpen] = useState(false);
   const action = ACTIONS[leak.action];
   const rows = leak.rows || [];
+  const rise = leak.priceRise ? versusCpi(leak.priceRise.oldPrice, leak.priceRise.newPrice) : null;
 
   return (
     <div className="rounded-3xl bg-[#f5f0e8] p-4 text-[#1b1233] sm:p-5">
@@ -37,6 +39,18 @@ export default function LeakCard({ leak, onDraft }) {
         </div>
       </div>
       <p className="mt-2 text-[13px] leading-relaxed text-[#5b5275]">{leak.reason}</p>
+
+      {rise && (
+        <p className="mt-2 text-[12.5px] leading-relaxed text-[#5b5275]">
+          Up <strong className="text-[#1b1233]">{rise.percent}%</strong> since {shortDate(leak.priceRise.since)}.
+          {' '}Prices overall rose {CPI.rate}% in the year to {CPI.asOf} (ABS).
+          {rise.above && (
+            <span className="ml-2 inline-block rounded-full bg-[#ffd9a8] px-2 py-0.5 text-[11px] font-bold text-[#8a3b00]">
+              Above inflation
+            </span>
+          )}
+        </p>
+      )}
 
       {rows.length > 0 && (
         <button
