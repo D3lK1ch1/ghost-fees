@@ -49,6 +49,37 @@ function Bat({ className, style }) {
   );
 }
 
+function Crow({ className }) {
+  return (
+    <svg viewBox="0 0 32 24" className={className} aria-hidden="true">
+      <path d="M6 18c2-6 7-9 12-9l3-4 2 1-1 3c3 1 5 3 6 6-3-1-5-1-7 0l-2 6h-2l1-5c-4 0-8 1-12 2Z" fill="#0b0716" />
+      <circle cx="21.5" cy="7.5" r="0.9" fill="#ffb347" />
+    </svg>
+  );
+}
+
+function Pumpkin({ className, delay = 0 }) {
+  return (
+    <svg viewBox="0 0 40 34" className={className} aria-hidden="true">
+      <path d="M19 6c0-3 2-5 4-5" stroke="#3d5a2a" strokeWidth="3" fill="none" strokeLinecap="round" />
+      <ellipse cx="12" cy="20" rx="10" ry="12" fill="#e8741c" />
+      <ellipse cx="28" cy="20" rx="10" ry="12" fill="#e8741c" />
+      <ellipse cx="20" cy="20" rx="9" ry="13" fill="#f58a2c" />
+      <g className="animate-window-flicker" style={{ animationDelay: `${delay}s` }}>
+        <path d="M12 16l4 3h-5zM28 16l-4 3h5zM13 25q7 5 14 0l-3 1-1-2-2 2-2-2-2 2-1-2z" fill="#ffd36b" />
+      </g>
+    </svg>
+  );
+}
+
+function Tree({ className, flip }) {
+  return (
+    <svg viewBox="0 0 80 140" className={className} style={flip ? { transform: 'scaleX(-1)' } : undefined} aria-hidden="true">
+      <path d="M40 140V78C30 66 18 62 8 50m32 28c4-14 14-22 26-30M40 98c-10-6-20-6-30-2m30-26C36 54 38 40 46 26m-6 44c-8-10-10-24-6-36M46 26c4-8 10-12 18-14M34 34c-6-6-14-8-22-6" stroke="#0e0818" strokeWidth="5" fill="none" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function prefersReduced() {
   return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
@@ -94,17 +125,28 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
       aria-pressed={active}
       aria-label={`${room.label}, ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}${leaks.length && !left ? ', all busted' : ''}`}
       className={cn(
-        'relative flex min-h-[120px] w-full flex-col rounded-2xl border-2 p-3 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-        active ? 'border-primary bg-[#2c1f47] shadow-[0_0_30px_hsl(var(--primary)/0.25)]' : 'border-[#3d2e66] bg-[#241a3d]',
-        leaks.length ? 'hover:border-primary/60' : 'cursor-default opacity-60',
-        leaks.length > 0 && !left && 'bg-[#3a2a1f] shadow-[inset_0_0_40px_rgba(255,200,110,0.18)]',
+        'relative isolate flex min-h-[130px] w-full flex-col overflow-hidden rounded-b-xl rounded-t-[3rem] border-[3px] p-3 pt-4 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+        left
+          ? 'border-[#7a4a22] bg-gradient-to-b from-[#ffb347]/35 via-[#8a4316]/45 to-[#2b1409] shadow-[inset_0_0_36px_rgba(255,170,80,0.35),0_0_24px_rgba(255,150,60,0.18)]'
+          : leaks.length
+            ? 'border-[#c99a3c] bg-gradient-to-b from-[#ffe2a0]/60 via-[#e6a94a]/40 to-[#5a3a14] shadow-[inset_0_0_40px_rgba(255,220,140,0.5),0_0_30px_rgba(255,200,110,0.35)]'
+            : 'border-[#3a2c45] bg-[#1b1424] opacity-60',
+        active && 'border-primary shadow-[0_0_0_2px_hsl(var(--primary)),0_0_30px_hsl(var(--primary)/0.45)]',
+        leaks.length ? 'hover:border-primary' : 'cursor-default',
         className,
       )}
     >
+      {leaks.length > 0 && (
+        <span className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+          <span className="absolute inset-y-0 left-1/2 w-[3px] -translate-x-1/2 bg-[#2b1409]/55" />
+          <span className="absolute inset-x-0 top-[46%] h-[3px] bg-[#2b1409]/55" />
+          <span className="absolute inset-0 animate-window-flicker bg-[radial-gradient(ellipse_at_50%_80%,rgba(255,190,100,0.35),transparent_70%)]" style={{ animationDelay: `${delay + 0.7}s` }} />
+        </span>
+      )}
       <span
         style={{ animationDelay: `${delay}s` }}
         className={cn(
-          'absolute right-3 top-3 h-2.5 w-2.5 animate-window-flicker rounded-full',
+          'absolute right-4 top-4 h-2.5 w-2.5 animate-window-flicker rounded-full',
           leaks.length && !left ? 'bg-[#ffcf73] shadow-[0_0_12px_#ffcf73]' : 'bg-primary/70 shadow-[0_0_10px_hsl(var(--primary))]',
         )}
       />
@@ -225,7 +267,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
           tilt(((event.clientX - box.left) / box.width) * 2 - 1, ((event.clientY - box.top) / box.height) * 2 - 1);
         }}
         onPointerLeave={() => tilt(0, 0)}
-        className="relative overflow-hidden rounded-3xl bg-[#140c26] px-3 pb-3 pt-6 [--tx:0] [--ty:0] sm:px-6 lg:self-start"
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-[#1d1036] via-[#140c26] to-[#0f0a1c] px-3 pb-4 pt-28 [--tx:0] [--ty:0] sm:px-10 sm:pt-32 lg:self-start"
         style={{ perspective: '1100px' }}
       >
         <div
@@ -237,17 +279,32 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
         ))}
         <Bat className="pointer-events-none absolute left-0 top-10 w-8 animate-bat-fly" />
         <Bat className="pointer-events-none absolute left-0 top-20 w-5 animate-bat-fly opacity-70" style={{ animationDelay: '5s' }} />
-        <div className="pointer-events-none absolute left-[14%] top-8 h-14 w-6 rounded-sm bg-[#2a1d47]" />
+        <Tree className="pointer-events-none absolute -left-4 bottom-10 h-56 w-28 opacity-90 sm:h-72 sm:w-36" />
+        <Tree className="pointer-events-none absolute -right-6 bottom-10 h-48 w-24 opacity-80 sm:h-64 sm:w-32" flip />
 
         <div
           className="relative mx-auto max-w-[640px] transition-transform duration-300 ease-out [transform-style:preserve-3d]"
           style={{ transform: 'rotateY(calc(var(--tx) * 7deg)) rotateX(calc(var(--ty) * -5deg))' }}
         >
-          <div className="relative h-24 [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#3d2e66] sm:h-28">
-            <div className="absolute inset-[3px] [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#2a1d47]" />
+          <div className="pointer-events-none absolute -left-3 -top-24 z-10 w-16 sm:-left-6 sm:-top-28 sm:w-20" aria-hidden="true">
+            <Crow className="mx-auto mb-[-2px] w-7" />
+            <div className="mx-auto h-24 w-full [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#1f1828] sm:h-28" />
+            <div className="mx-auto flex h-24 w-[78%] items-center justify-center bg-[#2a2030] [background-image:repeating-linear-gradient(0deg,#ffffff07_0,#ffffff07_1px,transparent_1px,transparent_12px)]">
+              <span className="h-10 w-6 animate-window-flicker rounded-t-full border-2 border-[#7a4a22] bg-gradient-to-b from-[#ffcf7a] to-[#c46a1c] shadow-[0_0_14px_rgba(255,170,80,0.7)]" style={{ animationDelay: '1.7s' }} />
+            </div>
+          </div>
+          <Crow className="pointer-events-none absolute right-[22%] -top-2 z-10 w-8" />
+
+          <div className="relative h-24 [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#3a2e44] sm:h-28">
+            <div className="absolute inset-[3px] [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#1f1828] [background-image:repeating-linear-gradient(-30deg,#ffffff06_0,#ffffff06_2px,transparent_2px,transparent_10px)]" />
+          </div>
+          <div className="relative -mx-2 flex justify-between px-2" aria-hidden="true">
+            {Array.from({ length: 14 }, (_, i) => (
+              <span key={i} className="h-2 w-2 animate-window-flicker rounded-full bg-[#ffcf73] shadow-[0_0_8px_#ffb347]" style={{ animationDelay: `${(i % 5) * 0.6}s` }} />
+            ))}
           </div>
 
-          <div className="space-y-3 border-x-2 border-[#3d2e66] bg-[#2a1d47] p-3">
+          <div className="space-y-3 border-x-4 border-[#1f1828] bg-[#2a2030] p-3 [background-image:repeating-linear-gradient(0deg,#ffffff07_0,#ffffff07_1px,transparent_1px,transparent_14px)]">
             <Room
               room={ROOMS[0]}
               leaks={byRoom.attic}
@@ -265,11 +322,22 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} flying={flyingSet} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
           </div>
 
-          <div className="relative h-1.5 bg-[#3d2e66]">
-            <div className="pointer-events-none absolute -inset-x-10 -top-8 h-12 animate-fog-drift rounded-full bg-[#c3b8db]/10 blur-xl" />
+          <div className="relative flex justify-center bg-[#1f1828] py-2">
+            <span className="rounded-lg border-2 border-[#7a4a22] bg-[#1a0f0a] px-4 py-1 font-heading text-[13px] font-semibold tracking-wide text-[#ffcf73] shadow-[0_0_18px_rgba(255,170,80,0.35)] [text-shadow:0_0_8px_rgba(255,190,100,0.7)]">
+              The Ghost Fees House
+            </span>
+            <div className="pointer-events-none absolute -inset-x-10 -bottom-8 h-12 animate-fog-drift rounded-full bg-[#c3b8db]/10 blur-xl" />
           </div>
-          <div className="bg-[#1a1230] p-3 [background-image:linear-gradient(#ffffff08_1px,transparent_1px),linear-gradient(90deg,#ffffff08_1px,transparent_1px)] [background-size:22px_22px]">
+          <div className="bg-[#1d1720] p-3 [background-image:linear-gradient(#ffffff0a_2px,transparent_2px),linear-gradient(90deg,#ffffff0a_2px,transparent_2px)] [background-size:44px_22px]">
             <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} flying={flyingSet} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
+          </div>
+          <div className="relative -mx-6 mt-1 h-10 sm:-mx-10" aria-hidden="true">
+            <div className="absolute inset-x-0 bottom-2 h-7 [background-image:repeating-linear-gradient(90deg,#0b0716_0,#0b0716_3px,transparent_3px,transparent_14px)] [mask-image:linear-gradient(to_bottom,transparent,black_25%)]" />
+            <div className="absolute inset-x-0 bottom-6 h-[3px] bg-[#0b0716]" />
+            <div className="absolute inset-x-0 bottom-0 h-2 rounded-full bg-[#2b1a12]" />
+            <Pumpkin className="absolute bottom-1 left-[8%] w-10 drop-shadow-[0_0_10px_rgba(255,140,40,0.6)]" />
+            <Pumpkin className="absolute bottom-1 left-[18%] w-7 drop-shadow-[0_0_8px_rgba(255,140,40,0.6)]" delay={1.2} />
+            <Pumpkin className="absolute bottom-1 right-[10%] w-9 drop-shadow-[0_0_10px_rgba(255,140,40,0.6)]" delay={2.1} />
           </div>
         </div>
       </div>
