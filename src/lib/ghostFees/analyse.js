@@ -71,6 +71,8 @@ export function mergeTransactions(lists) {
         description: String(item.description).trim(),
         amount,
         clean: cleanMerchant(item.description),
+        // Which uploaded statement this charge came from, so a leak can point at it.
+        source: item.source || null,
       });
     });
     seenHere.forEach((key) => seenBefore.add(key));
@@ -89,6 +91,7 @@ function statementRow(item, wasted, wastedAmount) {
     date: item.date,
     description: item.description,
     amount: round2(item.value),
+    source: item.source || null,
     wasted,
     wastedAmount: wasted ? round2(wastedAmount) : 0,
   };
@@ -248,7 +251,14 @@ export function analyse(transactions) {
     if (result.subscription) subscriptions.push(result.subscription);
   });
 
-  leaks.forEach((leak) => { leak.months = span; });
+  leaks.forEach((leak) => {
+    leak.months = span;
+    // The dates and statements behind the wasted charges, for the card's source line.
+    const wastedRows = (leak.rows || []).filter((row) => row.wasted);
+    const basis = wastedRows.length ? wastedRows : leak.rows || [];
+    leak.dates = [...new Set(basis.map((row) => row.date))].sort();
+    leak.sources = [...new Set(basis.map((row) => row.source).filter(Boolean))];
+  });
   subscriptions.forEach((item) => { item.months = span; });
   leaks.sort((a, b) => b.amount - a.amount);
   subscriptions.sort((a, b) => b.monthly - a.monthly);

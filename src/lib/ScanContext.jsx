@@ -59,21 +59,22 @@ export function ScanProvider({ children }) {
     const errors = [];
 
     if (useSample) {
-      lists.push(parseCsv(SAMPLE_CSV));
+      lists.push(parseCsv(SAMPLE_CSV).map((row) => ({ ...row, source: 'sample statement' })));
     } else {
       for (const file of files) {
         try {
           if (/\.csv$/i.test(file.name)) {
             const rows = parseCsv(await file.text());
             if (!rows.length) throw new Error('No transactions found in this file.');
-            lists.push(rows);
+            lists.push(rows.map((row) => ({ ...row, source: file.name })));
           } else if (/\.pdf$/i.test(file.name)) {
             const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
             const response = await base44.functions.invoke('parseStatement', { file_uri });
             const data = response?.data || {};
             if (data.error) errors.push({ name: file.name, message: data.error });
-            else if (Array.isArray(data.transactions) && data.transactions.length) lists.push(data.transactions);
-            else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
+            else if (Array.isArray(data.transactions) && data.transactions.length) {
+              lists.push(data.transactions.map((row) => ({ ...row, source: file.name })));
+            } else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
             throw new Error('Only CSV or PDF files are supported.');
           }
