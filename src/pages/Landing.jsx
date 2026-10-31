@@ -1,23 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
 import UseCases from '@/components/landing/UseCases';
 import UploadErrors from '@/components/landing/UploadErrors';
-import ScanningScreen from '@/components/scan/ScanningScreen';
+import { ScanScreen } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
 
 export default function Landing() {
-  const { status, steps, progress, transactionCount, fileCount, fileErrors, results, runScan, reset } = useScan();
+  const { status, fileErrors, results, runScan, reset } = useScan();
   const [usedSample, setUsedSample] = useState(false);
+  const [scanDone, setScanDone] = useState(false);
   const inputRef = useRef(null);
+
+  const handleScanDone = useCallback(() => setScanDone(true), []);
 
   useEffect(() => {
     reset();
+    setScanDone(false);
   }, [reset]);
 
   const scan = async (files, useSample) => {
+    setScanDone(false);
     setUsedSample(useSample);
     trackEvent('scan_started');
     const outcome = await runScan({ files, useSample });
@@ -30,19 +35,20 @@ export default function Landing() {
     if (picked.length) scan(picked, false);
   };
 
-  if (status === 'scanning') {
+  const analysisReady = Boolean(status === 'done' && results);
+  const scanning = status === 'scanning' || (analysisReady && !scanDone);
+
+  if (scanning) {
     return (
-      <ScanningScreen
-        steps={steps}
-        progress={progress}
-        transactionCount={transactionCount}
-        fileCount={fileCount}
+      <ScanScreen
+        lastLine={results && results.leaks.length === 0 ? 'No ghosts found' : 'Ghost detected'}
+        onDone={handleScanDone}
         onCancel={reset}
       />
     );
   }
 
-  if (status === 'done' && results) {
+  if (analysisReady) {
     return <ResultsView analysis={results} usedSample={usedSample} onRestart={reset} />;
   }
 

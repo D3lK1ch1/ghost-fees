@@ -82,6 +82,12 @@ module.exports = {
   				'0%': { transform: 'translateX(-140%)' },
   				'100%': { transform: 'translateX(440%)' }
   			},
+  			'ghost-sweep': {
+  				to: { left: '110%' }
+  			},
+  			'ghost-fill': {
+  				to: { width: '100%' }
+  			},
   			'accordion-down': {
   				from: {
   					height: '0'
@@ -103,6 +109,8 @@ module.exports = {
   			float: 'float 6s ease-in-out infinite',
   			rise: 'rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both',
   			'scan-beam': 'scan-beam 1.5s ease-in-out infinite',
+  			'ghost-sweep': 'ghost-sweep 1.5s ease-in-out forwards',
+  			'ghost-fill': 'ghost-fill 1.5s linear forwards',
   			'accordion-down': 'accordion-down 0.2s ease-out',
   			'accordion-up': 'accordion-up 0.2s ease-out'
   		}

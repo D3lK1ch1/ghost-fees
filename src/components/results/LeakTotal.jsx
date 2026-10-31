@@ -1,5 +1,5 @@
 import GhostMark from '@/components/site/GhostMark';
-import CountUp from './CountUp';
+import { CountUp } from '@/components/GhostAnimations';
 import { monthRangeLabel } from '@/lib/ghostFees/format';
 
 export default function LeakTotal({ total, months, from, to }) {
