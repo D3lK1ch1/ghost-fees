@@ -72,7 +72,7 @@ export function mergeTransactions(lists) {
         amount,
         clean: cleanMerchant(item.description),
         // Which uploaded statement this charge came from, so a leak can point at it.
-        source: item.source || source,
+        source: item.source || null,
       });
     });
     seenHere.forEach((key) => seenBefore.add(key));
@@ -205,7 +205,38 @@ function merchantLeak(key, list) {
     const more = extras.length > 3 ? ` and ${extras.length - 3} more` : '';
     parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'} (${dates}${more}).`);
   }
-  return { leak: null, subscription };
+
+  if (!creep && !extras.length) return { leak: null, subscription };
+
+  const parts = [];
+  if (creep) parts.push(`Was ${money(creep.oldPrice)}, now ${money(creep.newPrice)} (+${money(creep.rise)}/mo) since ${shortDate(creep.since)}.`);
+  if (extras.length) {
+    const dates = extras.slice(0, 3).map((item) => shortDate(item.date)).join(', ');
+    const more = extras.length > 3 ? ` and ${extras.length - 3} more` : '';
+    parts.push(`${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'} (${dates}${more}).`);
+  }
+  const creepBigger = creep && creep.amount >= dupAmount;
+
+  return {
+    leak: {
+      id: `m:${key}`,
+      merchant,
+      badge: creep && !extras.length ? 'Price creep' : !creep ? 'Duplicate' : creepBigger ? 'Price creep' : 'Duplicate',
+      extraBadge: creep && extras.length ? (creepBigger ? 'Duplicate' : 'Price creep') : null,
+      amount: round2((creep ? creep.amount : 0) + dupAmount),
+      monthly: creep ? creep.newPrice : round2(extras[0].value),
+      priceRise: creep ? { oldPrice: creep.oldPrice, newPrice: creep.newPrice, since: creep.since } : null,
+      caption: creep && !extras.length ? `extra since ${shortDate(creep.since)}` : extras.length && !creep ? `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}` : 'extra charges',
+      reason: parts.join(' '),
+      action: extras.length ? 'refund' : (isSubscription ? 'cancel' : null),
+      rows: list.map((item, index) => {
+        if (extraIndexes.has(index)) return statementRow(item, true, item.value);
+        if (creep && item.value === creep.newPrice) return statementRow(item, true, creep.rise);
+        return statementRow(item, false, 0);
+      }),
+    },
+    subscription,
+  };
 }
 
 export function analyse(transactions) {
