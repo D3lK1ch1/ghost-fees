@@ -193,8 +193,11 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
 }
 
 // Leaks drawn as ghosts in a five-room house. Busting is kept in this component only.
-export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide }) {
-  const [cleared, setCleared] = useState([]);
+export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide, cleared: sharedCleared, onClearedChange }) {
+  // Busted ghosts can be shared with the goal path; falls back to local state.
+  const [localCleared, setLocalCleared] = useState([]);
+  const cleared = sharedCleared ?? localCleared;
+  const setCleared = onClearedChange ?? setLocalCleared;
   const [flying, setFlying] = useState([]);
   const [soundOn, setSoundOn] = useState(false);
   const sceneRef = useRef(null);
