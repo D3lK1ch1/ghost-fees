@@ -74,6 +74,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       setTimeout(() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
       setTimeout(() => setPulseId(null), 2400);
     }
+    if (action === 'open_calendar' || action === 'open_emails') {
+      setTab(action === 'open_calendar' ? 'calendar' : 'emails');
+      setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
     if (action === 'scroll_feedback') {
       setTab('feedback');
       setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);

@@ -15,6 +15,8 @@ const ACTION_LABELS = {
   open_leak: 'Take me there',
   show_transactions: 'Show the transactions',
   open_house: 'Open the haunted house',
+  open_calendar: 'Open the calendar',
+  open_emails: 'See all email templates',
   scroll_feedback: 'Take me there',
 };
 
@@ -34,7 +36,7 @@ function answer(question, analysis) {
   const biggest = leaks[0];
   const mentioned = findLeak(text, leaks);
 
-  if (/\b(bank should|switch|invest|loan|credit card|which (bank|card|account)|super(annuation)?|tax|debt|mortgage|advice|should i)\b/.test(text)) {
+  if (/\b(bank should|switch|invest|loan|credit card|which (bank|card|account)|super(annuation)?|tax|debt|mortgage|advice|should i (invest|buy|switch|get|open|take|borrow|pay off))\b/.test(text)) {
     return { reply: "I can't give financial advice, and I never recommend banks, cards or products. For that, moneysmart.gov.au is a good free place to start, or a licensed financial adviser." };
   }
   if (/next year|future|will i|predict|per year|a year|yearly|annual/.test(text)) {
@@ -53,6 +55,22 @@ function answer(question, analysis) {
       action: creep ? 'open_leak' : null,
       leak: creep,
     };
+  }
+  if (/first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text)) {
+    const target = leaks.find((item) => item.action);
+    return {
+      reply: target
+        ? `Here's a simple plan. 1. Send the email for ${nameOf(target)}, your biggest fixable ghost (${money(target.amount)}). 2. Add reminders so renewals don't sneak up on you. 3. Bust each ghost in the Haunted House once it's sorted.`
+        : 'Here\'s a simple plan. 1. Add reminders so renewals don\'t sneak up on you. 2. Bust each ghost in the Haunted House once you\'ve dealt with it.',
+      action: target ? 'draft_email' : 'open_calendar',
+      leak: target,
+    };
+  }
+  if (/remind|calendar|renew/.test(text)) {
+    return { reply: 'The calendar shows the days ghosts charged you, plus your next subscription charges. Tap Remind me, or Add all, to put reminders in your own calendar 2 days before each charge.', action: 'open_calendar' };
+  }
+  if (/templates?|all (the )?emails|every email/.test(text)) {
+    return { reply: 'Every ghost that needs an email has one ready: cancel, refund or ask your bank to waive a fee. Open one, edit it, then copy it or send it from your mail app.', action: 'open_emails' };
   }
   if (/house|haunted/.test(text)) {
     return { reply: 'Each room holds one type of ghost. Pick a room, then draft an email or bust each ghost once it is sorted.', action: 'open_house' };
@@ -105,7 +123,10 @@ function summaryFor(analysis) {
 function starterChips(analysis) {
   const biggest = analysis.leaks[0];
   return [
+    'What should I do first?',
     'Which ghost costs the most?',
+    'Set up reminders',
+    'Show all email templates',
     biggest && `How did you work out ${nameOf(biggest)}?`,
     'Write my first email',
     'Is my data stored?',
@@ -143,7 +164,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     trackEvent('guide_opened');
     if (!messages.length) {
       const first = leaks.length
-        ? `I found ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'} that cost you ${money(total)} in ${monthsLabel(monthSpan)} months. Want to start with the biggest?`
+        ? `I found ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'} that cost you ${money(total)} in ${monthsLabel(monthSpan)} months. I can make you a plan, set reminders, or write the emails. Where shall we start?`
         : 'No ghosts in this statement. Ask me how Ghost Fees works.';
       setMessages([{ role: 'guide', text: first, chips: chips.slice(0, 3) }]);
     }
