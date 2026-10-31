@@ -18,8 +18,8 @@ export default function DetectionInfo({ className }) {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className || 'inline-flex items-center gap-1.5 text-[12.5px] font-bold text-primary underline-offset-4 hover:underline'}>
-        <Info className="h-3.5 w-3.5" />
+      <button type="button" onClick={() => setOpen(true)} className={className || 'inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-[12.5px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground'}>
+        <Info className="h-4 w-4" />
         What doesn&apos;t it detect?
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
