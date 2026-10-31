@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, Landmark, Mail, Undo2 } from 'lucide-react';
+import { Check, Landmark, Mail, Undo2, Volume2, VolumeX } from 'lucide-react';
+import { playBoo, playChime, playCreak } from '@/lib/ghostFees/sound';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
@@ -80,7 +81,7 @@ function useTween(value) {
   return shown;
 }
 
-function Room({ room, leaks, cleared, active, onSelect, className, delay = 0 }) {
+function Room({ room, leaks, cleared, flying, active, onSelect, className, delay = 0 }) {
   const haunting = leaks.filter((leak) => !cleared.has(leak.id));
   const left = haunting.length;
   const size = left > 3 ? 'h-12 w-12' : left > 1 ? 'h-14 w-14' : 'h-20 w-20';
@@ -131,13 +132,17 @@ function Room({ room, leaks, cleared, active, onSelect, className, delay = 0 }) 
 
       <span className="flex flex-1 flex-wrap items-end justify-around gap-3 px-4 pt-3">
         {leaks.map((leak, index) => (
-          cleared.has(leak.id) ? null : (
-            <span key={leak.id} className="animate-bob" style={{ animationDelay: `${index * 0.4}s` }}>
+          cleared.has(leak.id) && !flying.has(leak.id) ? null : (
+            <span
+              key={leak.id}
+              className={flying.has(leak.id) ? 'animate-fly-away' : 'animate-bob'}
+              style={flying.has(leak.id) ? undefined : { animationDelay: `${index * 0.4}s` }}
+            >
               <HouseGhost room={room.key} index={index} className={size} />
             </span>
           )
         ))}
-        {leaks.length > 0 && !left && (
+        {leaks.length > 0 && !left && !leaks.some((leak) => flying.has(leak.id)) && (
           <Check className="h-8 w-8 animate-poof self-center text-[#ffcf73] drop-shadow-[0_0_10px_#ffcf73]" strokeWidth={3} />
         )}
       </span>
@@ -153,6 +158,26 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const [unit, setUnit] = useState('money');
   const derivedPay = hourlyFromMonthly(monthlyIncome);
   const [pay, setPay] = useState(derivedPay || 35);
+  const [flying, setFlying] = useState([]);
+  const [soundOn, setSoundOn] = useState(false);
+  const sceneRef = useRef(null);
+
+  // Tilt the house a little toward the pointer (or the phone's tilt) for a 3D feel.
+  const tilt = (x, y) => {
+    const scene = sceneRef.current;
+    if (!scene || prefersReduced()) return;
+    scene.style.setProperty('--tx', Math.max(-1, Math.min(1, x)).toFixed(3));
+    scene.style.setProperty('--ty', Math.max(-1, Math.min(1, y)).toFixed(3));
+  };
+
+  useEffect(() => {
+    const onOrient = (event) => {
+      if (event.gamma == null) return;
+      tilt(event.gamma / 30, (event.beta - 45) / 30);
+    };
+    window.addEventListener('deviceorientation', onOrient);
+    return () => window.removeEventListener('deviceorientation', onOrient);
+  }, []);
 
   const guide = GUIDES[guideKey];
   const inHours = unit === 'hours';
@@ -160,6 +185,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const payOptions = [...new Set([derivedPay, ...PAY_PRESETS].filter(Boolean))];
 
   const clearedSet = new Set(cleared);
+  const flyingSet = new Set(flying);
   const total = leaks.reduce((sum, leak) => sum + leak.amount, 0);
   const saved = leaks.filter((leak) => clearedSet.has(leak.id)).reduce((sum, leak) => sum + leak.amount, 0);
   const shown = useTween(saved);
@@ -180,6 +206,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   types.sort((a, b) => (b.count > 0) - (a.count > 0) || b.amount - a.amount);
 
   const selectRoom = (key) => {
+    if (soundOn && key !== roomKey) playCreak();
     setRoomKey(key);
     const list = byRoom[key];
     setLine({ type: 'room', label: ROOMS.find((item) => item.key === key).label, count: list.length, amount: list.reduce((sum, leak) => sum + leak.amount, 0) });
@@ -188,7 +215,13 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
   const bust = (leak) => {
     if (clearedSet.has(leak.id)) return;
     setCleared((current) => [...current, leak.id]);
+    setFlying((current) => [...current, leak.id]);
+    setTimeout(() => setFlying((current) => current.filter((id) => id !== leak.id)), 900);
     const left = leaks.length - cleared.length - 1;
+    if (soundOn) {
+      playBoo();
+      if (!left) setTimeout(playChime, 650);
+    }
     setLine(left > 0 ? { type: 'bust', leak, left } : { type: 'done' });
   };
 
@@ -200,16 +233,32 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
 
   return (
     <section className="mt-4 grid gap-5 lg:grid-cols-[1fr_320px]">
-      <div className="relative overflow-hidden rounded-3xl bg-[#140c26] px-3 pb-3 pt-6 sm:px-6 lg:self-start">
-        <div className="pointer-events-none absolute right-6 top-4 h-14 w-14 animate-moon-glow rounded-full bg-[#f5efe0] sm:h-20 sm:w-20" />
+      <div
+        ref={sceneRef}
+        onPointerMove={(event) => {
+          if (event.pointerType !== 'mouse') return;
+          const box = event.currentTarget.getBoundingClientRect();
+          tilt(((event.clientX - box.left) / box.width) * 2 - 1, ((event.clientY - box.top) / box.height) * 2 - 1);
+        }}
+        onPointerLeave={() => tilt(0, 0)}
+        className="relative overflow-hidden rounded-3xl bg-[#140c26] px-3 pb-3 pt-6 [--tx:0] [--ty:0] sm:px-6 lg:self-start"
+        style={{ perspective: '1100px' }}
+      >
+        <div
+          className="pointer-events-none absolute right-6 top-4 h-14 w-14 animate-moon-glow rounded-full bg-[#f5efe0] transition-transform duration-300 ease-out sm:h-20 sm:w-20"
+          style={{ translate: 'calc(var(--tx) * -18px) calc(var(--ty) * -12px)' }}
+        />
         {[[8, 12], [30, 6], [62, 18], [80, 40], [44, 30]].map(([x, y]) => (
-          <span key={`${x}-${y}`} className="pointer-events-none absolute h-1 w-1 animate-flicker rounded-full bg-white/50" style={{ left: `${x}%`, top: `${y}px`, animationDelay: `${x / 20}s` }} />
+          <span key={`${x}-${y}`} className="pointer-events-none absolute h-1 w-1 animate-flicker rounded-full bg-white/50" style={{ left: `${x}%`, top: `${y}px`, animationDelay: `${x / 20}s`, translate: 'calc(var(--tx) * -8px) calc(var(--ty) * -6px)' }} />
         ))}
         <Bat className="pointer-events-none absolute left-0 top-10 w-8 animate-bat-fly" />
         <Bat className="pointer-events-none absolute left-0 top-20 w-5 animate-bat-fly opacity-70" style={{ animationDelay: '5s' }} />
         <div className="pointer-events-none absolute left-[14%] top-8 h-14 w-6 rounded-sm bg-[#2a1d47]" />
 
-        <div className="relative mx-auto max-w-[640px]">
+        <div
+          className="relative mx-auto max-w-[640px] transition-transform duration-300 ease-out [transform-style:preserve-3d]"
+          style={{ transform: 'rotateY(calc(var(--tx) * 7deg)) rotateX(calc(var(--ty) * -5deg))' }}
+        >
           <div className="relative h-24 [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#3d2e66] sm:h-28">
             <div className="absolute inset-[3px] [clip-path:polygon(50%_0,100%_100%,0_100%)] bg-[#2a1d47]" />
           </div>
@@ -218,7 +267,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             <Room
               room={ROOMS[0]}
               leaks={byRoom.attic}
-              cleared={clearedSet}
+              cleared={clearedSet} flying={flyingSet}
               active={room.key === 'attic'}
               onSelect={() => selectRoom('attic')}
               className="mx-auto -mt-20 w-[58%] sm:-mt-24"
@@ -226,17 +275,17 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             />
             <div className="grid grid-cols-2 gap-3">
               {[ROOMS[1], ROOMS[2]].map((item) => (
-                <Room key={item.key} room={item} leaks={byRoom[item.key]} cleared={clearedSet} active={room.key === item.key} onSelect={() => selectRoom(item.key)} delay={item.key === 'guest' ? 1.3 : 2.1} />
+                <Room key={item.key} room={item} leaks={byRoom[item.key]} cleared={clearedSet} flying={flyingSet} active={room.key === item.key} onSelect={() => selectRoom(item.key)} delay={item.key === 'guest' ? 1.3 : 2.1} />
               ))}
             </div>
-            <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
+            <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} flying={flyingSet} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
           </div>
 
           <div className="relative h-1.5 bg-[#3d2e66]">
             <div className="pointer-events-none absolute -inset-x-10 -top-8 h-12 animate-fog-drift rounded-full bg-[#c3b8db]/10 blur-xl" />
           </div>
           <div className="bg-[#1a1230] p-3 [background-image:linear-gradient(#ffffff08_1px,transparent_1px),linear-gradient(90deg,#ffffff08_1px,transparent_1px)] [background-size:22px_22px]">
-            <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
+            <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} flying={flyingSet} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
           </div>
         </div>
       </div>
@@ -244,8 +293,18 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
       <div className="space-y-4">
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="font-heading text-[15px] font-semibold text-foreground">
+            <p className="flex items-center gap-2 font-heading text-[15px] font-semibold text-foreground">
               Ghosts busted {cleared.length}/{leaks.length}
+              <button
+                type="button"
+                onClick={() => setSoundOn((on) => !on)}
+                aria-pressed={soundOn}
+                aria-label={soundOn ? 'Turn spooky sounds off' : 'Turn spooky sounds on'}
+                title={soundOn ? 'Sound on' : 'Sound off'}
+                className={cn('rounded-full p-1 transition-colors', soundOn ? 'text-primary' : 'text-muted-foreground hover:text-foreground')}
+              >
+                {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+              </button>
             </p>
             <div className="flex rounded-full border border-border bg-background p-0.5">
                 {[['money', '$'], ['hours', 'Hours of work']].map(([key, label]) => (
