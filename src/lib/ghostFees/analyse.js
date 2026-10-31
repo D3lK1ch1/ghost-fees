@@ -1,7 +1,7 @@
 import { cleanMerchant, displayName } from './cleanMerchant';
 import { money, shortDate } from './format';
 
-const FEE_RE = /\bFEES?\b|\bATM\b|INTERNATIONAL TRANSACTION|LATE PAYMENT|OVERDRAWN/;
+const FEE_RE = /\bFEES?\b|\bATM\b|INTERNATIONAL TRANSACTION|LATE PAYMENT|OVERDRAWN|DISHONOU?R|\b(ACCOUNT|SERVICE|MONTHLY|KEEPING|MAINTENANCE) CHARGES?\b/;
 const TRIAL_RE = /TRIAL/;
 // Never a subscription or a price rise: money moved, not spent on a plan.
 const HARD_EXCLUDE_RE = /\bTRANSFER\b|\bSALARY\b|\bWITHDRAWAL\b|TOP ?UP|\bMYKI\b|PUBLIC TRANSPORT/;
@@ -9,10 +9,16 @@ const RENT_RE = /\bRESIDENTIAL\b|\bRENT\b/;
 const MAX_SUBSCRIPTION = 500;
 const DAY = 24 * 60 * 60 * 1000;
 
-// Money lost to borrowing, and fees bolted onto a payment. Recognised so they are
-// never mistaken for a merchant, but never reported as a leak.
-const BORROWING_RE = /INTEREST CHARGED|PURCHASE INTEREST|AFTERPAY LATE|ZIP FEE|ZIP MONTHLY|HUMM FEE|DISHONOUR|OVERDRAWN/;
-const SURCHARGE_RE = /SURCHARGE|SERVICE FEE|CONVENIENCE FEE|CARD FEE/;
+// Interest, buy-now-pay-later fees and shop surcharges are not reported as leaks.
+// Bank fees that merely sound similar (service fee, card fee, overdrawn, dishonour)
+// are not in this list, so they still reach the bank-fee check.
+const BORROWING_RE = /INTEREST CHARGED|PURCHASE INTEREST|AFTERPAY LATE|ZIP FEE|ZIP MONTHLY|HUMM FEE/;
+const SURCHARGE_RE = /\bSURCHARGE\b|CONVENIENCE FEE/;
+
+// Long digit runs (card, account or reference numbers) are masked to the last 4.
+function scrub(text) {
+  return String(text).replace(/\b(?:\d[ -]?){6,}\d\b/g, (digits) => `••••${digits.replace(/\D/g, '').slice(-4)}`);
+}
 
 // Money arriving as pay, used only to show a total as hours of work.
 const INCOME_RE = /\bSALARY\b|\bPAYROLL\b|\bWAGES\b|\bPAY\b/;
@@ -68,7 +74,7 @@ export function mergeTransactions(lists) {
       seenHere.add(key);
       merged.push({
         date: item.date,
-        description: String(item.description).trim(),
+        description: scrub(String(item.description).trim()),
         amount,
         clean: cleanMerchant(item.description),
         // Which uploaded statement this charge came from, so a leak can point at it.

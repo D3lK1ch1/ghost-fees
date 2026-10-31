@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, MessagesSquare, Receipt, Repeat, Route } from 'lucide-react';
+import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, MessagesSquare, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
@@ -52,7 +54,20 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   // Shared between the Haunted House and the goal path. Never stored.
   const [cleared, setCleared] = useState([]);
   const [remindersDone, setRemindersDone] = useState(false);
+  const [subAnswers, setSubAnswers] = useState({});
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [lifeGoal, setLifeGoal] = useState({ name: '', amount: 0 });
+  const cancelSubs = subscriptions.filter((item) => subAnswers[item.id] === 'no');
+  const draftCancel = (item) => openEmail({ id: `sub:${item.id}`, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' });
   const current = TABS.find((item) => item.key === tab);
+
+  // Wipes everything from this tab: results, busted ghosts, goals and chat.
+  const clearData = () => {
+    setConfirmClear(false);
+    window.history.replaceState(null, '', window.location.pathname);
+    onRestart();
+    toast({ title: 'Your data is cleared', description: 'Nothing from your statement is left in this tab.' });
+  };
 
   // Keep the address bar on the open tab so the link can be shared.
   useEffect(() => {
@@ -103,13 +118,23 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       <div className="relative z-10">
       <BrandHeader
         right={(
-          <button
-            type="button"
-            onClick={onRestart}
-            className="text-[13px] font-bold text-primary underline underline-offset-4"
-          >
-            Scan another statement
-          </button>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <button
+              type="button"
+              onClick={() => setConfirmClear(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1.5 text-[12.5px] font-bold text-foreground transition-colors hover:border-[#ff6b8a]/70 hover:text-[#ff9db1]"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear my data
+            </button>
+            <button
+              type="button"
+              onClick={onRestart}
+              className="hidden text-[13px] font-bold text-primary underline underline-offset-4 sm:inline"
+            >
+              Scan another statement
+            </button>
+          </div>
         )}
       />
       </div>
@@ -140,10 +165,19 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             monthlyIncome={analysis.monthlyIncome}
             leakCount={leaks.length}
             fileNames={fileNames}
+            onClearData={() => setConfirmClear(true)}
           />
         ) : (
-          <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} />
+          <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
+
+        <p className="mt-3 flex items-start gap-2 rounded-2xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-4 py-2.5 text-[12.5px] leading-relaxed text-[#bff5e8]">
+          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
+          <span>
+            <span className="font-bold text-[#e6fffa]">Nothing is saved.</span> Your results live only in this browser tab and are gone when you close it or press Clear my data.
+            {fileNames.some((name) => /\.pdf$/i.test(name)) && ' PDFs are uploaded privately so they can be read.'}
+          </span>
+        </p>
 
         <FileErrors errors={fileErrors} />
 
@@ -228,12 +262,23 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   onRemindersDone={setRemindersDone}
                   onDraft={openEmail}
                   onOpenHouse={() => setTab('house')}
+                  cancelSubs={cancelSubs}
+                  lifeGoal={lifeGoal}
+                  onLifeGoal={setLifeGoal}
                   guideKey={guideKey}
                 />
               )}
               {tab === 'calendar' && <HauntedCalendar leaks={leaks} subscriptions={subscriptions} />}
               {tab === 'emails' && <EmailsPanel leaks={leaks} onDraft={openEmail} />}
-              {tab === 'subscriptions' && <SubscriptionsSection subscriptions={subscriptions} />}
+              {tab === 'subscriptions' && (
+                <SubscriptionsSection
+                  subscriptions={subscriptions}
+                  answers={subAnswers}
+                  onAnswer={setSubAnswers}
+                  onDraftCancel={draftCancel}
+                  onOpenPath={() => setTab('path')}
+                />
+              )}
               {tab === 'receipt' && <PossessedReceipt leaks={leaks} />}
               {tab === 'feedback' && (
                 <div id="feedback">
@@ -255,6 +300,38 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       <SiteFooter />
 
       <LeakEmailDialog leak={emailLeak} onClose={() => setEmailLeak(null)} />
+
+      <Dialog open={confirmClear} onOpenChange={setConfirmClear}>
+        <DialogContent className="max-w-md rounded-[1.5rem] border-border bg-popover p-0">
+          <div className="p-5 sm:p-6">
+            <DialogTitle className="flex items-center gap-2 pr-8 font-heading text-lg font-semibold text-foreground">
+              <Trash2 className="h-5 w-5 text-[#ff9db1]" />
+              Clear my data?
+            </DialogTitle>
+            <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">This wipes everything from this browser tab straight away:</p>
+            <ul className="mt-3 space-y-1.5 text-[13px] text-foreground">
+              {['Your statement and every transaction read from it', 'The ghosts, totals and receipt', 'Busted ghosts, goals, your life goal and subscription answers', 'Your chat with the ghost guide'].map((item) => (
+                <li key={item} className="flex gap-2"><span className="text-[#5ee6c8]">✓</span>{item}</li>
+              ))}
+            </ul>
+            <p className="mt-3 flex gap-2 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[12px] leading-relaxed text-[#bff5e8]">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
+              <span>
+                CSVs never left your browser, so there is nothing to delete anywhere else.
+                {fileNames.some((name) => /\.pdf$/i.test(name)) && ' PDFs you uploaded were stored privately so they could be read.'}
+              </span>
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-3">
+              <button type="button" onClick={() => setConfirmClear(false)} className="rounded-xl border border-border py-2.5 text-[14px] font-bold text-foreground transition-colors hover:bg-white/5">
+                Cancel
+              </button>
+              <button type="button" onClick={clearData} className="rounded-xl bg-[#ff6b8a] py-2.5 text-[14px] font-bold text-white transition-transform hover:-translate-y-0.5">
+                Clear now
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <GhostGuide analysis={analysis} guideKey={guideKey} onGuide={setGuideKey} onAction={onGuideAction} openRequest={guideOpen} />
     </div>

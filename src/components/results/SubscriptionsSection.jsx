@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { CalendarPlus } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
@@ -19,14 +18,14 @@ const ANSWERS = [
   { key: 'no', label: 'No' },
 ];
 
-export default function SubscriptionsSection({ subscriptions }) {
-  const [answers, setAnswers] = useState({});
+// Answers live in the results page, so they survive switching tabs.
+export default function SubscriptionsSection({ subscriptions, answers = {}, onAnswer, onDraftCancel, onOpenPath }) {
 
   if (!subscriptions.length) return null;
 
-  const answer = (id, key) => {
-    setAnswers((current) => ({ ...current, [id]: current[id] === key ? undefined : key }));
-  };
+  const answer = (id, key) => onAnswer?.((current) => ({ ...current, [id]: current[id] === key ? undefined : key }));
+  const keeping = subscriptions.filter((item) => answers[item.id] === 'yes').length;
+  const cancelling = subscriptions.filter((item) => answers[item.id] === 'no');
 
   const gym = subscriptions.find((item) => GYM_RE.test(item.merchant));
 
@@ -49,9 +48,13 @@ export default function SubscriptionsSection({ subscriptions }) {
 
       <CardList className="mt-3 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
         {subscriptions.map((subscription, index) => (
-          <CardItem key={subscription.id} index={index} className="py-3">
+          <CardItem key={subscription.id} index={index} className={cn('py-3 transition-opacity', answers[subscription.id] === 'yes' && 'opacity-55')}>
             <div className="flex items-center justify-between gap-4">
-              <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
+              <span className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
+                {answers[subscription.id] === 'yes' && <span className="shrink-0 rounded-full bg-[#5ee6c8]/15 px-2 py-0.5 text-[10.5px] font-bold text-[#5ee6c8]">Keeping it</span>}
+                {answers[subscription.id] === 'no' && <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10.5px] font-bold text-primary">On your goal path</span>}
+              </span>
               <span className="shrink-0 text-[14px] font-semibold tabular-nums text-white">
                 {money(subscription.monthly)}
                 <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
@@ -91,9 +94,30 @@ export default function SubscriptionsSection({ subscriptions }) {
                 </button>
               )}
             </div>
+
+            {answers[subscription.id] === 'no' && (
+              <div className="mt-2 flex flex-wrap items-center gap-2 rounded-xl bg-primary/[0.08] px-3 py-2 text-[12px] text-foreground animate-rise">
+                <span className="flex-1">Added &quot;Cancel {subscription.merchant}&quot; to your goal path.</span>
+                {onDraftCancel && (
+                  <button type="button" onClick={() => onDraftCancel(subscription)} className="rounded-full bg-primary px-2.5 py-1 font-bold text-primary-foreground">
+                    Draft cancel email
+                  </button>
+                )}
+                {onOpenPath && (
+                  <button type="button" onClick={onOpenPath} className="font-bold text-primary underline underline-offset-4">See goal path</button>
+                )}
+              </div>
+            )}
           </CardItem>
         ))}
       </CardList>
+
+      {(keeping > 0 || cancelling.length > 0) && (
+        <p className="mt-2.5 text-[12.5px] text-muted-foreground">
+          Keeping {keeping}. Cancelling {cancelling.length}
+          {cancelling.length > 0 && `, which frees up ${money(cancelling.reduce((sum, item) => sum + item.monthly, 0))} a month`}.
+        </p>
+      )}
 
       <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground/90">
         <span className="font-bold text-foreground/90">Know your rights:</span> from 1 July 2027, cancelling a subscription

@@ -68,7 +68,9 @@ function House({ lit }) {
 
 // A road of goals built from the ghosts, winding up to the Haunted House.
 // Busting a ghost in the house ticks its goal here too. Everything stays in memory.
-export default function GoalPath({ leaks, subscriptions, cleared, onClearedChange, remindersDone, onRemindersDone, onDraft, onOpenHouse }) {
+const LIFE_GOALS = ['A holiday', 'Emergency fund', 'Study', 'Family', 'A new home', 'Something fun'];
+
+export default function GoalPath({ leaks, subscriptions, cleared, onClearedChange, remindersDone, onRemindersDone, onDraft, onOpenHouse, cancelSubs = [], lifeGoal = {}, onLifeGoal }) {
   const leakGoals = leaks.map((leak) => {
     const kind = leak.action || 'check';
     return { id: leak.id, kind, leak, label: KINDS[kind].label(leak.title || leak.merchant), save: leak.amount, why: leak.reason, done: cleared.includes(leak.id) };
@@ -76,7 +78,21 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
   const reminderGoal = subscriptions.length
     ? [{ id: 'reminders', kind: 'reminders', label: KINDS.reminders.label(), save: 0, why: `You have ${subscriptions.length} subscriptions. A reminder 2 days before each charge means nothing renews without you deciding.`, done: remindersDone }]
     : [];
-  const goals = [...leakGoals.slice(0, 1), ...reminderGoal, ...leakGoals.slice(1)];
+  // Subscriptions the user would not sign up for again become cancel goals.
+  const subGoals = cancelSubs.map((item) => {
+    const id = `sub:${item.id}`;
+    return {
+      id,
+      kind: 'cancel',
+      leak: { id, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' },
+      label: KINDS.cancel.label(item.merchant),
+      save: 0,
+      monthly: item.monthly,
+      why: `You said you would not sign up for ${item.merchant} today. It costs ${money(item.monthly)} a month.`,
+      done: cleared.includes(id),
+    };
+  });
+  const goals = [...leakGoals.slice(0, 1), ...reminderGoal, ...leakGoals.slice(1), ...subGoals];
 
   const [selectedId, setSelectedId] = useState(null);
   const [ticked, setTicked] = useState({});
@@ -187,7 +203,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                       )}
                     >
                       <span className="block text-foreground">{goal.label}</span>
-                      <span className={cn('block text-[11px]', goal.done ? 'text-[#ffcf73]' : 'text-primary')}>{goal.done ? 'Done' : `saves ${money(goal.save)}`}</span>
+                      <span className={cn('block text-[11px]', goal.done ? 'text-[#ffcf73]' : 'text-primary')}>{goal.done ? 'Done' : goal.monthly ? `${money(goal.monthly)} a month` : `saves ${money(goal.save)}`}</span>
                     </span>
                   </button>
 
@@ -199,7 +215,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                   {goal.done && goal.leak && (
                     <span className="pointer-events-none absolute flex h-14 w-11 -translate-x-1/2 -translate-y-1/2 animate-rise flex-col items-center justify-center rounded-t-full bg-[#3d3060] shadow-[0_6px_0_#140c22]" style={{ left: pct(sideX, VIEW_W), top: pct(point.y, height) }}>
                       <span className="text-[8px] font-bold tracking-[0.15em] text-[#a99cd0]">RIP</span>
-                      <span className="text-[9.5px] font-bold text-[#f4efe8]">{money(goal.save)}</span>
+                      <span className="text-[9.5px] font-bold text-[#f4efe8]">{money(goal.save || goal.monthly)}</span>
                     </span>
                   )}
                   {isCurrent && (
@@ -224,8 +240,68 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
           </div>
         </div>
 
+        <div className="space-y-4 self-start">
+        {onLifeGoal && (
+          <div className="rounded-3xl border border-border bg-card p-4">
+            <p className="font-heading text-[15px] font-semibold text-foreground">What matters to you?</p>
+            <p className="mt-0.5 text-[12px] text-muted-foreground">Pick a life goal. Every ghost you sort moves money towards it.</p>
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {LIFE_GOALS.map((name) => (
+                <button
+                  key={name}
+                  type="button"
+                  onClick={() => onLifeGoal((current) => ({ ...current, name: current.name === name ? '' : name }))}
+                  aria-pressed={lifeGoal.name === name}
+                  className={cn('rounded-full border px-2.5 py-1 text-[12px] font-bold transition-colors', lifeGoal.name === name ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+            <div className="mt-2.5 flex gap-2">
+              <label className="sr-only" htmlFor="life-goal-name">Your goal</label>
+              <input
+                id="life-goal-name"
+                value={lifeGoal.name || ''}
+                maxLength={40}
+                onChange={(event) => onLifeGoal((current) => ({ ...current, name: event.target.value }))}
+                placeholder="Or type your own"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+              />
+              <label className="sr-only" htmlFor="life-goal-amount">Amount</label>
+              <span className="flex items-center rounded-xl border border-border bg-background px-2 text-[13px] text-muted-foreground focus-within:border-primary">
+                $
+                <input
+                  id="life-goal-amount"
+                  type="number"
+                  min="0"
+                  inputMode="decimal"
+                  value={lifeGoal.amount || ''}
+                  onChange={(event) => onLifeGoal((current) => ({ ...current, amount: Number(event.target.value) || 0 }))}
+                  placeholder="Amount"
+                  className="w-20 bg-transparent py-2 pl-1 text-foreground outline-none"
+                />
+              </span>
+            </div>
+            {lifeGoal.name && lifeGoal.amount > 0 && (
+              <div className="mt-3">
+                <div className="flex items-baseline justify-between text-[12.5px]">
+                  <span className="font-bold text-foreground">{lifeGoal.name}</span>
+                  <span className="tabular-nums text-muted-foreground">{money(Math.min(saved, lifeGoal.amount))} / {money(lifeGoal.amount)}</span>
+                </div>
+                <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full rounded-full bg-[#5ee6c8] transition-[width] duration-700" style={{ width: pct(Math.min(saved, lifeGoal.amount), lifeGoal.amount) }} />
+                </div>
+                <p className="mt-1.5 text-[11.5px] text-muted-foreground">
+                  {saved >= lifeGoal.amount ? `You've covered ${lifeGoal.name.toLowerCase()} with the ghosts you sorted!` : `${money(lifeGoal.amount - saved)} to go. Sorting the next ghost gets you closer.`}
+                </p>
+              </div>
+            )}
+            <p className="mt-2 text-[10.5px] text-muted-foreground/80">Your goal, your call. Not saved anywhere.</p>
+          </div>
+        )}
         {selected && Kind && (
-          <div key={selected.id} className="animate-rise self-start rounded-3xl bg-[#f5f0e8] p-5 text-[#1b1233] shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
+          <div key={selected.id} className="animate-rise rounded-3xl bg-[#f5f0e8] p-5 text-[#1b1233] shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
             <p className="font-retro text-[13px] uppercase tracking-[0.2em] text-[#a24a00]">Goal {selectedIndex + 1} of {goals.length}{selected.done ? ' · done' : ''}</p>
             <h3 className="mt-1.5 font-heading text-[1.45rem] font-bold leading-tight">{selected.label}</h3>
             <p className="mt-1.5 text-[13px] leading-relaxed text-[#5b5275]">{selected.why}</p>
@@ -290,6 +366,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             {allDone && <p className="mt-3 rounded-xl bg-[#ffcf73] px-3 py-2 text-center font-heading text-[14px] font-bold">You reached the ghost-free house!</p>}
           </div>
         )}
+        </div>
       </div>
     </section>
   );
