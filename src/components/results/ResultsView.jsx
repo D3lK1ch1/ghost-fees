@@ -30,7 +30,7 @@ const WINDOWS = [
 
 export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
-  const { windowMonths, setWindowMonths, fileErrors } = useScan();
+  const { windowMonths, setWindowMonths, fileErrors, fileNames } = useScan();
   const [emailLeak, setEmailLeak] = useState(null);
   const [view, setView] = useState('cards');
   const [guideKey, setGuideKey] = useState('penny');

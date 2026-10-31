@@ -316,4 +316,3 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
     </>
   );
 }
-}

@@ -74,7 +74,7 @@ export function mergeTransactions(lists, names = []) {
         amount,
         clean: cleanMerchant(item.description),
         // Which uploaded statement this charge came from, so a leak can point at it.
-        source: item.source || null,
+        source: item.source || source,
       });
     });
     seenHere.forEach((key) => seenBefore.add(key));
@@ -96,7 +96,6 @@ function statementRow(item, wasted, wastedAmount) {
     source: item.source || null,
     wasted,
     wastedAmount: wasted ? round2(wastedAmount) : 0,
-    source: item.source || null,
   };
 }
 
@@ -219,28 +218,7 @@ function merchantLeak(key, list) {
       subscription,
     };
   }
-  const creepBigger = creep && creep.amount >= dupAmount;
-
-  return {
-    leak: {
-      id: `m:${key}`,
-      merchant,
-      badge: creep && !extras.length ? 'Price creep' : !creep ? 'Duplicate' : creepBigger ? 'Price creep' : 'Duplicate',
-      extraBadge: creep && extras.length ? (creepBigger ? 'Duplicate' : 'Price creep') : null,
-      amount: round2((creep ? creep.amount : 0) + dupAmount),
-      monthly: creep ? creep.newPrice : round2(extras[0].value),
-      priceRise: creep ? { oldPrice: creep.oldPrice, newPrice: creep.newPrice, since: creep.since } : null,
-      caption: creep && !extras.length ? `extra since ${shortDate(creep.since)}` : extras.length && !creep ? `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}` : 'extra charges',
-      reason: parts.join(' '),
-      action: extras.length ? 'refund' : (isSubscription ? 'cancel' : null),
-      rows: list.map((item, index) => {
-        if (extraIndexes.has(index)) return statementRow(item, true, item.value);
-        if (creep && item.value === creep.newPrice) return statementRow(item, true, creep.rise);
-        return statementRow(item, false, 0);
-      }),
-    },
-    subscription,
-  };
+  return { leak: null, subscription };
 }
 
 export function analyse(transactions) {

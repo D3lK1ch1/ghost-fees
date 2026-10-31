@@ -50,4 +50,3 @@ export default function EmptyState({ fileNames = [], onRestart, onSample }) {
     </section>
   );
 }
-}
