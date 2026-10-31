@@ -82,20 +82,14 @@ export default async function (req) {
       return Response.json({ transactions: rows });
     }
 
-    const extracted = await base44.asServiceRole.integrations.Core.ExtractDataFromUploadedFile({
-      file_url: signed_url,
-      json_schema: TRANSACTION_SCHEMA,
+    const extracted = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt: `Extract every transaction from this ${bankName} bank statement, across all pages. date as YYYY-MM-DD (work out the year from the statement period and year headings). description = the merchant or payee text, short, without "EFFECTIVE DATE" text. amount = signed AUD, withdrawals/debits negative, deposits/credits positive. Skip opening balance, closing balance, totals and fee summary rows.`,
+      file_urls: [signed_url],
+      response_json_schema: TRANSACTION_SCHEMA,
+      model: 'gemini_3_flash',
     });
 
-    if (extracted?.status === 'error') {
-      return Response.json({ error: extracted.details || `We couldn't read this ${bankName} statement.` });
-    }
-
-    const rows = Array.isArray(extracted?.output?.transactions)
-      ? extracted.output.transactions
-      : Array.isArray(extracted?.output)
-        ? extracted.output
-        : [];
+    const rows = Array.isArray(extracted?.transactions) ? extracted.transactions : [];
 
     const transactions = rows.map(normalise).filter(Boolean);
     if (!transactions.length) return Response.json({ error: `No transactions found in this ${bankName} statement.` });
