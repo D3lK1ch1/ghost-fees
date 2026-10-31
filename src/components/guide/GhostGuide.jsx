@@ -3,14 +3,17 @@ import { Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
 
 const MAX_INPUT = 500;
+const MAX_AI_MESSAGES = 20;
 
 const ACTION_LABELS = {
   draft_email: 'Open the email',
   open_leak: 'Take me there',
+  show_transactions: 'Show the transactions',
   open_house: 'Open the haunted house',
   scroll_feedback: 'Take me there',
 };
@@ -84,7 +87,19 @@ function answer(question, analysis) {
   if (mentioned) {
     return { reply: `${nameOf(mentioned)}: ${money(mentioned.amount)} in ${months}. ${mentioned.reason}`, action: 'open_leak', leak: mentioned };
   }
-  return { reply: "I only know about the ghosts in your statement. Try one of these questions." };
+  return null;
+}
+
+// What the AI guide may see: the results summary only. Never rows, descriptions, pay or file names.
+function summaryFor(analysis) {
+  return {
+    total: analysis.total,
+    months: analysis.monthSpan,
+    leaks: analysis.leaks.map((leak) => ({
+      id: leak.id, merchant: nameOf(leak), badge: leak.badge, amount: leak.amount, monthly: leak.monthly, reason: leak.reason,
+    })),
+    subscriptions: analysis.subscriptions.map((item) => ({ merchant: item.merchant, monthly: item.monthly })),
+  };
 }
 
 function starterChips(analysis) {
@@ -103,6 +118,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
+  const [thinking, setThinking] = useState(false);
+  const [aiCount, setAiCount] = useState(0);
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const guide = GUIDES[guideKey];
@@ -132,18 +149,42 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
     }
   };
 
-  const ask = (question) => {
+  const reply = (message) => setMessages((current) => [...current, { role: 'guide', ...message }]);
+
+  // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
+  const ask = async (question) => {
     const text = question.trim().slice(0, MAX_INPUT);
-    if (!text) return;
+    if (!text || thinking) return;
     trackEvent('guide_message');
-    const result = answer(text, analysis);
     const nextChips = chips.filter((chip) => chip !== text).slice(0, 3);
-    setMessages((current) => [
-      ...current,
-      { role: 'user', text },
-      { role: 'guide', text: result.reply, action: result.action, leak: result.leak, chips: nextChips },
-    ]);
+    const history = messages.slice(-6).map((message) => ({ role: message.role, text: message.text }));
+    setMessages((current) => [...current, { role: 'user', text }]);
     setInput('');
+
+    const local = answer(text, analysis);
+    if (local) {
+      reply({ text: local.reply, action: local.action, leak: local.leak, chips: nextChips });
+      return;
+    }
+    if (aiCount >= MAX_AI_MESSAGES) {
+      reply({ text: "That's all my spirit energy for now. These questions still work:", chips: nextChips });
+      return;
+    }
+
+    setThinking(true);
+    setAiCount((count) => count + 1);
+    try {
+      const response = await base44.functions.invoke('askGhostGuide', { guide: guideKey, question: text, history, summary: summaryFor(analysis) });
+      const data = response?.data || {};
+      if (!data.reply) throw new Error('empty');
+      const leak = leaks.find((item) => item.id === data.leakId);
+      const action = ACTION_LABELS[data.action] && (leak || !['draft_email', 'open_leak', 'show_transactions'].includes(data.action)) ? data.action : null;
+      reply({ text: data.reply, action, leak, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
+    } catch {
+      reply({ text: 'The spirits went quiet. Try again, or tap a question below.', chips: nextChips });
+    } finally {
+      setThinking(false);
+    }
   };
 
   const run = (message) => {
@@ -240,6 +281,15 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
                 )}
               </div>
             ))}
+            {thinking && (
+              <div className="flex items-center gap-1.5 px-1" aria-label={`${guide.name} is typing`}>
+                {[0, 1, 2].map((dot) => (
+                  <span key={dot} className="animate-bob" style={{ animationDelay: `${dot * 0.2}s`, color: guide.color }}>
+                    <GhostMark className="h-4 w-4" eyeColor="#1a1230" />
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <form
@@ -256,7 +306,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction }) {
               placeholder="Ask about your ghosts"
               className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2.5 text-[13.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
-            <button type="submit" aria-label="Send" className="rounded-xl bg-primary p-2.5 text-primary-foreground disabled:opacity-50" disabled={!input.trim()}>
+            <button type="submit" aria-label="Send" className="rounded-xl bg-primary p-2.5 text-primary-foreground disabled:opacity-50" disabled={!input.trim() || thinking}>
               <Send className="h-4 w-4" />
             </button>
           </form>

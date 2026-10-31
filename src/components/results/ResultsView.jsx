@@ -55,7 +55,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       setView('house');
       setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);
     }
-    if (action === 'open_leak' && leak) {
+    if ((action === 'open_leak' || action === 'show_transactions') && leak) {
       setView('cards');
       setPulseId(leak.id);
       setTimeout(() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
