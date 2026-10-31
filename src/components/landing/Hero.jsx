@@ -13,8 +13,8 @@ export default function Hero({ onSample, onUpload }) {
       <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.05] text-foreground sm:text-[4rem]">
         Find the ghosts haunting your bank account.
       </h1>
-      <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-muted-foreground">
-        Drop in a bank statement. We find forgotten subscriptions, sneaky fees and price creep.
+      <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
+        Ghost Fees finds 8 kinds of money leak and shows the exact dollars, with the transactions behind every one.
       </p>
 
       <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">

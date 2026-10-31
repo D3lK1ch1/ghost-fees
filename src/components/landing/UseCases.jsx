@@ -1,4 +1,4 @@
-import { Copy, Dumbbell, Landmark, Layers, Timer, TrendingUp } from 'lucide-react';
+import { Copy, CreditCard, Dumbbell, Landmark, Layers, Percent, Timer, TrendingUp } from 'lucide-react';
 
 const USE_CASES = [
   {
@@ -8,8 +8,8 @@ const USE_CASES = [
   },
   {
     Icon: Dumbbell,
-    title: 'The gym you never go to',
-    body: 'Same charge, every fortnight, forever. Spotify, iCloud, Stan, that app you downloaded once.',
+    title: 'The subscription you forgot',
+    body: 'Same charge, every month, forever. The gym, the streaming app, the cloud drive, the one you downloaded once.',
   },
   {
     Icon: Copy,
@@ -29,7 +29,17 @@ const USE_CASES = [
   {
     Icon: Layers,
     title: 'Three services doing one job',
-    body: 'Netflix and Binge. Audible and Spotify Premium. Four cloud drives. We line them up so you can pick one.',
+    body: 'Netflix and Stan. Two music apps. Two cloud drives. We line them up so you can pick one.',
+  },
+  {
+    Icon: CreditCard,
+    title: 'Interest and BNPL fees',
+    body: 'Purchase interest, Afterpay and Zip late fees, dishonour fees. Money paid just to borrow.',
+  },
+  {
+    Icon: Percent,
+    title: 'Card surcharges',
+    body: 'Little add-ons bolted onto a payment: card fees, service fees, convenience fees.',
   },
 ];
 
@@ -37,13 +47,13 @@ export default function UseCases() {
   return (
     <section className="mx-auto w-full max-w-5xl px-5 pb-24 pt-4 sm:px-8">
       <h2 className="text-center text-[1.6rem] font-semibold leading-tight text-foreground sm:text-[2rem]">
-        What we hunt for
+        What it finds
       </h2>
       <p className="mx-auto mt-2 max-w-md text-center text-[14.5px] leading-relaxed text-muted-foreground">
-        Real charges from your own statements. Nothing guessed, nothing projected.
+        Eight kinds of money leak, all pulled from your own statement. Nothing guessed, nothing projected.
       </p>
 
-      <div className="mt-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
         {USE_CASES.map(({ Icon, title, body }) => (
           <div key={title} className="rounded-3xl border border-border bg-card/60 p-5">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15 text-primary">
