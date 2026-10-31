@@ -4,11 +4,15 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Always "05 Jun" so dates never wrap onto two lines.
 function rowDate(value) {
-  const date = new Date(`${value}T00:00:00Z`);
-  if (Number.isNaN(date.getTime())) return value;
-  return date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', timeZone: 'UTC' });
+  const [, month, day] = String(value).split('-');
+  return MONTHS[Number(month) - 1] ? `${day} ${MONTHS[Number(month) - 1]}` : value;
 }
+
+const ALL = 'all';
 
 // The printed charges of one leak, on paper that has clearly seen things.
 export default function PossessedReceipt({ leaks }) {
@@ -18,9 +22,10 @@ export default function PossessedReceipt({ leaks }) {
 
   if (!receipts.length) return null;
 
-  const active = receipts.find((leak) => leak.id === activeId) || receipts[0];
-  const rows = active.rows || [];
-  const printed = rows.reduce((sum, row) => sum + row.amount, 0);
+  const showAll = !activeId || activeId === ALL;
+  const active = showAll ? null : receipts.find((leak) => leak.id === activeId) || receipts[0];
+  const rows = active ? active.rows || [] : [];
+  const printed = active ? rows.reduce((sum, row) => sum + row.amount, 0) : leaks.reduce((sum, leak) => sum + leak.amount, 0);
   // Several statements: one section per bank and file, each with its own subtotal.
   const groups = [];
   rows.forEach((row) => {
@@ -30,6 +35,7 @@ export default function PossessedReceipt({ leaks }) {
     else groups.push({ label, rows: [row] });
   });
   const grouped = groups.length > 1;
+  const sources = new Set(leaks.flatMap((leak) => (leak.rows || []).map((row) => row.source).filter(Boolean))).size;
 
   return (
     <>
@@ -57,8 +63,18 @@ export default function PossessedReceipt({ leaks }) {
               The possessed receipt
             </DialogTitle>
 
-            {receipts.length > 1 && (
+            {receipts.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setActiveId(ALL)}
+                  className={cn(
+                    'rounded-full border px-2.5 py-1 text-[11.5px] font-bold transition-colors',
+                    showAll ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  All ghosts
+                </button>
                 {receipts.map((leak) => (
                   <button
                     key={leak.id}
@@ -66,7 +82,7 @@ export default function PossessedReceipt({ leaks }) {
                     onClick={() => setActiveId(leak.id)}
                     className={cn(
                       'rounded-full border px-2.5 py-1 text-[11.5px] font-bold transition-colors',
-                      leak.id === active.id
+                      leak.id === active?.id
                         ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-border text-muted-foreground hover:text-foreground',
                     )}
@@ -81,38 +97,66 @@ export default function PossessedReceipt({ leaks }) {
               <div className="max-h-[52vh] overflow-y-auto bg-[#f6efe1] px-4 py-5 font-mono text-[12.5px] text-[#1b1233] sm:px-5">
                 <p className="text-center font-retro text-[21px] uppercase tracking-[0.22em]">Possessed receipt</p>
                 <p className="mt-1 text-center text-[10.5px] uppercase tracking-[0.18em] text-[#7a6f8f]">
-                  {active.badge}
+                  {active ? active.badge : `${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}`}
                 </p>
-                <p className="mt-3 text-center text-[13px] font-bold">{active.title || active.merchant}</p>
+                <p className="mt-3 text-center text-[13px] font-bold">{active ? active.title || active.merchant : 'Every ghost charge'}</p>
 
                 <div className="my-3 border-t border-dashed border-[#1b1233]/30" />
 
-                {groups.map((group) => (
-                  <div key={group.label} className={cn(grouped && 'mb-3')}>
-                    {grouped && (
-                      <p className="mb-1.5 flex items-baseline justify-between border-b border-[#1b1233]/20 pb-1 text-[11px] font-bold uppercase tracking-[0.12em]">
-                        <span className="truncate">{group.label}</span>
-                        <span className="shrink-0 tabular-nums">{money(group.rows.reduce((sum, row) => sum + row.amount, 0))}</span>
-                      </p>
-                    )}
-                    <ul className="space-y-1.5">
-                      {group.rows.map((row, index) => (
-                        <li key={`${row.date}-${index}`} className="flex items-baseline gap-2">
-                          <span className="w-[52px] shrink-0 text-[#7a6f8f]">{rowDate(row.date)}</span>
-                          <span className="min-w-0 flex-1 truncate">{row.description}</span>
-                          <span className={cn('shrink-0 tabular-nums', row.wasted && 'font-bold')}>
-                            {money(row.amount)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                {showAll ? (
+                  leaks.map((leak) => {
+                    const wasted = (leak.rows || []).filter((row) => row.wasted);
+                    return (
+                      <div key={leak.id} className="mb-3">
+                        <p className="mb-1 flex items-baseline justify-between border-b border-[#1b1233]/20 pb-1 text-[11px] font-bold uppercase tracking-[0.1em]">
+                          <span className="truncate">{leak.title || leak.merchant} · {leak.badge}</span>
+                          <span className="shrink-0 tabular-nums">{money(leak.amount)}</span>
+                        </p>
+                        <ul className="space-y-1">
+                          {wasted.map((row, index) => (
+                            <li key={`${row.date}-${index}`} className="flex items-baseline gap-2">
+                              <span className="w-[52px] shrink-0 whitespace-nowrap text-[#7a6f8f]">{rowDate(row.date)}</span>
+                              <span className="min-w-0 flex-1 truncate">
+                                {row.description}
+                                {row.source && sources > 1 && <span className="block truncate text-[10px] text-[#7a6f8f]">{row.source}</span>}
+                              </span>
+                              <span className="shrink-0 font-bold tabular-nums">{money(row.wastedAmount || row.amount)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <>
+                  {groups.map((group) => (
+                    <div key={group.label} className={cn(grouped && 'mb-3')}>
+                      {grouped && (
+                        <p className="mb-1.5 flex items-baseline justify-between border-b border-[#1b1233]/20 pb-1 text-[11px] font-bold uppercase tracking-[0.12em]">
+                          <span className="truncate">{group.label}</span>
+                          <span className="shrink-0 tabular-nums">{money(group.rows.reduce((sum, row) => sum + row.amount, 0))}</span>
+                        </p>
+                      )}
+                      <ul className="space-y-1.5">
+                        {group.rows.map((row, index) => (
+                          <li key={`${row.date}-${index}`} className="flex items-baseline gap-2">
+                            <span className="w-[52px] shrink-0 whitespace-nowrap text-[#7a6f8f]">{rowDate(row.date)}</span>
+                            <span className="min-w-0 flex-1 truncate">{row.description}</span>
+                            <span className={cn('shrink-0 tabular-nums', row.wasted && 'font-bold')}>
+                              {money(row.amount)}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                  </>
+                )}
 
                 <div className="my-3 border-t border-dashed border-[#1b1233]/30" />
 
                 <div className="flex items-baseline justify-between font-bold">
-                  <span>Printed total</span>
+                  <span>{showAll ? 'Ghost total' : 'Printed total'}</span>
                   <span className="tabular-nums">{money(printed)}</span>
                 </div>
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, MessagesSquare, Receipt, Repeat } from 'lucide-react';
+import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, MessagesSquare, Receipt, Repeat, Route } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
@@ -11,6 +11,7 @@ import FileErrors from './FileErrors';
 import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import HauntedCalendar from './HauntedCalendar';
+import GoalPath from './GoalPath';
 import EmailsPanel from './EmailsPanel';
 import NightSky from './NightSky';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -24,6 +25,7 @@ import { cn } from '@/lib/utils';
 const TABS = [
   { key: 'ghosts', label: 'Ghosts', Icon: Ghost, title: 'Your ghosts, biggest first', blurb: 'Each card is one money leak, with the transactions behind it. Tap a card to mark it most useful.' },
   { key: 'house', label: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
+  { key: 'path', label: 'Goal path', Icon: Route, title: 'Your path to a ghost-free house', blurb: 'Every stop is a goal built from your ghosts. Tick them off to walk your lantern up to the house. Busting a ghost in the Haunted House ticks it here too.' },
   { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged, and add reminders for the next charges to your own calendar.' },
   { key: 'emails', label: 'Email templates', Icon: Mail, title: 'Email templates', blurb: 'Cancel, refund and fee-waiver emails, ready to edit and send.' },
   { key: 'subscriptions', label: 'Subscriptions', Icon: Repeat, title: 'Still using these?', blurb: 'Your regular subscriptions. Not counted in the total.' },
@@ -44,6 +46,9 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [emailLeak, setEmailLeak] = useState(null);
   const [tab, setTab] = useState('ghosts');
   const [guideOpen, setGuideOpen] = useState(0);
+  // Shared between the Haunted House and the goal path. Never stored.
+  const [cleared, setCleared] = useState([]);
+  const [remindersDone, setRemindersDone] = useState(false);
   const current = TABS.find((item) => item.key === tab);
   const [guideKey, setGuideKey] = useState('penny');
   const [pulseId, setPulseId] = useState(null);
@@ -74,8 +79,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       setTimeout(() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
       setTimeout(() => setPulseId(null), 2400);
     }
-    if (action === 'open_calendar' || action === 'open_emails') {
-      setTab(action === 'open_calendar' ? 'calendar' : 'emails');
+    if (action === 'open_calendar' || action === 'open_emails' || action === 'open_path') {
+      setTab({ open_calendar: 'calendar', open_emails: 'emails', open_path: 'path' }[action]);
       setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);
     }
     if (action === 'scroll_feedback') {
@@ -203,7 +208,20 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                 </CardList>
               )}
               {tab === 'house' && (
-                <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} />
+                <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
+              )}
+              {tab === 'path' && (
+                <GoalPath
+                  leaks={leaks}
+                  subscriptions={subscriptions}
+                  cleared={cleared}
+                  onClearedChange={setCleared}
+                  remindersDone={remindersDone}
+                  onRemindersDone={setRemindersDone}
+                  onDraft={openEmail}
+                  onOpenHouse={() => setTab('house')}
+                  guideKey={guideKey}
+                />
               )}
               {tab === 'calendar' && <HauntedCalendar leaks={leaks} subscriptions={subscriptions} />}
               {tab === 'emails' && <EmailsPanel leaks={leaks} onDraft={openEmail} />}

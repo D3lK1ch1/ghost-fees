@@ -193,8 +193,11 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
 }
 
 // Leaks drawn as ghosts in a five-room house. Busting is kept in this component only.
-export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide }) {
-  const [cleared, setCleared] = useState([]);
+export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide, cleared: sharedCleared, onClearedChange, onSetGoals, onAskGuide }) {
+  // Busted ghosts can be shared with the goal path; falls back to local state.
+  const [localCleared, setLocalCleared] = useState([]);
+  const cleared = sharedCleared ?? localCleared;
+  const setCleared = onClearedChange ?? setLocalCleared;
   const [flying, setFlying] = useState([]);
   const [soundOn, setSoundOn] = useState(false);
   const sceneRef = useRef(null);
@@ -335,7 +338,34 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                 <Room key={item.key} room={item} leaks={byRoom[item.key]} cleared={clearedSet} flying={flyingSet} active={room.key === item.key} onSelect={() => selectRoom(item.key)} delay={item.key === 'guest' ? 1.3 : 2.1} />
               ))}
             </div>
-            <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} flying={flyingSet} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
+            {byRoom.hallway.length || !onSetGoals ? (
+              <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} flying={flyingSet} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
+            ) : (
+              // No ghosts in the hallway, so the guide uses it to help set goals.
+              <div className="relative flex min-h-[130px] items-center gap-3 overflow-hidden rounded-b-xl rounded-t-[3rem] border-[3px] border-[#7a4a22] bg-gradient-to-b from-[#ffb347]/25 via-[#5a2e10]/40 to-[#2b1409] p-4 shadow-[inset_0_0_36px_rgba(255,170,80,0.3)]">
+                <span className="absolute left-4 top-4 rounded-full bg-[#170f2a]/80 px-2.5 py-1 text-[11.5px] font-bold text-[#e6defa]">Creaky hallway · {guide.name}&apos;s corner</span>
+                <span className="absolute bottom-3 left-4 animate-float" style={{ color: guide.color }}>
+                  <GhostMark className="h-14 w-14 drop-shadow-[0_0_12px_rgba(255,255,255,0.25)]" eyeColor="#1a1230" />
+                </span>
+                <div className="ml-16 mt-8 min-w-0 flex-1 sm:ml-20">
+                  <p className="rounded-2xl rounded-bl-sm bg-[#170f2a]/85 px-3 py-2 text-[12.5px] leading-relaxed text-foreground">
+                    {cleared.length === leaks.length
+                      ? 'Every ghost is sorted. Lovely work!'
+                      : `${leaks.length - cleared.length} ${leaks.length - cleared.length === 1 ? 'ghost' : 'ghosts'} left. Shall we turn them into goals, one step at a time?`}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <button type="button" onClick={onSetGoals} className="rounded-full bg-primary px-3 py-1.5 text-[12px] font-bold text-primary-foreground shadow-[0_4px_16px_hsl(var(--primary)/0.4)]">
+                      Set my goals
+                    </button>
+                    {onAskGuide && (
+                      <button type="button" onClick={onAskGuide} className="rounded-full border border-[#ffcf73]/60 px-3 py-1.5 text-[12px] font-bold text-[#ffcf73] hover:bg-[#ffcf73]/10">
+                        Ask {guide.name}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="relative flex justify-center bg-[#1f1828] py-2">
