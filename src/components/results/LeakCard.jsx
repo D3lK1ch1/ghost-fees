@@ -1,9 +1,26 @@
-import { Mail } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronDown, Landmark, Mail, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 
+const ACTIONS = {
+  cancel: { label: 'Draft cancel email', Icon: Mail },
+  refund: { label: 'Draft refund request', Icon: Undo2 },
+  waive: { label: 'Ask bank to waive', Icon: Landmark },
+};
+
+function rowDate(value) {
+  const date = new Date(`${value}T00:00:00Z`);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: '2-digit', timeZone: 'UTC' });
+}
+
 export default function LeakCard({ leak, onDraft }) {
+  const [open, setOpen] = useState(false);
+  const action = ACTIONS[leak.action];
+  const rows = leak.rows || [];
+
   return (
     <div className="rounded-3xl bg-[#f5f0e8] p-4 text-[#1b1233] sm:p-5">
       <div className="flex items-start justify-between gap-4">
@@ -20,14 +37,46 @@ export default function LeakCard({ leak, onDraft }) {
       </div>
       <p className="mt-2 text-[13px] leading-relaxed text-[#5b5275]">{leak.reason}</p>
 
-      {leak.cancelable && (
+      {rows.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#5b5275] underline underline-offset-4 hover:text-[#1b1233]"
+        >
+          {open ? 'Hide transactions' : 'Show transactions'}
+          <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
+        </button>
+      )}
+
+      {open && (
+        <ul className="mt-3 overflow-hidden rounded-2xl border border-[#1b1233]/10 bg-white/70">
+          {rows.map((row, index) => (
+            <li
+              key={`${row.date}-${index}`}
+              className={cn(
+                'flex items-center gap-3 px-3 py-2 text-[12.5px]',
+                index > 0 && 'border-t border-[#1b1233]/[0.07]',
+                row.wasted && 'bg-[#ffd9a8]/70',
+              )}
+            >
+              <span className="w-[62px] shrink-0 tabular-nums text-[#5b5275]">{rowDate(row.date)}</span>
+              <span className="min-w-0 flex-1 truncate">{row.description}</span>
+              <span className={cn('shrink-0 tabular-nums', row.wasted ? 'font-bold text-[#8a3b00]' : 'text-[#5b5275]')}>
+                {money(row.amount)}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {action && (
         <button
           type="button"
           onClick={onDraft}
           className="mt-3.5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[#1b1233]/70 py-2.5 text-[13.5px] font-bold transition-colors hover:bg-[#1b1233] hover:text-[#f5f0e8]"
         >
-          <Mail className="h-4 w-4" />
-          Draft cancel email
+          <action.Icon className="h-4 w-4" />
+          {action.label}
         </button>
       )}
     </div>

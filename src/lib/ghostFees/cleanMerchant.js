@@ -1,8 +1,8 @@
 // Turns a raw bank description into a stable merchant key. Fixed rules only.
-// uppercase, remove digits, remove PTY / LTD / AUS / AU / VISA / CARD, collapse spaces.
+// uppercase, remove digits, drop company suffixes, city/country words and card noise, collapse spaces.
 // "TRIAL" is also dropped so a trial charge groups with the paid plan.
 
-const NOISE_RE = /\b(PTY|LTD|AUS|AU|VISA|CARD|TRIAL)\b/g;
+const NOISE_RE = /\b(PTY|LTD|AB|AUS|AU|VISA|CARD|TRIAL|XX|SYDNEY|MELBOURNE|BRISBANE|PERTH|ADELAIDE|CANBERRA|HOBART|DARWIN|NEWCASTLE|GOLD COAST|AUSTRALIA|STOCKHOLM|LONDON|DUBLIN|SINGAPORE|TORONTO|NEW YORK|SAN FRANCISCO|SEATTLE|SWEDEN|IRELAND|UK|USA|NZ)\b/g;
 
 export function cleanMerchant(raw) {
   return String(raw || '')

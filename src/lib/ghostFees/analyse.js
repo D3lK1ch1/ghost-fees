@@ -76,6 +76,16 @@ function push(map, key, item) {
   map.get(key).push(item);
 }
 
+function statementRow(item, wasted, wastedAmount) {
+  return {
+    date: item.date,
+    description: item.description,
+    amount: round2(item.value),
+    wasted,
+    wastedAmount: wasted ? round2(wastedAmount) : 0,
+  };
+}
+
 function feeLeak(key, list) {
   const amount = sumValues(list);
   if (amount <= 0) return null;
@@ -87,7 +97,8 @@ function feeLeak(key, list) {
     amount,
     caption: `${count} ${count === 1 ? 'charge' : 'charges'}`,
     reason: `${count} fee ${count === 1 ? 'charge' : 'charges'} on your statement.`,
-    cancelable: false,
+    action: 'waive',
+    rows: list.map((item) => statementRow(item, true, item.value)),
   };
 }
 
@@ -126,7 +137,12 @@ function merchantLeak(key, list) {
           monthly: price,
           caption: 'paid after trial',
           reason: `Free trial on ${shortDate(trial.date)}, then ${paid.length} paid ${paid.length === 1 ? 'charge' : 'charges'}.`,
-          cancelable: true,
+          action: 'cancel',
+          rows: list.map((item) => statementRow(
+            item,
+            item.value > 0 && item.date > trial.date && !TRIAL_RE.test(item.description.toUpperCase()),
+            item.value,
+          )),
         },
         subscription,
       };
@@ -151,7 +167,8 @@ function merchantLeak(key, list) {
           monthly: newPrice,
           caption: `extra since ${shortDate(since)}`,
           reason: `Was ${money(oldPrice)}, now ${money(newPrice)} (+${money(rise)}/mo) since ${shortDate(since)}.`,
-          cancelable: isSubscription,
+          action: isSubscription ? 'cancel' : null,
+          rows: list.map((item) => statementRow(item, item.value === newPrice, rise)),
         },
         subscription,
       };
@@ -159,16 +176,17 @@ function merchantLeak(key, list) {
   }
 
   // Duplicate: the same amount charged twice within 2 days. Only the extras count.
-  const extras = [];
+  const extraIndexes = new Set();
   for (let i = 0; i < list.length; i += 1) {
     for (let j = i + 1; j < list.length; j += 1) {
       if (dayDiff(list[i].date, list[j].date) > 2) break;
       if (list[i].value > 0 && list[i].value === list[j].value) {
-        extras.push(list[j]);
+        extraIndexes.add(j);
         break;
       }
     }
   }
+  const extras = [...extraIndexes].map((index) => list[index]);
   if (extras.length) {
     return {
       leak: {
@@ -179,7 +197,8 @@ function merchantLeak(key, list) {
         monthly: round2(extras[0].value),
         caption: `${extras.length} extra ${extras.length === 1 ? 'charge' : 'charges'}`,
         reason: `${money(extras[0].value)} was charged twice within 2 days, ${extras.length} ${extras.length === 1 ? 'time' : 'times'}.`,
-        cancelable: isSubscription,
+        action: 'refund',
+        rows: list.map((item, index) => statementRow(item, extraIndexes.has(index), item.value)),
       },
       subscription,
     };
@@ -222,11 +241,15 @@ export function analyse(transactions) {
   leaks.sort((a, b) => b.amount - a.amount);
   subscriptions.sort((a, b) => b.monthly - a.monthly);
 
+  const sortedDates = transactions.map((item) => item.date).sort();
+
   return {
     leaks,
     subscriptions,
     total: round2(leaks.reduce((sum, leak) => sum + leak.amount, 0)),
     monthSpan: span,
+    firstDate: sortedDates[0] || null,
+    lastDate: sortedDates[sortedDates.length - 1] || null,
     enoughHistory: span >= MIN_MONTHS,
     transactionCount: transactions.length,
   };

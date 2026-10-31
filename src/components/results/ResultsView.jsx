@@ -4,7 +4,7 @@ import LeakTotal from './LeakTotal';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import FeedbackPanel from './FeedbackPanel';
-import CancelEmailDialog from './CancelEmailDialog';
+import LeakEmailDialog from './LeakEmailDialog';
 import { trackEvent } from '@/lib/session';
 
 export default function ResultsView({ analysis, usedSample, onRestart }) {
@@ -31,7 +31,7 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
       />
 
       <main className="mx-auto w-full max-w-5xl px-5 pb-24 sm:px-8">
-        <LeakTotal total={total} months={analysis.monthSpan} />
+        <LeakTotal total={total} months={analysis.monthSpan} from={analysis.firstDate} to={analysis.lastDate} />
 
         {!enoughHistory && (
           <div className="mt-4 rounded-2xl border border-[#ffb37c]/25 bg-[#ffb37c]/[0.06] px-4 py-3.5 text-[13px] leading-relaxed text-[#ffb37c]">
@@ -56,7 +56,7 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
         <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} />
       </main>
 
-      <CancelEmailDialog leak={emailLeak} onClose={() => setEmailLeak(null)} />
+      <LeakEmailDialog leak={emailLeak} onClose={() => setEmailLeak(null)} />
     </div>
   );
 }
