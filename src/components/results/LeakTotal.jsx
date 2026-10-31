@@ -1,6 +1,8 @@
 import { CountUp, BobbingGhost } from '@/components/GhostAnimations';
 import { monthRangeLabel } from '@/lib/ghostFees/format';
-import { FileText } from 'lucide-react';
+import { useState } from 'react';
+import { FileText, Share2 } from 'lucide-react';
+import { shareResult } from '@/lib/ghostFees/shareCard';
 import HoursLine from './HoursLine';
 
 // Where the numbers came from, in plain words. PDFs are read on the server once.
@@ -14,6 +16,13 @@ function sourceLine(fileNames) {
 export default function LeakTotal({ total, months, from, to, monthlyIncome, leakCount = 0, fileNames = [] }) {
   const range = monthRangeLabel(from, to);
   const source = sourceLine(fileNames);
+  const [shareState, setShareState] = useState('idle');
+
+  const share = async () => {
+    setShareState('working');
+    const outcome = await shareResult({ total, months, ghosts: leakCount });
+    setShareState(outcome === 'downloaded' ? 'downloaded' : 'idle');
+  };
 
   return (
     <section className="relative mt-4 overflow-hidden rounded-[2rem] border border-border bg-card p-6 sm:p-9">
@@ -49,6 +58,17 @@ export default function LeakTotal({ total, months, from, to, monthlyIncome, leak
       <p className="mt-2 max-w-md text-[12.5px] leading-relaxed text-muted-foreground/80">
         Real charges from your own statement. Nothing guessed, nothing projected.
       </p>
+      {leakCount > 0 && (
+        <button
+          type="button"
+          onClick={share}
+          disabled={shareState === 'working'}
+          className="mt-4 inline-flex items-center gap-2 rounded-full border border-primary/50 bg-primary/10 px-4 py-2 text-[13px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
+        >
+          <Share2 className="h-4 w-4" />
+          {shareState === 'downloaded' ? 'Saved! Post it anywhere' : 'Share my result'}
+        </button>
+      )}
     </section>
   );
 }
