@@ -9,7 +9,7 @@ const ROWS = [
 export default function StatementCard() {
   return (
     <div className="relative mx-auto w-full max-w-sm">
-      <div className="absolute -inset-10 -z-10 rounded-full bg-primary/[0.09] blur-3xl" />
+      <div className="absolute -inset-4 -z-10 rounded-full bg-primary/[0.09] blur-3xl" />
       <div className="rounded-[1.75rem] border border-white/[0.08] bg-card/90 p-5 shadow-[0_40px_90px_-40px_rgba(0,0,0,0.95)] backdrop-blur">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-white/70">statement.csv</span>
