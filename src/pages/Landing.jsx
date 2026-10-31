@@ -57,7 +57,7 @@ export default function Landing() {
     <div className="min-h-screen">
       <BrandHeader />
       {fileErrors.length > 0 ? (
-        <UploadErrors onSample={() => scan([], true)} />
+        <UploadErrors errors={fileErrors} onSample={() => scan([], true)} />
       ) : (
         <>
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />

@@ -9,34 +9,15 @@ const RENT_RE = /\bRESIDENTIAL\b|\bRENT\b/;
 const MAX_SUBSCRIPTION = 500;
 const DAY = 24 * 60 * 60 * 1000;
 
-// Services that do the same job. Two or more active at once is an overlap.
-const OVERLAP_CATEGORIES = [
-  { key: 'streaming', label: 'streaming', re: /\b(NETFLIX|STAN|BINGE|DISNEY|PARAMOUNT|PRIME VIDEO|APPLE TV|KAYO|FOXTEL)\b/ },
-  { key: 'music', label: 'music', re: /\b(SPOTIFY|APPLE MUSIC|YOUTUBE MUSIC|TIDAL)\b/ },
-  { key: 'cloud', label: 'cloud storage', re: /\b(ICLOUD|GOOGLE ONE|DROPBOX|ONEDRIVE)\b/ },
-];
-
-// Money lost to borrowing, and fees bolted onto a payment.
+// Money lost to borrowing, and fees bolted onto a payment. Recognised so they are
+// never mistaken for a merchant, but never reported as a leak.
 const BORROWING_RE = /INTEREST CHARGED|PURCHASE INTEREST|AFTERPAY LATE|ZIP FEE|ZIP MONTHLY|HUMM FEE|DISHONOUR|OVERDRAWN/;
+const SURCHARGE_RE = /SURCHARGE|SERVICE FEE|CONVENIENCE FEE|CARD FEE/;
 
 // Money arriving as pay, used only to show a total as hours of work.
 const INCOME_RE = /\bSALARY\b|\bPAYROLL\b|\bWAGES\b|\bPAY\b/;
-const SURCHARGE_RE = /SURCHARGE|SERVICE FEE|CONVENIENCE FEE|CARD FEE/;
 
-const COST_TYPES = {
-  borrowing: {
-    badge: 'Borrowing cost',
-    reason: (count, months) => `${count} ${count === 1 ? 'charge' : 'charges'} for borrowing money over ${months} ${months === 1 ? 'month' : 'months'}.`,
-    tip: 'Tip: clearing the balance in full each month stops this charge.',
-  },
-  surcharge: {
-    badge: 'Surcharge',
-    reason: (count, months) => `${count} ${count === 1 ? 'surcharge' : 'surcharges'} added on top of your payments over ${months} ${months === 1 ? 'month' : 'months'}.`,
-    tip: 'Tip: pay by bank transfer or a savings account card where it is offered.',
-  },
-};
-
-export const MIN_MONTHS = 6;
+export const MIN_MONTHS = 3;
 
 function round2(value) {
   return Math.round((Number(value) || 0) * 100) / 100;
@@ -129,85 +110,6 @@ function feeLeak(key, list) {
   };
 }
 
-function costLeak(key, list, type) {
-  const amount = sumValues(list);
-  if (amount <= 0) return null;
-  const config = COST_TYPES[type];
-  const months = distinctMonths(list).length;
-  return {
-    id: `${type}:${key}`,
-    merchant: displayName(key),
-    badge: config.badge,
-    amount,
-    caption: `${list.length} ${list.length === 1 ? 'charge' : 'charges'}`,
-    reason: config.reason(list.length, months),
-    tip: config.tip,
-    action: null,
-    rows: list.map((item) => statementRow(item, true, item.value)),
-  };
-}
-
-// Two or more services doing the same job. The cheapest ones beyond the first
-// only count for the months they overlapped.
-function overlapLeaks(groups) {
-  const byCategory = new Map();
-
-  groups.forEach((list, key) => {
-    const category = OVERLAP_CATEGORIES.find((item) => item.re.test(key.toUpperCase()));
-    if (!category) return;
-    const months = distinctMonths(list);
-    if (months.length < 2) return;
-    if (!byCategory.has(category.key)) byCategory.set(category.key, { category, members: [] });
-    byCategory.get(category.key).members.push({ key, list, months });
-  });
-
-  const leaks = [];
-  const latestValue = (member) => member.list[member.list.length - 1].value;
-
-  byCategory.forEach(({ category, members }) => {
-    if (members.length < 2) return;
-
-    const sorted = [...members].sort((a, b) => latestValue(b) - latestValue(a));
-    const keep = sorted[0];
-    const dropped = sorted.slice(1);
-    const keepMonths = new Set(keep.months);
-
-    const rows = [];
-    let amount = 0;
-    dropped.forEach((member) => {
-      member.list.forEach((item) => {
-        if (!keepMonths.has(monthKey(item.date))) return;
-        amount += item.value;
-        rows.push(statementRow(item, true, item.value));
-      });
-    });
-    if (amount <= 0) return;
-
-    const names = members.map((member) => displayName(member.key));
-    const monthly = round2(members.reduce((sum, member) => sum + latestValue(member), 0));
-    const droppedMonthly = round2(dropped.reduce((sum, member) => sum + latestValue(member), 0));
-
-    leaks.push({
-      id: `overlap:${category.key}`,
-      title: `${members.length} ${category.label} services`,
-      merchant: displayName(keep.key),
-      badge: 'Overlap',
-      amount: round2(amount),
-      monthly: droppedMonthly,
-      caption: `${money(monthly)}/mo all up`,
-      reason: `${names.join(', ')} all charge you each month. The extra ones come to ${money(droppedMonthly)}/mo.`,
-      action: 'cancel',
-      targets: dropped.map((member) => ({
-        merchant: displayName(member.key),
-        monthly: round2(latestValue(member)),
-      })),
-      rows: rows.sort((a, b) => a.date.localeCompare(b.date)),
-    });
-  });
-
-  return leaks;
-}
-
 // One merchant's charges. Returns the wasted gap (if any) and, when the
 // merchant is a subscription, its current monthly price.
 function merchantLeak(key, list) {
@@ -282,7 +184,8 @@ function merchantLeak(key, list) {
     }
   }
 
-  // Duplicate: the same amount charged twice within 2 days. Only the extras count.
+  // Duplicate: the same amount charged twice within 2 days, and only for a
+  // subscription. A shop that charges whatever you spent is never a duplicate.
   const extraIndexes = new Set();
   for (let i = 0; i < list.length; i += 1) {
     for (let j = i + 1; j < list.length; j += 1) {
@@ -294,7 +197,7 @@ function merchantLeak(key, list) {
     }
   }
   const extras = [...extraIndexes].map((index) => list[index]);
-  if (extras.length) {
+  if (isSubscription && extras.length) {
     return {
       leak: {
         id: `m:${key}`,
@@ -317,8 +220,6 @@ function merchantLeak(key, list) {
 export function analyse(transactions) {
   const span = monthSpan(transactions);
   const feeGroups = new Map();
-  const borrowGroups = new Map();
-  const surchargeGroups = new Map();
   const groups = new Map();
 
   transactions
@@ -326,10 +227,10 @@ export function analyse(transactions) {
     .forEach((item) => {
       const upper = item.description.toUpperCase();
       if (HARD_EXCLUDE_RE.test(upper)) return;
+      // Borrowing costs and surcharges are not leaks we report.
+      if (BORROWING_RE.test(upper) || SURCHARGE_RE.test(upper)) return;
       const debit = { ...item, value: Math.abs(item.amount) };
-      if (BORROWING_RE.test(upper)) push(borrowGroups, item.clean || 'BORROWING COST', debit);
-      else if (SURCHARGE_RE.test(upper)) push(surchargeGroups, item.clean || 'SURCHARGE', debit);
-      else if (FEE_RE.test(upper)) push(feeGroups, item.clean || 'BANK FEE', debit);
+      if (FEE_RE.test(upper)) push(feeGroups, item.clean || 'BANK FEE', debit);
       else if (item.clean) push(groups, item.clean, debit);
     });
 
@@ -341,23 +242,11 @@ export function analyse(transactions) {
     if (leak) leaks.push(leak);
   });
 
-  borrowGroups.forEach((list, key) => {
-    const leak = costLeak(key, list, 'borrowing');
-    if (leak) leaks.push(leak);
-  });
-
-  surchargeGroups.forEach((list, key) => {
-    const leak = costLeak(key, list, 'surcharge');
-    if (leak) leaks.push(leak);
-  });
-
   groups.forEach((list, key) => {
     const result = merchantLeak(key, list);
     if (result.leak) leaks.push(result.leak);
     if (result.subscription) subscriptions.push(result.subscription);
   });
-
-  leaks.push(...overlapLeaks(groups));
 
   leaks.forEach((leak) => { leak.months = span; });
   subscriptions.forEach((item) => { item.months = span; });

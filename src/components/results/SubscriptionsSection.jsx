@@ -17,10 +17,6 @@ export default function SubscriptionsSection({ subscriptions }) {
     setAnswers((current) => ({ ...current, [id]: current[id] === key ? undefined : key }));
   };
 
-  const answeredYes = subscriptions.filter((item) => answers[item.id] === 'yes');
-  const answeredCount = subscriptions.filter((item) => answers[item.id]).length;
-  const yesMonthly = answeredYes.reduce((sum, item) => sum + item.monthly, 0);
-
   return (
     <section className="mt-8">
       <h2 className="text-[15px] font-semibold tracking-tight text-white">Still using these?</h2>
@@ -61,20 +57,6 @@ export default function SubscriptionsSection({ subscriptions }) {
           </CardItem>
         ))}
       </CardList>
-
-      {answeredCount > 0 && (
-        <p className="mt-2.5 text-[12.5px] leading-relaxed text-muted-foreground">
-          {answeredYes.length > 0 ? (
-            <>
-              You&apos;d sign up again for <strong className="text-foreground">{answeredYes.length}</strong> of{' '}
-              {answeredCount} answered today, costing {money(yesMonthly)} a month.
-            </>
-          ) : (
-            <>You wouldn&apos;t sign up again for any of the {answeredCount} you answered.</>
-          )}
-          {answeredCount < subscriptions.length && ' Answer the rest to see the full picture.'}
-        </p>
-      )}
     </section>
   );
 }

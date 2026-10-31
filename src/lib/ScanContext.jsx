@@ -6,8 +6,6 @@ import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
 
 const STEP_COUNT = 4;
 
-const wait = (ms) => new Promise((resolve) => { setTimeout(resolve, ms); });
-
 function initialSteps() {
   return Array.from({ length: STEP_COUNT }, (_, index) => (index === 0 ? 'active' : 'pending'));
 }
@@ -21,7 +19,7 @@ function withinMonths(transactions, months) {
   cutoff.setUTCDate(1);
   cutoff.setUTCMonth(cutoff.getUTCMonth() - (months - 1));
   const floor = cutoff.toISOString().slice(0, 10);
-  return transactions.filter((item) => !item.date || item.date > floor);
+  return transactions.filter((item) => !item.date || item.date >= floor);
 }
 
 const ScanContext = createContext(null);
@@ -35,11 +33,6 @@ export function ScanProvider({ children }) {
   const [transactions, setTransactions] = useState(null);
   const [windowMonths, setWindowMonths] = useState(0);
   const [fileErrors, setFileErrors] = useState([]);
-
-  const advance = useCallback((index) => {
-    setSteps((current) => current.map((_, i) => (i < index ? 'done' : i === index ? 'active' : 'pending')));
-    setProgress(Math.round((index / STEP_COUNT) * 100));
-  }, []);
 
   const reset = useCallback(() => {
     setStatus('idle');
@@ -67,7 +60,6 @@ export function ScanProvider({ children }) {
 
     if (useSample) {
       lists.push(parseCsv(SAMPLE_CSV));
-      await wait(600);
     } else {
       for (const file of files) {
         try {
@@ -103,13 +95,7 @@ export function ScanProvider({ children }) {
     }
 
     setTransactionCount(transactions.length);
-    advance(1);
-    await wait(700);
-    advance(2);
-    await wait(700);
-    advance(3);
     const analysis = analyse(transactions);
-    await wait(500);
 
     setSteps(Array.from({ length: STEP_COUNT }, () => 'done'));
     setProgress(100);
@@ -117,7 +103,7 @@ export function ScanProvider({ children }) {
     setTransactions(transactions);
     setStatus('done');
     return analysis;
-  }, [advance]);
+  }, []);
 
   const results = useMemo(
     () => (transactions ? analyse(withinMonths(transactions, windowMonths)) : null),
