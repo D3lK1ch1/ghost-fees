@@ -21,6 +21,15 @@ export default function PossessedReceipt({ leaks }) {
   const active = receipts.find((leak) => leak.id === activeId) || receipts[0];
   const rows = active.rows || [];
   const printed = rows.reduce((sum, row) => sum + row.amount, 0);
+  // Several statements: one section per bank and file, each with its own subtotal.
+  const groups = [];
+  rows.forEach((row) => {
+    const label = row.source || 'Your statement';
+    const group = groups.find((item) => item.label === label);
+    if (group) group.rows.push(row);
+    else groups.push({ label, rows: [row] });
+  });
+  const grouped = groups.length > 1;
 
   return (
     <>
@@ -78,17 +87,27 @@ export default function PossessedReceipt({ leaks }) {
 
                 <div className="my-3 border-t border-dashed border-[#1b1233]/30" />
 
-                <ul className="space-y-1.5">
-                  {rows.map((row, index) => (
-                    <li key={`${row.date}-${index}`} className="flex items-baseline gap-2">
-                      <span className="w-[52px] shrink-0 text-[#7a6f8f]">{rowDate(row.date)}</span>
-                      <span className="min-w-0 flex-1 truncate">{row.description}</span>
-                      <span className={cn('shrink-0 tabular-nums', row.wasted && 'font-bold')}>
-                        {money(row.amount)}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
+                {groups.map((group) => (
+                  <div key={group.label} className={cn(grouped && 'mb-3')}>
+                    {grouped && (
+                      <p className="mb-1.5 flex items-baseline justify-between border-b border-[#1b1233]/20 pb-1 text-[11px] font-bold uppercase tracking-[0.12em]">
+                        <span className="truncate">{group.label}</span>
+                        <span className="shrink-0 tabular-nums">{money(group.rows.reduce((sum, row) => sum + row.amount, 0))}</span>
+                      </p>
+                    )}
+                    <ul className="space-y-1.5">
+                      {group.rows.map((row, index) => (
+                        <li key={`${row.date}-${index}`} className="flex items-baseline gap-2">
+                          <span className="w-[52px] shrink-0 text-[#7a6f8f]">{rowDate(row.date)}</span>
+                          <span className="min-w-0 flex-1 truncate">{row.description}</span>
+                          <span className={cn('shrink-0 tabular-nums', row.wasted && 'font-bold')}>
+                            {money(row.amount)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
 
                 <div className="my-3 border-t border-dashed border-[#1b1233]/30" />
 

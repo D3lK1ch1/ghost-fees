@@ -72,16 +72,18 @@ export function ScanProvider({ children }) {
             const text = await file.text();
             const rows = parseCsv(text);
             if (!rows.length) throw new Error('No transactions found in this file.');
-            lists.push(rows.map((row) => ({ ...row, source: file.name })));
-            names.push(sourceLabel(file.name, text));
+            const label = sourceLabel(file.name, text);
+            lists.push(rows.map((row) => ({ ...row, source: label })));
+            names.push(label);
           } else if (/\.pdf$/i.test(file.name)) {
             const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
             const response = await base44.functions.invoke('parseStatement', { file_uri });
             const data = response?.data || {};
             if (data.error) errors.push({ name: file.name, message: data.error });
             else if (Array.isArray(data.transactions) && data.transactions.length) {
-              lists.push(data.transactions.map((row) => ({ ...row, source: file.name })));
-              names.push(sourceLabel(file.name));
+              const label = sourceLabel(file.name);
+              lists.push(data.transactions.map((row) => ({ ...row, source: label })));
+              names.push(label);
             } else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
           } else {
             throw new Error("This isn't a CSV or PDF.");
