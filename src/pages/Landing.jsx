@@ -10,6 +10,8 @@ import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
 
+const DEEP_LINK_TABS = ['ghosts', 'house', 'path', 'calendar', 'emails', 'subscriptions', 'receipt', 'feedback'];
+
 export default function Landing() {
   const { status, fileErrors, results, runScan, reset } = useScan();
   const [usedSample, setUsedSample] = useState(false);
@@ -21,6 +23,8 @@ export default function Landing() {
   useEffect(() => {
     reset();
     setScanDone(false);
+    // Shareable links like /#house or /#path open the sample straight on that tab.
+    if (DEEP_LINK_TABS.includes(window.location.hash.slice(1))) scan([], true);
   }, [reset]);
 
   const scan = async (files, useSample) => {
