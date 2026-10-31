@@ -46,9 +46,8 @@ export default async function (req) {
     const bank = String(payload?.bank || '');
 
     if (!fileUri) return Response.json({ error: 'Missing statement file.' }, { status: 400 });
-    if (!BANK_NAMES[bank]) return Response.json({ error: 'Choose ANZ, CommBank or NAB.' }, { status: 400 });
 
-    const bankName = BANK_NAMES[bank];
+    const bankName = BANK_NAMES[bank] || 'Australian';
     const { signed_url } = await base44.asServiceRole.integrations.Core.CreateFileSignedUrl({
       file_uri: fileUri,
       expires_in: 600,
@@ -68,7 +67,7 @@ export default async function (req) {
 
       const form = new FormData();
       form.append('FILE', await download.blob(), 'statement.pdf');
-      form.append('bank', bank);
+      if (bank) form.append('bank', bank);
 
       const parsed = await fetch(endpoint, { method: 'POST', body: form, signal: AbortSignal.timeout(120000) });
       const json = await parsed.json().catch(() => ({}));

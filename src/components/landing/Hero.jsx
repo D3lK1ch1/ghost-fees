@@ -29,13 +29,13 @@ export default function Hero({ onSample, onUpload }) {
             className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[0.04] px-6 py-3.5 text-[15px] font-medium text-white transition-colors hover:border-white/25 hover:bg-white/[0.07]"
           >
             <Upload className="h-4 w-4" strokeWidth={2.4} />
-            Upload my CSV
+            Upload my CSV or PDF
           </button>
         </div>
 
         <p className="mt-6 flex items-center gap-2 text-[13px] leading-relaxed text-muted-foreground/80">
           <Lock className="h-3.5 w-3.5 shrink-0" />
-          Processed in your browser. Never stored.
+          CSVs are processed in your browser. PDFs are read once, then deleted.
         </p>
       </div>
 

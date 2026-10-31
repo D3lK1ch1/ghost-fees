@@ -24,7 +24,7 @@ export default function Landing() {
   };
 
   const handleFiles = (event) => {
-    const picked = Array.from(event.target.files || []).filter((file) => /\.csv$/i.test(file.name));
+    const picked = Array.from(event.target.files || []).filter((file) => /\.(csv|pdf)$/i.test(file.name));
     event.target.value = '';
     if (picked.length) scan(picked, false);
   };
@@ -56,7 +56,7 @@ export default function Landing() {
       <input
         ref={inputRef}
         type="file"
-        accept=".csv,text/csv"
+        accept=".csv,.pdf,text/csv,application/pdf"
         multiple
         className="hidden"
         onChange={handleFiles}
