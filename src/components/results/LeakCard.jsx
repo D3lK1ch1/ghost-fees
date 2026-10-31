@@ -1,6 +1,6 @@
 import { Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { money, moneyWhole } from '@/lib/ghostFees/format';
+import { money } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 
 export default function LeakCard({ leak, onDraft }) {
@@ -18,10 +18,12 @@ export default function LeakCard({ leak, onDraft }) {
         </div>
         <div className="shrink-0 text-right">
           <div className="text-[1.35rem] font-semibold leading-none tabular-nums text-white">
-            {moneyWhole(leak.yearly)}
-            <span className="text-[12px] font-normal text-muted-foreground">/yr</span>
+            {money(leak.monthly)}
+            <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
           </div>
-          <div className="mt-1.5 text-[12px] text-muted-foreground">{money(leak.monthly)}/mo</div>
+          <div className="mt-1.5 text-[12px] text-muted-foreground">
+            {money(leak.observed)} in {leak.months} mo
+          </div>
         </div>
       </div>
 

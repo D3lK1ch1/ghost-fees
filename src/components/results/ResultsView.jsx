@@ -30,7 +30,7 @@ export default function ResultsView({ analysis, usedSample, onRestart }) {
       />
 
       <main className="mx-auto w-full max-w-3xl px-5 pb-24 sm:px-8">
-        <LeakTotal total={total} />
+        <LeakTotal total={total} months={analysis.monthSpan} />
 
         {!enoughHistory && (
           <div className="mt-4 rounded-2xl border border-[#ffb37c]/25 bg-[#ffb37c]/[0.06] px-4 py-3.5 text-[13px] leading-relaxed text-[#ffb37c]">

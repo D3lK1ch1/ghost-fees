@@ -106,7 +106,7 @@ export default function FeedbackAdmin() {
                         <span className="rounded-full bg-white/[0.06] px-2 py-0.5">
                           would pay: {row.would_pay || '—'}
                         </span>
-                        <span>{row.leaks_found || 0} leaks · {money(row.yearly_total)}/yr</span>
+                        <span>{row.leaks_found || 0} leaks · {money(row.yearly_total)} found</span>
                         {row.builder_name && <span>builder: {row.builder_name}</span>}
                       </div>
                       {row.most_useful_leak && (

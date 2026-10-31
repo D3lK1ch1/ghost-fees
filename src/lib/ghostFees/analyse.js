@@ -61,16 +61,15 @@ function push(map, key, item) {
 }
 
 function feeLeak(key, list, span) {
-  const total = list.reduce((sum, item) => sum + item.value, 0);
-  const yearly = round2((total * 12) / Math.max(span, 1));
-  if (yearly <= 0) return null;
+  const observed = round2(list.reduce((sum, item) => sum + item.value, 0));
+  if (observed <= 0) return null;
   return {
     id: `fee:${key}`,
     merchant: titleCase(key),
     badge: 'Bank fee',
-    monthly: round2(yearly / 12),
-    yearly,
-    reason: `${list.length} fee ${list.length === 1 ? 'charge' : 'charges'} totalling ${money(total)}, scaled to 12 months.`,
+    monthly: round2(observed / Math.max(span, 1)),
+    observed,
+    reason: `${list.length} fee ${list.length === 1 ? 'charge' : 'charges'} in this statement.`,
   };
 }
 
@@ -79,7 +78,8 @@ function merchantLeak(key, list) {
   list.forEach((item) => totals.set(monthKey(item.date), (totals.get(monthKey(item.date)) || 0) + item.value));
   const months = [...totals.keys()].sort();
   const recurring = months.length >= 3;
-  const base = { id: `m:${key}`, merchant: titleCase(key) };
+  const observed = round2(list.reduce((sum, item) => sum + item.value, 0));
+  const base = { id: `m:${key}`, merchant: titleCase(key), observed };
 
   // Trial converted
   const trialIndex = list.findIndex((item) => item.value === 0 || TRIAL_RE.test(item.description.toUpperCase()));
@@ -94,7 +94,6 @@ function merchantLeak(key, list) {
         ...base,
         badge: 'Trial converted',
         monthly: price,
-        yearly: round2(price * 12),
         reason: `Free trial on ${shortDate(trial.date)} turned into ${money(price)} charges.`,
       };
     }
@@ -112,7 +111,6 @@ function merchantLeak(key, list) {
         ...base,
         badge: 'Price creep',
         monthly: round2(last),
-        yearly: round2(diff * 12),
         reason: `Was ${money(first)}, now ${money(last)} since ${shortDate(changeDate)}.`,
       };
     }
@@ -134,7 +132,6 @@ function merchantLeak(key, list) {
       ...base,
       badge: 'Duplicate',
       monthly: dupAmount,
-      yearly: round2(dupAmount * 12),
       reason: `Charged ${money(dupAmount)} twice within 2 days in ${dupMonths.size} months.`,
     };
   }
@@ -147,7 +144,6 @@ function merchantLeak(key, list) {
       ...base,
       badge: 'Still using this?',
       monthly,
-      yearly: round2(monthly * 12),
       reason: `Charged in ${months.length} different months.`,
     };
   }
@@ -175,14 +171,15 @@ export function analyse(transactions) {
   });
   groups.forEach((list, key) => {
     const leak = merchantLeak(key, list);
-    if (leak && leak.yearly > 0) leaks.push(leak);
+    if (leak && leak.observed > 0) leaks.push(leak);
   });
 
-  leaks.sort((a, b) => b.yearly - a.yearly);
+  leaks.forEach((leak) => { leak.months = span; });
+  leaks.sort((a, b) => b.observed - a.observed);
 
   return {
     leaks,
-    total: round2(leaks.reduce((sum, leak) => sum + leak.yearly, 0)),
+    total: round2(leaks.reduce((sum, leak) => sum + leak.observed, 0)),
     monthSpan: span,
     enoughHistory: span >= MIN_MONTHS,
     transactionCount: transactions.length,
