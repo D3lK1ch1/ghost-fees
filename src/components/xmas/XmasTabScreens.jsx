@@ -10,6 +10,7 @@ import { Disclaimer, Kicker, Spirit, Stocking, Title, XScreen, useSeason } from 
 //   Calendar  > Stave three, the Hooded One (CW5): the next 12 months
 //   Emails    > Stave two, Jolly's table (CW4): every dish is something you pay for
 //   Subscriptions > Changed my ways (CW6): the cancel list with Tiny Savings
+//   Receipt   > The gift tag (CW8): one more gift to yourself, real totals only
 
 function FeesPast({ leaks, total, X, season }) {
   return (
@@ -102,6 +103,36 @@ function Present({ subscriptions, X, season }) {
   );
 }
 
+function GiftTag({ leaks, subscriptions, total, X, season }) {
+  const yearly = subscriptions.reduce((sum, item) => sum + (Number(item.monthly) || 0), 0) * 12;
+  const biggest = leaks[0];
+  const lines = [
+    total > 0 && [`${money(total)}`, 'lost to fees and leaks on this statement'],
+    yearly > 0 && [`${money(yearly)} a year`, `on ${subscriptions.length} subscriptions`],
+    biggest && [biggest.title || biggest.merchant, `your biggest ghost, ${money(biggest.amount)}`],
+  ].filter(Boolean);
+  return (
+    <XScreen X={X} season={season}>
+      <div className="relative flex items-end gap-1.5">
+        <img src={XMAS.morning(season)} alt="" width={150} className="x-bob h-[110px] w-[150px] flex-none rounded-2xl object-cover" />
+        <Title size={26}>One more gift to yourself.</Title>
+      </div>
+      <div className="relative flex flex-col gap-2 py-4 pl-[34px] pr-4" style={{ borderRadius: '8px 22px 22px 8px', background: X.cream, color: '#1a1a22', clipPath: 'polygon(22px 0, 100% 0, 100% 100%, 22px 100%, 0 50%)' }}>
+        <span aria-hidden="true" className="absolute left-2.5 top-1/2 -mt-[5px] h-2.5 w-2.5 rounded-full" style={{ background: X.bg }} />
+        <div className="text-[12px] font-extrabold tracking-wide" style={{ color: '#2d6b4f' }}>FROM YOUR STATEMENT</div>
+        {lines.map(([big, small]) => (
+          <div key={small} className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{big}</b>: {small}</div></div>
+        ))}
+        <div className="pt-2 text-[12px] font-extrabold tracking-wide" style={{ borderTop: '1px dashed #c9b28a', color: '#6b5a40' }}>AND FOR EVERYONE</div>
+        <div className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>Up to $1,739 a year</b>: wasted on unused subscriptions <span style={{ color: '#6b5a40' }}>(Compare the Market, 2026)</span></div></div>
+        <div className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>9 months</b>: how long people take to cancel <span style={{ color: '#6b5a40' }}>(ING)</span></div></div>
+      </div>
+      <div className="relative text-center text-[13px] font-extrabold" style={{ color: X.mint }}>Every charge is on the receipt below. Print it, or keep it for the bank.</div>
+      <Disclaimer X={X} />
+    </XScreen>
+  );
+}
+
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
 function YetToCome({ subscriptions, X, season }) {
@@ -142,5 +173,6 @@ export default function XmasTabScreens({ tab, leaks = [], subscriptions = [], to
   if (tab === 'calendar' && subscriptions.length) return wrap(<YetToCome subscriptions={subscriptions} X={X} season={season} />);
   if (tab === 'emails' && subscriptions.length) return wrap(<Present subscriptions={subscriptions} X={X} season={season} />);
   if (tab === 'subscriptions' && subscriptions.length) return <div className="mb-5 mt-4"><ChangedMyWays subscriptions={subscriptions} /></div>;
+  if (tab === 'receipt' && leaks.length) return wrap(<GiftTag leaks={leaks} subscriptions={subscriptions} total={total} X={X} season={season} />);
   return null;
 }
