@@ -7,6 +7,7 @@ import GhostMark from '@/components/site/GhostMark';
 import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
+import ExLeakCard from '@/components/ex/ExLeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
 import ExJourney from '@/components/ex/ExJourney';
@@ -45,6 +46,10 @@ const TABS = [
   { key: 'receipt', label: 'Possessed receipt', Icon: Receipt, title: 'Possessed receipt', blurb: 'Every ghost charge printed on one spooky receipt.' },
   { key: 'feedback', label: 'Feedback', Icon: MessageSquareHeart, title: 'Tell us in 20 seconds', blurb: 'Did it find something real? It helps us tune the ghost detector.' },
 ];
+
+// 💔 only shows the sections that exist in its design: the ex cards, Heartbreak
+// House, the subscriptions list and feedback. The rest are Haunted House screens.
+const EX_TABS = new Set(['ghosts', 'house', 'subscriptions', 'feedback']);
 
 const ANSWERS_KEY = 'ghostFees.subAnswers';
 
@@ -99,7 +104,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [guessDone, setGuessDone] = useState(false);
   const cancelSubs = subscriptions.filter((item) => subAnswers[item.id] === 'no');
   const draftCancel = (item) => openEmail({ id: `sub:${item.id}`, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' });
-  const current = TABS.find((item) => item.key === tab);
+  const tabs = useMemo(() => (theme.key === 'ex' ? TABS.filter((item) => EX_TABS.has(item.key)) : TABS), [theme.key]);
+  useEffect(() => {
+    if (!tabs.some((item) => item.key === tab)) setTab('ghosts');
+  }, [tabs, tab]);
+  const current = tabs.find((item) => item.key === tab) || tabs[0];
 
   // Wipes everything from this tab: results, busted ghosts, goals and chat.
   const clearData = () => {
@@ -243,7 +252,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               aria-label="Results sections"
               className="sticky top-0 z-20 -mx-5 mb-4 flex gap-1.5 overflow-x-auto border-b border-border bg-background/90 px-5 py-2.5 backdrop-blur sm:-mx-8 sm:px-8 lg:top-4 lg:mx-0 lg:mb-0 lg:flex-col lg:self-start lg:overflow-visible lg:rounded-2xl lg:border lg:bg-card/80 lg:p-2"
             >
-              {TABS.map((item) => (
+              {tabs.map((item) => (
                 <button
                   key={item.key}
                   type="button"
@@ -293,7 +302,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                             Most useful
                           </span>
                         )}
-                        <LeakCard leak={leak} avatar={avatarFor(leak.merchant)} onDraft={() => openEmail(leak)} />
+                        {theme.key === 'ex' ? (
+                          <ExLeakCard leak={leak} avatar={avatarFor(leak.merchant)} primary={index === 0} onDraft={() => openEmail(leak)} />
+                        ) : (
+                          <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
+                        )}
                       </div>
                     </CardItem>
                   ))}
