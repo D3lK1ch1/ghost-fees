@@ -26,7 +26,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
   const stave = staves[Math.min(step, staves.length - 1)];
   const next = () => setStep((value) => Math.min(value + 1, staves.length - 1));
 
-  const kicker = 'text-[11px] font-bold uppercase tracking-[0.14em] text-primary';
+  const kicker = 'text-[11px] font-bold uppercase tracking-[0.14em] text-[#e8563f]';
   const title = 'mt-1 font-heading text-[20px] font-bold leading-tight text-foreground';
   const art = 'h-auto w-[130px] shrink-0 sm:w-[150px]';
 

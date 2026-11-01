@@ -8,25 +8,38 @@ export default function ThemeSwitcher() {
   const { theme, setThemeKey } = useTheme();
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <span className="font-heading text-[10.5px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Theme</span>
-      <div role="radiogroup" aria-label="Theme" className="flex items-center gap-1 rounded-full border border-border bg-card/70 p-1">
-        {THEME_LIST.map((item) => (
-          <button
-            key={item.key}
-            type="button"
-            role="radio"
-            aria-checked={theme.key === item.key}
-            title={item.label}
-            onClick={() => setThemeKey(item.key)}
-            className={cn(
-              'flex h-7 items-center gap-1.5 rounded-full px-2 text-[12.5px] font-medium transition-colors',
-              theme.key === item.key ? 'bg-primary/25 text-foreground ring-1 ring-primary' : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            <span aria-hidden="true" className="text-[15px] leading-none">{item.emoji}</span>
-            <span className="whitespace-nowrap sr-only sm:not-sr-only sm:inline">{item.label}</span>
-          </button>
-        ))}
+      <span className="font-heading text-[10px] font-semibold uppercase leading-none tracking-[0.2em] text-muted-foreground">
+        Theme
+      </span>
+      <div
+        role="radiogroup"
+        aria-label="Theme"
+        className="flex items-center gap-0.5 rounded-full border border-border/80 bg-card/60 p-1"
+      >
+        {THEME_LIST.map((item) => {
+          const active = theme.key === item.key;
+          return (
+            <button
+              key={item.key}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              title={item.label}
+              onClick={() => setThemeKey(item.key)}
+              className={cn(
+                'flex h-8 items-center gap-1.5 rounded-full px-2 transition-colors sm:px-2.5',
+                active
+                  ? 'bg-primary/20 text-foreground ring-1 ring-primary/80'
+                  : 'text-muted-foreground hover:bg-card/80 hover:text-foreground',
+              )}
+            >
+              <span aria-hidden="true" className="text-[15px] leading-none">{item.emoji}</span>
+              <span className="sr-only whitespace-nowrap text-[13px] font-semibold leading-none tracking-tight sm:not-sr-only sm:inline">
+                {item.label}
+              </span>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
