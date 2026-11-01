@@ -1,6 +1,7 @@
 import ReceiptGhost from '@/components/site/ReceiptGhost';
 import { useState } from 'react';
 import { useGhostList } from '@/hooks/use-ghost-list';
+import FkJar from './FkJar';
 import { money } from '@/lib/ghostFees/format';
 import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import { MilestoneIcon } from './GlowUpFund';
@@ -279,22 +280,21 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
         <div className="text-[14px]" style={{ color: C.soft }}>{pick.splurgeSub}</div>
       </div>
 
-      {/* F**k-ex jar: progress toward every treat, with the party ghost beside it. */}
-      <div className="relative flex items-end gap-2 rounded-[20px] p-3" style={{ ...card }}>
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5 pb-1">
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="ex-fredoka text-[16px] font-semibold">F**k-ex jar</span>
-            <span className="text-[13px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
-          </div>
-          <div className="h-3 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
-            <div className="ex-bar h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${C.coral}, ${C.mint})` }} />
-          </div>
-          <div className="text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</div>
+      {/* The F**k-ex jar fills with coins as you block exes (amount counts up), with
+          the party ghost beside it; her bubble dances with her, tail at her mouth. */}
+      <div className="relative flex flex-col gap-2 rounded-[20px] px-3 pb-2 pt-3" style={{ ...card }}>
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="ex-fredoka text-[17px] font-semibold">F**k-ex jar</span>
+          <span className="text-[13px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
         </div>
-        <div className="relative flex flex-none flex-col items-center">
-          <Bubble kind="r" className="ex-in -mb-1 !min-w-0 !px-4 !pb-6 !pt-2.5 text-[12px]" style={{ animationDelay: '.6s' }}>Feel it.</Bubble>
-          <img src={pick.party} alt="Your party ghost" className="ex-dance h-[84px] w-auto object-contain" style={{ '--gs': '1.8s' }} />
+        <div className="flex items-end justify-between">
+          <FkJar amount={fund} total={total} size={112} />
+          <div className="ex-dance relative mr-2 flex-none" style={{ '--gs': '1.8s' }}>
+            <img src={pick.party} alt="Your party ghost" className="block h-[104px] w-auto object-contain" />
+            <Bubble kind="r" className="ex-in absolute bottom-[calc(100%-46px)] right-[calc(100%-40px)] !min-w-0 whitespace-nowrap !px-4 !pb-6 !pt-2.5 text-[13px]" style={{ animationDelay: '.6s' }}>Feel it.</Bubble>
+          </div>
         </div>
+        <span className="text-center text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</span>
       </div>
 
       <div className="relative grid grid-cols-2 gap-x-3 gap-y-5 pt-3">
