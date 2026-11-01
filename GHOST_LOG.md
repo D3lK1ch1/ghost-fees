@@ -82,3 +82,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ScanContext.jsx, base44/functions/parseStatement
 - How to test: upload a CSV or PDF over 5 MB: the error screen names the file and says it's over 5 MB.
 - User feedback that drove this: (fill in)
+
+### Privacy page: exactly what we keep
+- What: new /privacy page (footer link) with a table of everything stored, where and for how long, including the honest note that PDFs are still kept in Base44 private storage for now. "Delete my data" explains Clear my data for browser data and how to ask for server data to be deleted.
+- Files: src/pages/Privacy.jsx (new), App.jsx, SiteFooter.jsx
+- How to test: footer > Privacy. To do: add a contact email for deletion requests, and update the PDF row once PDFs are deleted after reading.
+- User feedback that drove this: (fill in)

@@ -9,6 +9,8 @@ export default function SiteFooter() {
         <Link to="/about" className="font-bold text-primary underline-offset-4 hover:underline">About us</Link>
         {' · '}
         <Link to="/progress" className="font-bold text-primary underline-offset-4 hover:underline">Our progress</Link>
+        {' · '}
+        <Link to="/privacy" className="font-bold text-primary underline-offset-4 hover:underline">Privacy</Link>
       </p>
       <p className="mt-1">
         Original art and animations. Type: Fredoka, Nunito and VT323 (Google Fonts, open licences).
