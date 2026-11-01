@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { secrets } from 'base44:runtime';
 
 const BANK_NAMES = { anz: 'ANZ', commonwealth: 'CommBank', nab: 'NAB' };
+const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
 const TRANSACTION_SCHEMA = {
   type: 'object',
@@ -50,8 +51,15 @@ export default async function (req) {
     const bankName = BANK_NAMES[bank] || 'Australian';
     const { signed_url } = await base44.asServiceRole.integrations.Core.CreateFileSignedUrl({
       file_uri: fileUri,
-      expires_in: 600,
+      expires_in: 120,
     });
+
+    // Same 5 MB limit as the browser. Never log statement contents.
+    const head = await fetch(signed_url, { method: 'HEAD', signal: AbortSignal.timeout(10000) }).catch(() => null);
+    const size = Number(head?.headers.get('content-length') || 0);
+    if (size > MAX_FILE_BYTES) return Response.json({ error: 'This file is over 5 MB. Try exporting a shorter date range.' });
+    const type = head?.headers.get('content-type') || '';
+    if (type && !/pdf|octet-stream/i.test(type)) return Response.json({ error: "This isn't a PDF." });
 
     let endpoint = '';
     try {

@@ -5,6 +5,8 @@ import { analyse, mergeTransactions } from '@/lib/ghostFees/analyse';
 import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
 import { sourceLabel } from '@/lib/ghostFees/detectBank';
 
+const MAX_FILE_BYTES = 5 * 1024 * 1024;
+
 const STEP_COUNT = 4;
 
 function initialSteps() {
@@ -68,6 +70,8 @@ export function ScanProvider({ children }) {
     } else {
       for (const file of files) {
         try {
+          // Same limit is checked again on the server for PDFs.
+          if (file.size > MAX_FILE_BYTES) throw new Error('This file is over 5 MB. Try exporting a shorter date range.');
           if (/\.csv$/i.test(file.name)) {
             const text = await file.text();
             const rows = parseCsv(text);

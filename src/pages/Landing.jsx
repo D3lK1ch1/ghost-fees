@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
 import UseCases from '@/components/landing/UseCases';
+import FoundersSection from '@/components/landing/FoundersSection';
 import UploadErrors from '@/components/landing/UploadErrors';
 import SeanceScreen from '@/components/scan/SeanceScreen';
 import { CrtOverlay } from '@/components/GhostAnimations';
@@ -9,6 +10,12 @@ import ResultsView from '@/components/results/ResultsView';
 import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
+import { useAuth } from '@/lib/AuthContext';
+import { canScanFree, recordScan } from '@/lib/ghostFees/scanQuota';
+import Paywall from '@/components/scan/Paywall';
+import FromGhostIt from '@/components/landing/FromGhostIt';
+import { readGhostItParams } from '@/lib/ghostFees/ghostItLink';
+import { base44 } from '@/api/base44Client';
 
 const DEEP_LINK_TABS = ['ghosts', 'house', 'path', 'calendar', 'emails', 'subscriptions', 'receipt', 'feedback'];
 
@@ -17,6 +24,16 @@ export default function Landing() {
   const [usedSample, setUsedSample] = useState(false);
   const [scanDone, setScanDone] = useState(false);
   const inputRef = useRef(null);
+  const { user, isAuthenticated } = useAuth();
+  const [paywall, setPaywall] = useState(false);
+  const unlimited = Boolean(isAuthenticated && (user?.paid || user?.role === 'admin'));
+  const [ghostIt] = useState(() => readGhostItParams(typeof window !== 'undefined' ? window.location.search : ''));
+
+  // Count visits from the Ghost It agent (ref + how many subs only).
+  useEffect(() => {
+    if (!ghostIt.ref) return;
+    base44.functions.invoke('logRefVisit', { ref: ghostIt.ref, subs_count: ghostIt.subs.length }).catch(() => {});
+  }, [ghostIt]);
 
   const handleScanDone = useCallback(() => setScanDone(true), []);
 
@@ -32,6 +49,7 @@ export default function Landing() {
     setUsedSample(useSample);
     trackEvent('scan_started');
     const outcome = await runScan({ files, useSample });
+    if (outcome && !useSample && files.length) recordScan(files);
     if (outcome) trackEvent('scan_finished');
   };
 
@@ -39,7 +57,13 @@ export default function Landing() {
     // Unsupported files go through too, so the error screen can name them.
     const picked = Array.from(event.target.files || []);
     event.target.value = '';
-    if (picked.length) scan(picked, false);
+    if (!picked.length) return;
+    if (!unlimited && !canScanFree(picked)) {
+      trackEvent('paywall_shown');
+      setPaywall(true);
+      return;
+    }
+    scan(picked, false);
   };
 
   const analysisReady = Boolean(status === 'done' && results);
@@ -61,16 +85,19 @@ export default function Landing() {
   } else {
     content = (
     <div className="min-h-screen">
-      <BrandHeader right={<span className="text-[13px] font-bold text-muted-foreground">Takes about a minute</span>} />
+      <BrandHeader right={<span className="hidden text-[13px] font-bold text-muted-foreground sm:inline">Takes about a minute</span>} />
       {fileErrors.length > 0 ? (
         <UploadErrors errors={fileErrors} onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
       ) : (
         <>
+          {ghostIt.subs.length > 0 && <FromGhostIt subs={ghostIt.subs} onScan={() => inputRef.current?.click()} />}
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <UseCases />
+          <FoundersSection />
           <SiteFooter />
         </>
       )}
+      <Paywall open={paywall} onClose={() => setPaywall(false)} signedIn={isAuthenticated} onSample={() => { setPaywall(false); scan([], true); }} />
       <input
         ref={inputRef}
         type="file"
