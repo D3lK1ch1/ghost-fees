@@ -1,0 +1,17 @@
+// When each daily clean-up job last ran (date only), so a job that runs from a
+// busy function happens at most once a day. No user data. Admin and backend only.
+{
+  "name": "Maintenance",
+  "type": "object",
+  "properties": {
+    "key": { "type": "string", "description": "Which job, e.g. anonymise_feedback" },
+    "last_run": { "type": "string", "format": "date", "description": "UTC day it last ran" }
+  },
+  "required": ["key"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}
