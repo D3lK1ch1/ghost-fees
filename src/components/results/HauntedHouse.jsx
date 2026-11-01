@@ -113,7 +113,7 @@ function useTween(value) {
   return shown;
 }
 
-function Room({ room, leaks, cleared, flying, active, onSelect, className, delay = 0 }) {
+function Room({ room, leaks, cleared, flying, active, onSelect, className, delay = 0, biggestId }) {
   const haunting = leaks.filter((leak) => !cleared.has(leak.id));
   const left = haunting.length;
   const size = left > 3 ? 'h-12 w-12' : left > 1 ? 'h-14 w-14' : 'h-20 w-20';
@@ -181,7 +181,7 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
               className={flying.has(leak.id) ? 'animate-fly-away' : 'animate-bob'}
               style={flying.has(leak.id) ? undefined : { animationDelay: `${index * 0.4}s` }}
             >
-              <GhostTip label={leak.title || leak.merchant} detail={`${leak.badge} · ${money(leak.amount)}`}>
+              <GhostTip biggest={leak.id === biggestId} label={leak.title || leak.merchant} detail={`${leak.badge} · ${money(leak.amount)}`}>
                 <HouseGhost room={room.key} index={index} className={size} />
               </GhostTip>
             </span>
@@ -330,7 +330,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             <Room
               room={ROOMS[0]}
               leaks={byRoom.attic}
-              cleared={clearedSet} flying={flyingSet}
+              cleared={clearedSet} flying={flyingSet} biggestId={leaks[0]?.id}
               active={room.key === 'attic'}
               onSelect={() => selectRoom('attic')}
               className="mx-auto -mt-20 w-[58%] sm:-mt-24"
@@ -338,11 +338,11 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             />
             <div className="grid grid-cols-2 gap-3">
               {[ROOMS[1], ROOMS[2]].map((item) => (
-                <Room key={item.key} room={item} leaks={byRoom[item.key]} cleared={clearedSet} flying={flyingSet} active={room.key === item.key} onSelect={() => selectRoom(item.key)} delay={item.key === 'guest' ? 1.3 : 2.1} />
+                <Room key={item.key} room={item} leaks={byRoom[item.key]} cleared={clearedSet} flying={flyingSet} biggestId={leaks[0]?.id} active={room.key === item.key} onSelect={() => selectRoom(item.key)} delay={item.key === 'guest' ? 1.3 : 2.1} />
               ))}
             </div>
             {byRoom.hallway.length || !onSetGoals ? (
-              <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} flying={flyingSet} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
+              <Room room={ROOMS[3]} leaks={byRoom.hallway} cleared={clearedSet} flying={flyingSet} biggestId={leaks[0]?.id} active={room.key === 'hallway'} onSelect={() => selectRoom('hallway')} delay={2.9} />
             ) : (
               // No ghosts in the hallway, so the guide uses it to help set goals.
               <div className="relative flex min-h-[130px] items-center gap-3 overflow-hidden rounded-b-xl rounded-t-[3rem] border-[3px] border-[#7a4a22] bg-gradient-to-b from-[#ffb347]/25 via-[#5a2e10]/40 to-[#2b1409] p-4 shadow-[inset_0_0_36px_rgba(255,170,80,0.3)]">
@@ -378,7 +378,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             <div className="pointer-events-none absolute -inset-x-10 -bottom-8 h-12 animate-fog-drift rounded-full bg-[#c3b8db]/10 blur-xl" />
           </div>
           <div className="bg-[#1d1720] p-3 [background-image:linear-gradient(#ffffff0a_2px,transparent_2px),linear-gradient(90deg,#ffffff0a_2px,transparent_2px)] [background-size:44px_22px]">
-            <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} flying={flyingSet} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
+            <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} flying={flyingSet} biggestId={leaks[0]?.id} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
           </div>
           <div className="relative -mx-6 mt-1 h-10 sm:-mx-10" aria-hidden="true">
             <div className="absolute inset-x-0 bottom-2 h-7 [background-image:repeating-linear-gradient(90deg,#0b0716_0,#0b0716_3px,transparent_3px,transparent_14px)] [mask-image:linear-gradient(to_bottom,transparent,black_25%)]" />
