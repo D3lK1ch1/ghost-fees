@@ -9,6 +9,7 @@ import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
+import ExJourney from '@/components/ex/ExJourney';
 import GuessReveal from './GuessReveal';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
@@ -70,6 +71,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   );
   const { windowMonths, setWindowMonths, fileErrors, fileNames } = useScan();
   const { theme } = useTheme();
+  // 💔 tells its own story, screen by screen, before the full results.
+  const exStory = theme.key === 'ex' && leaks.length > 0 && subscriptions.length > 0;
   const [emailLeak, setEmailLeak] = useState(null);
   const [tab, setTab] = useState(() => {
     const linked = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
@@ -177,7 +180,18 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           </label>
         </div>
 
-        {leaks.length > 0 && !guessDone ? (
+        {exStory && (
+          <ExJourney
+            theme={theme}
+            analysis={analysis}
+            fileName={usedSample ? 'sample-statement.csv' : fileNames[0] || 'your-statement.csv'}
+            avatarFor={avatarFor}
+            onSeeAll={() => document.getElementById('see-everything')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          />
+        )}
+        {exStory && <h2 id="see-everything" className="mt-10 scroll-mt-4 font-heading text-[22px] font-bold text-foreground">See everything</h2>}
+
+        {leaks.length > 0 && !guessDone && !exStory ? (
           <GuessReveal total={total} months={analysis.monthSpan} onDone={() => setGuessDone(true)} />
         ) : leaks.length ? (
           <LeakTotal
@@ -194,7 +208,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
 
-        {leaks.length > 0 && guessDone && (
+        {leaks.length > 0 && guessDone && !exStory && (
           <ThemeStory
             avatarFor={avatarFor}
             subscriptions={subscriptions}
