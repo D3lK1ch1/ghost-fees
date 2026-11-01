@@ -131,3 +131,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/guides.js, HauntedHouse.jsx, GhostGuide.jsx, src/components/site/SiteFooter.jsx
 - How to test: Haunted House porch and guide picker; Ask a ghost header; bottom of any page.
 - User feedback that drove this: "make sure text is better resized and cleaner"; tester note on text alignment in the footer.
+
+### Subscriptions: answers stick, Yes / No do something, life goals easy to find
+- What: from tester feedback. The scan and Yes / No answers now survive visiting another page and coming back (kept for this browser tab only). Answering pops up a confirmation and moves the subscription into a Decided list with Undo; To cancel ones keep the cancel link and email. A "What matters to you?" card on the Subscriptions tab opens life goals.
+- Files: src/pages/Landing.jsx, ResultsView.jsx, SubscriptionsSection.jsx
+- How to test: Try a sample statement, Subscriptions, answer Yes and No, open About us, press Back; then press Set a life goal.
+- User feedback that drove this: "clicked yes or no ... came back, the item was reset. Nothing actually happened ... Add a section on life goals and what matters to you" (tester, 4 of 5).

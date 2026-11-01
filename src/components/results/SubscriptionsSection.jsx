@@ -202,6 +202,20 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
         </p>
       )}
 
+      <div className="mt-4 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3">
+        <p className="text-[14px] font-semibold text-foreground">What matters to you?</p>
+        <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+          {cancelling.length > 0
+            ? `Cancelling frees up ${money(cancelling.reduce((sum, item) => sum + item.monthly, 0))} a month. Pick a life goal, like a holiday or a savings buffer, and watch every ghost you sort move money towards it.`
+            : 'Pick a life goal, like a holiday or a savings buffer, and watch every ghost you sort move money towards it.'}
+        </p>
+        {onOpenPath && (
+          <button type="button" onClick={onOpenPath} className="mt-2 rounded-full bg-[#5ee6c8] px-3.5 py-1.5 text-[12.5px] font-bold text-[#0f2a24]">
+            Set a life goal
+          </button>
+        )}
+      </div>
+
       <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground/90">
         <span className="font-bold text-foreground/90">Know your rights:</span> from 1 July 2027, cancelling a subscription
         must be as easy as signing up. You can report subscription traps to the{' '}
