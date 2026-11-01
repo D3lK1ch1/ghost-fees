@@ -166,31 +166,59 @@ export function BobbingGhost({ size = 72 }) {
   );
 }
 
-// Shown after a successful feedback submit.
-export function CapturedJar({ message = 'Thanks! Ghosts captured.' }) {
-  const flies = [[-140, -90], [140, -110], [-110, 60], [130, 70]];
+// Shown after a successful feedback submit: white ghosts swoop in from all sides,
+// one after another, shrink into the jar and stay inside it, bobbing behind the
+// glass. The lid wobbles on each catch. Reduced motion: ghosts just appear in the jar.
+const CATCHES = [[-170, -120, -30], [170, -130, 25], [-200, 10, -20], [200, 0, 30], [-120, -170, 15], [130, -175, -25], [-160, 90, 20], [160, 80, -15]];
+const INSIDE = [[-11, 14], [10, 12], [0, 2], [-12, -6], [11, -8], [-2, -16], [8, 24], [-8, 26]];
+const CAPTURE_CSS = `
+@keyframes gcFly{0%{opacity:0;transform:translate(var(--sx),var(--sy)) rotate(var(--rot)) scale(1)}12%{opacity:1}55%{transform:translate(calc(var(--sx)*.35),calc(var(--sy)*.35 - 40px)) rotate(calc(var(--rot)*-1)) scale(.9)}100%{opacity:0;transform:translate(0,0) rotate(0) scale(.25)}}
+@keyframes gcIn{0%{opacity:0;transform:scale(.2)}100%{opacity:1;transform:scale(1)}}
+@keyframes gcBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes gcLid{0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg) translateY(-3px)}60%{transform:rotate(8deg)}}
+@keyframes gcGlow{0%,100%{opacity:.18}50%{opacity:.45}}
+.gc-fly{animation:gcFly .9s cubic-bezier(.45,.05,.55,.95) both}
+.gc-in{animation:gcIn .3s ease-out both}
+.gc-bob{animation:gcBob 1.8s ease-in-out infinite}
+.gc-lid{animation:gcLid .35s ease-in-out 8;animation-delay:.85s;animation-duration:.28s;transform-origin:50% 100%;transform-box:fill-box}
+.gc-glow{animation:gcGlow 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.gc-fly{display:none}.gc-in,.gc-bob,.gc-lid,.gc-glow{animation:none}}
+`;
 
+export function CapturedJar({ message = 'Thanks! Ghosts captured.' }) {
   return (
-    <div className="relative mx-auto flex h-[200px] w-full max-w-[380px] flex-col items-center justify-end">
-      {flies.map(([x, y], index) => (
-        <span
-          key={`${x}-${y}`}
-          className="absolute bottom-[70px] w-7 animate-ghost-suck"
-          style={{ '--sx': `${x}px`, '--sy': `${y}px`, animationDelay: `${index * 0.12}s` }}
-        >
-          <GhostMark className="h-7 w-7 text-[#f5efe6]" eyeColor="#150e28" />
+    <div className="relative mx-auto flex h-[250px] w-full max-w-[420px] flex-col items-center justify-end">
+      <style>{CAPTURE_CSS}</style>
+      {CATCHES.map(([x, y, rot], i) => (
+        <span key={i} aria-hidden="true" className="gc-fly pointer-events-none absolute bottom-[96px] left-1/2 -ml-4 w-8" style={{ '--sx': `${x}px`, '--sy': `${y}px`, '--rot': `${rot}deg`, animationDelay: `${i * 0.28}s` }}>
+          <GhostMark className="h-8 w-8 text-[#fbf8fa] drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" eyeColor="#150e28" />
         </span>
       ))}
 
-      <svg viewBox="0 0 64 72" width="64" height="72" className="animate-ghost-jar">
-        <rect x="18" y="4" width="28" height="8" rx="2" fill="#ffaa3c" />
-        <path d="M14 14h36v46a8 8 0 0 1-8 8H22a8 8 0 0 1-8-8z" fill="rgba(255,255,255,0.12)" stroke="#f5efe6" strokeWidth="2" />
-        <circle cx="32" cy="44" r="10" fill="rgba(255,170,60,0.35)" />
-      </svg>
+      <div className="relative">
+        <svg viewBox="0 0 90 104" width="96" height="111" aria-hidden="true" className="block overflow-visible">
+          <ellipse cx="45" cy="101" rx="34" ry="3.5" fill="#000" opacity=".35" />
+          <circle className="gc-glow" cx="45" cy="64" r="30" fill="#fbf8fa" />
+          <path d="M18 24C10 26 8 32 8 42V88Q8 98 18 98H72Q82 98 82 88V42C82 32 80 26 72 24Z" fill="rgba(255,255,255,0.08)" stroke="#f4dfe4" strokeWidth="2.5" />
+          <path d="M15 46V84" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" opacity=".3" />
+          <g className="gc-lid">
+            <rect x="16" y="8" width="58" height="16" rx="5" fill="hsl(var(--primary))" />
+            <rect x="22" y="11" width="16" height="3" rx="1.5" fill="#fff" opacity=".45" />
+          </g>
+        </svg>
+        <div className="pointer-events-none absolute left-1/2 top-[66px] h-0 w-0">
+          {INSIDE.map(([x, y], i) => (
+            <span key={i} aria-hidden="true" className="gc-in absolute" style={{ left: x - 9, top: y - 9, animationDelay: `${0.85 + i * 0.28}s` }}>
+              <span className="gc-bob block" style={{ animationDelay: `${i * 0.23}s` }}>
+                <GhostMark className="h-[18px] w-[18px] text-[#fbf8fa]" eyeColor="#150e28" />
+              </span>
+            </span>
+          ))}
+        </div>
+      </div>
 
-      <p className="mt-2.5 animate-rise text-[18px] font-bold text-white" style={{ animationDelay: '1.1s' }}>
-        {message}
-      </p>
+      <p className="mt-3 animate-rise text-[18px] font-bold text-white" style={{ animationDelay: '3s' }}>{message}</p>
+      <p className="animate-rise text-[13px] text-muted-foreground" style={{ animationDelay: '3.2s' }}>{CATCHES.length} ghosts in the jar. Your answers help us catch more.</p>
     </div>
   );
 }

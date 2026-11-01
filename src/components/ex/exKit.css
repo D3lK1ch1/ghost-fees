@@ -38,3 +38,8 @@
 .bub-t::after{content:'';position:absolute;left:14px;bottom:-12px;width:11px;height:11px;border-radius:50%;background:#fbf8fa;box-shadow:-9px 11px 0 -2px #fbf8fa}
 .bub-s{background-image:url(/themes/ex/bub-shout.webp);padding:24px 34px;min-width:176px;line-height:1.2}
 @media (prefers-reduced-motion:reduce){.ex-in{animation-name:exFade}.ex-av,.ex-float,.ex-dance,.ex-shock,.ex-breathe,.ex-star,.ex-ghost,.gp-shadow{animation:none}.ex-mote{display:none}.ex-bar{transition:none}.ex-shine{animation:none;color:#ff6f7d;background:none}}
+@keyframes hhWalk{0%{transform:translateX(0)}100%{transform:translateX(118px)}}
+@keyframes hhConf{0%{transform:translateY(-170px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(30px) rotate(540deg);opacity:0}}
+.hh-walk{animation:hhWalk 1.2s .3s ease-in-out forwards}
+.hh-conf{animation:hhConf 2.6s linear infinite}
+@media (prefers-reduced-motion:reduce){.hh-conf{display:none}.hh-walk{animation:none}}

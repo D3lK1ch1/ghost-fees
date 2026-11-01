@@ -28,7 +28,7 @@ export const THEMES = {
       { match: /ICLOUD|APPLE|GOOGLE|DROPBOX/i, text: "I'm keeping all your photos. And your money." },
     ],
     fallbackLine: "Hey stranger. Still paying for me?",
-    outro: (yearly) => `Cut them loose and that's ${yearly} a year back for brunch, travel or your savings.`,
+    outro: (yearly) => `Cut them loose and that's ${yearly} a year back.`,
     // Charcoal page with a limited pink: pink only on the main button and the
     // key dollar figure. Mint is reserved for good news.
     decor: 'none', // no moon or bats here; those belong to Haunted
