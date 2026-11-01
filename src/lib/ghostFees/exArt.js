@@ -13,6 +13,7 @@ export const EX_PICKS = {
     label: 'Heartbroken',
     note: 'Her pick',
     avatar: `${ART}/pfp-heartbroken.webp`,
+    pickArt: `${ART}/pink-phone.webp`, // full-body, no circle, for the ghost picker
     hero: `${ART}/ghost-sad.webp`,
     heroAlt: 'A sad pink ghost in bed, looking at her phone',
     heroBubble: "They said they'd change...",
@@ -51,6 +52,7 @@ export const EX_PICKS = {
     label: "I'm Fine",
     note: 'His pick',
     avatar: `${ART}/pfp-fine.webp`,
+    pickArt: `${ART}/men-cap.webp`,
     hero: `${ART}/men-cap.webp`,
     heroAlt: 'A ghost in a cap, sipping a drink and looking at his phone',
     heroBubble: "I'm fine. Totally fine.",
@@ -100,8 +102,13 @@ export function avatarKey(merchant = '') {
   return AVATARS.find((item) => item.match.test(merchant))?.key || 'more';
 }
 
+// Exes with their own art from the Image Assets folder: the gym is the ghost lifting
+// a barbell. Everyone else uses their ex character from the design.
+const OWN_ART = { gym: `${ART}/men-lift.webp` };
+
 export function exAvatar(merchant = '') {
-  return `${ART}/exav-${avatarKey(merchant)}.webp`;
+  const key = avatarKey(merchant);
+  return OWN_ART[key] || `${ART}/exav-${key}.webp`;
 }
 
 // Avatars for the exes: cut-out ghosts, no circle behind them. Known exes (Netflix,
@@ -109,10 +116,10 @@ export function exAvatar(merchant = '') {
 // else first gets an ex character nobody is using yet, then a full-body ghost from
 // the pick's art. No doubles until the set runs out, and the same merchant keeps
 // the same face on every screen because the map is built once per results page.
-const EX_KEYS = ['more', 'streammax', 'stan', 'adobe', 'gym', 'netflix'];
+const EX_KEYS = ['more', 'streammax', 'stan', 'adobe', 'netflix'];
 const BODY_SETS = {
   heartbroken: ['pink-phone', 'ghost-shocked', 'ghost-focused', 'ghost-happy', 'ghost-sad', 'ghost-dinner', 'ghost-sassy'],
-  fine: ['men-cap', 'men-shaker', 'men-shock', 'men-couch', 'men-footy', 'men-bbqshades', 'men-lift', 'men-block'],
+  fine: ['men-cap', 'men-shaker', 'men-shock', 'men-couch', 'men-footy', 'men-bbqshades', 'men-block'],
 };
 
 export function exAvatarMap(merchants = [], pickKey = 'heartbroken') {

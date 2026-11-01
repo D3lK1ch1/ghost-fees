@@ -25,7 +25,7 @@ export default function XmasLeakCard({ leak, onDraft, primary = false }) {
   return (
     <div className="x-root relative flex flex-col gap-2.5 rounded-[20px] p-4" style={{ background: X.card, border: `1px solid ${X.line}`, color: X.text }}>
       <div className="flex items-center gap-2.5">
-        <img src={xmasAvatar(leak.merchant, season)} alt="" width={46} height={46} className="x-bob h-[46px] w-[46px] flex-none rounded-full" />
+        <img src={xmasAvatar(leak.merchant, season)} alt="" width={46} height={46} className="object-contain x-bob h-[46px] w-[46px] flex-none" />
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-[16px] font-extrabold">{leak.title || leak.merchant}</span>
           <span className="mt-0.5 self-start rounded-md px-2 py-0.5 text-[11px] font-extrabold" style={{ background: X.cream, color: '#14301f' }}>{leak.badge}</span>

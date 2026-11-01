@@ -60,7 +60,7 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
                     boxShadow: active && !broken ? `0 0 0 3px ${X.gold}55` : 'none',
                   }}
                 >
-                  <img src={xmasAvatar(leak.merchant, season)} alt="" width={34} height={34} className={`h-[34px] w-[34px] flex-none rounded-full ${broken ? 'opacity-50 grayscale' : ''}`} />
+                  <img src={xmasAvatar(leak.merchant, season)} alt="" width={34} height={34} className={`object-contain h-[34px] w-[34px] flex-none ${broken ? 'opacity-50 grayscale' : ''}`} />
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[13.5px] font-extrabold">{leak.title || leak.merchant}</span>
                     <span className="block text-[11.5px] font-bold" style={{ color: broken ? X.mint : '#c0392b' }}>{broken ? 'Link broken' : `${leak.badge} · ${money(leak.amount)}`}</span>
@@ -77,7 +77,7 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
 
       <div className="x-root flex flex-col gap-3 self-start rounded-[22px] p-4" style={{ background: X.card, border: `1px solid ${X.line}`, color: X.text }}>
         <div className="flex items-center gap-3">
-          <img src={xmasAvatar(selected.merchant, season)} alt="" width={46} height={46} className="h-[46px] w-[46px] rounded-full" />
+          <img src={xmasAvatar(selected.merchant, season)} alt="" width={46} height={46} className="object-contain h-[46px] w-[46px]" />
           <div className="min-w-0 flex-1">
             <div className="x-fredoka text-[18px] font-semibold">{selected.title || selected.merchant}</div>
             <div className="text-[12.5px]" style={{ color: X.muted }}>{selected.badge}</div>

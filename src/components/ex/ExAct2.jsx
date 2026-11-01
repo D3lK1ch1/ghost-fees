@@ -1,3 +1,4 @@
+import ReceiptGhost from '@/components/site/ReceiptGhost';
 import { useState } from 'react';
 import { money } from '@/lib/ghostFees/format';
 import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
@@ -184,7 +185,7 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
   return (
     <Screen stars={false}>
       <div className="relative z-[1] flex items-center gap-3 px-4 pb-3.5 pt-[18px]" style={{ background: C.bar, borderBottom: `1px solid ${C.barLine}` }}>
-        <img src={pick.avatar} alt="" className="h-[42px] w-[42px] flex-none rounded-full object-cover" />
+        <ReceiptGhost width={34} className="flex-none" />
         <div className="flex flex-col gap-0.5">
           <div className="ex-fredoka text-[18px] font-semibold">Ghost Fees</div>
           <div className="text-[13px] font-bold" style={{ color: C.mint }}>Monthly check-in</div>

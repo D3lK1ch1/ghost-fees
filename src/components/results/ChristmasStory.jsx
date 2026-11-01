@@ -50,7 +50,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
               <li key={item.id} className="flex">
                 <GhostTip className="w-full" align="fill" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
                   <span className="flex w-full flex-col items-center rounded-xl bg-[#fbf3e4] px-1.5 py-2 text-center text-[#14301f] shadow">
-                    <img src={xmasAvatar(item.merchant, season)} alt={item.merchant} width={40} height={40} className="h-10 w-10 rounded-full" />
+                    <img src={xmasAvatar(item.merchant, season)} alt={item.merchant} width={40} height={40} className="object-contain h-10 w-10" />
                     <span className="mt-1 line-clamp-1 text-[11px] font-bold">{item.merchant}</span>
                     <span className="text-[11px] font-bold text-[#c0392b]">{money(item.monthly)}</span>
                   </span>

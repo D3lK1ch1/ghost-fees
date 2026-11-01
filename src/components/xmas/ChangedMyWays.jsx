@@ -78,7 +78,7 @@ export default function ChangedMyWays({ subscriptions }) {
         return (
           <div key={item.id} className="relative flex flex-col gap-2 rounded-[20px] p-3.5" style={{ background: X.card, border: `1px solid ${X.line}` }}>
             <div className="flex items-center gap-2.5">
-              <img src={xmasAvatar(item.merchant, season)} alt="" width={46} height={46} className="h-[46px] w-[46px] flex-none rounded-full" />
+              <img src={xmasAvatar(item.merchant, season)} alt="" width={46} height={46} className="object-contain h-[46px] w-[46px] flex-none" />
               <span className="flex-1 text-[16px] font-extrabold">{item.merchant}</span>
               <span className="x-fredoka text-[18px] font-semibold">{money(item.monthly)}/mo</span>
             </div>
