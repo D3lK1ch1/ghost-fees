@@ -4,6 +4,26 @@ import { parseCsv } from '@/lib/ghostFees/parseCsv';
 import { analyse, mergeTransactions } from '@/lib/ghostFees/analyse';
 import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
 import { sourceLabel } from '@/lib/ghostFees/detectBank';
+import { loadGhostList, saveGhostList } from '@/lib/ghostFees/ghostList';
+import { checkGhosts } from '@/lib/ghostFees/ghostCheck';
+import { toast } from '@/components/ui/use-toast';
+
+const shortDate = (iso) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+
+// Monthly ghost check: a new statement updates Ghost List items still "Requested"
+// (charged again -> Still charging, quiet for 35+ days -> Confirmed). In the browser only.
+function runGhostCheck(transactions) {
+  const { items, changes } = checkGhosts(loadGhostList(), transactions);
+  if (!changes.length) return;
+  saveGhostList(items);
+  changes.filter((change) => change.kind === 'charging').forEach((change) => {
+    toast({ title: `${change.merchant} charged you again on ${shortDate(change.date)}`, description: 'Marked Still charging on your Ghost List. Send them your proof and ask for a refund.' });
+  });
+  const confirmed = changes.filter((change) => change.kind === 'confirmed');
+  if (confirmed.length) {
+    toast({ title: `Confirmed stopped: ${confirmed.map((change) => change.merchant).join(', ')}`, description: 'No charges on your statement since you ghosted them.' });
+  }
+}
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
@@ -118,6 +138,7 @@ export function ScanProvider({ children }) {
     setFileNames(names);
     setTransactions(transactions);
     setStatus('done');
+    runGhostCheck(transactions);
     return analysis;
   }, []);
 

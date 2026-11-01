@@ -9,6 +9,7 @@ import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
 import GhostTip from './GhostTip';
+import GhostNameField from './GhostNameField';
 import HouseHint from './HouseHint';
 
 const PAY_PRESETS = [25, 35, 50];
@@ -513,7 +514,10 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
 
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center justify-between gap-3">
-            <p className="font-heading text-[15px] font-semibold leading-tight text-foreground">Pick your ghost guide</p>
+            <div>
+              <p className="font-heading text-[15px] font-semibold leading-tight text-foreground">Pick your ghost guide</p>
+              <GhostNameField className="mt-1.5" />
+            </div>
             <div className="flex gap-1.5" role="group" aria-label="Pick your ghost guide">
               {GUIDE_KEYS.map((key) => (
                 <button
