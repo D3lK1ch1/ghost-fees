@@ -8,6 +8,7 @@ import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import ExLeakCard from '@/components/ex/ExLeakCard';
+import CancelAssistant from './CancelAssistant';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
 import XmasLeakCard from '@/components/xmas/XmasLeakCard';
@@ -365,8 +366,18 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   guideKey={guideKey}
                 />
               )}
-              {tab === 'calendar' && <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />}
-              {tab === 'emails' && <EmailsPanel leaks={leaks} onDraft={openEmail} />}
+              {tab === 'calendar' && (
+                <>
+                  <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
+                  <CancelAssistant subscriptions={subscriptions} onDraft={openEmail} />
+                </>
+              )}
+              {tab === 'emails' && (
+                <>
+                  <EmailsPanel leaks={leaks} onDraft={openEmail} />
+                  <CancelAssistant subscriptions={subscriptions} onDraft={openEmail} />
+                </>
+              )}
               {tab === 'subscriptions' && (
                 <SubscriptionsSection
                   subscriptions={subscriptions}
