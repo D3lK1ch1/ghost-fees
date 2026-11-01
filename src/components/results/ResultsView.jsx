@@ -10,6 +10,8 @@ import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
 import ExJourney from '@/components/ex/ExJourney';
+import HeartbreakHouse from '@/components/ex/HeartbreakHouse';
+import { EX_PICKS } from '@/lib/ghostFees/exArt';
 import GuessReveal from './GuessReveal';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
@@ -252,7 +254,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   )}
                 >
                   <item.Icon className={cn('h-4 w-4 shrink-0', tab === item.key && 'text-primary')} />
-                  {item.label}
+                  {item.key === 'house' && theme.key === 'ex' ? 'Heartbreak House' : item.label}
                   {item.key === 'ghosts' && (
                     <span className="ml-auto rounded-full bg-white/10 px-1.5 text-[11px]">{leaks.length}</span>
                   )}
@@ -269,8 +271,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             </nav>
 
             <div key={tab} className="min-w-0 animate-rise">
-              <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
+              <h2 className="font-heading text-xl font-semibold text-foreground">{tab === 'house' && theme.key === 'ex' ? 'Heartbreak House' : current.title}</h2>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{tab === 'house' && theme.key === 'ex' ? 'Every ex has a window. Block one once you have cancelled and its window lights up.' : current.blurb}</p>
 
               {tab === 'ghosts' && (
                 <CardList className="mt-4 grid gap-3">
@@ -296,7 +298,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   ))}
                 </CardList>
               )}
-              {tab === 'house' && (
+              {tab === 'house' && theme.key === 'ex' && (
+                <HeartbreakHouse theme={theme} pick={EX_PICKS[exPick]} subscriptions={subscriptions} avatarFor={avatarFor} />
+              )}
+              {tab === 'house' && theme.key !== 'ex' && (
                 <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
               {tab === 'path' && (

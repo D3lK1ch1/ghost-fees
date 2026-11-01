@@ -8,10 +8,12 @@ const MINT = '#5ee6c8';
 // Glow-up fund bar and the four milestones (Brunch, Dinner out, Weekend away,
 // Savings), as in the Moving on and Heartbreak House designs. `glow` comes from
 // glowUp() in exJourney.js.
-export default function GlowUpFund({ glow, compact = false, className }) {
+export default function GlowUpFund({ glow, compact = false, milestonesOnly = false, className }) {
   const pct = glow.goal > 0 ? Math.min(100, (glow.fund / glow.goal) * 100) : 0;
   return (
     <div className={className}>
+      {!milestonesOnly && (
+      <>
       <div className="flex items-baseline justify-between gap-3">
         <span className="font-heading text-[16px] font-bold text-white">Glow-up fund</span>
         <span className="text-[13px] text-white/80">
@@ -23,8 +25,10 @@ export default function GlowUpFund({ glow, compact = false, className }) {
       <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white/10">
         <div className="h-full rounded-full bg-gradient-to-r from-primary to-[#5ee6c8] transition-[width] duration-700" style={{ width: `${pct}%` }} />
       </div>
+      </>
+      )}
       {!compact && (
-        <ul className="mt-4 grid grid-cols-4 gap-2 text-center">
+        <ul className={cn('grid grid-cols-4 gap-2 text-center', !milestonesOnly && 'mt-4')}>
           {glow.steps.map((step) => {
             const Icon = ICONS[step.icon];
             return (
