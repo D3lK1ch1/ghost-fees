@@ -1,27 +1,24 @@
 import { Lock, Upload } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
-import ExHeroArt, { ExHeadline } from '@/components/landing/ExHeroArt';
+import ExHero from '@/components/landing/ExHero';
 import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
-import { EX_GHOST_KEY, EX_GHOSTS } from '@/lib/ghostFees/exArt';
 import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
 
 const TAGS = ['Forgotten subscriptions', 'Sneaky fees', 'Price creep'];
 
 export default function Hero({ onSample, onUpload }) {
   const { theme } = useTheme();
-  const [exPick, setExPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const [season, setSeason] = useSavedChoice(SEASON_KEY, SEASONS, 'winter');
+  if (theme.key === 'ex') return <ExHero theme={theme} onSample={onSample} onUpload={onUpload} />;
   return (
     <section className="mx-auto flex w-full max-w-3xl animate-rise flex-col items-center px-5 pb-16 pt-6 text-center sm:px-8">
       <h2 className="mb-4 font-heading text-[1.6rem] font-bold leading-none text-white [text-shadow:2px_0_0_#000,-2px_0_0_#000,0_2px_0_#000,0_-2px_0_#000,2px_2px_0_#000,-2px_2px_0_#000,2px_-2px_0_#000,-2px_-2px_0_#000] sm:text-[1.9rem]">
         Ghost Fees
       </h2>
 
-      {theme.key === 'ex' ? (
-        <ExHeroArt pickKey={exPick} setPickKey={setExPick} />
-      ) : theme.key === 'christmas' ? (
+      {theme.key === 'christmas' ? (
         <ChristmasHeroArt season={season} setSeason={setSeason} />
       ) : (
         <div className="animate-float rounded-full p-6 shadow-[0_0_80px_hsl(var(--primary)/0.22)]">
@@ -30,7 +27,7 @@ export default function Hero({ onSample, onUpload }) {
       )}
 
       <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.05] text-foreground sm:text-[4rem]">
-        {theme.key === 'ex' ? <ExHeadline pickKey={exPick} /> : theme.headline}
+        {theme.headline}
       </h1>
       <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
         {theme.subhead}

@@ -4,17 +4,17 @@
 const ART = '/themes/ex';
 
 export const EX_GHOST_KEY = 'ghostFees.exGhost';
-export const EX_GHOSTS = ['heartbroken', 'fine'];
+export const EX_GHOSTS = ['fine', 'heartbroken']; // display order, as in the design
 
 export const EX_PICKS = {
   heartbroken: {
     label: 'Heartbroken',
     note: 'Her pick',
-    avatar: `${ART}/pfp-cool-pink.webp`,
+    avatar: `${ART}/pfp-heartbroken.webp`,
     hero: `${ART}/ghost-sad.webp`,
     heroAlt: 'A sad pink ghost in bed, looking at her phone',
     heroBubble: "They said they'd change...",
-    headline: ['They ghosted you. ', 'Now ghost them back.'],
+    headline: ['They ghosted you. ', 'Now', 'ghost them back.'],
     shocked: `${ART}/ghost-shocked.webp`,
     shout: 'Wait. ALL of them?!',
     done: `${ART}/ghost-sassy.webp`,
@@ -26,7 +26,7 @@ export const EX_PICKS = {
     hero: `${ART}/men-cap.webp`,
     heroAlt: 'A ghost in a cap, sipping a drink and looking at his phone',
     heroBubble: "I'm fine. Totally fine.",
-    headline: ['They ghosted you. ', "You're fine. Totally fine."],
+    headline: ['They ghosted you. ', "You're", 'fine. Totally fine.'],
     shocked: `${ART}/men-shock.webp`,
     shout: 'Mate. ALL of them?!',
     done: `${ART}/men-block.webp`,

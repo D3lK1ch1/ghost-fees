@@ -16,7 +16,7 @@ export const THEMES = {
     label: 'My Ex Ghosted Me',
     emoji: '💔',
     headline: 'They ghosted you. Now ghost them back.',
-    subhead: 'Your subscriptions said they would change. They raised their prices instead. Find every one that is still taking your money.',
+    subhead: 'Your subscriptions said they would change. They raised their prices instead.',
     storyTitle: 'Unread messages from your exes',
     // Lines matched on merchant name. Kind jokes only, never about the user.
     lines: [
