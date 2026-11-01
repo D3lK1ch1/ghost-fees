@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Check, ExternalLink, Heart } from 'lucide-react';
-import { ThoughtBubble } from '@/components/site/Bubbles';
 import { useGhostList } from '@/hooks/use-ghost-list';
 import { money } from '@/lib/ghostFees/format';
 import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { glowUp, kindOf, yearly } from '@/lib/ghostFees/exJourney';
 import { cn } from '@/lib/utils';
 import GlowUpFund from './GlowUpFund';
+import FkJar from './FkJar';
 import './exKit.css';
 import GhostMark from '@/components/site/GhostMark';
 
@@ -67,7 +67,6 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   const shown = subscriptions.slice(0, SHOWN);
   const rest = subscriptions.slice(SHOWN);
   const stillMonthly = subscriptions.filter((item) => !blocked.has(item.id)).reduce((sum, item) => sum + item.monthly, 0);
-  const jar = glow.goal > 0 ? Math.min(100, (glow.fund / glow.goal) * 100) : 0;
 
   const block = (item) => setGhostList((current) => (
     current.some((entry) => entry.id === item.id)
@@ -76,17 +75,20 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   ));
   const unblock = (item) => setGhostList((current) => current.filter((entry) => entry.id !== item.id));
 
-  // The storyline from the design: sad in bed (none blocked) > focused (1-2) >
-  // sassy "F**k my ex" (3-5) > dressed up for a night out (all of them).
-  const n = glow.blockedCount;
-  const all = subscriptions.length > 0 && n >= subscriptions.length;
-  const mood = all
-    ? { key: 'out', art: pick.clear, line: pick.clearBubble, alt: 'Your ghost dressed up for a night out' }
-    : n >= 3
-      ? { key: 'sassy', art: pick.moving, line: `${pick.movingBubble[0]} ${pick.movingBubble[1]}`, alt: 'Your ghost, done with their exes' }
-      : n >= 1
-        ? { key: 'focused', art: pick.scan, line: `${n} down. ${subscriptions.length - n} to go.`, alt: 'Your ghost, focused on blocking exes' }
-        : { key: 'sad', art: pick.house, line: pick.houseBubble, alt: 'Your ghost, sad in bed' };
+  // The F**k-ex jar stages from the design: the ghost gets happier as the jar
+  // fills. 0%: sad in bed; under 50%: out of bed; 50%+: dancing; 100%: party
+  // outfit, confetti, then walks out to the Dinner (her) or BBQ (his) sign.
+  const frac = glow.goal > 0 ? glow.fund / glow.goal : 0;
+  const fine = pick.label === "I'm Fine";
+  const allClear = subscriptions.length > 0 && glow.blockedCount >= subscriptions.length;
+  const stage = allClear ? 3 : frac >= 0.5 ? 2 : frac > 0 ? 1 : 0;
+  const STAGES = [
+    { art: pick.house, line: fine ? "I'm fine. Totally fine." : 'They all ghosted me...', motion: 'ex-breathe', alt: 'Your ghost, sad in bed' },
+    { art: pick.scan, line: fine ? 'Out of bed. Still fine.' : 'Out of bed. One down.', motion: 'ex-float', alt: 'Your ghost, out of bed' },
+    { art: fine ? '/themes/ex/men-footy.webp' : '/themes/ex/ghost-happy.webp', line: 'Look at that jar!', motion: 'ex-dance', alt: 'Your ghost, dancing' },
+    { art: pick.clear, line: "Cheers! Party's on them.", motion: 'ex-dance', alt: 'Your ghost, dressed up to party' },
+  ];
+  const mood = STAGES[stage];
 
   if (!selected) return null;
   const info = cancelInfo(selected.merchant);
@@ -156,20 +158,30 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
           <div className="mx-auto mt-3 h-10 w-14 rounded-t-full border-2 border-white/10 bg-black/40" aria-hidden="true" />
         </div>
 
-        <div className="mt-4 flex items-end justify-between gap-3">
-          <div className="flex flex-col items-center">
-            <div className="relative h-16 w-12 overflow-hidden rounded-b-xl rounded-t-md border-2 border-white/60 bg-white/5">
-              <div className="absolute inset-x-0 bottom-0 bg-[#5ee6c8]/70 transition-[height] duration-700" style={{ height: `${jar}%` }} />
-            </div>
-            <span className="mt-1 text-[11.5px] font-bold text-[#5ee6c8]">Glow-up jar</span>
+        {/* Under the house: the F**k-ex jar, your ghost, and the Dinner or BBQ sign. */}
+        <div className="relative mt-[-2px] h-[200px] w-full overflow-hidden rounded-[10px]" style={{ background: 'linear-gradient(180deg, #111016 0%, #15131a 100%)' }}>
+          {allClear && Array.from({ length: 18 }, (_, i) => (
+            <span key={i} aria-hidden="true" className="hh-conf pointer-events-none absolute" style={{ left: `${(i * 23 + 9) % 96}%`, top: 30, width: i % 2 ? 6 : 8, height: i % 3 ? 10 : 6, borderRadius: i % 4 ? 2 : '50%', background: ['#ff6f7d', '#5ee6c8', '#f2c14e', '#fbf8fa', '#ffb8bf', '#8fb8ff'][i % 6], animationDelay: `${((i * 0.19) % 2.6).toFixed(2)}s` }} />
+          ))}
+          <div className="absolute bottom-2.5 left-1.5"><FkJar amount={glow.fund} total={glow.goal} size={104} /></div>
+          <div aria-hidden="true" className="absolute bottom-3.5 right-2.5 flex w-24 flex-col items-center gap-[3px] transition-opacity duration-500" style={{ opacity: allClear ? 1 : 0.35 }}>
+            <div className="h-[18px] w-24 rounded-t-md" style={{ background: 'repeating-linear-gradient(90deg, #ff6f7d 0 12px, #fbf8fa 12px 24px)' }} />
+            <div className="ex-fredoka w-[84px] rounded-b-lg py-1.5 text-center text-[13px] font-semibold" style={{ background: '#221f29', border: '1px solid #3a3644', color: '#ffd36e' }}>{fine ? 'BBQ' : 'Dinner'}</div>
+            <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
-          <div className="relative">
-            <ThoughtBubble key={mood.key} trail="right" tones="text-[#2a1020]" size="sm" className="animate-rise absolute -left-36 -top-10 w-max max-w-[170px]">
-              {mood.line}
-            </ThoughtBubble>
-            <img key={mood.art} src={mood.art} alt={mood.alt} width={360} className={`animate-rise h-auto w-[120px] ${mood.key !== 'sad' ? 'ex-dance' : ''}`} style={{ '--gs': '2.2s' }} />
+          <div className="absolute bottom-1.5 left-1/2 -ml-14 flex flex-col items-center">
+            <div key={stage} className={`animate-rise flex flex-col items-center ${allClear ? 'hh-walk' : ''}`}>
+              <div className="bub-l mb-0.5 whitespace-nowrap text-[12px] font-extrabold">{mood.line}</div>
+              <img src={mood.art} alt={mood.alt} width={92} className={`h-auto w-[92px] ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }} />
+            </div>
           </div>
         </div>
+        {allClear && (
+          <div role="status" className="ex-drop absolute left-1/2 top-[150px] z-20 -ml-[150px] w-[300px] rounded-[18px] px-[18px] py-4 text-center" style={{ background: '#fbf8fa', color: '#15131a', boxShadow: '0 0 60px rgba(94,230,200,0.55)' }}>
+            <div className="ex-fredoka text-[24px] font-bold">Heartbreak House cleared!</div>
+            <div className="text-[15px] font-bold" style={{ color: '#34303e' }}>{money(glow.fund)} a year back. {fine ? "BBQ's" : "Dinner's"} on your exes.</div>
+          </div>
+        )}
       </div>
 
       {/* The selected ex */}
