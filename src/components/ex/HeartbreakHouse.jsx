@@ -8,6 +8,7 @@ import { glowUp, kindOf, yearly } from '@/lib/ghostFees/exJourney';
 import { cn } from '@/lib/utils';
 import GlowUpFund from './GlowUpFund';
 import './exKit.css';
+import GhostMark from '@/components/site/GhostMark';
 
 const SHOWN = 5;
 
@@ -48,8 +49,8 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
   );
 }
 
-// Little exes drifting around outside the house, like the bats and ghosts in the
-// Haunted House. Decoration only; they use the same avatars as the windows.
+// Plain white ghosts (the logo ghost) drifting around outside the house, like the
+// bats in the Haunted House. Decoration only, not exes.
 const DRIFTERS = [
   { left: '-6%', top: '18%', size: 34, gs: 3.4, gd: 7.2, delay: -1.1 },
   { left: '94%', top: '34%', size: 30, gs: 3.9, gd: 6.4, delay: -2.6 },
@@ -99,29 +100,25 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         <span>{glow.blockedCount} of {subscriptions.length} exes blocked</span>
         <span>{money(stillMonthly * 12)}/yr still texting</span>
       </div>
-      <GlowUpFund glow={glow} milestonesOnly className="mt-4" />
+      <GlowUpFund glow={glow} milestonesOnly hide={['savings']} className="mt-4" />
 
       {/* The house */}
       <div className="relative mt-6">
         <div className="mx-auto h-0 w-0 border-x-[150px] border-b-[70px] border-x-transparent border-b-[#2a1c2c]" aria-hidden="true" />
         <Heart className="absolute left-1/2 top-6 h-7 w-7 -translate-x-1/2 fill-primary text-primary drop-shadow-[0_0_12px_hsl(var(--primary))]" aria-hidden="true" />
         <span className="absolute right-2 top-0 h-12 w-12 rounded-full bg-[#f3e9f0] shadow-[0_0_30px_rgba(255,255,255,0.35)]" aria-hidden="true" />
-        {DRIFTERS.map((d, index) => {
-          const item = subscriptions[(index + 1) % subscriptions.length];
-          if (!item || blocked.has(item.id)) return null;
-          return (
-            <span
-              key={d.left + d.top}
-              aria-hidden="true"
-              className="ex-ghost pointer-events-none absolute z-10 opacity-80"
-              style={{ left: d.left, top: d.top, '--gd': `${d.gd}s`, '--gdx': '10px', '--gdl': `${d.delay}s` }}
-            >
-              <span className="ex-float block" style={{ '--gs': `${d.gs}s`, animationDelay: `${d.delay}s` }}>
-                <img src={avatarFor(item.merchant)} alt="" width={d.size} height={d.size} className="object-contain  drop-shadow-[0_0_10px_rgba(255,111,125,0.45)]" style={{ width: d.size, height: d.size }} />
-              </span>
+        {DRIFTERS.map((d) => (
+          <span
+            key={d.left + d.top}
+            aria-hidden="true"
+            className="ex-ghost pointer-events-none absolute z-10 opacity-70"
+            style={{ left: d.left, top: d.top, '--gd': `${d.gd}s`, '--gdx': '10px', '--gdl': `${d.delay}s` }}
+          >
+            <span className="ex-float block" style={{ '--gs': `${d.gs}s`, animationDelay: `${d.delay}s` }}>
+              <GhostMark className="block text-[#fbf8fa] drop-shadow-[0_0_10px_rgba(255,255,255,0.35)]" eyeColor="#15131a" style={{ width: d.size, height: d.size }} />
             </span>
-          );
-        })}
+          </span>
+        ))}
         <div className="rounded-b-2xl border-2 border-t-0 border-primary/40 bg-[#1d1520] p-3 shadow-[inset_0_0_40px_hsl(var(--primary)/0.15)]">
           <div className="grid grid-cols-2 gap-3">
             {shown.map((item, index) => (

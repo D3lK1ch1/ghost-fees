@@ -24,7 +24,8 @@ export function MilestoneIcon({ icon, on, size = 44 }) {
 
 // Glow-up fund bar and the four milestones, as in Moving on and Heartbreak House.
 // `glow` comes from glowUp() in exJourney.js.
-export default function GlowUpFund({ glow, compact = false, milestonesOnly = false, className = '' }) {
+export default function GlowUpFund({ glow, compact = false, milestonesOnly = false, hide = [], className = '' }) {
+  const steps = glow.steps.filter((step) => !hide.includes(step.key));
   const pct = glow.goal > 0 ? Math.min(100, (glow.fund / glow.goal) * 100) : 0;
   return (
     <div className={`relative flex flex-col gap-2 ${className}`}>
@@ -42,8 +43,8 @@ export default function GlowUpFund({ glow, compact = false, milestonesOnly = fal
         </>
       )}
       {!compact && (
-        <div className={`grid grid-cols-4 gap-1.5 ${milestonesOnly ? '' : 'mt-1'}`}>
-          {glow.steps.map((step) => (
+        <div className={`grid gap-1.5 ${milestonesOnly ? '' : 'mt-1'}`} style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
+          {steps.map((step) => (
             <div key={step.key} className="flex flex-col items-center gap-1 text-center" title={`${step.label}: ${money(step.amount)}`}>
               <MilestoneIcon icon={step.icon} on={step.unlocked} />
               <span className="text-[12px] font-extrabold leading-tight">{step.label}</span>
