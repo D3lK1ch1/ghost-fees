@@ -123,12 +123,15 @@ export function ExGlowupPlan({ pick, pickKey, glow, blockedCount, onNext, monthl
 // Design screen Ex10Weekend: month 6, on the beach, paid for by your exes.
 export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = false }) {
   const [sent, setSent] = useState(false);
-  const six = blockedMonthly(glow) * 6;
-  // By month 6 the weekend-away money in the plan is there, by definition.
-  const funded = six > 0;
+  // The weekend-away saving goal is the third milestone: 6 months of every ex.
+  // Progress is the yearly money from the exes you've blocked, up to the goal.
+  const goal = glow.steps.find((step) => step.key === 'weekend')?.amount || 0;
+  const saved = preview ? 0 : Math.min(goal, glow.fund);
+  const pct = goal > 0 ? Math.round((saved / goal) * 100) : 0;
+  const reached = goal > 0 && saved >= goal;
   const name = biggest?.merchant || 'my exes';
   const send = async () => {
-    const text = `Wish you weren't here, ${name}. ${money(six)} back in 6 months. ${SITE}`;
+    const text = `Wish you weren't here, ${name}. ${money(saved)} saved for my weekend away. ${SITE}`;
     try {
       if (navigator.share) await navigator.share({ title: 'My Ex Ghosted Me', text, url: `https://${SITE}` });
       else await navigator.clipboard.writeText(text);
@@ -164,8 +167,16 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         {pick?.weekendArt && <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>Paid for by {name}.</Bubble>}
       </div>
       <div className="relative flex flex-col items-center gap-0.5 text-center">
-        <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>{funded ? `${pick?.weekendTitle || 'Weekend away: funded.'}`.replace('funded.', preview ? 'yours to fund.' : 'funded.') : 'Month 6: getting there.'}</div>
-        <div className="ex-in ex-fredoka text-[22px] font-semibold" style={{ color: C.mint, animationDelay: '1.3s' }}>{money(six)} back {preview ? 'once you block them' : 'since you blocked them'}.</div>
+        <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>
+          {reached ? pick?.weekendTitle || 'Weekend away: funded.' : `${(pick?.weekendTitle || 'Weekend away: funded.').split(':')[0]}: ${pct}% there.`}
+        </div>
+        <div className="ex-in w-full max-w-[300px]" style={{ animationDelay: '1.3s' }}>
+          <div className="ex-fredoka text-[20px] font-semibold" style={{ color: C.mint }}>{money(saved)} of {money(goal)} saved</div>
+          <div className="mt-1.5 h-2.5 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.12)' }}>
+            <div className="ex-bar h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${C.coral}, ${C.mint})` }} />
+          </div>
+          <div className="mt-1 text-[12.5px]" style={{ color: C.muted }}>{reached ? 'Paid for by the exes you blocked.' : 'Block more exes to fill it.'}</div>
+        </div>
       </div>
       <div className="flex-1" />
       <div className="ex-in relative flex items-center gap-3.5 rounded-[22px] px-[18px] py-4" style={{ animationDelay: '1.85s', background: C.text, color: C.bg, transform: 'rotate(-1.5deg)', boxShadow: '0 16px 40px -18px rgba(0,0,0,0.7)' }}>
