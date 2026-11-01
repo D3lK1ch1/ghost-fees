@@ -5,7 +5,7 @@
 export const THEMES = {
   haunted: {
     key: 'haunted',
-    label: 'Haunted',
+    label: 'Haunted House',
     emoji: '👻',
     headline: 'Find the ghosts haunting your bank account.',
     subhead: 'Ghost Fees finds 8 kinds of money leak and shows the exact dollars, with the transactions behind every one.',
