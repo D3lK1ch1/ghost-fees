@@ -7,6 +7,7 @@ import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { loadGhostList, saveGhostList } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
 import GhostList from './GhostList';
+import { OVERLAP_TIPS, findOverlaps } from '@/lib/ghostFees/overlaps';
 
 const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|SNAP|F45|CROSSFIT|PILATES|YOGA)\b/i;
 
@@ -43,6 +44,7 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
   const cancelling = subscriptions.filter((item) => answers[item.id] === 'no');
 
   const gym = subscriptions.find((item) => GYM_RE.test(item.merchant));
+  const overlaps = findOverlaps(subscriptions);
 
   return (
     <section className="mt-8">
@@ -58,6 +60,20 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
             <span className="font-bold">{gym.merchant}: {money(gym.monthly)} a month.</span>{' '}
             <span className="text-muted-foreground">Been this month?</span>
           </p>
+        </div>
+      )}
+
+      {overlaps.length > 0 && (
+        <div className="mt-3 rounded-2xl border border-[#ffc27a]/40 bg-[#ffc27a]/[0.06] px-4 py-3">
+          <p className="text-[13px] font-bold text-foreground">Double-ups spotted</p>
+          <ul className="mt-1 space-y-0.5 text-[12.5px] text-muted-foreground">
+            {overlaps.map((group) => (
+              <li key={group.key}>
+                <span className="font-bold text-foreground">{group.items.length} {group.label}</span>: {group.items.map((item) => item.merchant).join(', ')} = {money(group.yearly)}/yr together.
+              </li>
+            ))}
+          </ul>
+          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{OVERLAP_TIPS}</p>
         </div>
       )}
 

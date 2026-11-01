@@ -27,3 +27,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/ThemeStory.jsx (new), ResultsView.jsx
 - How to test: Pick 💔 or 🎄, run the sample statement: the story animates in under the total.
 - User feedback that drove this: (fill in)
+
+### Double-ups spotted
+- What: Groups subscriptions doing the same job (video streaming, music, cloud storage, AI tools, design tools, gyms) and shows what they cost together, with general tips (keep one, rotate monthly, family plan). Information only, never advice.
+- Files: src/lib/ghostFees/overlaps.js (new), SubscriptionsSection.jsx
+- How to test: Sample statement > Subscriptions: "3 video streaming services: Streammax, Netflix, Stan Entertainment = $599.76/yr together."
+- User feedback that drove this: (fill in)
