@@ -33,3 +33,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/overlaps.js (new), SubscriptionsSection.jsx
 - How to test: Sample statement > Subscriptions: "3 video streaming services: Streammax, Netflix, Stan Entertainment = $599.76/yr together."
 - User feedback that drove this: (fill in)
+
+### 1 free scan, then sign in and pay once
+- What: Anyone can scan one upload for free (up to 6 files, e.g. bank account + credit card, so one scan covers everything). After that: sign in, then $5 once for the first 50 founding members or $10 once, unlimited forever. Never a subscription. The sample statement is always free, re-scanning the same files is free, admins and paid users are unlimited. Adds optional User.paid and a paywall_shown event.
+- Files: src/lib/ghostFees/scanQuota.js, src/components/scan/Paywall.jsx (new), Landing.jsx, Hero.jsx, base44/entities/User.jsonc, Event.jsonc, base44/functions/logEvent
+- How to test: Upload one CSV: it scans. Upload a different CSV: the paywall opens. The sample still works. Note: counted in the browser for now; a server-side check comes with Stripe.
+- User feedback that drove this: (fill in)

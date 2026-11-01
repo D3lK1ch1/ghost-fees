@@ -13,7 +13,8 @@
         "cancel_email_clicked",
         "feedback_submitted",
         "guide_opened",
-        "guide_message"
+        "guide_message",
+        "paywall_shown"
       ]
     },
     "created_at": {

@@ -7,6 +7,11 @@
         "admin",
         "user"
       ]
+    },
+    "paid": {
+      "type": "boolean",
+      "default": false,
+      "description": "Founding member who paid the $5 one-off unlock"
     }
   },
   "required": [

@@ -9,6 +9,9 @@ import ResultsView from '@/components/results/ResultsView';
 import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
+import { useAuth } from '@/lib/AuthContext';
+import { canScanFree, recordScan } from '@/lib/ghostFees/scanQuota';
+import Paywall from '@/components/scan/Paywall';
 
 const DEEP_LINK_TABS = ['ghosts', 'house', 'path', 'calendar', 'emails', 'subscriptions', 'receipt', 'feedback'];
 
@@ -17,6 +20,9 @@ export default function Landing() {
   const [usedSample, setUsedSample] = useState(false);
   const [scanDone, setScanDone] = useState(false);
   const inputRef = useRef(null);
+  const { user, isAuthenticated } = useAuth();
+  const [paywall, setPaywall] = useState(false);
+  const unlimited = Boolean(isAuthenticated && (user?.paid || user?.role === 'admin'));
 
   const handleScanDone = useCallback(() => setScanDone(true), []);
 
@@ -32,6 +38,7 @@ export default function Landing() {
     setUsedSample(useSample);
     trackEvent('scan_started');
     const outcome = await runScan({ files, useSample });
+    if (outcome && !useSample && files.length) recordScan(files);
     if (outcome) trackEvent('scan_finished');
   };
 
@@ -39,7 +46,13 @@ export default function Landing() {
     // Unsupported files go through too, so the error screen can name them.
     const picked = Array.from(event.target.files || []);
     event.target.value = '';
-    if (picked.length) scan(picked, false);
+    if (!picked.length) return;
+    if (!unlimited && !canScanFree(picked)) {
+      trackEvent('paywall_shown');
+      setPaywall(true);
+      return;
+    }
+    scan(picked, false);
   };
 
   const analysisReady = Boolean(status === 'done' && results);
@@ -71,6 +84,7 @@ export default function Landing() {
           <SiteFooter />
         </>
       )}
+      <Paywall open={paywall} onClose={() => setPaywall(false)} signedIn={isAuthenticated} onSample={() => { setPaywall(false); scan([], true); }} />
       <input
         ref={inputRef}
         type="file"
