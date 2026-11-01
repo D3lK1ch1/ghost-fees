@@ -9,6 +9,7 @@ import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
 import GhostTip from './GhostTip';
+import HouseHint from './HouseHint';
 
 const PAY_PRESETS = [25, 35, 50];
 
@@ -281,6 +282,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
 
   return (
     <section className="mt-4 grid gap-5 lg:grid-cols-[1fr_320px]">
+      <HouseHint className="lg:col-span-2" />
       <div
         ref={sceneRef}
         onPointerMove={(event) => {
