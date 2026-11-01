@@ -2,6 +2,7 @@
 // Kept in this browser only (localStorage). Only merchant name, monthly price,
 // status and date are kept, never statement rows. Cleared by "Clear my data".
 const KEY = 'ghostFees.ghostList.v1';
+export const CHANGED = 'ghostfees:ghostlist';
 
 export const STATUSES = {
   requested: 'Requested',
@@ -21,6 +22,8 @@ export function loadGhostList() {
 export function saveGhostList(items) {
   try {
     window.localStorage.setItem(KEY, JSON.stringify(items));
+    // Let every screen showing the list (Subscriptions tab, 💔 story) catch up.
+    window.dispatchEvent(new Event(CHANGED));
   } catch {
     // Storage can be off (private mode). The list still works for this visit.
   }
@@ -29,6 +32,7 @@ export function saveGhostList(items) {
 export function clearGhostList() {
   try {
     window.localStorage.removeItem(KEY);
+    window.dispatchEvent(new Event(CHANGED));
   } catch {
     // Nothing to clear.
   }
