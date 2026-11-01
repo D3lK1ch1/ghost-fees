@@ -9,6 +9,8 @@ import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import ExLeakCard from '@/components/ex/ExLeakCard';
 import ExTabScreens from '@/components/ex/ExTabScreens';
+import XmasTabScreens from '@/components/xmas/XmasTabScreens';
+import XmasLeakCard from '@/components/xmas/XmasLeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
 import ExJourney from '@/components/ex/ExJourney';
@@ -289,6 +291,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
 
+              {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} />}
+
               {tab === 'ghosts' && (
                 <CardList className="mt-4 grid gap-3">
                   {leaks.map((leak, index) => (
@@ -309,6 +313,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         )}
                         {theme.key === 'ex' ? (
                           <ExLeakCard leak={leak} avatar={avatarFor(leak.merchant)} primary={index === 0} onDraft={() => openEmail(leak)} />
+                        ) : theme.key === 'christmas' ? (
+                          <XmasLeakCard leak={leak} primary={index === 0} onDraft={() => openEmail(leak)} />
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
