@@ -365,7 +365,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   guideKey={guideKey}
                 />
               )}
-              {tab === 'calendar' && <HauntedCalendar leaks={leaks} subscriptions={subscriptions} />}
+              {tab === 'calendar' && <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />}
               {tab === 'emails' && <EmailsPanel leaks={leaks} onDraft={openEmail} />}
               {tab === 'subscriptions' && (
                 <SubscriptionsSection
