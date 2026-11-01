@@ -69,3 +69,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/GuessReveal.jsx (new), ResultsView.jsx
 - How to test: run the sample statement: the guess card appears where the total was; Reveal counts up, "Show me the ghosts" shows the usual total and story.
 - User feedback that drove this: (fill in)
+
+### Levels, badges and Share my level
+- What: the Ghost List now shows a level from the $/yr you've ghosted (Rookie $0, Hunter $100, Exorcist $500, Legend $1,000) with a progress bar and "$X to the next level", plus badges: First Ghost, Overlap Buster (cancelled one of a double-up) and Price Rise Spotter (cancelled something that raised its price). Locked badges show how to earn them. "Share my level" shares or copies "I ghosted $X/yr of forgotten subscriptions. Level: Hunter 👻 hunt-ghost-fees.base44.app". Fun only, never changes any numbers.
+- Files: src/lib/ghostFees/levels.js (new), GhostList.jsx, SubscriptionsSection.jsx, ResultsView.jsx
+- How to test: sample statement > Subscriptions: cancel Netflix (a double-up) and see Level and Overlap Buster unlock; cancel Fitlife Gym to reach Exorcist.
+- User feedback that drove this: (fill in)

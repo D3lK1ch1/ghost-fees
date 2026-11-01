@@ -283,6 +283,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {tab === 'subscriptions' && (
                 <SubscriptionsSection
                   subscriptions={subscriptions}
+                  leaks={leaks}
                   answers={subAnswers}
                   onAnswer={setSubAnswers}
                   onDraftCancel={draftCancel}

@@ -24,7 +24,7 @@ const ANSWERS = [
 ];
 
 // Answers live in the results page, so they survive switching tabs.
-export default function SubscriptionsSection({ subscriptions, answers = {}, onAnswer, onDraftCancel, onOpenPath }) {
+export default function SubscriptionsSection({ subscriptions, leaks = [], answers = {}, onAnswer, onDraftCancel, onOpenPath }) {
   const [ghosts, setGhosts] = useState(loadGhostList);
   useEffect(() => saveGhostList(ghosts), [ghosts]);
 
@@ -45,6 +45,8 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
 
   const gym = subscriptions.find((item) => GYM_RE.test(item.merchant));
   const overlaps = findOverlaps(subscriptions);
+  const overlapIds = new Set(overlaps.flatMap((group) => group.items.map((item) => item.id)));
+  const priceRiseIds = new Set(leaks.filter((leak) => leak.priceRise).map((leak) => leak.id));
 
   return (
     <section className="mt-8">
@@ -77,7 +79,7 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
         </div>
       )}
 
-      <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} />
+      <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />
 
       <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
 
