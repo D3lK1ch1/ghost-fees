@@ -100,3 +100,9 @@ One entry per change. Newest at the bottom.
 - Files: public/themes/christmas (new), src/components/landing/ChristmasHeroArt.jsx (new), src/components/results/ChristmasStory.jsx (new), src/components/site/SeasonToggle.jsx (new), src/lib/ghostFees/christmasArt.js (new), Hero.jsx, ThemeStory.jsx, ResultsView.jsx
 - How to test: pick 🎄, switch Winter and Summer on the landing page, then Try a sample statement, Reveal, and step through all five staves.
 - User feedback that drove this: (fill in)
+
+### Footer text lines up with the rest of the page
+- What: the footer was the only left-aligned block on a centred landing page, and wider than the sections above it. It is now centred and the same width as the content. Shows on every page with the footer.
+- Files: src/components/site/SiteFooter.jsx
+- How to test: scroll to the bottom of the landing page in any theme; the disclaimer, links and font credit are centred under Meet the founders.
+- User feedback that drove this: "some inconsistency regarding the text alignment, especially on the footer" (tester, 4 of 5).
