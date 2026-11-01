@@ -41,9 +41,11 @@ export const EX_PICKS = {
     planLabels: ['Brunch', 'Dinner out', 'Weekend away', 'Savings'],
     splurgeTitle: ['What your exes ', 'paid for'],
     splurgeSub: 'Healing looks good on you.',
+    party: `${ART}/ghost-dinner.webp`,
+    partyCrew: ['ghost-dinner', 'ghost-happy', 'ghost-sassy', 'pink-phone'],
     splurge: [
       { label: 'Dinner out', art: `${ART}/ghost-dinner.webp` },
-      { label: 'Rosé with the girls', art: `${ART}/avatars/pf-rose.webp` },
+      { label: 'Night out with the girls', art: `${ART}/pink-phone.webp` },
       { label: 'New outfit', art: `${ART}/ghost-sassy.webp` },
       { label: 'Weekend away', art: `${ART}/ghost-happy.webp` },
     ],
@@ -79,6 +81,8 @@ export const EX_PICKS = {
     planLabels: ['Footy tickets', 'New kicks', 'Fishing trip', 'Savings goal'],
     splurgeTitle: ['What your exes ', 'paid for'],
     splurgeSub: "Didn't miss them. Didn't even notice.",
+    party: `${ART}/men-footy.webp`,
+    partyCrew: ['men-footy', 'men-bbqshades', 'men-lift', 'men-cap'],
     splurge: [
       { label: 'New kicks', art: `${ART}/avatars/pm-kicks.webp`, cover: true },
       { label: 'Footy finals', art: `${ART}/men-footy.webp` },

@@ -1,5 +1,6 @@
 import ReceiptGhost from '@/components/site/ReceiptGhost';
 import { useState } from 'react';
+import { useGhostList } from '@/hooks/use-ghost-list';
 import { money } from '@/lib/ghostFees/format';
 import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import { MilestoneIcon } from './GlowUpFund';
@@ -217,43 +218,99 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
   );
 }
 
-// Design screen FineSplurge: what your exes paid for. One treat per ex, biggest
-// first, with that ex's real yearly price. The treats are the pick's art set.
+// Design screen FineSplurge: what your exes paid for. The F**k-ex jar fills as you
+// block exes; each treat unlocks when its ex is blocked, and when the jar is full
+// the party ghost says "Feel it" and Party mode opens: your ghosts dance on the
+// exes' gravestones. Real yearly prices only.
 export function ExSplurge({ pick, subscriptions, avatarFor }) {
+  const [ghostList] = useGhostList();
+  const [party, setParty] = useState(false);
+  const blocked = new Set(ghostList.filter((item) => item.status !== 'charging').map((item) => item.id));
   const top = [...subscriptions].sort((a, b) => b.monthly - a.monthly).slice(0, pick.splurge.length);
   const total = top.reduce((sum, item) => sum + item.monthly * 12, 0);
+  const fund = top.filter((item) => blocked.has(item.id)).reduce((sum, item) => sum + item.monthly * 12, 0);
+  const full = top.length > 0 && top.every((item) => blocked.has(item.id));
+  const pct = total > 0 ? Math.min(100, (fund / total) * 100) : 0;
   const [lead, shine] = pick.splurgeTitle;
+
+  if (party) {
+    return (
+      <Screen background="radial-gradient(ellipse at 50% 30%, #3a2440 0%, #15131a 65%)" className="gap-3 px-4 pb-[22px] pt-[18px]">
+        {Array.from({ length: 22 }, (_, i) => (
+          <span key={i} aria-hidden="true" className="ex-mote pointer-events-none absolute rounded-sm" style={{ left: `${(i * 37 + 5) % 96}%`, bottom: -12, width: 6, height: 10, background: [C.coral, C.mint, '#ffe3a3'][i % 3], animationDuration: `${5 + (i % 5)}s`, animationDelay: `${-i * 0.6}s` }} />
+        ))}
+        <h2 className="ex-fredoka relative m-0 text-center text-[28px] font-bold leading-tight"><span className="ex-shine">Party mode</span></h2>
+        <div className="relative text-center text-[14px]" style={{ color: C.soft }}>{money(fund)} a year, all yours. Dance on their graves.</div>
+        <div className="relative grid grid-cols-2 gap-1">
+          {pick.partyCrew.map((file, index) => (
+            <div key={file} className="flex justify-center"><img src={`/themes/ex/${file}.webp`} alt="" className="ex-dance h-[120px] w-auto object-contain" style={{ '--gs': `${1.4 + index * 0.25}s` }} /></div>
+          ))}
+        </div>
+        <div className="relative flex flex-wrap justify-center gap-2">
+          {top.map((item) => (
+            <div key={item.id} className="flex h-[74px] w-[64px] flex-col items-center justify-center rounded-t-[32px] text-center" style={{ background: '#34303e', boxShadow: '0 6px 0 #0f0d13' }}>
+              <span className="text-[9px] font-extrabold tracking-[0.15em]" style={{ color: C.muted }}>RIP</span>
+              <img src={avatarFor(item.merchant)} alt="" className="h-6 w-6 object-contain opacity-60 grayscale" />
+              <span className="line-clamp-1 px-1 text-[9.5px] font-bold">{item.merchant}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex-1" />
+        <GhostButton onClick={() => setParty(false)}>Back to what they paid for</GhostButton>
+      </Screen>
+    );
+  }
+
   return (
     <Screen background="radial-gradient(ellipse at 50% 0%, #2a2530 0%, #15131a 55%)" className="gap-3.5 px-4 pb-[22px] pt-[18px]">
       <div className="relative flex flex-col gap-0.5">
         <h2 className="ex-fredoka m-0 text-[26px] font-bold leading-tight">{lead}<span className="ex-shine">{shine}</span></h2>
         <div className="text-[14px]" style={{ color: C.soft }}>{pick.splurgeSub}</div>
       </div>
-      <div className="relative grid grid-cols-2 gap-3">
+
+      {/* F**k-ex jar: progress toward every treat, with the party ghost beside it. */}
+      <div className="relative flex items-end gap-2 rounded-[20px] p-3" style={{ ...card }}>
+        <div className="flex min-w-0 flex-1 flex-col gap-1.5 pb-1">
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="ex-fredoka text-[16px] font-semibold">F**k-ex jar</span>
+            <span className="text-[13px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
+          </div>
+          <div className="h-3 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
+            <div className="ex-bar h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${C.coral}, ${C.mint})` }} />
+          </div>
+          <div className="text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</div>
+        </div>
+        <div className="relative flex flex-none flex-col items-center">
+          <Bubble kind="r" className="ex-in -mb-1 !min-w-0 !px-4 !pb-6 !pt-2.5 text-[12px]" style={{ animationDelay: '.6s' }}>Feel it.</Bubble>
+          <img src={pick.party} alt="Your party ghost" className="ex-dance h-[84px] w-auto object-contain" style={{ '--gs': '1.8s' }} />
+        </div>
+      </div>
+
+      <div className="relative grid grid-cols-2 gap-x-3 gap-y-5 pt-3">
         {top.map((item, index) => {
           const treat = pick.splurge[index];
+          const open = blocked.has(item.id);
           return (
-            <div key={item.id} className="ex-in flex flex-col overflow-hidden" style={{ ...card, borderRadius: 22, animationDelay: `${0.3 + index * 0.55}s` }}>
-              <div className="relative flex h-[150px] items-end justify-center" style={{ background: 'radial-gradient(ellipse at 50% 70%, #2c3a3a 0%, #1b1921 70%)' }}>
-                {treat.cover ? (
-                  <img src={treat.art} alt="" className="block h-full w-full object-cover" />
-                ) : (
-                  <img src={treat.art} alt="" className="ex-dance block h-[92%] w-[86%] object-contain object-bottom" style={{ '--gs': `${1.7 + index * 0.2}s` }} />
-                )}
-                <img src={avatarFor(item.merchant)} alt="" className="object-contain absolute left-2 top-2 h-8 w-8" />
+            <div key={item.id} className="ex-in relative flex flex-col" style={{ ...card, borderRadius: 22, animationDelay: `${0.3 + index * 0.55}s` }}>
+              <img src={avatarFor(item.merchant)} alt="" className="absolute -left-2 -top-5 z-10 h-11 w-11 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.5)]" />
+              <div className="relative flex h-[150px] items-end justify-center overflow-hidden rounded-t-[22px]" style={{ background: 'radial-gradient(ellipse at 50% 70%, #2c3a3a 0%, #1b1921 70%)' }}>
+                <img src={treat.art} alt="" className={`block h-[92%] w-[86%] object-contain object-bottom ${open ? 'ex-dance' : 'opacity-25 blur-[2px] grayscale'}`} style={{ '--gs': `${1.7 + index * 0.2}s` }} />
+                {!open && <span className="absolute inset-0 flex items-center justify-center text-[30px]" aria-hidden="true">🔒</span>}
               </div>
               <div className="flex flex-col gap-0.5 px-3 pb-3 pt-2.5">
                 <span className="ex-fredoka text-[17px] font-semibold">{treat.label}</span>
-                <span className="text-[12px]" style={{ color: C.muted }}>Paid for by {item.merchant}</span>
-                <span className="ex-fredoka text-[16px] font-semibold" style={{ color: C.mint }}>{money(item.monthly * 12)}/yr</span>
+                <span className="text-[12px]" style={{ color: C.muted }}>{open ? `Paid for by ${item.merchant}` : `Block ${item.merchant} to unlock`}</span>
+                <span className="ex-fredoka text-[16px] font-semibold" style={{ color: open ? C.mint : C.muted }}>{money(item.monthly * 12)}/yr</span>
               </div>
             </div>
           );
         })}
       </div>
-      <div className="relative text-center text-[13px]" style={{ color: C.muted }}>
-        {money(total)} a year from {top.length} {top.length === 1 ? 'ex' : 'exes'}, once they're blocked.
-      </div>
+      {full ? (
+        <PrimaryButton onClick={() => setParty(true)}>🎉 Party mode</PrimaryButton>
+      ) : (
+        <div className="relative text-center text-[13px]" style={{ color: C.muted }}>Fill the jar to unlock Party mode.</div>
+      )}
     </Screen>
   );
 }
