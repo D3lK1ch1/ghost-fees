@@ -9,6 +9,9 @@ import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import ExLeakCard from '@/components/ex/ExLeakCard';
 import ExTabScreens from '@/components/ex/ExTabScreens';
+import XmasTabScreens from '@/components/xmas/XmasTabScreens';
+import XmasLeakCard from '@/components/xmas/XmasLeakCard';
+import JacobsChain from '@/components/xmas/JacobsChain';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
 import ExJourney from '@/components/ex/ExJourney';
@@ -57,6 +60,17 @@ const EX_TAB_TEXT = {
   emails: { label: 'Messages to exes', title: 'Messages to your exes', blurb: 'Cancel, refund and fee-waiver messages, ready to edit and send.' },
   subscriptions: { title: 'Still seeing these?', blurb: 'Your regular subscriptions. Keep the ones you love, block the rest.' },
   receipt: { label: 'What they cost you', title: 'What your exes paid for', blurb: 'What your exes could pay for instead, then every charge on one receipt.' },
+};
+
+// 🎄 names and intros, in the story's words. Same features underneath.
+const XMAS_TAB_TEXT = {
+  ghosts: { label: 'Fees Past', title: 'The Ghost of Fees Past', blurb: 'Every leak on your statement, biggest first, with the transactions behind it.' },
+  house: { label: "Jacob's chain", title: "Jacob's chain", blurb: 'Every leak is a link. Draft the email, then break the link once it is sorted.' },
+  path: { label: 'Christmas morning', title: 'Christmas morning', blurb: 'Break links to bring the dawn. Tick off each step below.' },
+  calendar: { label: 'Yet to come', title: 'Subscriptions yet to come', blurb: 'Next year if nothing changes, the days you were charged, and reminders for the next charge.' },
+  emails: { label: "Jolly's letters", title: "Jolly's letters", blurb: 'Cancel, refund and fee-waiver emails for every dish on the table, ready to edit and send.' },
+  subscriptions: { label: 'Changed my ways', title: 'Changed my ways', blurb: 'Cancel, then check next month that it really stopped.' },
+  receipt: { label: 'Gift to yourself', title: 'One more gift to yourself', blurb: 'What this statement cost you, then every charge on one receipt.' },
 };
 
 const ANSWERS_KEY = 'ghostFees.subAnswers';
@@ -112,7 +126,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [guessDone, setGuessDone] = useState(false);
   const cancelSubs = subscriptions.filter((item) => subAnswers[item.id] === 'no');
   const draftCancel = (item) => openEmail({ id: `sub:${item.id}`, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' });
-  const exText = theme.key === 'ex' ? EX_TAB_TEXT : {};
+  const exText = theme.key === 'ex' ? EX_TAB_TEXT : theme.key === 'christmas' ? XMAS_TAB_TEXT : {};
   const current = { ...TABS.find((item) => item.key === tab), ...exText[tab] };
 
   // Wipes everything from this tab: results, busted ghosts, goals and chat.
@@ -289,6 +303,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
 
+              {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
+
               {tab === 'ghosts' && (
                 <CardList className="mt-4 grid gap-3">
                   {leaks.map((leak, index) => (
@@ -309,6 +325,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         )}
                         {theme.key === 'ex' ? (
                           <ExLeakCard leak={leak} avatar={avatarFor(leak.merchant)} primary={index === 0} onDraft={() => openEmail(leak)} />
+                        ) : theme.key === 'christmas' ? (
+                          <XmasLeakCard leak={leak} primary={index === 0} onDraft={() => openEmail(leak)} />
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
@@ -320,7 +338,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {tab === 'house' && theme.key === 'ex' && (
                 <HeartbreakHouse theme={theme} pick={EX_PICKS[exPick]} subscriptions={subscriptions} avatarFor={avatarFor} />
               )}
-              {tab === 'house' && theme.key !== 'ex' && (
+              {tab === 'house' && theme.key === 'christmas' && (
+                <JacobsChain leaks={leaks} cleared={cleared} onClearedChange={setCleared} onDraft={openEmail} />
+              )}
+              {tab === 'house' && theme.key !== 'ex' && theme.key !== 'christmas' && (
                 <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
               {theme.key === 'ex' && ['path', 'calendar', 'emails', 'receipt'].includes(tab) && (
