@@ -22,6 +22,7 @@ import SiteFooter from '@/components/site/SiteFooter';
 import GhostGuide from '@/components/guide/GhostGuide';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { useScan } from '@/lib/ScanContext';
+import { useTheme } from '@/lib/ThemeContext';
 import { trackEvent } from '@/lib/session';
 import { clearGhostList } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,7 @@ const WINDOWS = [
 export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
   const { windowMonths, setWindowMonths, fileErrors, fileNames } = useScan();
+  const { theme } = useTheme();
   const [emailLeak, setEmailLeak] = useState(null);
   const [tab, setTab] = useState(() => {
     const linked = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
@@ -147,7 +149,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
       <main className="relative mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="font-retro text-[15px] uppercase tracking-[0.16em] text-primary/80">The reading</p>
+          <p className="font-retro text-[15px] uppercase tracking-[0.16em] text-primary/80">{theme.label}</p>
           <label className="flex items-center gap-2 text-[12px] font-bold text-muted-foreground">
             <span className="sr-only">Statement period</span>
             <select
