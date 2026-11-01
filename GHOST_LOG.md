@@ -39,3 +39,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/scanQuota.js, src/components/scan/Paywall.jsx (new), Landing.jsx, Hero.jsx, base44/entities/User.jsonc, Event.jsonc, base44/functions/logEvent
 - How to test: Upload one CSV: it scans. Upload a different CSV: the paywall opens. The sample still works. Note: counted in the browser for now; a server-side check comes with Stripe.
 - User feedback that drove this: (fill in)
+
+### Paywall that shows why it is worth it
+- What: Three facts with sources (up to $1,739 a year wasted on unused subscriptions and $1,116 a year for the average unused gym, Compare the Market 2026; 9 months to cancel, ING), "One forgotten Netflix is $204 a year. Ghost Fees is $10, once.", $5 founding / $10 price cards (once, forever), what is included, and an optional refund promise (SHOW_GUARANTEE in Paywall.jsx).
+- Files: src/components/scan/Paywall.jsx
+- How to test: Use the free scan, then upload a different file: the new paywall opens on mobile and desktop.
+- User feedback that drove this: (fill in)
