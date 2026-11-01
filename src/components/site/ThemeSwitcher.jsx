@@ -2,7 +2,7 @@ import { THEME_LIST } from '@/lib/ghostFees/themes';
 import { useTheme } from '@/lib/ThemeContext';
 import { cn } from '@/lib/utils';
 
-// Small row of emoji buttons. Changes words and colours only.
+// Labelled theme bar: emoji plus the theme name. Changes words and colours only.
 export default function ThemeSwitcher() {
   const { theme, setThemeKey } = useTheme();
   return (
@@ -16,12 +16,12 @@ export default function ThemeSwitcher() {
           title={item.label}
           onClick={() => setThemeKey(item.key)}
           className={cn(
-            'grid h-7 w-7 place-items-center rounded-full text-[15px] transition-colors',
-            theme.key === item.key ? 'bg-primary/25 ring-1 ring-primary' : 'opacity-70 hover:opacity-100',
+            'flex h-7 items-center gap-1.5 rounded-full px-2 text-[12.5px] font-medium transition-colors',
+            theme.key === item.key ? 'bg-primary/25 text-foreground ring-1 ring-primary' : 'text-muted-foreground hover:text-foreground',
           )}
         >
-          <span aria-hidden="true">{item.emoji}</span>
-          <span className="sr-only">{item.label}</span>
+          <span aria-hidden="true" className="text-[15px] leading-none">{item.emoji}</span>
+          <span className="whitespace-nowrap sr-only sm:not-sr-only sm:inline">{item.label}</span>
         </button>
       ))}
     </div>
