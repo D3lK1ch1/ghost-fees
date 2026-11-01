@@ -18,7 +18,7 @@ export default function EmailsPanel({ leaks, onDraft }) {
       <p className="text-[13.5px] leading-relaxed text-muted-foreground">
         One email ready for each ghost. Open it, edit anything, then copy it or send it from your own mail app.
       </p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="mt-4 grid grid-cols-1 gap-3">
         {ready.map((leak) => {
           const action = ACTIONS[leak.action];
           return (
