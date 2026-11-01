@@ -5,6 +5,7 @@ import { toast } from '@/components/ui/use-toast';
 import { money } from '@/lib/ghostFees/format';
 import { downloadTask, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ghostFees/reminder';
 import { cn } from '@/lib/utils';
+import { loadSync, syncEvents, taskEvent } from '@/lib/ghostFees/calendarSync';
 
 const longDay = (date) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 
@@ -75,6 +76,23 @@ export default function TaskDialog({ target, onClose }) {
           </label>
         </div>
 
+        {loadSync() && (
+          <button
+            type="button"
+            disabled={!date}
+            onClick={async () => {
+              try {
+                await syncEvents([taskEvent(task)]);
+                scheduled('added to your synced calendar');
+              } catch {
+                toast({ title: 'Could not add it', description: 'Try again in a moment.' });
+              }
+            }}
+            className="mt-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#5ee6c8] px-4 py-3 text-[14px] font-bold text-[#12302a] disabled:opacity-40"
+          >
+            <CalendarPlus className="h-4 w-4" /> Add to my synced calendar
+          </button>
+        )}
         <button
           type="button"
           disabled={!date}
