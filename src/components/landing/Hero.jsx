@@ -8,6 +8,12 @@ export default function Hero({ onSample, onUpload }) {
   const { theme } = useTheme();
   return (
     <section className="mx-auto flex w-full max-w-3xl animate-rise flex-col items-center px-5 pb-16 pt-6 text-center sm:px-8">
+      <h2
+        className="mb-4 font-heading text-[1.6rem] font-bold leading-none text-black [text-shadow:0_0_2px_rgba(245,241,235,0.85),0_0_20px_hsl(var(--primary)/0.55)] sm:text-[1.9rem]"
+      >
+        Ghost Fees
+      </h2>
+
       <div className="animate-float rounded-full p-6 shadow-[0_0_80px_hsl(var(--primary)/0.22)]">
         <GhostMark className="h-24 w-24 text-foreground sm:h-28 sm:w-28" eyeColor="#150e28" />
       </div>
