@@ -248,7 +248,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
 
               {tab === 'ghosts' && (
-                <CardList className="mt-4 grid gap-3 sm:grid-cols-2">
+                <CardList className="mt-4 grid gap-3">
                   {leaks.map((leak, index) => (
                     <CardItem key={leak.id} index={index}>
                       <div
