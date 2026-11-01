@@ -15,3 +15,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/ghostList.js (new), src/components/results/GhostList.jsx (new), SubscriptionsSection.jsx, ResultsView.jsx
 - How to test: Tap "I cancelled it" on two cards: both appear in the Ghost List with the yearly total. Reload: still there. Clear my data: gone.
 - User feedback that drove this: (fill in)
+
+### Themes: Haunted, My Ex Ghosted Me, Ghosts of Christmas
+- What: Theme switcher (👻 💔 🎄) in the header on every page. Each theme changes the headline, copy and colours only, never features or numbers. All theme copy and colours live in one file (themes.js). Choice is remembered in the browser.
+- Files: src/lib/ghostFees/themes.js, src/lib/ThemeContext.jsx, src/components/site/ThemeSwitcher.jsx (new), App.jsx, BrandHeader.jsx, Hero.jsx, Landing.jsx
+- How to test: Tap 💔 and 🎄 on the landing page: headline and colours change; reload keeps the choice.
+- User feedback that drove this: (fill in)

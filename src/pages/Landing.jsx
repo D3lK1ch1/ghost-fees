@@ -61,7 +61,7 @@ export default function Landing() {
   } else {
     content = (
     <div className="min-h-screen">
-      <BrandHeader right={<span className="text-[13px] font-bold text-muted-foreground">Takes about a minute</span>} />
+      <BrandHeader right={<span className="hidden text-[13px] font-bold text-muted-foreground sm:inline">Takes about a minute</span>} />
       {fileErrors.length > 0 ? (
         <UploadErrors errors={fileErrors} onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
       ) : (

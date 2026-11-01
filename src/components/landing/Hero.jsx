@@ -1,9 +1,11 @@
 import { Lock, Upload } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
+import { useTheme } from '@/lib/ThemeContext';
 
 const TAGS = ['Forgotten subscriptions', 'Sneaky fees', 'Price creep'];
 
 export default function Hero({ onSample, onUpload }) {
+  const { theme } = useTheme();
   return (
     <section className="mx-auto flex w-full max-w-3xl animate-rise flex-col items-center px-5 pb-16 pt-6 text-center sm:px-8">
       <div className="animate-float rounded-full p-6 shadow-[0_0_80px_hsl(var(--primary)/0.22)]">
@@ -11,10 +13,10 @@ export default function Hero({ onSample, onUpload }) {
       </div>
 
       <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.05] text-foreground sm:text-[4rem]">
-        Find the ghosts haunting your bank account.
+        {theme.headline}
       </h1>
       <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-        Ghost Fees finds 8 kinds of money leak and shows the exact dollars, with the transactions behind every one.
+        {theme.subhead}
       </p>
 
       <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
