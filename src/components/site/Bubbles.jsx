@@ -85,7 +85,13 @@ export function SpeechBubble({ children, side = 'left', className }) {
   );
 }
 
-export function ThoughtBubble({ children, className, trail = 'right', tones }) {
+const THOUGHT_SIZES = {
+  sm: 'text-[13px] leading-[1.4] px-6 py-3',
+  md: 'min-h-[64px] text-[14px] leading-[1.4] px-7 py-4',
+  lg: 'min-h-[86px] text-[16px] leading-[1.45] px-8 py-5',
+};
+
+export function ThoughtBubble({ children, className, trail = 'right', tones, size = 'md' }) {
   return (
     <div className={cn('relative w-fit max-w-full', SHADOW, className)}>
       <div className="relative">
@@ -105,7 +111,11 @@ export function ThoughtBubble({ children, className, trail = 'right', tones }) {
           />
         </svg>
         <div
-          className={cn('relative z-10 flex min-h-[64px] items-center justify-center px-7 py-4 text-center text-[14px] font-semibold leading-[1.4] text-balance', tones)}
+          className={cn(
+            'relative z-10 flex items-center justify-center text-center font-semibold text-balance',
+            THOUGHT_SIZES[size] || THOUGHT_SIZES.md,
+            tones,
+          )}
           style={{ color: INK }}
         >
           {children}

@@ -11,7 +11,7 @@ export default function ChristmasHeroArt({ season, setSeason }) {
       <SeasonToggle season={season} setSeason={setSeason} />
       <div className="relative mt-3 w-full overflow-hidden rounded-[28px] border border-primary/30 shadow-[0_12px_60px_hsl(var(--primary)/0.18)]">
         <img src={XMAS.room(season)} alt="A cosy living room with a Christmas tree late on Christmas Eve" width={560} className="h-[280px] w-full object-cover object-[50%_35%] sm:h-[320px]" />
-        <ThoughtBubble className="absolute left-3 top-3 max-w-[190px]">
+        <ThoughtBubble size="lg" className="absolute left-2.5 top-2.5 max-w-[236px] sm:left-3 sm:top-3 sm:max-w-[280px]">
           Bah, humbug. One more streaming service can&apos;t hurt.
         </ThoughtBubble>
         <RoomClock />
