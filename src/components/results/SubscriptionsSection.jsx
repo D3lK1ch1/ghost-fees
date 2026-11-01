@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { CalendarPlus, ExternalLink } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
@@ -8,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
 import { useCancelProof } from './ProofDialog';
-import { OVERLAP_TIPS, findOverlaps } from '@/lib/ghostFees/overlaps';
+import { OVERLAP_TIPS, TYPE_LABELS, findOverlaps, typeOf } from '@/lib/ghostFees/overlaps';
 
 const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|SNAP|F45|CROSSFIT|PILATES|YOGA)\b/i;
 
@@ -30,6 +31,8 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   const [ghosts, setGhosts] = useGhostList();
   // "I cancelled it" asks for proof first (how, when, a reference or a screenshot).
   const proof = useCancelProof();
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('cost');
 
   if (!subscriptions.length) return null;
 
@@ -45,7 +48,16 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
       : { title: `${subscription.merchant} is on your goal path`, description: 'Its cancel link and email are in Decided below.' });
   };
   const undo = (id) => onAnswer?.((current) => ({ ...current, [id]: undefined }));
-  const open = subscriptions.filter((item) => !answers[item.id]);
+  const types = [...new Set(subscriptions.map((item) => typeOf(item.merchant)))];
+  const sorters = {
+    cost: (a, b) => b.monthly - a.monthly,
+    name: (a, b) => a.merchant.localeCompare(b.merchant),
+    type: (a, b) => typeOf(a.merchant).localeCompare(typeOf(b.merchant)) || b.monthly - a.monthly,
+  };
+  const open = subscriptions
+    .filter((item) => !answers[item.id])
+    .filter((item) => typeFilter === 'all' || typeOf(item.merchant) === typeFilter)
+    .sort(sorters[sortBy]);
   const decided = subscriptions.filter((item) => answers[item.id]);
   const keeping = subscriptions.filter((item) => answers[item.id] === 'yes').length;
   const cancelling = subscriptions.filter((item) => answers[item.id] === 'no');
@@ -90,6 +102,30 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
       {proof.dialog}
 
       <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
+
+      {types.length > 1 || subscriptions.length > 3 ? (
+        <div className="mt-3 flex flex-wrap items-center gap-1.5" aria-label="Filter and sort subscriptions">
+          {['all', ...types].map((key) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={typeFilter === key}
+              onClick={() => setTypeFilter(key)}
+              className={cn('rounded-full border px-2.5 py-1 text-[12px] font-semibold', typeFilter === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
+            >
+              {key === 'all' ? 'All' : TYPE_LABELS[key]}
+            </button>
+          ))}
+          <label className="ml-auto flex items-center gap-1.5 text-[12px] text-muted-foreground">
+            Sort
+            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-full border border-border bg-card px-2 py-1 text-[12px] text-foreground">
+              <option value="cost">Highest cost</option>
+              <option value="type">By type</option>
+              <option value="name">A to Z</option>
+            </select>
+          </label>
+        </div>
+      ) : null}
 
       {open.length > 0 ? (
         <CardList className="mt-2 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
@@ -146,7 +182,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
         </CardList>
       ) : (
         <p className="mt-2 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3 text-[13px] font-semibold text-foreground">
-          All decided. Your answers are below.
+          {typeFilter === 'all' ? 'All decided. Your answers are below.' : 'Nothing of this type left to decide.'}
         </p>
       )}
 
