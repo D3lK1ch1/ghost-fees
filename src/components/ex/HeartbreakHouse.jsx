@@ -63,6 +63,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   const blocked = new Set(ghostList.filter((item) => item.status !== 'charging').map((item) => item.id));
   const glow = glowUp(subscriptions, blocked);
   const [selectedId, setSelectedId] = useState(subscriptions[0]?.id);
+  const [expanded, setExpanded] = useState(false);
   const selected = subscriptions.find((item) => item.id === selectedId) || subscriptions[0];
   const shown = subscriptions.slice(0, SHOWN);
   const rest = subscriptions.slice(SHOWN);
@@ -143,16 +144,36 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                 onClick={() => setSelectedId(item.id)}
               />
             ))}
-            {rest.length > 0 && (
+            {rest.length > 0 && !expanded && (
               <Tile
                 index={shown.length}
                 label={`${rest.length} more ${rest.length === 1 ? 'ex' : 'exes'}`}
-                price={`${money(rest.reduce((sum, item) => sum + item.monthly, 0))}/mo`}
+                price={`${money(rest.reduce((sum, item) => sum + item.monthly, 0))}/mo · tap to see`}
                 avatar={avatarFor(rest[0].merchant)}
                 active={rest.some((item) => item.id === selected.id)}
                 lit={rest.every((item) => blocked.has(item.id))}
-                onClick={() => setSelectedId(rest.find((item) => !blocked.has(item.id))?.id || rest[0].id)}
+                onClick={() => {
+                  setExpanded(true);
+                  setSelectedId(rest.find((item) => !blocked.has(item.id))?.id || rest[0].id);
+                }}
               />
+            )}
+            {expanded && rest.map((item, index) => (
+              <Tile
+                key={item.id}
+                index={shown.length + index}
+                label={item.merchant.length > 14 ? item.merchant.split(' ')[0] : item.merchant}
+                price={`${money(item.monthly)}/mo`}
+                avatar={avatarFor(item.merchant)}
+                active={item.id === selected.id}
+                lit={blocked.has(item.id)}
+                onClick={() => setSelectedId(item.id)}
+              />
+            ))}
+            {expanded && (
+              <button type="button" onClick={() => setExpanded(false)} className="col-span-2 rounded-2xl border-2 border-dashed border-white/15 py-2 text-[13px] font-bold text-white/70 hover:border-primary/50">
+                Show fewer rooms
+              </button>
             )}
           </div>
           <div className="mx-auto mt-3 h-10 w-14 rounded-t-full border-2 border-white/10 bg-black/40" aria-hidden="true" />
