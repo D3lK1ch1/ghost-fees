@@ -486,8 +486,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   type="button"
                   onClick={() => onGuide?.(key)}
                   aria-pressed={guideKey === key}
-                  aria-label={`${GUIDES[key].name}, ${GUIDES[key].role}`}
-                  title={GUIDES[key].name}
+                  aria-label={`${GUIDES[key].name}, ${GUIDES[key].role}: ${GUIDES[key].job}`}
+                  title={`${GUIDES[key].name}: ${GUIDES[key].job}`}
                   className={cn(
                     'rounded-full border-2 p-1.5 transition-colors',
                     guideKey === key ? 'border-primary bg-background' : 'border-border bg-background/40 hover:border-primary/50',
@@ -500,7 +500,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
               ))}
             </div>
           </div>
-          <p className="mt-1 text-right text-[11.5px] font-bold text-primary">{guide.name} · {guide.role.replace(/^the /, '')}</p>
+          <p className="mt-1 text-right text-[11.5px] font-bold" style={{ color: guide.color }}>{guide.name} · {guide.job}</p>
+          <p className="mt-0.5 text-right text-[11.5px] leading-snug text-muted-foreground">{guide.does}</p>
 
           <div className="mt-3 flex gap-3">
             <span className="shrink-0 animate-bob" style={{ color: guide.color }}>
