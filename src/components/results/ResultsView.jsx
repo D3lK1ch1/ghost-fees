@@ -41,6 +41,16 @@ const TABS = [
   { key: 'feedback', label: 'Feedback', Icon: MessageSquareHeart, title: 'Tell us in 20 seconds', blurb: 'Did it find something real? It helps us tune the ghost detector.' },
 ];
 
+const ANSWERS_KEY = 'ghostFees.subAnswers';
+
+function readAnswers() {
+  try {
+    return JSON.parse(window.sessionStorage.getItem(ANSWERS_KEY) || '{}') || {};
+  } catch {
+    return {};
+  }
+}
+
 const WINDOWS = [
   { value: 0, label: 'All months' },
   { value: 12, label: 'Last 12 months' },
@@ -61,7 +71,15 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   // Shared between the Haunted House and the goal path. Never stored.
   const [cleared, setCleared] = useState([]);
   const [remindersDone, setRemindersDone] = useState(false);
-  const [subAnswers, setSubAnswers] = useState({});
+  // Kept for this browser tab only, so answers survive a visit to another page.
+  const [subAnswers, setSubAnswers] = useState(readAnswers);
+  useEffect(() => {
+    try {
+      window.sessionStorage.setItem(ANSWERS_KEY, JSON.stringify(subAnswers));
+    } catch {
+      // Storage off: answers still work until the page changes.
+    }
+  }, [subAnswers]);
   const [confirmClear, setConfirmClear] = useState(false);
   const [lifeGoal, setLifeGoal] = useState({ name: '', amount: 0 });
   // Guess-your-number comes first; the guess stays in this tab only.
@@ -75,6 +93,12 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     setConfirmClear(false);
     window.history.replaceState(null, '', window.location.pathname);
     clearGhostList();
+    setSubAnswers({});
+    try {
+      window.sessionStorage.removeItem(ANSWERS_KEY);
+    } catch {
+      // Nothing stored.
+    }
     onRestart();
     toast({ title: 'Your data is cleared', description: 'Nothing from your statement is left in this tab.' });
   };

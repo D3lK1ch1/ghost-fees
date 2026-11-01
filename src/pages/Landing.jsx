@@ -22,7 +22,9 @@ const DEEP_LINK_TABS = ['ghosts', 'house', 'path', 'calendar', 'emails', 'subscr
 export default function Landing() {
   const { status, fileErrors, results, runScan, reset } = useScan();
   const [usedSample, setUsedSample] = useState(false);
-  const [scanDone, setScanDone] = useState(false);
+  // Coming back from another page (About, Privacy) keeps the scan you already ran.
+  const hadResults = useRef(status === 'done' && Boolean(results));
+  const [scanDone, setScanDone] = useState(hadResults.current);
   const inputRef = useRef(null);
   const { user, isAuthenticated } = useAuth();
   const [paywall, setPaywall] = useState(false);
@@ -38,6 +40,7 @@ export default function Landing() {
   const handleScanDone = useCallback(() => setScanDone(true), []);
 
   useEffect(() => {
+    if (hadResults.current) return;
     reset();
     setScanDone(false);
     // Shareable links like /#house or /#path open the sample straight on that tab.
