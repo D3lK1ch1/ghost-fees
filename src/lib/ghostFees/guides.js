@@ -1,6 +1,6 @@
 import { money } from './format';
 
-// Three ghost guides, each with their own colour and job. They change the tone and
+// Four ghost guides, each with their own colour and job. They change the tone and
 // which questions come first, never the facts.
 export const GUIDES = {
   penny: {
@@ -41,6 +41,19 @@ export const GUIDES = {
     room: (label, count, amount) => `${label.toUpperCase()}! ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)}. Let's clear it!`,
     bust: (leak, left) => `BOOM! ${leak.title || leak.merchant} busted! ${left} left!`,
     done: (total) => `HOUSE CLEARED! ${money(total)} of ghosts, gone! Legend!`,
+  },
+  cass: {
+    name: 'Cass',
+    role: 'the cancel ghost',
+    color: '#f2a65a',
+    job: 'Cancelling for you',
+    does: 'Searches the official site for the cancel link, the steps and the phone number, then drafts the email.',
+    chips: ['How do I cancel my biggest one?', 'Find a phone number', 'Write my cancel email'],
+    intro: (count, total) => `${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(total)}. Name one and I'll find how to cancel it.`,
+    pick: (leak) => `${leak.title || leak.merchant}? I'll find their cancel page and phone number.`,
+    room: (label, count, amount) => `${label}: ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)}. Pick one and I'll look it up.`,
+    bust: (leak, left) => `${leak.title || leak.merchant}, cancelled. ${left} to go.`,
+    done: (total) => `Every one cancelled. ${money(total)} saved. My work here is done.`,
   },
 };
 

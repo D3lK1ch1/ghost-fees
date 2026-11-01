@@ -3,6 +3,7 @@ import { Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import CassLookup from '@/components/results/CassLookup';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
@@ -193,6 +194,20 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     setMessages((current) => [...current, { role: 'user', text }]);
     setInput('');
 
+    // Cass: name a subscription (or ask about cancelling one) and she looks it up.
+    const subs = [...(analysis.subscriptions || [])].sort((a, b) => b.monthly - a.monthly);
+    const named = [...subs, ...leaks].find((item) => {
+      const word = String(item.merchant || '').split(/\s+/)[0];
+      return word.length > 2 && text.toUpperCase().includes(word.toUpperCase());
+    });
+    const wantsCancel = guideKey === 'cass' || /\bcancel|phone number|contact\b/i.test(text);
+    const target = named || (guideKey === 'cass' && /biggest|phone|cancel email|cancel/i.test(text) ? subs[0] : null);
+    if (wantsCancel && target) {
+      trackEvent('cass_lookup');
+      reply({ text: `Looking up ${target.merchant} on their official site...`, lookup: { merchant: target.merchant, monthly: target.monthly || 0 }, chips: nextChips });
+      return;
+    }
+
     const local = answer(text, analysis);
     if (local) {
       reply({ text: local.reply, action: local.action, leak: local.leak, chips: nextChips });
@@ -292,6 +307,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 >
                   {message.text}
                 </p>
+                {message.lookup && <CassLookup merchant={message.lookup.merchant} monthly={message.lookup.monthly} auto className="mt-2 w-full" />}
                 {message.action && (
                   <button
                     type="button"
