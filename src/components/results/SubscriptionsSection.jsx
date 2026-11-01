@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { CalendarPlus, ExternalLink } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
 import { downloadReminder } from '@/lib/ghostFees/reminder';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
-import { loadGhostList, saveGhostList } from '@/lib/ghostFees/ghostList';
+import { useGhostList } from '@/hooks/use-ghost-list';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
@@ -27,8 +26,7 @@ const ANSWERS = [
 // Answers live in the results page and this browser tab, so they survive switching tabs
 // and visiting other pages. Answered subscriptions move to Decided, with Undo.
 export default function SubscriptionsSection({ subscriptions, leaks = [], answers = {}, onAnswer, onDraftCancel, onOpenPath }) {
-  const [ghosts, setGhosts] = useState(loadGhostList);
-  useEffect(() => saveGhostList(ghosts), [ghosts]);
+  const [ghosts, setGhosts] = useGhostList();
 
   if (!subscriptions.length) return null;
 

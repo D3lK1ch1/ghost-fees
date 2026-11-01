@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -9,6 +9,9 @@ import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
+import ExJourney from '@/components/ex/ExJourney';
+import HeartbreakHouse from '@/components/ex/HeartbreakHouse';
+import { EX_PICKS } from '@/lib/ghostFees/exArt';
 import GuessReveal from './GuessReveal';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
@@ -24,6 +27,8 @@ import SiteFooter from '@/components/site/SiteFooter';
 import GhostGuide from '@/components/guide/GhostGuide';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { useScan } from '@/lib/ScanContext';
+import { useSavedChoice } from '@/hooks/use-saved-choice';
+import { EX_GHOST_KEY, EX_GHOSTS, exAvatarMap } from '@/lib/ghostFees/exArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { trackEvent } from '@/lib/session';
 import { clearGhostList } from '@/lib/ghostFees/ghostList';
@@ -60,8 +65,16 @@ const WINDOWS = [
 
 export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
+  // 💔 only: one photo avatar per ex, the same on every screen.
+  const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
+  const avatarFor = useMemo(
+    () => exAvatarMap([...subscriptions.map((item) => item.merchant), ...leaks.map((leak) => leak.merchant)], exPick),
+    [subscriptions, leaks, exPick],
+  );
   const { windowMonths, setWindowMonths, fileErrors, fileNames } = useScan();
   const { theme } = useTheme();
+  // 💔 tells its own story, screen by screen, before the full results.
+  const exStory = theme.key === 'ex' && leaks.length > 0 && subscriptions.length > 0;
   const [emailLeak, setEmailLeak] = useState(null);
   const [tab, setTab] = useState(() => {
     const linked = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
@@ -169,7 +182,19 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           </label>
         </div>
 
-        {leaks.length > 0 && !guessDone ? (
+        {exStory && (
+          <ExJourney
+            theme={theme}
+            analysis={analysis}
+            fileName={usedSample ? 'sample-statement.csv' : fileNames[0] || 'your-statement.csv'}
+            avatarFor={avatarFor}
+            onSeeAll={() => document.getElementById('see-everything')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            onUpload={onRestart}
+          />
+        )}
+        {exStory && <h2 id="see-everything" className="mt-10 scroll-mt-4 font-heading text-[22px] font-bold text-foreground">See everything</h2>}
+
+        {leaks.length > 0 && !guessDone && !exStory ? (
           <GuessReveal total={total} months={analysis.monthSpan} onDone={() => setGuessDone(true)} />
         ) : leaks.length ? (
           <LeakTotal
@@ -186,8 +211,9 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
 
-        {leaks.length > 0 && guessDone && (
+        {leaks.length > 0 && guessDone && !exStory && (
           <ThemeStory
+            avatarFor={avatarFor}
             subscriptions={subscriptions}
             leaks={leaks}
             leaksTotal={total}
@@ -229,7 +255,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   )}
                 >
                   <item.Icon className={cn('h-4 w-4 shrink-0', tab === item.key && 'text-primary')} />
-                  {item.label}
+                  {item.key === 'house' && theme.key === 'ex' ? 'Heartbreak House' : item.label}
                   {item.key === 'ghosts' && (
                     <span className="ml-auto rounded-full bg-white/10 px-1.5 text-[11px]">{leaks.length}</span>
                   )}
@@ -246,8 +272,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             </nav>
 
             <div key={tab} className="min-w-0 animate-rise">
-              <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
+              <h2 className="font-heading text-xl font-semibold text-foreground">{tab === 'house' && theme.key === 'ex' ? 'Heartbreak House' : current.title}</h2>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{tab === 'house' && theme.key === 'ex' ? 'Every ex has a window. Block one once you have cancelled and its window lights up.' : current.blurb}</p>
 
               {tab === 'ghosts' && (
                 <CardList className="mt-4 grid gap-3">
@@ -267,13 +293,16 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                             Most useful
                           </span>
                         )}
-                        <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
+                        <LeakCard leak={leak} avatar={avatarFor(leak.merchant)} onDraft={() => openEmail(leak)} />
                       </div>
                     </CardItem>
                   ))}
                 </CardList>
               )}
-              {tab === 'house' && (
+              {tab === 'house' && theme.key === 'ex' && (
+                <HeartbreakHouse theme={theme} pick={EX_PICKS[exPick]} subscriptions={subscriptions} avatarFor={avatarFor} />
+              )}
+              {tab === 'house' && theme.key !== 'ex' && (
                 <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
               {tab === 'path' && (

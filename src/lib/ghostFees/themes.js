@@ -16,7 +16,7 @@ export const THEMES = {
     label: 'My Ex Ghosted Me',
     emoji: '💔',
     headline: 'They ghosted you. Now ghost them back.',
-    subhead: 'Your subscriptions said they would change. They raised their prices instead. Find every one that is still taking your money.',
+    subhead: 'Your subscriptions said they would change. They raised their prices instead.',
     storyTitle: 'Unread messages from your exes',
     // Lines matched on merchant name. Kind jokes only, never about the user.
     lines: [
@@ -33,21 +33,21 @@ export const THEMES = {
     // key dollar figure. Mint is reserved for good news.
     decor: 'none', // no moon or bats here; those belong to Haunted
     vars: {
-      '--background': '257 16% 9%',
+      '--background': '255 13% 9%',
       '--foreground': '320 20% 98%',
       '--card': '258 14% 14%',
       '--card-foreground': '320 20% 98%',
       '--popover': '258 14% 13%',
       '--popover-foreground': '320 20% 98%',
       '--primary': '354 100% 72%',
-      '--primary-foreground': '257 16% 9%',
+      '--primary-foreground': '255 13% 9%',
       '--secondary': '258 14% 17%',
       '--secondary-foreground': '320 20% 98%',
       '--muted': '258 14% 16%',
-      '--muted-foreground': '270 12% 84%',
+      '--muted-foreground': '265 11% 80%',
       '--accent': '258 14% 19%',
       '--accent-foreground': '320 20% 98%',
-      '--border': '257 13% 22%',
+      '--border': '258 9% 22%',
       '--input': '258 14% 20%',
       '--ring': '354 100% 72%',
     },

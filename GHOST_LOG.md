@@ -137,3 +137,15 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Landing.jsx, ResultsView.jsx, SubscriptionsSection.jsx
 - How to test: Try a sample statement, Subscriptions, answer Yes and No, open About us, press Back; then press Set a life goal.
 - User feedback that drove this: "clicked yes or no ... came back, the item was reset. Nothing actually happened ... Add a section on life goals and what matters to you" (tester, 4 of 5).
+
+### My Ex Ghosted Me: pink, photo avatars, landing matched to the design
+- What: step 1 of rebuilding 💔 to match the design pack. Colours move from near-black to deep berry pink. Every ex gets its own round photo avatar from Bella's ghost art (pink ghosts for Heartbroken, hoodie ghosts for I'm Fine, piggy bank for bank fees), with no doubles. The 💔 landing now matches the ChooseGhost design.
+- Files: themes.js, LeakCard.jsx, exArt.js, ResultsView.jsx, ThemeStory.jsx, ExStory.jsx, ExHero.jsx (new, replaces ExHeroArt.jsx), Hero.jsx, public/themes/ex/avatars (new)
+- How to test: pick 💔, compare the landing with the design, switch picks, then Try a sample statement and check the chat and cards.
+- User feedback that drove this: "should be more pink than black", "avatars double up", "very different from what's on the web app".
+
+### My Ex Ghosted Me story mode: Act 1 and Heartbreak House
+- What: 💔 results are now a story, one phone screen at a time, following the design pack: scanning chat, Unread messages (phone), Moving on with the Glow-up fund and double-ups, a Blocked chat for each ex, Inbox zero with a share card. The full results are still underneath under See everything, where the Haunted House is replaced by Heartbreak House. Blocking an ex adds it to the Ghost List (this browser only), so the story, Heartbreak House and the Subscriptions tab always agree.
+- Files: src/components/ex/ (new: ExJourney, ExScanChat, ExMovingOn, ExBlockedChat, ExInboxZero, HeartbreakHouse, GlowUpFund), src/lib/ghostFees/exJourney.js (new), src/hooks/use-ghost-list.jsx (new), ghostList.js, exArt.js, ResultsView.jsx, SubscriptionsSection.jsx, public/themes/ex
+- How to test: pick 💔, Try a sample statement and go through every screen; block an ex, then check Heartbreak House and Subscriptions.
+- User feedback that drove this: "why can't the UI be fully implemented ... the storyline ... look how different that is".
