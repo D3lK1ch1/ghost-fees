@@ -10,6 +10,9 @@ import { SEASON_KEY, SEASONS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
 import GhostTip from './GhostTip';
 import TaskDialog from './TaskDialog';
 import CalendarSync from './CalendarSync';
+import { useGhostList } from '@/hooks/use-ghost-list';
+import { CASS_COLOR } from './CassLookup';
+import { EX_GHOST_KEY, EX_GHOSTS } from '@/lib/ghostFees/exArt';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -20,8 +23,14 @@ const longDay = (date) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-A
 // Month grid: ghosts on the days a leak charged you, bells on upcoming subscription
 // charges. Like the Haunted House, each ghost shows its name, hovering says what it
 // is, and the biggest ghost glows orange. Scheduling opens a task popup.
-export default function HauntedCalendar({ leaks, subscriptions, avatarFor }) {
+export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions, avatarFor }) {
   const { theme } = useTheme();
+  // Cancelled ones (on the Ghost List as Requested or Confirmed) come off the
+  // calendar and reminders. Still charging puts them back.
+  const [ghostList] = useGhostList();
+  const cancelledIds = new Set(ghostList.filter((item) => item.status !== 'charging').map((item) => item.id));
+  const subscriptions = allSubscriptions.filter((item) => !cancelledIds.has(item.id));
+  const cancelled = allSubscriptions.filter((item) => cancelledIds.has(item.id));
   const [season] = useSavedChoice(SEASON_KEY, SEASONS, 'winter');
   const [task, setTask] = useState(null);
   const biggestId = leaks[0]?.id;
@@ -70,7 +79,8 @@ export default function HauntedCalendar({ leaks, subscriptions, avatarFor }) {
 
   return (
     <section className="mt-4 grid gap-5 lg:grid-cols-[1fr_320px]">
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-[#140c26] p-4 sm:p-6 lg:self-start">
+      <div className="flex flex-col gap-5">
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-[#140c26] p-4 sm:p-6">
         <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 animate-moon-glow rounded-full bg-[#f5efe0]/80" />
         <div className="relative flex items-center justify-between gap-3">
           <button
@@ -156,6 +166,8 @@ export default function HauntedCalendar({ leaks, subscriptions, avatarFor }) {
           <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-[hsl(30_100%_62%)] shadow-[0_0_8px_hsl(30_100%_62%)]" /> Biggest ghost</span>
         </p>
       </div>
+        <CassyNudge />
+      </div>
 
       <div className="space-y-4">
         <div className="rounded-2xl border border-border bg-card p-4">
@@ -221,11 +233,51 @@ export default function HauntedCalendar({ leaks, subscriptions, avatarFor }) {
             ))}
             {!upcoming.length && <li className="py-2 text-[13px] text-muted-foreground">No subscriptions to remind you about.</li>}
           </ul>
+          {cancelled.length > 0 && (
+            <p className="mt-2 text-[12px] leading-relaxed text-[#5ee6c8]">
+              Cancelled, so off your reminders: {cancelled.map((item) => item.merchant).join(', ')}.
+            </p>
+          )}
           <CalendarSync subscriptions={subscriptions} />
           <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">Schedule picks a task and a day, then adds it to Google, Outlook or Apple Calendar. Add all puts a reminder 2 days before every charge.</p>
         </div>
       </div>
       <TaskDialog target={task} onClose={() => setTask(null)} />
     </section>
+  );
+}
+
+// Fills the space under the calendar on wide screens (the reminders column is
+// taller): a ghost pointing you to Cassy, the cancellation assistant just below.
+// 💔 uses your own ghost (sassy for Heartbroken, blocking for I'm Fine); the other
+// themes use Cassy herself.
+const NUDGE = {
+  ex: 'Continue to f**k your exes, with help from Cassy.',
+  christmas: "Keep breaking Jacob's chain, with help from Cassy.",
+  haunted: 'Keep busting your ghosts, with help from Cassy.',
+};
+
+function CassyNudge() {
+  const { theme } = useTheme();
+  const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
+  const art = theme.key === 'ex' ? `/themes/ex/${exPick === 'fine' ? 'men-block' : 'ghost-sassy'}.webp` : null;
+  const toCassy = () => document.querySelector('[aria-label="Cancellation assistant"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  return (
+    <div className="hidden flex-1 items-center justify-center gap-3 rounded-3xl border border-dashed border-border/70 px-6 py-6 lg:flex">
+      <div className="animate-float flex-none">
+        {art ? (
+          <img src={art} alt="" width={120} height={138} className="h-[138px] w-[120px] object-contain" />
+        ) : (
+          <GhostMark className="h-24 w-24" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
+        )}
+      </div>
+      <div className="relative max-w-[260px] self-start mt-6 rounded-[22px] bg-white px-5 py-4 text-[#15131a] shadow-[0_8px_20px_rgba(0,0,0,0.35)]">
+        <span aria-hidden="true" className="absolute -left-2 top-6 h-5 w-5 rotate-45 rounded-[3px] bg-white" />
+        <p className="relative font-heading text-[17px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
+        <button type="button" onClick={toCassy} className="relative mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
+          Cancel the next one ↓
+        </button>
+      </div>
+    </div>
   );
 }

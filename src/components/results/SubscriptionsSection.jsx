@@ -7,6 +7,7 @@ import { useGhostList } from '@/hooks/use-ghost-list';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
+import { useCancelProof } from './ProofDialog';
 import { OVERLAP_TIPS, findOverlaps } from '@/lib/ghostFees/overlaps';
 
 const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|SNAP|F45|CROSSFIT|PILATES|YOGA)\b/i;
@@ -27,15 +28,13 @@ const ANSWERS = [
 // and visiting other pages. Answered subscriptions move to Decided, with Undo.
 export default function SubscriptionsSection({ subscriptions, leaks = [], answers = {}, onAnswer, onDraftCancel, onOpenPath }) {
   const [ghosts, setGhosts] = useGhostList();
+  // "I cancelled it" asks for proof first (how, when, a reference or a screenshot).
+  const proof = useCancelProof();
 
   if (!subscriptions.length) return null;
 
   const isGhosted = (id) => ghosts.some((item) => item.id === id);
-  const ghostIt = (subscription) => setGhosts((current) => (
-    current.some((item) => item.id === subscription.id)
-      ? current
-      : [...current, { id: subscription.id, merchant: subscription.merchant, monthly: subscription.monthly, status: 'requested', date: new Date().toISOString() }]
-  ));
+  const ghostIt = (subscription) => proof.ask(subscription);
   const setStatus = (id, status) => setGhosts((current) => current.map((item) => (item.id === id ? { ...item, status } : item)));
   const removeGhost = (id) => setGhosts((current) => current.filter((item) => item.id !== id));
 
@@ -87,7 +86,8 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
         </div>
       )}
 
-      <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />
+      <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} onAddProof={proof.addProof} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />
+      {proof.dialog}
 
       <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
 

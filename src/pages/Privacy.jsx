@@ -4,6 +4,7 @@ import SiteFooter from '@/components/site/SiteFooter';
 // Exactly what is kept, where, and for how long. Keep this true: update it with every data change.
 const STORED = [
   { what: 'Your results, Ghost List, theme and free-scan count', where: 'Your browser only', how: 'Until you press Clear my data or clear your browser' },
+  { what: 'Proof of cancelling (how and when, references, screenshots you add)', where: 'Your browser only, with your Ghost List. Never uploaded', how: 'Until you press Clear my data, remove it, or clear your browser' },
   { what: 'CSV statements', where: 'Never leave your browser', how: 'Not stored' },
   { what: 'PDF statements', where: 'Base44 private storage, so they can be read', how: 'Kept for now: we are working on deleting them right after reading' },
   { what: 'Anonymous usage events (e.g. "scan finished")', where: 'Ghost Fees database', how: 'A random session id and the event type only' },

@@ -1,7 +1,8 @@
 // Ghost List: subscriptions the user has asked to cancel.
 // Kept in this browser only (localStorage). Only merchant name, monthly price,
-// status, date and the proof the person typed (how and when they cancelled, a
-// reference) are kept, never statement rows. Cleared by "Clear my data".
+// status, date and the proof the person gave (how and when they cancelled, a
+// reference, and optionally a shrunk screenshot) are kept, never statement rows.
+// Cleared by "Clear my data".
 const KEY = 'ghostFees.ghostList.v1';
 export const CHANGED = 'ghostfees:ghostlist';
 
@@ -20,14 +21,26 @@ export function loadGhostList() {
   }
 }
 
+// Returns false when the browser wouldn't keep it (private mode, or storage full
+// because of screenshots), so the caller can say so.
 export function saveGhostList(items) {
   try {
     window.localStorage.setItem(KEY, JSON.stringify(items));
     // Let every screen showing the list (Subscriptions tab, 💔 story) catch up.
     window.dispatchEvent(new Event(CHANGED));
+    return true;
   } catch {
     // Storage can be off (private mode). The list still works for this visit.
+    return false;
   }
+}
+
+// Mark a subscription cancelled ("requested") with its proof, adding it if new.
+export function withCancelled(items, subscription, proof) {
+  const patch = { status: 'requested', ...(proof ? { proof } : {}) };
+  return items.some((entry) => entry.id === subscription.id)
+    ? items.map((entry) => (entry.id === subscription.id ? { ...entry, ...patch } : entry))
+    : [...items, { id: subscription.id, merchant: subscription.merchant, monthly: subscription.monthly, date: new Date().toISOString(), ...patch }];
 }
 
 export function clearGhostList() {
