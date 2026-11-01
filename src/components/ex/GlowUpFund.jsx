@@ -24,7 +24,7 @@ export function MilestoneIcon({ icon, on, size = 44 }) {
 
 // Glow-up fund bar and the four milestones, as in Moving on and Heartbreak House.
 // `glow` comes from glowUp() in exJourney.js.
-export default function GlowUpFund({ glow, compact = false, milestonesOnly = false, hide = [], className = '' }) {
+export default function GlowUpFund({ glow, compact = false, milestonesOnly = false, hide = ['savings'], className = '' }) {
   const steps = glow.steps.filter((step) => !hide.includes(step.key));
   const pct = glow.goal > 0 ? Math.min(100, (glow.fund / glow.goal) * 100) : 0;
   return (
