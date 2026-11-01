@@ -1,6 +1,7 @@
 import { SpeechBubble } from '@/components/site/Bubbles';
 import { money } from '@/lib/ghostFees/format';
 import { XMAS } from '@/lib/ghostFees/christmasArt';
+import ChangedMyWays from './ChangedMyWays';
 import { Disclaimer, Kicker, Spirit, Stocking, Title, XScreen, useSeason } from './XmasKit';
 
 // The 🎄 design screen at the top of each results tab. Every number is from the scan.
@@ -8,6 +9,7 @@ import { Disclaimer, Kicker, Spirit, Stocking, Title, XScreen, useSeason } from 
 //   Goal path > Christmas morning (CW7): dawn breaks as you break Jacob's links
 //   Calendar  > Stave three, the Hooded One (CW5): the next 12 months
 //   Emails    > Stave two, Jolly's table (CW4): every dish is something you pay for
+//   Subscriptions > Changed my ways (CW6): the cancel list with Tiny Savings
 
 function FeesPast({ leaks, total, X, season }) {
   return (
@@ -139,5 +141,6 @@ export default function XmasTabScreens({ tab, leaks = [], subscriptions = [], to
   if (tab === 'path' && leaks.length) return wrap(<Morning leaks={leaks} cleared={cleared} subscriptions={subscriptions} X={X} season={season} />);
   if (tab === 'calendar' && subscriptions.length) return wrap(<YetToCome subscriptions={subscriptions} X={X} season={season} />);
   if (tab === 'emails' && subscriptions.length) return wrap(<Present subscriptions={subscriptions} X={X} season={season} />);
+  if (tab === 'subscriptions' && subscriptions.length) return <div className="mb-5 mt-4"><ChangedMyWays subscriptions={subscriptions} /></div>;
   return null;
 }
