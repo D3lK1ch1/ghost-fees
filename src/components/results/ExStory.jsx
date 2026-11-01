@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { money } from '@/lib/ghostFees/format';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { EX_GHOST_KEY, EX_GHOSTS, EX_PICKS, exAvatar } from '@/lib/ghostFees/exArt';
+import GhostTip from './GhostTip';
 
 // My Ex Ghosted Me: "Unread messages from your exes".
 // One message per real subscription, with the real monthly price. Kind jokes only.
@@ -48,7 +49,9 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn })
         <div className="flex items-center gap-2.5 border-b border-border pb-2.5">
           <div className="flex -space-x-2">
             {shown.slice(0, 3).map((item) => (
-              <img key={item.id} src={exAvatar(item.merchant)} alt="" width={28} height={28} className="h-7 w-7 rounded-full ring-2 ring-background" />
+              <GhostTip key={item.id} side="bottom" align="start" label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
+                <img src={exAvatar(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full ring-2 ring-background" />
+              </GhostTip>
             ))}
           </div>
           <div className="min-w-0 flex-1">
@@ -63,7 +66,9 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn })
             const line = theme.lines.find((entry) => entry.match.test(item.merchant))?.text || theme.fallbackLine;
             return (
               <motion.li key={item.id} {...enter(index)} className="flex items-end gap-2">
-                <img src={exAvatar(item.merchant)} alt="" width={28} height={28} className="h-7 w-7 shrink-0 rounded-full" />
+                <GhostTip className="shrink-0" align="start" label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
+                  <img src={exAvatar(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full" />
+                </GhostTip>
                 <div className="max-w-[85%]">
                   <div className="pl-1 text-[11px] font-bold text-primary">{item.merchant}</div>
                   <div className="rounded-2xl rounded-bl-md bg-secondary px-3 py-2 text-[13px] text-foreground">
