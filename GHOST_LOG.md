@@ -125,3 +125,9 @@ One entry per change. Newest at the bottom.
 - Files: src/data/founders.js
 - How to test: open /about; the first paragraph is the story, with no dashed placeholder box.
 - User feedback that drove this: (fill in)
+
+### Bigger, cleaner text: guides and footer
+- What: Gus's job reads Busting your ghosts. Guide text on the porch, the guide picker and the chat header is bigger (12 to 14px) and left-aligned where it was right-aligned. The footer, already centred after tester feedback, now leads with bigger About us / Our progress / Privacy links, then a readable disclaimer and a smaller font credit.
+- Files: src/lib/ghostFees/guides.js, HauntedHouse.jsx, GhostGuide.jsx, src/components/site/SiteFooter.jsx
+- How to test: Haunted House porch and guide picker; Ask a ghost header; bottom of any page.
+- User feedback that drove this: "make sure text is better resized and cleaner"; tester note on text alignment in the footer.

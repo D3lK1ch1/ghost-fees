@@ -250,7 +250,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">
-                {guide.name} <span className="text-[11.5px] font-bold" style={{ color: guide.color }}>· {guide.job}</span>
+                {guide.name} <span className="text-[13px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
               </p>
               <div className="mt-0.5 flex gap-1" role="group" aria-label="Pick your ghost guide">
                 {GUIDE_KEYS.map((key) => (
@@ -274,9 +274,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <X className="h-5 w-5" />
             </button>
           </div>
-          <p className="border-b border-border px-4 py-2 text-[11.5px] text-muted-foreground">
-            <span className="font-semibold text-foreground">{guide.does}</span> Your guide sees your results, not your statement. Nothing is saved.
-          </p>
+          <div className="border-b border-border px-4 py-2.5">
+            <p className="text-[13px] leading-relaxed text-foreground">{guide.does}</p>
+            <p className="mt-0.5 text-[11.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
+          </div>
 
           <div ref={listRef} aria-live="polite" className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {messages.map((message, index) => (
