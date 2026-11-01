@@ -1,82 +1,62 @@
 import { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { CheckCheck, HeartCrack } from 'lucide-react';
-import { SpeechBubble } from '@/components/site/Bubbles';
 import { yearly } from '@/lib/ghostFees/exJourney';
+import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import GlowUpFund from './GlowUpFund';
 
-// Scene 4 (design Ex5Story): the chat with one ex after you block them. Their line
-// is the real joke for that merchant; the money back is their real price x 12.
-export default function ExBlockedChat({ theme, pick, ex, glow, avatarFor, onReplay, onNext }) {
-  const reduce = useReducedMotion();
+// Scene 4, design screen Ex5Story: the chat with one ex after you block them.
+// Their line is the real joke for that merchant; the money back is their price x 12.
+export default function ExBlockedChat({ theme, pick, pickKey, ex, glow, avatarFor, onNext }) {
   const [run, setRun] = useState(0);
   const line = theme.lines.find((entry) => entry.match.test(ex.merchant))?.text || theme.fallbackLine;
-  const step = (index) => ({
-    initial: reduce ? { opacity: 0 } : { opacity: 0, y: 10 },
-    animate: reduce ? { opacity: 1 } : { opacity: 1, y: 0 },
-    transition: { delay: reduce ? 0 : 0.3 + index * 0.7, duration: 0.35 },
-  });
+  const chip = (text) => <div className="self-center rounded-full px-3 py-1 text-[12px] font-bold" style={{ color: C.muted, background: C.card }}>{text}</div>;
 
   return (
-    <div key={run} className="flex min-h-[640px] flex-col">
-      <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-        <img src={avatarFor(ex.merchant)} alt="" width={44} height={44} className="h-11 w-11 rounded-full opacity-60 grayscale" />
-        <div>
-          <p className="font-heading text-[17px] font-bold text-white">{ex.merchant}</p>
-          <p className="text-[12.5px] text-white/55">Blocked</p>
+    <Screen key={run} stars={false}>
+      <div className="relative z-[1] flex items-center gap-3 px-4 pb-3.5 pt-[18px]" style={{ background: C.bar, borderBottom: `1px solid ${C.barLine}` }}>
+        <img src={avatarFor(ex.merchant)} alt="" className="h-[42px] w-[42px] flex-none rounded-full object-cover opacity-50 grayscale" />
+        <div className="flex flex-col gap-0.5">
+          <div className="ex-fredoka text-[18px] font-semibold">{ex.merchant}</div>
+          <div className="text-[13px] font-bold" style={{ color: C.muted }}>Blocked</div>
         </div>
       </div>
 
-      <motion.div {...step(0)} className="mt-3 flex items-center gap-3 rounded-2xl bg-primary px-4 py-3 text-primary-foreground">
-        <HeartCrack className="h-6 w-6 shrink-0" />
-        <div>
-          <p className="font-heading text-[16px] font-bold">Blocked</p>
-          <p className="text-[13px]">{ex.merchant} won&apos;t be texting you again.</p>
+      <div className="relative flex flex-1 flex-col gap-2.5 p-4" style={{ background: 'radial-gradient(ellipse at 80% 85%, #24202c 0%, #15131a 55%)' }}>
+        <div className="ex-in flex items-center gap-3 rounded-[18px] px-4 py-3" style={{ background: C.coral, color: C.bg, animationDelay: '.1s' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.bg} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-9.4-8.8A5.3 5.3 0 0 1 12 6a5.3 5.3 0 0 1 9.4 5.2C19 15.6 12 20 12 20z" /><path d="M12 6l-2 4 3 2.5-2 4" /></svg>
+          <div className="flex flex-col">
+            <span className="ex-fredoka text-[17px] font-semibold">Blocked</span>
+            <span className="text-[13px] font-bold">{ex.merchant} won&apos;t be texting you again.</span>
+          </div>
         </div>
-      </motion.div>
+        {chip('Before')}
+        <div className="ex-in max-w-[82%] self-start px-4 py-3 text-[16px]" style={{ background: C.card, borderRadius: '20px 20px 20px 6px', animationDelay: '.6s' }}>{line}</div>
+        {chip('Today')}
+        <div className="ex-in flex max-w-[78%] flex-col items-end gap-1 self-end" style={{ animationDelay: '1.2s' }}>
+          <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>I cancelled. We&apos;re done, and that&apos;s okay.</div>
+          <div className="text-[12px] font-bold" style={{ color: C.mint }}>✓✓ Left on read</div>
+        </div>
 
-      <div className="flex-1 space-y-3 pt-4">
-        <p className="mx-auto w-fit rounded-full bg-white/10 px-3 py-0.5 text-[12px] text-white/70">Before</p>
-        <motion.p {...step(1)} className="w-fit max-w-[80%] rounded-2xl rounded-bl-md bg-white/[0.08] px-4 py-2.5 text-[14.5px] text-white">
-          {line}
-        </motion.p>
-        <p className="mx-auto w-fit rounded-full bg-white/10 px-3 py-0.5 text-[12px] text-white/70">Today</p>
-        <motion.div {...step(2)} className="ml-auto w-fit max-w-[80%]">
-          <p className="rounded-2xl rounded-br-md bg-primary px-4 py-2.5 text-[14.5px] font-semibold text-primary-foreground">
-            I cancelled. We&apos;re done, and that&apos;s okay.
-          </p>
-          <p className="mt-1 flex items-center justify-end gap-1 text-[11.5px] font-semibold text-[#5ee6c8]">
-            <CheckCheck className="h-3.5 w-3.5" /> Left on read
-          </p>
-        </motion.div>
-
-        <motion.div {...step(3)} className="flex items-end justify-between gap-3 pt-8">
-          <div className="space-y-2">
-            <p className="w-fit rounded-full border-2 border-[#5ee6c8] bg-[#173b33] px-4 py-2 text-[14px] text-white">
-              <span className="font-heading text-[18px] font-bold text-[#5ee6c8]">+{yearly(ex.monthly)}</span> a year back
-            </p>
-            <GlowUpFund glow={glow} compact className="w-[220px] rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5" />
+        <div className="mt-auto flex items-end justify-between gap-2 pt-4">
+          <div className="ex-in flex flex-col gap-2" style={{ animationDelay: '1.8s' }}>
+            <div className="w-fit rounded-full px-4 py-2 text-[14px] font-bold" style={{ border: `2px solid ${C.mint}`, background: '#173b33' }}>
+              <span className="ex-fredoka text-[19px] font-bold" style={{ color: C.mint }}>+{yearly(ex.monthly)}</span> a year back
+            </div>
+            <GlowUpFund glow={glow} compact className="w-[200px] rounded-2xl px-3 py-2.5" />
           </div>
-          <div className="relative">
-            <SpeechBubble side="right" className="absolute -left-24 top-0 w-max">{pick.healedBubble}</SpeechBubble>
-            <img src={pick.healed} alt="" width={360} className="h-auto w-[110px]" />
+          <div className="flex flex-col items-end">
+            <Bubble kind="r" className="ex-in -mb-2 text-[13px]" style={{ animationDelay: '2.2s' }}>{pick.healedBubble}</Bubble>
+            <GhostPal pickKey={pickKey} mood="happy" motion="dance" width={112} speed={2.1} />
           </div>
-        </motion.div>
+        </div>
       </div>
 
-      <p className="mt-4 text-center text-[13px] text-white/60">{ex.merchant} is on your Blocked list.</p>
-      <div className="mt-3 grid grid-cols-2 gap-3">
-        <button
-          type="button"
-          onClick={() => { setRun((value) => value + 1); onReplay?.(); }}
-          className="rounded-[18px] border-2 border-white/20 px-5 py-3 font-heading text-[16px] font-bold text-white hover:border-primary/60"
-        >
-          Replay
-        </button>
-        <button type="button" onClick={onNext} className="rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
-          Next ex
-        </button>
+      <div className="flex flex-col gap-2.5 px-4 pb-[22px] pt-3.5" style={{ background: C.bar, borderTop: `1px solid ${C.barLine}` }}>
+        <div className="text-center text-[13px]" style={{ color: C.muted }}>{ex.merchant} is on your Blocked list.</div>
+        <div className="grid grid-cols-2 gap-2.5">
+          <GhostButton onClick={() => setRun((value) => value + 1)}>Replay</GhostButton>
+          <PrimaryButton onClick={onNext}>Next ex</PrimaryButton>
+        </div>
       </div>
-    </div>
+    </Screen>
   );
 }

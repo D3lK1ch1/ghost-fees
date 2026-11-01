@@ -1,130 +1,130 @@
-import { ExternalLink, Clock, Check, Copy } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
 import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { findOverlaps } from '@/lib/ghostFees/overlaps';
 import { kindOf, yearly } from '@/lib/ghostFees/exJourney';
-import { cn } from '@/lib/utils';
+import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen, Stars } from './ExKit';
 import GlowUpFund from './GlowUpFund';
 
-// Scene 3 (design Ex4Subs): the Glow-up fund, double-ups, and every ex with their
-// line, the official cancel steps and Block and delete. Blocking adds the ex to the
-// Ghost List, the same list as the Subscriptions tab.
-export default function ExMovingOn({ theme, pick, subscriptions, glow, blocked, ghostList, avatarFor, priceRiseIds, onBlock, onDone }) {
+const card = { background: C.card, border: `1px solid ${C.line}`, borderRadius: 20 };
+
+const BADGES = {
+  confirmed: { label: 'Gone for good', note: (item) => `${yearly(item.monthly)}/yr back`, style: { background: C.mint, color: C.mintInk } },
+  requested: { label: 'Requested', note: () => 'Waiting on their reply', style: { border: '1.5px solid #ffa3ab', color: '#ffc6cb' } },
+  charging: { label: 'Still texting', note: () => 'Charged you again. Message them.', style: { background: C.coral, color: C.bg } },
+};
+
+// Scene 3, design screen Ex4Subs: the Glow-up fund, double-ups, and every ex still
+// charging with their line, the official cancel steps and Block and delete.
+// Blocking adds the ex to the Ghost List, the same list as the Subscriptions tab.
+export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, blocked, ghostList, avatarFor, priceRiseIds, onBlock, onDone }) {
   const overlaps = findOverlaps(subscriptions);
   const overlapIds = new Set(overlaps.flatMap((group) => group.items.map((item) => item.id)));
   const open = subscriptions.filter((item) => !blocked.has(item.id));
-  const statusOf = (id) => ghostList.find((item) => item.id === id)?.status;
+  const gone = subscriptions.filter((item) => blocked.has(item.id));
+  const statusOf = (id) => ghostList.find((item) => item.id === id)?.status || 'requested';
   const [bubbleTop, bubbleRest] = pick.movingBubble;
 
   return (
-    <div>
-      <h2 className="font-heading text-[26px] font-bold text-white">Moving on</h2>
-      <p className="text-[14px] text-white/70">
-        {open.length} {open.length === 1 ? 'ex' : 'exes'} still charging you · {money(open.reduce((sum, item) => sum + item.monthly, 0) * 12)} a year
-      </p>
-
-      <div className="mt-4 rounded-[26px] border border-white/10 bg-white/[0.04] p-4">
-        <div className="relative flex items-end gap-2">
-          <img src={pick.moving} alt="" width={360} className="h-auto w-[150px]" />
-          <p className="mb-8 rounded-[28px] bg-white px-4 py-3 text-center text-[14px] font-bold leading-snug text-[#2a1020] shadow-[0_5px_0_rgba(255,143,156,0.5)]">
-            <span className="font-heading text-[16px] text-primary">{bubbleTop}</span>
-            <br />
-            {bubbleRest}
-          </p>
+    <Screen stars={false} className="gap-4 px-4 pb-7 pt-[18px]">
+      <div className="flex flex-col gap-0.5">
+        <h2 className="ex-fredoka m-0 text-[24px] font-bold leading-tight">Moving on</h2>
+        <div className="text-[14px]" style={{ color: C.soft }}>
+          {open.length} {open.length === 1 ? 'ex' : 'exes'} still charging you · {money(open.reduce((sum, item) => sum + item.monthly, 0) * 12)} a year
         </div>
-        <GlowUpFund glow={glow} className="mt-3" />
+      </div>
+
+      <div className="ex-in relative flex flex-col gap-3.5 overflow-hidden rounded-[26px] px-4 pb-4 pt-[18px]" style={{ animationDelay: '.1s', background: 'radial-gradient(ellipse at 20% 30%, #332c3a 0%, #262230 55%, #1b1921 100%)', border: '1px solid #3a3444' }}>
+        <Stars n={16} maxY={40} />
+        <div className="relative flex items-end gap-1">
+          <GhostPal pickKey={pickKey} mood="power" motion="dance" width={132} speed={1.93} drift={6.4} />
+          <Bubble kind="l" className="mb-[70px] flex min-w-0 flex-1 flex-col gap-0.5">
+            <span className="ex-fredoka whitespace-nowrap text-[21px] font-bold leading-none" style={{ color: C.coralDeep }}>{bubbleTop}</span>
+            <span className="text-[15px] font-extrabold leading-snug">{bubbleRest}</span>
+          </Bubble>
+        </div>
+        <GlowUpFund glow={glow} />
       </div>
 
       {overlaps.map((group) => (
-        <div key={group.key} className="mt-4 rounded-[22px] border-2 border-primary/60 bg-white/[0.03] p-4">
-          <p className="flex items-center gap-1.5 text-[13px] font-bold text-primary"><Copy className="h-3.5 w-3.5" /> Double-ups</p>
-          <p className="mt-1.5 font-heading text-[19px] font-bold leading-snug text-white">
-            {group.items.length} {group.label.replace('video ', '').replace(/ (services|apps|plans|tools|assistants|memberships)$/, '')} exes at once? That&apos;s <span className="text-primary">{money(group.yearly)}/yr.</span>
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
+        <div key={group.key} className="ex-in flex flex-col gap-3 p-4" style={{ ...card, border: `1.5px solid ${C.coral}`, animationDelay: '.65s' }}>
+          <div className="flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.coral} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10z" /><path d="M15 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10z" /></svg>
+            <span className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>Double-ups</span>
+          </div>
+          <div className="ex-fredoka text-[21px] font-semibold leading-snug">
+            {group.items.length} {group.label.replace('video ', '').replace(/ (services|apps|plans|tools|assistants|memberships)$/, '')} exes at once? That&apos;s <span style={{ color: C.coral }}>{money(group.yearly)}/yr</span>.
+          </div>
+          <div className="flex flex-wrap gap-1.5">
             {group.items.map((item) => (
-              <span key={item.id} className="rounded-full border border-white/15 px-3 py-1 text-[13px] text-white">{item.merchant} {money(item.monthly)}</span>
+              <span key={item.id} className="rounded-full px-2.5 py-1.5 text-[13px] font-bold" style={{ background: C.bg, border: `1px solid ${C.line}` }}>{item.merchant} {money(item.monthly)}</span>
             ))}
           </div>
-          <p className="mt-3 text-[13.5px] text-white/70">Keep the one you actually use. Block the rest.</p>
+          <div className="text-[14px]" style={{ color: C.soft }}>Keep the one you actually use. Block the rest.</div>
         </div>
       ))}
 
-      <ul className="mt-4 space-y-3">
-        {open.map((item, index) => {
-          const info = cancelInfo(item.merchant);
-          const line = theme.lines.find((entry) => entry.match.test(item.merchant))?.text || theme.fallbackLine;
-          const tag = priceRiseIds.has(item.id) ? 'price went up' : overlapIds.has(item.id) ? 'double-up' : null;
-          return (
-            <li key={item.id} className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
-              <div className="flex items-start gap-3">
-                <img src={avatarFor(item.merchant)} alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-full" />
-                <div className="min-w-0 flex-1">
-                  <p className="font-heading text-[17px] font-bold text-white">{item.merchant}</p>
-                  <p className="text-[12.5px] text-white/60">{kindOf(item.merchant)}{tag && ` · ${tag}`}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-heading text-[17px] font-bold text-white">{money(item.monthly)}/mo</p>
-                  <p className="text-[12px] text-white/60">{yearly(item.monthly)}/yr</p>
-                </div>
+      {open.map((item, index) => {
+        const info = cancelInfo(item.merchant);
+        const line = theme.lines.find((entry) => entry.match.test(item.merchant))?.text || theme.fallbackLine;
+        const tag = priceRiseIds.has(item.id) ? 'price went up' : overlapIds.has(item.id) ? 'double-up' : null;
+        const steps = info.url ? info.steps.split(/\s*>\s*|\.\s+/).filter(Boolean) : [];
+        const Button = index === 0 ? PrimaryButton : GhostButton;
+        return (
+          <div key={item.id} className="ex-in flex flex-col gap-3 p-4" style={{ ...card, animationDelay: `${Math.min(1.2 + index * 0.25, 2.2)}s` }}>
+            <div className="flex items-center gap-3">
+              <img src={avatarFor(item.merchant)} alt="" className="ex-av h-[42px] w-[42px] flex-none rounded-full object-cover" />
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span className="text-[17px] font-extrabold">{item.merchant}</span>
+                <span className="text-[13px]" style={{ color: C.muted }}>{kindOf(item.merchant)}{tag && ` · ${tag}`}</span>
               </div>
-              <p className="mt-3 w-fit rounded-2xl bg-white/[0.07] px-3.5 py-2 text-[14px] text-white">&quot;{line}&quot;</p>
-              <p className="mt-3 text-[13.5px] leading-relaxed text-white/75">{info.steps}</p>
-              {info.url && (
-                <a href={info.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[14px] font-bold text-primary underline underline-offset-4">
-                  Cancel on {info.name} <ExternalLink className="h-3.5 w-3.5" />
-                </a>
-              )}
-              <button
-                type="button"
-                onClick={() => onBlock(item)}
-                className={cn(
-                  'mt-3 w-full rounded-[18px] px-5 py-3 font-heading text-[16px] font-bold transition-transform hover:-translate-y-0.5',
-                  index === 0 ? 'bg-primary text-primary-foreground' : 'border-2 border-white/20 text-white',
-                )}
-              >
-                💔 Block and delete
-              </button>
-              <p className="mt-1.5 text-center text-[11.5px] text-white/50">Block once you&apos;ve cancelled.</p>
-            </li>
-          );
-        })}
-      </ul>
-
-      {blocked.size > 0 && (
-        <div className="mt-6">
-          <div className="flex items-baseline justify-between">
-            <h3 className="font-heading text-[20px] font-bold text-white">Blocked list</h3>
-            <span className="text-[13px] text-white/60">{blocked.size} {blocked.size === 1 ? 'ex' : 'exes'}</span>
+              <div className="flex flex-col items-end">
+                <span className="ex-fredoka text-[20px] font-semibold">{money(item.monthly)}/mo</span>
+                <span className="text-[13px]" style={{ color: C.muted }}>{yearly(item.monthly)}/yr</span>
+              </div>
+            </div>
+            <div className="max-w-[88%] self-start px-3 py-2 text-[14px]" style={{ borderRadius: '16px 16px 16px 4px', background: C.bg, color: C.soft }}>&quot;{line}&quot;</div>
+            {steps.length > 1 ? (
+              <ol className="m-0 flex list-decimal flex-col gap-1.5 pl-5 text-[14px] leading-snug" style={{ color: '#e6e2ea' }}>
+                {steps.map((step) => <li key={step}>{step.replace(/\.$/, '')}.</li>)}
+              </ol>
+            ) : (
+              <p className="text-[14px] leading-snug" style={{ color: '#e6e2ea' }}>{info.steps}</p>
+            )}
+            {info.url && (
+              <a href={info.url} target="_blank" rel="noreferrer" className="inline-flex min-h-[32px] items-center self-start text-[15px] font-extrabold underline" style={{ color: '#ffa3ab' }}>
+                Cancel on {info.name} ↗
+              </a>
+            )}
+            <Button onClick={() => onBlock(item)}>💔 Block and delete</Button>
           </div>
-          <ul className="mt-2 divide-y divide-white/10 rounded-[22px] border border-white/10 bg-white/[0.04]">
-            {subscriptions.filter((item) => blocked.has(item.id)).map((item) => {
-              const gone = statusOf(item.id) === 'confirmed';
+        );
+      })}
+
+      {gone.length > 0 && (
+        <div className="ex-in flex flex-col gap-2.5" style={{ animationDelay: '.3s' }}>
+          <div className="flex items-baseline justify-between">
+            <h3 className="ex-fredoka m-0 text-[22px] font-bold">Blocked list</h3>
+            <span className="text-[13px]" style={{ color: C.muted }}>{gone.length} {gone.length === 1 ? 'ex' : 'exes'}</span>
+          </div>
+          <div className="flex flex-col" style={card}>
+            {gone.map((item, index) => {
+              const badge = BADGES[statusOf(item.id)] || BADGES.requested;
               return (
-                <li key={item.id} className="flex items-center justify-between gap-3 px-4 py-3">
-                  <div>
-                    <p className="font-heading text-[15px] font-bold text-white">{item.merchant}</p>
-                    <p className="text-[12.5px] text-white/60">{gone ? `${yearly(item.monthly)}/yr back` : 'Waiting on their reply'}</p>
+                <div key={item.id} className="flex items-center gap-3 px-4 py-3.5" style={index < gone.length - 1 ? { borderBottom: `1px solid ${C.line}` } : undefined}>
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <span className="text-[16px] font-extrabold">{item.merchant}</span>
+                    <span className="text-[13px]" style={{ color: C.muted }}>{badge.note(item)}</span>
                   </div>
-                  <span className={cn('inline-flex items-center gap-1 rounded-full px-3 py-1 text-[12px] font-bold', gone ? 'bg-[#5ee6c8] text-[#0f2a24]' : 'border border-primary/60 text-primary')}>
-                    {gone ? <Check className="h-3.5 w-3.5" /> : <Clock className="h-3.5 w-3.5" />}
-                    {gone ? 'Gone for good' : 'Requested'}
-                  </span>
-                </li>
+                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[13px] font-extrabold" style={badge.style}>{badge.label}</span>
+                </div>
               );
             })}
-          </ul>
-          <p className="mt-2 text-[12px] text-white/55">Next month, check your statement and mark them Gone for good on the Subscriptions tab.</p>
+          </div>
+          <div className="text-[12.5px]" style={{ color: C.muted }}>Next month, check your statement and mark them Gone for good on the Subscriptions tab.</div>
         </div>
       )}
 
-      <button
-        type="button"
-        onClick={onDone}
-        className="mt-5 w-full rounded-[20px] border-2 border-white/20 px-6 py-3.5 font-heading text-[17px] font-bold text-white hover:border-primary/60"
-      >
-        {open.length ? "That's enough for today" : 'Inbox zero'}
-      </button>
-    </div>
+      <GhostButton onClick={onDone}>{open.length ? "That's enough for today" : 'Inbox zero'}</GhostButton>
+    </Screen>
   );
 }
