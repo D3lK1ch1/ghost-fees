@@ -52,7 +52,7 @@ function TrailDots({ trail }) {
     <span
       key={size}
       aria-hidden="true"
-      className={cn('absolute rounded-full border-2 bg-white', size, offsets[index])}
+      className={cn('absolute rounded-full border-[2.4px] bg-white', size, offsets[index])}
       style={{ borderColor: INK }}
     />
   ));
@@ -72,10 +72,10 @@ export function SpeechBubble({ children, side = 'left', className }) {
             left ? 'left-4' : 'right-4 -scale-x-100',
           )}
         >
-          <path d={TAIL_PATH} fill="#fff" stroke={INK} strokeWidth={2.2} strokeLinejoin="round" strokeLinecap="round" />
+          <path d={TAIL_PATH} fill="#fff" stroke={INK} strokeWidth={2.8} strokeLinejoin="round" strokeLinecap="round" />
         </svg>
         <div
-          className="relative z-10 rounded-full border-[2.2px] bg-white px-4 py-2 text-[12.5px] font-semibold leading-snug"
+          className="relative z-10 rounded-full border-[2.6px] bg-white px-4 py-2 text-[12.5px] font-semibold leading-snug"
           style={{ borderColor: INK, color: INK }}
         >
           {children}
@@ -99,7 +99,7 @@ export function ThoughtBubble({ children, className, trail = 'right', tones }) {
             d={CLOUD_PATH}
             fill="#fff"
             stroke={INK}
-            strokeWidth={2.3}
+            strokeWidth={2.7}
             strokeLinejoin="round"
             vectorEffect="non-scaling-stroke"
           />
