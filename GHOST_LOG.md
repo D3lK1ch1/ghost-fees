@@ -21,3 +21,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/themes.js, src/lib/ThemeContext.jsx, src/components/site/ThemeSwitcher.jsx (new), App.jsx, BrandHeader.jsx, Hero.jsx, Landing.jsx
 - How to test: Tap 💔 and 🎄 on the landing page: headline and colours change; reload keeps the choice.
 - User feedback that drove this: (fill in)
+
+### Animated story for each theme
+- What: Under the total: My Ex Ghosted Me shows your subscriptions texting you ("It's not you, it's my price rise."); Ghosts of Christmas shows Ghost of Fees Past (leaks found), Present (monthly subscriptions) and Yet to Come (next 12 months). Real numbers only, Skip button, reduced-motion safe.
+- Files: src/components/results/ThemeStory.jsx (new), ResultsView.jsx
+- How to test: Pick 💔 or 🎄, run the sample statement: the story animates in under the total.
+- User feedback that drove this: (fill in)
