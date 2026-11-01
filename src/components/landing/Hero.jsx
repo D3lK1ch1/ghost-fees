@@ -1,15 +1,18 @@
 import { Lock, Upload } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import ExHeroArt, { ExHeadline } from '@/components/landing/ExHeroArt';
+import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { EX_GHOST_KEY, EX_GHOSTS } from '@/lib/ghostFees/exArt';
+import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
 
 const TAGS = ['Forgotten subscriptions', 'Sneaky fees', 'Price creep'];
 
 export default function Hero({ onSample, onUpload }) {
   const { theme } = useTheme();
   const [exPick, setExPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
+  const [season, setSeason] = useSavedChoice(SEASON_KEY, SEASONS, 'winter');
   return (
     <section className="mx-auto flex w-full max-w-3xl animate-rise flex-col items-center px-5 pb-16 pt-6 text-center sm:px-8">
       <h2 className="mb-4 font-heading text-[1.6rem] font-bold leading-none text-white [text-shadow:2px_0_0_#000,-2px_0_0_#000,0_2px_0_#000,0_-2px_0_#000,2px_2px_0_#000,-2px_2px_0_#000,2px_-2px_0_#000,-2px_-2px_0_#000] sm:text-[1.9rem]">
@@ -18,6 +21,8 @@ export default function Hero({ onSample, onUpload }) {
 
       {theme.key === 'ex' ? (
         <ExHeroArt pickKey={exPick} setPickKey={setExPick} />
+      ) : theme.key === 'christmas' ? (
+        <ChristmasHeroArt season={season} setSeason={setSeason} />
       ) : (
         <div className="animate-float rounded-full p-6 shadow-[0_0_80px_hsl(var(--primary)/0.22)]">
           <GhostMark className="h-24 w-24 text-foreground sm:h-28 sm:w-28" eyeColor="#150e28" />

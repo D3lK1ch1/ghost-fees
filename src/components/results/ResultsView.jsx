@@ -182,6 +182,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         {leaks.length > 0 && guessDone && (
           <ThemeStory
             subscriptions={subscriptions}
+            leaks={leaks}
             leaksTotal={total}
             onMoveOn={() => {
               setTab('subscriptions');
