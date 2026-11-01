@@ -7,6 +7,7 @@ import { Disclaimer, Kicker, Spirit, Stocking, Title, XScreen, useSeason } from 
 //   Ghosts > Stave one, Dusty the Ghost of Fees Past (CW3)
 //   Goal path > Christmas morning (CW7): dawn breaks as you break Jacob's links
 //   Calendar  > Stave three, the Hooded One (CW5): the next 12 months
+//   Emails    > Stave two, Jolly's table (CW4): every dish is something you pay for
 
 function FeesPast({ leaks, total, X, season }) {
   return (
@@ -67,6 +68,38 @@ function Morning({ leaks, cleared, subscriptions, X, season }) {
   );
 }
 
+function Present({ subscriptions, X, season }) {
+  const monthly = subscriptions.reduce((sum, item) => sum + (Number(item.monthly) || 0), 0);
+  return (
+    <XScreen X={X} season={season}>
+      <Kicker X={X}>STAVE TWO · THE PRESENT</Kicker>
+      <Title size={24}>Jolly, the Ghost of Subscriptions Present</Title>
+      <div className="relative flex items-end gap-2">
+        <div className="flex flex-col gap-2 pb-8">
+          <SpeechBubble>Come in, and know me better, friend! Every dish is something you pay for.</SpeechBubble>
+        </div>
+        <Spirit src={XMAS.jolly} name="Jolly" alt="Jolly, a cheerful ghost in a patchwork robe holding a torch" width={130} X={X} className="ml-auto" />
+      </div>
+      <ul className="relative m-0 grid list-none grid-cols-3 gap-2 rounded-2xl border-t-4 border-dashed p-3" style={{ borderColor: '#c0392b', background: '#5a3a24' }}>
+        {subscriptions.slice(0, 9).map((item, index) => (
+          <li key={item.id} className="x-dish flex flex-col items-center text-center" style={{ animationDelay: `${0.4 + index * 0.35}s` }}>
+            <span className="relative h-5 w-14 rounded-[50%] shadow-inner" style={{ background: '#efe6d8' }} aria-hidden="true">
+              <span className="x-steam absolute -top-3 left-1/2 h-3 w-1.5 -translate-x-1/2 rounded-full bg-white/60" style={{ animationDelay: `${index * 0.3}s` }} />
+            </span>
+            <span className="mt-1 rounded px-1.5 py-0.5 text-[10.5px] font-bold" style={{ background: X.cream, color: '#14301f' }}>
+              {item.merchant} <span style={{ color: '#c0392b' }}>{money(item.monthly)}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <div className="relative text-center">
+        <div className="x-fredoka text-[26px] font-bold" style={{ color: X.gold }}>{money(monthly)} a month</div>
+        <div className="text-[13px]" style={{ color: X.muted }}>on the table right now. The letters below clear it, one dish at a time.</div>
+      </div>
+    </XScreen>
+  );
+}
+
 const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
 function YetToCome({ subscriptions, X, season }) {
@@ -105,5 +138,6 @@ export default function XmasTabScreens({ tab, leaks = [], subscriptions = [], to
   if (tab === 'ghosts' && leaks.length) return wrap(<FeesPast leaks={leaks} total={total} X={X} season={season} />);
   if (tab === 'path' && leaks.length) return wrap(<Morning leaks={leaks} cleared={cleared} subscriptions={subscriptions} X={X} season={season} />);
   if (tab === 'calendar' && subscriptions.length) return wrap(<YetToCome subscriptions={subscriptions} X={X} season={season} />);
+  if (tab === 'emails' && subscriptions.length) return wrap(<Present subscriptions={subscriptions} X={X} season={season} />);
   return null;
 }
