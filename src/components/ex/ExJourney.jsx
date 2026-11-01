@@ -88,7 +88,7 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
           exit={{ opacity: 0, x: -24 }}
           transition={{ duration: 0.25 }}
         >
-          {scene === 'scan' && <ExScanChat pick={pick} pickKey={pickKey} count={subscriptions.length} fileName={fileName} onNext={() => go('reveal')} />}
+          {scene === 'scan' && <ExScanChat pick={pick} pickKey={pickKey} count={subscriptions.length} fileName={fileName} sample={fileName === 'sample-statement.csv'} onUpload={onUpload} onNext={() => go('reveal')} />}
           {scene === 'reveal' && (
             <Screen className="px-4 pb-6 pt-5">
               <ExStory theme={theme} subscriptions={subscriptions} avatarFor={avatarFor} onSkip={() => go('moving')} onMoveOn={() => go('moving')} />
@@ -115,9 +115,9 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
           {scene === 'clear' && (
             <ExInboxZero pick={pick} pickKey={pickKey} glow={glow} total={subscriptions.length} onSeeAll={onSeeAll} onBack={() => go('moving')} onNext={glow.blockedCount ? () => go('back') : null} />
           )}
-          {scene === 'back' && firstBlocked && <ExComesBack pickKey={pickKey} ex={firstBlocked} onNext={() => go('plan')} />}
-          {scene === 'plan' && <ExGlowupPlan pickKey={pickKey} glow={glow} blockedCount={glow.blockedCount} onNext={() => go('weekend')} />}
-          {scene === 'weekend' && <ExWeekend pickKey={pickKey} glow={glow} biggest={firstBlocked} onNext={() => go('checkin')} />}
+          {scene === 'back' && firstBlocked && <ExComesBack pick={pick} pickKey={pickKey} ex={firstBlocked} onNext={() => go('plan')} />}
+          {scene === 'plan' && <ExGlowupPlan pick={pick} pickKey={pickKey} glow={glow} blockedCount={glow.blockedCount} onNext={() => go('weekend')} />}
+          {scene === 'weekend' && <ExWeekend pick={pick} pickKey={pickKey} glow={glow} biggest={firstBlocked} onNext={() => go('checkin')} />}
           {scene === 'checkin' && (
             <ExCheckin pick={pick} pickKey={pickKey} blockedCount={glow.blockedCount} onUpload={onUpload} onSeeAll={onSeeAll} />
           )}

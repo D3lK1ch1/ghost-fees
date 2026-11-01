@@ -32,6 +32,20 @@ export const EX_PICKS = {
     clearUnlock: 'Dinner out',
     house: `${ART}/ghost-sad.webp`,
     houseBubble: 'They all ghosted me...',
+    // Act 2 and the results tabs, from design screens Ex8 to Ex11 and Ex6.
+    backShout: 'New phone. Who dis?',
+    planTitle: 'Your better-life plan',
+    weekendTag: 'Act 2 · Month 6',
+    weekendTitle: 'Weekend away: funded.',
+    planLabels: ['Brunch', 'Dinner out', 'Weekend away', 'Savings'],
+    splurgeTitle: ['What your exes ', 'paid for'],
+    splurgeSub: 'Healing looks good on you.',
+    splurge: [
+      { label: 'Dinner out', art: `${ART}/ghost-dinner.webp` },
+      { label: 'Rosé with the girls', art: `${ART}/avatars/pf-rose.webp` },
+      { label: 'New outfit', art: `${ART}/ghost-sassy.webp` },
+      { label: 'Weekend away', art: `${ART}/ghost-happy.webp` },
+    ],
   },
   fine: {
     label: "I'm Fine",
@@ -55,6 +69,20 @@ export const EX_PICKS = {
     clearUnlock: 'BBQ',
     house: `${ART}/men-couch.webp`,
     houseBubble: "I'm fine. They all left.",
+    backShout: 'Mid-game. Who dis?',
+    planTitle: 'The power-on plan',
+    weekendTag: 'Act 2 · Month 6 · Gone fishing',
+    weekendTitle: 'Fishing trip: funded.',
+    weekendArt: `${ART}/men-fish.webp`,
+    planLabels: ['Footy tickets', 'New kicks', 'Fishing trip', 'Savings goal'],
+    splurgeTitle: ['What your exes ', 'paid for'],
+    splurgeSub: "Didn't miss them. Didn't even notice.",
+    splurge: [
+      { label: 'New kicks', art: `${ART}/avatars/pm-kicks.webp`, cover: true },
+      { label: 'Footy finals', art: `${ART}/men-footy.webp` },
+      { label: 'Fishing trip', art: `${ART}/men-fish.webp`, cover: true },
+      { label: 'Weekend BBQ', art: `${ART}/men-bbqshades.webp` },
+    ],
   },
 };
 
@@ -79,13 +107,12 @@ export function exAvatar(merchant = '') {
 // Avatars for the exes. Known exes (Netflix, Stan, gym, Adobe, Streammax) keep their
 // drawn character from the design. Everyone else gets a photo avatar, one set per
 // pick: pink ghosts for Heartbroken, hoodie ghosts for I'm Fine. Every merchant gets its own face (no doubles until
-// the set runs out), bank fees get the piggy bank, and the same merchant keeps
+// the set runs out), and the same merchant keeps
 // the same face on every screen because the map is built once per results page.
 const PHOTO_SETS = {
   heartbroken: ['pf-card', 'pf-phone', 'pf-rose', 'pf-determined', 'pf-sassy', 'pf-shocked', 'pf-sad'],
   fine: ['pm-hoodie', 'pm-block', 'pm-bbq', 'pm-fish', 'pm-couch', 'pm-kicks', 'pm-footy', 'pm-lift', 'pm-shock', 'pm-cap'],
 };
-const FEE_RE = /\bFEE\b|\bFEES\b|INTEREST|\bATM\b|OVERDRAWN|DISHONOUR/i;
 
 export function exAvatarMap(merchants = [], pickKey = 'heartbroken') {
   const pool = PHOTO_SETS[pickKey] || PHOTO_SETS.heartbroken;
@@ -99,14 +126,9 @@ export function exAvatarMap(merchants = [], pickKey = 'heartbroken') {
       map.set(merchant, exAvatar(merchant));
       return;
     }
-    let file;
-    if (FEE_RE.test(merchant) && !used.has('pf-piggy')) {
-      file = 'pf-piggy';
-    } else {
-      const free = pool.find((name) => !used.has(name));
-      file = free || pool[next % pool.length];
-      next += 1;
-    }
+    const free = pool.find((name) => !used.has(name));
+    const file = free || pool[next % pool.length];
+    next += 1;
     used.add(file);
     map.set(merchant, `${ART}/avatars/${file}.webp`);
   });

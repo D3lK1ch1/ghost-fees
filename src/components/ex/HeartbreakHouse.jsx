@@ -7,30 +7,54 @@ import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { glowUp, kindOf, yearly } from '@/lib/ghostFees/exJourney';
 import { cn } from '@/lib/utils';
 import GlowUpFund from './GlowUpFund';
+import './exKit.css';
 
 const SHOWN = 5;
 
-// One window of the house: an ex, or the last window holding the rest.
-function Tile({ label, price, avatar, onClick, active, lit }) {
+// One window of the house: an ex floating and drifting inside it (like the ghosts in
+// the Haunted House), with a typing bubble. The last window holds the rest.
+function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'relative flex flex-col items-center rounded-2xl border-2 px-2 pb-2.5 pt-3 transition-colors',
+        'relative flex flex-col items-center overflow-hidden rounded-2xl border-2 px-2 pb-2.5 pt-4 transition-colors',
         lit ? 'border-[#5ee6c8] bg-[#5ee6c8]/10' : active ? 'border-primary bg-white/[0.06]' : 'border-white/10 bg-black/30 hover:border-primary/50',
       )}
     >
-      <span className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/40 px-2 py-1.5">
-        <img src={avatar} alt="" width={36} height={36} className={cn('h-9 w-9 rounded-full', lit && 'opacity-60 grayscale')} />
-        <span className="rounded-full bg-white/80 px-1.5 text-[10px] font-black leading-4 text-[#141218]">{lit ? '✓' : '•••'}</span>
+      {!lit && (
+        <span aria-hidden="true" className="pointer-events-none absolute inset-x-4 bottom-8 top-2 rounded-full bg-[radial-gradient(ellipse_at_50%_60%,rgba(255,111,125,0.22),transparent_70%)]" />
+      )}
+      <span
+        className={cn('relative', !lit && 'ex-ghost')}
+        style={{ '--gd': `${6 + (index % 3) * 0.9}s`, '--gdx': '7px', '--gdl': `${-index * 1.3}s` }}
+      >
+        <span className={cn('relative block', !lit && 'ex-float')} style={{ '--gs': `${3 + (index % 4) * 0.35}s`, animationDelay: `${-index * 0.6}s` }}>
+          <img
+            src={avatar}
+            alt=""
+            width={56}
+            height={56}
+            className={cn('h-14 w-14 rounded-full drop-shadow-[0_6px_14px_rgba(255,111,125,0.35)]', lit && 'opacity-60 grayscale')}
+          />
+          <span className="absolute -right-6 -top-1 rounded-full bg-white/85 px-1.5 text-[10px] font-black leading-4 text-[#141218]">{lit ? '✓' : '•••'}</span>
+        </span>
       </span>
-      <span className="mt-1.5 text-[13px] font-bold text-white">{label}</span>
-      <span className={cn('text-[12px] font-semibold', lit ? 'text-[#5ee6c8]' : 'text-primary')}>{lit ? 'Blocked' : price}</span>
+      <span className="relative mt-2 text-[13px] font-bold text-white">{label}</span>
+      <span className={cn('relative text-[12px] font-semibold', lit ? 'text-[#5ee6c8]' : 'text-primary')}>{lit ? 'Blocked' : price}</span>
     </button>
   );
 }
+
+// Little exes drifting around outside the house, like the bats and ghosts in the
+// Haunted House. Decoration only; they use the same avatars as the windows.
+const DRIFTERS = [
+  { left: '-6%', top: '18%', size: 34, gs: 3.4, gd: 7.2, delay: -1.1 },
+  { left: '94%', top: '34%', size: 30, gs: 3.9, gd: 6.4, delay: -2.6 },
+  { left: '-4%', top: '62%', size: 26, gs: 3.1, gd: 8.1, delay: -0.4 },
+];
 
 // Heartbreak House (design screen HeartbreakHouse): the 💔 version of the Haunted
 // House. Every ex has a window; block one once you've cancelled and its window
@@ -82,11 +106,28 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         <div className="mx-auto h-0 w-0 border-x-[150px] border-b-[70px] border-x-transparent border-b-[#2a1c2c]" aria-hidden="true" />
         <Heart className="absolute left-1/2 top-6 h-7 w-7 -translate-x-1/2 fill-primary text-primary drop-shadow-[0_0_12px_hsl(var(--primary))]" aria-hidden="true" />
         <span className="absolute right-2 top-0 h-12 w-12 rounded-full bg-[#f3e9f0] shadow-[0_0_30px_rgba(255,255,255,0.35)]" aria-hidden="true" />
+        {DRIFTERS.map((d, index) => {
+          const item = subscriptions[(index + 1) % subscriptions.length];
+          if (!item || blocked.has(item.id)) return null;
+          return (
+            <span
+              key={d.left + d.top}
+              aria-hidden="true"
+              className="ex-ghost pointer-events-none absolute z-10 opacity-80"
+              style={{ left: d.left, top: d.top, '--gd': `${d.gd}s`, '--gdx': '10px', '--gdl': `${d.delay}s` }}
+            >
+              <span className="ex-float block" style={{ '--gs': `${d.gs}s`, animationDelay: `${d.delay}s` }}>
+                <img src={avatarFor(item.merchant)} alt="" width={d.size} height={d.size} className="rounded-full drop-shadow-[0_0_10px_rgba(255,111,125,0.45)]" style={{ width: d.size, height: d.size }} />
+              </span>
+            </span>
+          );
+        })}
         <div className="rounded-b-2xl border-2 border-t-0 border-primary/40 bg-[#1d1520] p-3 shadow-[inset_0_0_40px_hsl(var(--primary)/0.15)]">
           <div className="grid grid-cols-2 gap-3">
-            {shown.map((item) => (
+            {shown.map((item, index) => (
               <Tile
                 key={item.id}
+                index={index}
                 label={item.merchant.length > 14 ? item.merchant.split(' ')[0] : item.merchant}
                 price={`${money(item.monthly)}/mo`}
                 avatar={avatarFor(item.merchant)}
@@ -97,6 +138,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             ))}
             {rest.length > 0 && (
               <Tile
+                index={shown.length}
                 label={`${rest.length} more ${rest.length === 1 ? 'ex' : 'exes'}`}
                 price={`${money(rest.reduce((sum, item) => sum + item.monthly, 0))}/mo`}
                 avatar={avatarFor(rest[0].merchant)}
