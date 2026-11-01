@@ -21,13 +21,13 @@ function sourceLabel(sources) {
 }
 
 // Where a ghost came from: the dates of the charges and the statement file(s).
-export default function LeakSource({ dates = [], sources = [] }) {
+export default function LeakSource({ dates = [], sources = [], dark = false }) {
   const when = dateRange(dates);
   const where = sourceLabel(sources);
   if (!when && !where) return null;
 
   return (
-    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-semibold text-[#5b5275]">
+    <div className={`mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] font-semibold ${dark ? 'text-[#bdb7c6]' : 'text-[#5b5275]'}`}>
       {when && (
         <span className="inline-flex items-center gap-1.5">
           <CalendarDays className="h-3.5 w-3.5" />

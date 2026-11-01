@@ -3,6 +3,7 @@ import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, MessagesSquare, R
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import BrandHeader from '@/components/site/BrandHeader';
+import GhostMark from '@/components/site/GhostMark';
 import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
@@ -18,6 +19,7 @@ import HauntedCalendar from './HauntedCalendar';
 import GoalPath from './GoalPath';
 import EmailsPanel from './EmailsPanel';
 import NightSky from './NightSky';
+import ResultsMenu from './ResultsMenu';
 import SiteFooter from '@/components/site/SiteFooter';
 import GhostGuide from '@/components/guide/GhostGuide';
 import { CardList, CardItem } from '@/components/GhostAnimations';
@@ -122,34 +124,13 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
   return (
     <div className="relative min-h-screen">
-      <NightSky />
+      {theme.key === 'haunted' && <NightSky />}
       <div className="relative z-10">
-      <BrandHeader
-        right={(
-          <div className="flex items-center gap-3 sm:gap-4">
-            <button
-              type="button"
-              onClick={() => setConfirmClear(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/70 px-3 py-1.5 text-[12.5px] font-bold text-foreground transition-colors hover:border-[#ff6b8a]/70 hover:text-[#ff9db1]"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Clear my data
-            </button>
-            <button
-              type="button"
-              onClick={onRestart}
-              className="hidden text-[13px] font-bold text-primary underline underline-offset-4 sm:inline"
-            >
-              Scan another statement
-            </button>
-          </div>
-        )}
-      />
+      <BrandHeader right={<ResultsMenu onRestart={onRestart} onClear={() => setConfirmClear(true)} />} />
       </div>
 
       <main className="relative mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="font-retro text-[15px] uppercase tracking-[0.16em] text-primary/80">{theme.label}</p>
+        <div className="flex flex-wrap items-center justify-end gap-3">
           <label className="flex items-center gap-2 text-[12px] font-bold text-muted-foreground">
             <span className="sr-only">Statement period</span>
             <select
@@ -193,12 +174,9 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           />
         )}
 
-        <p className="mt-3 flex items-start gap-2 rounded-2xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-4 py-2.5 text-[12.5px] leading-relaxed text-[#bff5e8]">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
-          <span>
-            <span className="font-bold text-[#e6fffa]">Nothing is saved.</span> Your results live only in this browser tab and are gone when you close it or press Clear my data.
-            {fileNames.some((name) => /\.pdf$/i.test(name)) && ' PDFs are uploaded privately so they can be read.'}
-          </span>
+        <p className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-[12.5px] leading-relaxed text-muted-foreground">
+          <ShieldCheck className="h-4 w-4 shrink-0 text-[#5ee6c8]" />
+          <span>Nothing is saved. Results vanish when you close this tab.</span>
         </p>
 
         <FileErrors errors={fileErrors} />
@@ -223,22 +201,22 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   aria-current={tab === item.key ? 'page' : undefined}
                   className={cn(
                     'flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2 text-left text-[13px] font-bold transition-colors',
-                    tab === item.key ? 'bg-primary text-primary-foreground shadow-[0_4px_20px_hsl(var(--primary)/0.35)]' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
+                    tab === item.key ? 'bg-white/[0.07] text-foreground' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
                   )}
                 >
-                  <item.Icon className="h-4 w-4 shrink-0" />
+                  <item.Icon className={cn('h-4 w-4 shrink-0', tab === item.key && 'text-primary')} />
                   {item.label}
                   {item.key === 'ghosts' && (
-                    <span className={cn('ml-auto rounded-full px-1.5 text-[11px]', tab === item.key ? 'bg-primary-foreground/20' : 'bg-white/10')}>{leaks.length}</span>
+                    <span className="ml-auto rounded-full bg-white/10 px-1.5 text-[11px]">{leaks.length}</span>
                   )}
                 </button>
               ))}
               <button
                 type="button"
                 onClick={() => setGuideOpen((count) => count + 1)}
-                className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl border border-primary/40 px-3 py-2 text-left text-[13px] font-bold text-primary transition-colors hover:bg-primary/10 lg:mt-2"
+                className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl border border-primary/50 bg-card px-3 py-2 text-left text-[13px] font-bold text-foreground transition-colors hover:bg-white/5 lg:mt-2"
               >
-                <MessagesSquare className="h-4 w-4 shrink-0" />
+                <GhostMark className="h-4 w-4 shrink-0 text-primary" eyeColor="hsl(var(--card))" />
                 Ask a ghost
               </button>
             </nav>

@@ -12,14 +12,14 @@ export default function GuessReveal({ total, months, onDone }) {
   const period = `${months} ${months === 1 ? 'month' : 'months'}`;
 
   return (
-    <section className="relative mt-4 overflow-hidden rounded-[2rem] border border-primary/40 bg-card p-6 sm:p-9" aria-label="Guess your number">
+    <section className="relative mt-4 overflow-hidden rounded-[2rem] border border-border bg-card p-5 sm:p-7" aria-label="Guess your number">
       {!revealed ? (
         <>
           <p className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">Before we show you...</p>
           <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
             How much do you think forgotten subscriptions and fees took from you in these {period}?
           </p>
-          <p className="mt-5 font-heading text-[2.6rem] font-bold leading-none tabular-nums text-primary">{money(guess)}{guess === MAX_GUESS ? '+' : ''}</p>
+          <p className="mt-4 font-heading text-[2.1rem] font-bold leading-none tabular-nums text-primary">{money(guess)}{guess === MAX_GUESS ? '+' : ''}</p>
           <input
             type="range"
             min={0}
@@ -28,7 +28,7 @@ export default function GuessReveal({ total, months, onDone }) {
             value={guess}
             onChange={(event) => setGuess(Number(event.target.value))}
             aria-label="Your guess in dollars"
-            className="mt-4 w-full accent-[hsl(var(--primary))]"
+            className="mt-4 h-3 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[hsl(var(--primary))] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
           />
           <div className="flex justify-between text-[11.5px] text-muted-foreground">
             <span>$0</span>
