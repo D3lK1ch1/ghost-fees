@@ -163,3 +163,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/xmas/ (new: XmasKit, XmasLeakCard, XmasTabScreens, JacobsChain, ChangedMyWays), ResultsView.jsx
 - How to test: pick 🎄, upload a CSV, open every tab in Winter and Summer.
 - Checked: CSV upload works in all three themes; email drafting opens from 🎄 cards.
+
+### Cass, the cancel ghost (backend agent)
+- What: a new ghost in the house. Cass is a Base44 backend function (findCancelInfo) that searches the web for one company and returns the official cancel page, the steps, the Australian support phone number and hours, the support email or contact page, and its sources, labelled Official or Double-check. She never guesses; anything not found on an official page stays empty. She shows up in the cancellation assistant (automatically when we have no checked link) and in Ask a ghost, in every theme, with a ready cancel email addressed to the support contact.
+- Files: base44/functions/findCancelInfo (new), src/components/results/CassLookup.jsx (new), src/lib/ghostFees/cancelLookup.js (new), CancelAssistant.jsx, GhostGuide.jsx, guides.js
+- Privacy: only the merchant name is sent; card numbers and references are stripped first. Nothing is stored server-side.
+- How to test (published app only, AI calls don't run locally): Ask a ghost > Cass > "How do I cancel Fitlife Gym?"
