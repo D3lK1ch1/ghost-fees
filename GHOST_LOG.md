@@ -57,3 +57,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Progress.jsx, src/data/changelog.json, src/data/shipped.json, base44/functions/progressStats (all new), App.jsx, SiteFooter.jsx
 - How to test: open /progress on mobile and desktop. To add a real change, edit src/data/changelog.json: {"date", "quote", "who" (first name only if they said OK), "change", "beforeImg", "afterImg"} and delete the example entry. Add each day's work to src/data/shipped.json.
 - User feedback that drove this: (fill in)
+
+### Meet the founders + About page
+- What: "Meet the founders" on the landing page (below the hero and use cases) with Sanjay and Bella, a "Why we built it" line and "Read our story". New /about page "Why we built Ghost Fees" with the founders' moment (placeholder, clearly marked), the Compare the Market 2026 fact, what it does, full founder cards and "Talk to us". Footer on every page now says "Ghost Fees gives general information about subscriptions and fees. It is not financial advice." and links About us and Our progress. All founder copy in one file.
+- Files: src/data/founders.js, src/components/landing/FounderCard.jsx, FoundersSection.jsx, src/pages/About.jsx (all new), App.jsx, Landing.jsx, SiteFooter.jsx
+- How to test: landing page scroll to Meet the founders (mobile stacks, desktop side by side); open /about. To do: fill in MOMENT in src/data/founders.js, add photos at public/founders/sanjay.jpg and bella.jpg (square, 400px+), check both bios.
+- User feedback that drove this: (fill in)
