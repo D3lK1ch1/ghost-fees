@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import SeasonToggle from '@/components/site/SeasonToggle';
+import { SpeechBubble } from '@/components/site/Bubbles';
 import { money } from '@/lib/ghostFees/format';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS, XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
@@ -25,7 +26,6 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
   const stave = staves[Math.min(step, staves.length - 1)];
   const next = () => setStep((value) => Math.min(value + 1, staves.length - 1));
 
-  const bubble = 'rounded-[20px] bg-white px-3.5 py-2 text-[12.5px] font-bold leading-snug text-[#14301f] shadow-lg';
   const kicker = 'text-[11px] font-bold uppercase tracking-[0.14em] text-primary';
   const title = 'mt-1 font-heading text-[20px] font-bold leading-tight text-foreground';
   const art = 'h-auto w-[130px] shrink-0 sm:w-[150px]';
@@ -40,8 +40,8 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           <div className="mt-3 flex items-start gap-3">
             <img src={XMAS.jacob} alt="Jacob Ledger, a weary ghost wrapped in a chain of receipts" width={320} className={art} />
             <div className="space-y-2">
-              <p className={bubble}>I wear the chain I forged in life. Every link an auto-renew.</p>
-              <p className={bubble}>Three ghosts will show you what they cost.</p>
+              <SpeechBubble>I wear the chain I forged in life. Every link an auto-renew.</SpeechBubble>
+              <SpeechBubble>Three ghosts will show you what they cost.</SpeechBubble>
             </div>
           </div>
           <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -68,8 +68,8 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           <div className="mt-3 flex items-start gap-3">
             <img src={XMAS.dusty} alt="Dusty, a candle ghost reading an old ledger" width={320} className={art} />
             <div className="space-y-2">
-              <p className={bubble}>I am the Ghost of Fees Past.</p>
-              <p className={bubble}>Long past? No. Your past, from this statement.</p>
+              <SpeechBubble>I am the Ghost of Fees Past.</SpeechBubble>
+              <SpeechBubble>Long past? No. Your past, from this statement.</SpeechBubble>
             </div>
           </div>
           <ul className="mt-3 grid grid-cols-3 gap-2">
@@ -97,7 +97,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           <h3 className={title}>Jolly, the Ghost of Subscriptions Present</h3>
           <div className="mt-3 flex items-start gap-3">
             <div className="space-y-2">
-              <p className={bubble}>Come in, and know me better, friend! Every dish is something you pay for.</p>
+              <SpeechBubble>Come in, and know me better, friend! Every dish is something you pay for.</SpeechBubble>
             </div>
             <img src={XMAS.jolly} alt="Jolly, a cheerful ghost in a patchwork robe holding a torch" width={320} className={`${art} ml-auto`} />
           </div>
@@ -126,7 +126,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
             <img src={XMAS.hooded} alt="The Hooded One, a silent cloaked ghost holding a lantern" width={320} className={art} />
             <div className="space-y-2">
               <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Next 12 months</p>
-              <p className={bubble}>Spirit, is this my future? Can I still change it?</p>
+              <SpeechBubble side="right">Spirit, is this my future? Can I still change it?</SpeechBubble>
               <p className="text-[11.5px] italic text-muted-foreground">He never speaks. He shows you next year: every month you keep paying drops into the stocking.</p>
             </div>
           </div>

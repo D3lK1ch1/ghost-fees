@@ -1,4 +1,5 @@
 import { EX_GHOSTS, EX_PICKS } from '@/lib/ghostFees/exArt';
+import { ThoughtBubble } from '@/components/site/Bubbles';
 import { cn } from '@/lib/utils';
 
 // My Ex Ghosted Me hero: the chosen ghost, a thought bubble and "Choose your ghost".
@@ -10,9 +11,13 @@ export default function ExHeroArt({ pickKey, setPickKey }) {
     <div className="flex w-full flex-col items-center">
       <div className="relative">
         <img src={pick.hero} alt={pick.heroAlt} width={360} className="h-auto w-[220px] animate-float drop-shadow-[0_12px_40px_hsl(var(--primary)/0.25)] sm:w-[260px]" />
-        <p className="absolute -right-6 top-2 max-w-[140px] rounded-[22px] bg-white px-3.5 py-2 text-[13px] font-bold leading-tight text-[#2a1020] shadow-lg sm:-right-16">
+        <ThoughtBubble
+          trail="left"
+          tones="text-[#2a1020]"
+          className="absolute -right-6 top-2 max-w-[150px] text-left sm:-right-16"
+        >
           {pick.heroBubble}
-        </p>
+        </ThoughtBubble>
       </div>
 
       <p className="mt-4 text-[13px] font-bold text-muted-foreground">Choose your ghost</p>
