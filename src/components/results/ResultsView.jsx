@@ -11,6 +11,7 @@ import ExLeakCard from '@/components/ex/ExLeakCard';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
 import XmasLeakCard from '@/components/xmas/XmasLeakCard';
+import JacobsChain from '@/components/xmas/JacobsChain';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
 import ExJourney from '@/components/ex/ExJourney';
@@ -326,7 +327,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {tab === 'house' && theme.key === 'ex' && (
                 <HeartbreakHouse theme={theme} pick={EX_PICKS[exPick]} subscriptions={subscriptions} avatarFor={avatarFor} />
               )}
-              {tab === 'house' && theme.key !== 'ex' && (
+              {tab === 'house' && theme.key === 'christmas' && (
+                <JacobsChain leaks={leaks} cleared={cleared} onClearedChange={setCleared} onDraft={openEmail} />
+              )}
+              {tab === 'house' && theme.key !== 'ex' && theme.key !== 'christmas' && (
                 <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
               {theme.key === 'ex' && ['path', 'calendar', 'emails', 'receipt'].includes(tab) && (
