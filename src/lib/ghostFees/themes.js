@@ -30,7 +30,7 @@ export const THEMES = {
     fallbackLine: "Hey stranger. Still paying for me?",
     outro: (yearly) => `Cut them loose and that's ${yearly} a year back for brunch, travel or your savings.`,
     vars: {
-      '--background': '330 35% 10%',
+      '--background': '340 55% 26%',
       '--card': '330 30% 14%',
       '--popover': '330 30% 13%',
       '--primary': '345 90% 68%',
