@@ -4,6 +4,7 @@ import { money } from '@/lib/ghostFees/format';
 import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { findOverlaps } from '@/lib/ghostFees/overlaps';
 import { xmasAvatar } from '@/lib/ghostFees/christmasArt';
+import { useCancelProof } from '@/components/results/ProofDialog';
 import { Disclaimer, GoldButton, TinySavings, Title, XScreen, useSeason } from './XmasKit';
 
 // "Changed my ways" (design CW6): the 🎄 cancel list. Tick "I cancelled it", then
@@ -20,6 +21,8 @@ export default function ChangedMyWays({ subscriptions }) {
       : [...current, { id: item.id, merchant: item.merchant, monthly: item.monthly, status, date: new Date().toISOString() }]));
     setHop((value) => value + 1);
   };
+  // "I cancelled it" asks for proof first; Tiny Savings hops once it's saved.
+  const proof = useCancelProof({ saveLabel: '🎄 Save proof', onSaved: () => setHop((value) => value + 1) });
   const yearlyOf = (items) => items.reduce((sum, item) => sum + item.monthly * 12, 0);
   const req = subscriptions.filter((item) => statusOf(item.id) === 'requested');
   const conf = subscriptions.filter((item) => statusOf(item.id) === 'confirmed');
@@ -90,7 +93,7 @@ export default function ChangedMyWays({ subscriptions }) {
             </div>
             <div className="text-[12px]" style={{ color: X.muted }}>{info.steps}</div>
             {!status || status === 'charging' ? (
-              <GoldButton X={X} className="!min-h-[46px] !text-[16px]" onClick={() => set(item, 'requested')}>🎄 I cancelled it</GoldButton>
+              <GoldButton X={X} className="!min-h-[46px] !text-[16px]" onClick={() => proof.ask(item)}>🎄 I cancelled it</GoldButton>
             ) : status === 'requested' ? (
               <div className="flex gap-2">
                 <button type="button" onClick={() => set(item, 'confirmed')} className="x-btn min-h-[44px] flex-1 rounded-xl text-[14px] font-extrabold" style={{ background: X.mint, color: X.mintInk }}>It stopped</button>
@@ -100,6 +103,7 @@ export default function ChangedMyWays({ subscriptions }) {
           </div>
         );
       })}
+      {proof.dialog}
       <Disclaimer X={X} />
     </XScreen>
   );

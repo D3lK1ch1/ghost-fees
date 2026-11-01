@@ -5,8 +5,10 @@ import { money } from '@/lib/ghostFees/format';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { nextChargeDate } from '@/lib/ghostFees/reminder';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/use-toast';
 import TaskDialog from './TaskDialog';
 import CassLookup from './CassLookup';
+import { useCancelProof } from './ProofDialog';
 
 const STEPS = ['Open the cancel page', 'Follow their steps', 'No luck? Email them', 'Mark it cancelled'];
 
@@ -16,9 +18,21 @@ const STEPS = ['Open the cancel page', 'Follow their steps', 'No luck? Email the
 // email as a fallback, then mark it cancelled (Ghost List) and schedule a check.
 export default function CancelAssistant({ subscriptions = [], onDraft }) {
   const subs = [...subscriptions].sort((a, b) => b.monthly - a.monthly);
-  const [ghostList, setGhostList] = useGhostList();
+  const [ghostList] = useGhostList();
   const [id, setId] = useState(subs[0]?.id);
   const [step, setStep] = useState(0);
+  const isGone = (itemId) => ['requested', 'confirmed'].includes(ghostList.find((entry) => entry.id === itemId)?.status);
+  // Once one is cancelled (proof saved or added later), go straight to the next
+  // biggest one still charging, back at step 1, so Cassy picks it up right away.
+  const proof = useCancelProof({
+    onSaved: (done) => {
+      const next = subs.find((item) => item.id !== done.id && !isGone(item.id));
+      if (!next) return;
+      setId(next.id);
+      setStep(0);
+      toast({ title: `Next up: ${next.merchant}`, description: 'Cassy has the cancel page and steps ready.' });
+    },
+  });
   const [ticks, setTicks] = useState({});
   const [task, setTask] = useState(null);
   const sub = subs.find((item) => item.id === id) || subs[0];
@@ -33,9 +47,8 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
     setId(next);
     setStep(0);
   };
-  const markCancelled = () => setGhostList((current) => (current.some((entry) => entry.id === sub.id)
-    ? current.map((entry) => (entry.id === sub.id ? { ...entry, status: 'requested' } : entry))
-    : [...current, { id: sub.id, merchant: sub.merchant, monthly: sub.monthly, status: 'requested', date: new Date().toISOString() }]));
+  // Asks for proof (how, when, a reference or a screenshot), then adds it to the Ghost List.
+  const markCancelled = () => proof.ask(sub);
   const scheduleCheck = () => {
     const next = sub.lastDate ? nextChargeDate(sub.lastDate) : null;
     const date = (next || new Date(Date.now() + 30 * 864e5)).toISOString().slice(0, 10);
@@ -134,7 +147,7 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
         {step === 3 && (
           <>
             <p className="font-heading text-[16px] font-bold text-foreground">{done ? `${sub.merchant} is on your Ghost List` : `Did you cancel ${sub.merchant}?`}</p>
-            <p className="mt-1 text-[13px] text-muted-foreground">That&apos;s {money(sub.monthly * 12)} a year back. Check your next statement to be sure it stopped.</p>
+            <p className="mt-1 text-[13px] text-muted-foreground">That&apos;s {money(sub.monthly * 12)} a year back. Keep proof (a screenshot of the cancelled screen, their email or a reference number), then check your next statement to be sure it stopped.</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {!done && (
                 <button type="button" onClick={markCancelled} className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-3 text-[14px] font-bold text-primary-foreground">
@@ -158,14 +171,15 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
             Next <ChevronRight className="h-4 w-4" />
           </button>
         ) : (
-          subs.find((item) => item.id !== sub.id && !['requested', 'confirmed'].includes(ghostList.find((entry) => entry.id === item.id)?.status)) && (
-            <button type="button" onClick={() => pick(subs.find((item) => item.id !== sub.id && !['requested', 'confirmed'].includes(ghostList.find((entry) => entry.id === item.id)?.status)).id)} className="inline-flex items-center gap-1 text-[13px] font-bold text-primary">
+          subs.find((item) => item.id !== sub.id && !isGone(item.id)) && (
+            <button type="button" onClick={() => pick(subs.find((item) => item.id !== sub.id && !isGone(item.id)).id)} className="inline-flex items-center gap-1 text-[13px] font-bold text-primary">
               Next subscription <ChevronRight className="h-4 w-4" />
             </button>
           )
         )}
       </div>
       <TaskDialog target={task} onClose={() => setTask(null)} />
+      {proof.dialog}
     </section>
   );
 }

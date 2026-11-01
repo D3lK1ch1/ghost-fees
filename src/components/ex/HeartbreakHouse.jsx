@@ -7,7 +7,7 @@ import { glowUp, kindOf, yearly } from '@/lib/ghostFees/exJourney';
 import { cn } from '@/lib/utils';
 import GlowUpFund from './GlowUpFund';
 import FkJar from './FkJar';
-import ProofDialog, { proofLine } from '@/components/results/ProofDialog';
+import { ProofSummary, useCancelProof } from '@/components/results/ProofDialog';
 import './exKit.css';
 import GhostMark from '@/components/site/GhostMark';
 
@@ -70,13 +70,9 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   const rest = subscriptions.slice(SHOWN);
   const stillMonthly = subscriptions.filter((item) => !blocked.has(item.id)).reduce((sum, item) => sum + item.monthly, 0);
 
-  // Blocking asks for proof first: how and when you cancelled, and any reference.
-  const [proofFor, setProofFor] = useState(null);
-  const block = (item, proof) => setGhostList((current) => (
-    current.some((entry) => entry.id === item.id)
-      ? current.map((entry) => (entry.id === item.id ? { ...entry, status: 'requested', proof } : entry))
-      : [...current, { id: item.id, merchant: item.merchant, monthly: item.monthly, status: 'requested', date: new Date().toISOString(), proof }]
-  ));
+  // Blocking asks for proof first: how and when you cancelled, a reference or a
+  // screenshot. Same dialog and Ghost List as every other "I cancelled it".
+  const proof = useCancelProof({ saveLabel: '💔 Save proof and block' });
   const proofOf = (item) => ghostList.find((entry) => entry.id === item.id)?.proof;
   const unblock = (item) => setGhostList((current) => current.filter((entry) => entry.id !== item.id));
 
@@ -265,18 +261,18 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
               <button type="button" onClick={() => unblock(selected)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
             </div>
             {proofOf(selected) ? (
-              <p className="mt-1.5 text-[12.5px] text-white/75"><span className="font-bold text-white">Proof:</span> {proofLine(proofOf(selected))}</p>
+              <ProofSummary proof={proofOf(selected)} className="mt-1.5 text-[12.5px] text-white/75" />
             ) : (
-              <button type="button" onClick={() => setProofFor(selected)} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
+              <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === selected.id))} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
             )}
           </div>
         ) : (
-          <button type="button" onClick={() => setProofFor(selected)} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
+          <button type="button" onClick={() => proof.ask(selected)} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
             💔 Block and delete
           </button>
         )}
-        <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) as proof, then the room lights up and the money goes in your jar.</p>
-        <ProofDialog target={proofFor} onClose={() => setProofFor(null)} onSave={(proof) => { block(proofFor, proof); setProofFor(null); }} />
+        <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
+        {proof.dialog}
       </div>
     </div>
   );

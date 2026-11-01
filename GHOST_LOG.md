@@ -169,3 +169,21 @@ One entry per change. Newest at the bottom.
 - Files: base44/functions/findCancelInfo (new), src/components/results/CassLookup.jsx (new), src/lib/ghostFees/cancelLookup.js (new), CancelAssistant.jsx, GhostGuide.jsx, guides.js
 - Privacy: only the merchant name is sent; card numbers and references are stripped first. Nothing is stored server-side.
 - How to test (published app only, AI calls don't run locally): Ask a ghost > Cassy > "How do I cancel Fitlife Gym?"
+
+### Proof of cancelling, in every theme, with screenshots
+- What: every "I cancelled it" (Subscriptions, the cancellation assistant, 🎄 Changed my ways, 💔 Block and delete) now asks how you cancelled (online, email or phone call) and shows what counts as proof for that way: a screenshot of the "cancelled" screen, their confirmation email, the end date, a reference number, who you spoke to. You can add a screenshot or photo (shrunk in the browser, never uploaded), a reference and a note. Saving needs at least one piece of proof; "Add proof later" adds it without, and the Ghost List then shows "No proof yet. Add proof of cancelling". The Ghost List shows the proof and the screenshot (tap to enlarge), and if you mark something Still charging it tells you to send them your proof, ask for a refund, then dispute it with your bank. Adding proof later keeps its status. If browser storage is full, the screenshot is dropped and the rest kept, with a message. Privacy page lists it.
+- Files: src/components/results/ProofDialog.jsx (useCancelProof, ProofSummary), GhostList.jsx, SubscriptionsSection.jsx, CancelAssistant.jsx, src/components/xmas/ChangedMyWays.jsx, src/components/ex/HeartbreakHouse.jsx, src/lib/ghostFees/ghostList.js, src/hooks/use-ghost-list.jsx, src/pages/Privacy.jsx
+- How to test: Try a sample statement, Subscriptions, press I cancelled it, add a screenshot, save; mark it Still charging; press I cancelled it on another, Add proof later, mark it Confirmed, then add proof (stays Confirmed). Repeat in 🎄 Changed my ways and 💔 Heartbreak House.
+- User feedback that drove this: "when cancel need proof cancellation and what they could upload or prove on that".
+
+### Cancelled subscriptions come off your calendar
+- What: once a subscription is on the Ghost List as Requested or Confirmed, it leaves the calendar's bells and Upcoming reminders, with a line saying "Cancelled, so off your reminders: ...". If calendar sync is on, its "charges again in 2 days" reminder is taken out of the synced Google, Outlook or Apple feed too. Marking it Still charging puts it back on the page.
+- Files: src/components/results/HauntedCalendar.jsx, src/lib/ghostFees/calendarSync.js (dropEvents), src/components/results/ProofDialog.jsx
+- How to test: Try a sample statement, cancel Fitlife Gym, open Calendar & reminders (💔 Check-ins & reminders). The synced feed part only runs on the published app.
+- User feedback that drove this: "upload proof of cancellation then removing it from your calendar".
+
+### Cassy moves on to the next one, and a ghost points you to her
+- What: in the cancellation assistant, saving proof (or Add proof later) jumps straight to the next biggest subscription still charging, back at step 1, so Cassy starts on it ("Next up: ..."). Also fixed: the proof dialog didn't open from the assistant. Under the calendar on wide screens, the empty space now has a ghost saying "Continue to f**k your exes, with help from Cassy." (💔, your own ghost), "Keep breaking Jacob's chain, with help from Cassy." (🎄) or "Keep busting your ghosts, with help from Cassy." (👻), with a Cancel the next one button that scrolls to her.
+- Files: src/components/results/CancelAssistant.jsx, src/components/results/HauntedCalendar.jsx
+- How to test: Calendar tab on a wide screen; then in the assistant press 4. Mark it cancelled, I cancelled it, and save.
+- User feedback that drove this: "after you cancel the first one will Cassy automatically assist you in the next one", "here on all versions should be filled by a ghost saying continue to f**k your exes with assistance from Cassy".

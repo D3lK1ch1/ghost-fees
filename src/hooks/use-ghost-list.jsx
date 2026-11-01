@@ -16,10 +16,12 @@ export function useGhostList() {
     };
   }, []);
 
+  // Returns false if the browser wouldn't store it (it still shows for this visit).
   const update = useCallback((change) => {
     const next = typeof change === 'function' ? change(loadGhostList()) : change;
-    saveGhostList(next);
+    const saved = saveGhostList(next);
     setItems(next);
+    return saved;
   }, []);
 
   return [items, update];

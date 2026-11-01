@@ -5,9 +5,11 @@ import { money } from '@/lib/ghostFees/format';
 import { badgesFor, levelFor } from '@/lib/ghostFees/levels';
 import { STATUSES, daysSince, ghostTotals } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
+import { ProofSummary } from './ProofDialog';
 
-// Tracks what the user has ghosted and whether it actually stopped charging.
-export default function GhostList({ items, onStatus, onRemove, overlapIds, priceRiseIds }) {
+// Tracks what the user has ghosted, the proof they kept, and whether it actually
+// stopped charging. Still charging? The proof is what gets the money back.
+export default function GhostList({ items, onStatus, onRemove, onAddProof, overlapIds, priceRiseIds }) {
   const [shared, setShared] = useState(false);
   if (!items.length) return null;
   const { ghosted, confirmed } = ghostTotals(items);
@@ -77,6 +79,12 @@ export default function GhostList({ items, onStatus, onRemove, overlapIds, price
               <p className="mt-0.5 text-[11.5px] text-muted-foreground">
                 Ghosted {new Date(item.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
               </p>
+              <ProofSummary proof={item.proof} className="mt-1" onAdd={onAddProof ? () => onAddProof(item) : undefined} />
+              {item.status === 'charging' && (
+                <p className="mt-1 rounded-lg bg-[#ffc27a]/10 px-2.5 py-1.5 text-[12px] leading-relaxed text-foreground">
+                  <span className="font-bold">Charged again?</span> {item.proof ? 'Send' : 'Find your cancel email or screenshot and send'} {item.merchant} your proof, and ask for a refund. If they say no, call your bank and ask to dispute the charge.
+                </p>
+              )}
               {askCheck && (
                 <p className="mt-1 text-[12px] font-semibold text-[#ffc27a]">Did {item.merchant} stop charging?</p>
               )}
