@@ -6,6 +6,8 @@ const ART = '/themes/ex';
 export const EX_GHOST_KEY = 'ghostFees.exGhost';
 export const EX_GHOSTS = ['fine', 'heartbroken']; // display order, as in the design
 
+export const EX_SHOUT_BUBBLE = `${ART}/bubble-shout.webp`;
+
 export const EX_PICKS = {
   heartbroken: {
     label: 'Heartbroken',
@@ -51,8 +53,9 @@ export function exAvatar(merchant = '') {
   return `${ART}/exav-${avatarKey(merchant)}.webp`;
 }
 
-// Photo avatars for the exes, one set per pick: pink ghosts for Heartbroken,
-// hoodie ghosts for I'm Fine. Every merchant gets its own face (no doubles until
+// Avatars for the exes. Known exes (Netflix, Stan, gym, Adobe, Streammax) keep their
+// drawn character from the design. Everyone else gets a photo avatar, one set per
+// pick: pink ghosts for Heartbroken, hoodie ghosts for I'm Fine. Every merchant gets its own face (no doubles until
 // the set runs out), bank fees get the piggy bank, and the same merchant keeps
 // the same face on every screen because the map is built once per results page.
 const PHOTO_SETS = {
@@ -68,6 +71,11 @@ export function exAvatarMap(merchants = [], pickKey = 'heartbroken') {
   let next = 0;
   merchants.forEach((merchant) => {
     if (!merchant || map.has(merchant)) return;
+    // Known exes keep their drawn character from the design.
+    if (avatarKey(merchant) !== 'more') {
+      map.set(merchant, exAvatar(merchant));
+      return;
+    }
     let file;
     if (FEE_RE.test(merchant) && !used.has('pf-piggy')) {
       file = 'pf-piggy';
