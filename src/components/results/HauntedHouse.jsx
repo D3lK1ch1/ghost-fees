@@ -381,7 +381,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} flying={flyingSet} biggestId={leaks[0]?.id} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
           </div>
           <div className="bg-[#1d1720] px-3 pb-3 pt-2" role="group" aria-label="Your ghost guides on the front porch">
-            <p className="text-center text-[11.5px] font-bold text-[#e6defa]/80">Front porch · your guides</p>
+            <p className="text-center font-heading text-[13px] font-semibold tracking-wide text-[#e6defa]">Front porch · your guides</p>
             <div className="mt-2 flex items-end justify-around gap-2">
               {GUIDE_KEYS.map((key, index) => {
                 const item = GUIDES[key];
@@ -401,12 +401,12 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                       </span>
                     </GhostTip>
                     <span
-                      className={cn('mt-1 rounded-full px-2 py-0.5 text-[11px] font-bold', chosen ? 'text-[#1b1233]' : 'bg-[#170f2a]/80 text-[#e6defa]')}
+                      className={cn('mt-1.5 rounded-full px-2.5 py-0.5 font-heading text-[13px] font-semibold', chosen ? 'text-[#1b1233]' : 'bg-[#170f2a]/80 text-[#e6defa]')}
                       style={chosen ? { background: item.color } : undefined}
                     >
                       {item.name.replace('Sir ', '')}
                     </span>
-                    <span className="mt-0.5 text-[10.5px] font-semibold" style={{ color: item.color }}>{item.job}</span>
+                    <span className="mt-1 text-[12px] font-bold leading-tight" style={{ color: item.color }}>{item.job}</span>
                   </button>
                 );
               })}
@@ -532,8 +532,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
               ))}
             </div>
           </div>
-          <p className="mt-1 text-right text-[11.5px] font-bold" style={{ color: guide.color }}>{guide.name} · {guide.job}</p>
-          <p className="mt-0.5 text-right text-[11.5px] leading-snug text-muted-foreground">{guide.does}</p>
+          <p className="mt-3 font-heading text-[14px] font-semibold" style={{ color: guide.color }}>{guide.name} · {guide.job}</p>
+          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">{guide.does}</p>
 
           <div className="mt-3 flex gap-3">
             <span className="shrink-0 animate-bob" style={{ color: guide.color }}>
