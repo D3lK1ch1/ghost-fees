@@ -234,3 +234,9 @@ One entry per change. Newest at the bottom.
 - Files: src/hooks/use-ghost-name.jsx (new), src/components/results/GhostNameField.jsx (new), src/lib/ghostFees/ghostCheck.js (new), src/lib/ScanContext.jsx, src/components/results/GhostList.jsx, src/components/results/HauntedHouse.jsx
 - How to test: Try a sample statement, Subscriptions, I cancelled it on Netflix (Add proof later). To see the check without waiting a month, set that Ghost List item's date in browser storage to a few months back, run the sample again, and Netflix shows Still charging. Type a name in Name your ghost and the header changes.
 - User feedback that drove this: none yet; planned in the week-2 schedule (personalise).
+
+### Statement descriptions hide emails, BSBs and transfer names
+- What: on screen and in the PDF report, transaction descriptions now hide email addresses ([email hidden]), BSBs (•••-•••) and the person's name after TRANSFER / TFR / OSKO / PAYID to or from ([name hidden]), on top of the existing last-4-only for card, account and reference numbers. Subscriptions and leaks are found from the original text, so results don't change (sample still $296.92).
+- Files: src/lib/ghostFees/analyse.js
+- How to test: upload a CSV with "TRANSFER TO JANE SMITH 062-000 12345678" and "PAYPAL *bob@example.com" rows, open Show transactions or the possessed receipt.
+- User feedback that drove this: "clarity on information - can we scrub small amounts of identifying information from the csvs?" (tester, 31 Oct).
