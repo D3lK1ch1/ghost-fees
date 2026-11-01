@@ -31,7 +31,7 @@ export const FOUNDERS = [
 
 export const WHY_LINE = 'We built Ghost Fees because forgotten subscriptions quietly cost real people real money, and cancelling should take minutes, not months.';
 
-// FOUNDERS: replace this with your own moment, e.g. "We found $___ a month going to things we'd forgotten about."
-export const MOMENT = '[FOUNDERS: fill in the moment that made you build this]';
+// The moment that made us build it, in Bella's words. Shown at the top of /about.
+export const MOMENT = "It started at Stranger Builds, a NerdConf hackathon challenge: build something in a day, then keep improving it. The idea came quickly. Nerds pay for a lot of subscriptions across their tech stack, and some of them double or triple up without anyone noticing. It's not just nerds, either. Plenty of people have two or three streaming services or games running at once and don't realise they overlap. I've been there too: you know your budget, yet more money disappears than you expected. Ghost Fees shows you where it went.";
 
 export const DISCLAIMER = 'Ghost Fees gives general information about subscriptions and fees. It is not financial advice.';

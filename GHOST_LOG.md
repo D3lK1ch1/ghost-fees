@@ -119,3 +119,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/guides.js, HauntedHouse.jsx, GhostGuide.jsx, base44/functions/askGhostGuide
 - How to test: Try a sample statement, open Haunted House, check the porch and the guide picker, then Ask a ghost with each guide and compare the first questions.
 - User feedback that drove this: guide colours too similar, no description of what they do, all three should be in the house.
+
+### About page: why we built Ghost Fees
+- What: the placeholder at the top of /about is replaced with the real story: Stranger Builds at NerdConf, subscriptions that double and triple up across a tech stack and streaming, and money disappearing even when you know your budget.
+- Files: src/data/founders.js
+- How to test: open /about; the first paragraph is the story, with no dashed placeholder box.
+- User feedback that drove this: (fill in)
