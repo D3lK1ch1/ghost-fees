@@ -29,14 +29,14 @@ export default function LeakCard({ leak, onDraft }) {
   const action = ACTIONS[leak.action];
   const rows = leak.rows || [];
   const rise = leak.priceRise ? versusCpi(leak.priceRise.oldPrice, leak.priceRise.newPrice) : null;
-  const muted = dark ? 'text-[#bdb7c6]' : 'text-[#5b5275]';
+  const muted = dark ? 'text-muted-foreground' : 'text-[#5b5275]';
   const strong = dark ? 'text-[#fbf8fa]' : 'text-[#1b1233]';
 
   return (
     <div
       className={cn(
         'rounded-3xl p-4 sm:p-5',
-        dark ? 'border border-[#34303e] bg-[#221f29] text-[#d6d1db]' : 'bg-[#f5f0e8] text-[#1b1233]',
+        dark ? 'border border-border bg-card text-foreground/90' : 'bg-[#f5f0e8] text-[#1b1233]',
       )}
     >
       <div className="flex items-start justify-between gap-4">
@@ -99,13 +99,13 @@ export default function LeakCard({ leak, onDraft }) {
       )}
 
       {open && (
-        <ul className={cn('mt-3 overflow-hidden rounded-2xl border', dark ? 'border-[#34303e] bg-white/[0.04]' : 'border-[#1b1233]/10 bg-white/70')}>
+        <ul className={cn('mt-3 overflow-hidden rounded-2xl border', dark ? 'border-border bg-white/[0.04]' : 'border-[#1b1233]/10 bg-white/70')}>
           {rows.map((row, index) => (
             <li
               key={`${row.date}-${index}`}
               className={cn(
                 'flex items-center gap-3 px-3 py-2 text-[12.5px]',
-                index > 0 && (dark ? 'border-t border-[#34303e]' : 'border-t border-[#1b1233]/[0.07]'),
+                index > 0 && (dark ? 'border-t border-border' : 'border-t border-[#1b1233]/[0.07]'),
                 row.wasted && 'bg-[#ffd9a8]/70',
               )}
             >
