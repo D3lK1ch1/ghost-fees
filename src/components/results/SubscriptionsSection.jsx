@@ -6,6 +6,7 @@ import { downloadReminder } from '@/lib/ghostFees/reminder';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { loadGhostList, saveGhostList } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
+import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
 import { OVERLAP_TIPS, findOverlaps } from '@/lib/ghostFees/overlaps';
 
@@ -23,7 +24,8 @@ const ANSWERS = [
   { key: 'no', label: 'No' },
 ];
 
-// Answers live in the results page, so they survive switching tabs.
+// Answers live in the results page and this browser tab, so they survive switching tabs
+// and visiting other pages. Answered subscriptions move to Decided, with Undo.
 export default function SubscriptionsSection({ subscriptions, leaks = [], answers = {}, onAnswer, onDraftCancel, onOpenPath }) {
   const [ghosts, setGhosts] = useState(loadGhostList);
   useEffect(() => saveGhostList(ghosts), [ghosts]);
@@ -39,7 +41,15 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   const setStatus = (id, status) => setGhosts((current) => current.map((item) => (item.id === id ? { ...item, status } : item)));
   const removeGhost = (id) => setGhosts((current) => current.filter((item) => item.id !== id));
 
-  const answer = (id, key) => onAnswer?.((current) => ({ ...current, [id]: current[id] === key ? undefined : key }));
+  const answer = (subscription, key) => {
+    onAnswer?.((current) => ({ ...current, [subscription.id]: key }));
+    toast(key === 'yes'
+      ? { title: `Keeping ${subscription.merchant}`, description: 'Moved to Decided below. Tap Undo to change it.' }
+      : { title: `${subscription.merchant} is on your goal path`, description: 'Its cancel link and email are in Decided below.' });
+  };
+  const undo = (id) => onAnswer?.((current) => ({ ...current, [id]: undefined }));
+  const open = subscriptions.filter((item) => !answers[item.id]);
+  const decided = subscriptions.filter((item) => answers[item.id]);
   const keeping = subscriptions.filter((item) => answers[item.id] === 'yes').length;
   const cancelling = subscriptions.filter((item) => answers[item.id] === 'no');
 
@@ -83,73 +93,107 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
       <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
 
-      <CardList className="mt-2 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
-        {subscriptions.map((subscription, index) => (
-          <CardItem key={subscription.id} index={index} className={cn('py-3 transition-opacity', answers[subscription.id] === 'yes' && 'opacity-55')}>
-            <div className="flex items-center justify-between gap-4">
-              <span className="flex min-w-0 items-center gap-2">
-                <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
-                {answers[subscription.id] === 'yes' && <span className="shrink-0 rounded-full bg-[#5ee6c8]/15 px-2 py-0.5 text-[10.5px] font-bold text-[#5ee6c8]">Keeping it</span>}
-                {answers[subscription.id] === 'no' && <span className="shrink-0 rounded-full bg-primary/15 px-2 py-0.5 text-[10.5px] font-bold text-primary">On your goal path</span>}
-              </span>
-              <span className="shrink-0 text-[14px] font-semibold tabular-nums text-white">
-                {money(subscription.monthly)}
-                <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
-              </span>
-            </div>
+      {open.length > 0 ? (
+        <CardList className="mt-2 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
+          {open.map((subscription, index) => (
+            <CardItem key={subscription.id} index={index} className="py-3">
+              <div className="flex items-center justify-between gap-4">
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
+                </span>
+                <span className="shrink-0 text-[14px] font-semibold tabular-nums text-white">
+                  {money(subscription.monthly)}
+                  <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
+                </span>
+              </div>
 
-            {bundleHint(subscription.merchant) && (
-              <p className="mt-1 text-[11.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
-            )}
-
-            <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} />
-
-            <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span className="text-[11.5px] text-muted-foreground">Would you sign up for it today?</span>
-              {ANSWERS.map((option) => (
-                <button
-                  key={option.key}
-                  type="button"
-                  aria-pressed={answers[subscription.id] === option.key}
-                  onClick={() => answer(subscription.id, option.key)}
-                  className={cn(
-                    'rounded-full border px-2.5 py-0.5 text-[11.5px] font-bold transition-colors',
-                    answers[subscription.id] === option.key
-                      ? 'border-primary bg-primary text-primary-foreground'
-                      : 'border-border text-muted-foreground hover:text-foreground',
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
-              {subscription.lastDate && (
-                <button
-                  type="button"
-                  onClick={() => downloadReminder(subscription)}
-                  className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-bold text-primary underline-offset-4 hover:underline"
-                >
-                  <CalendarPlus className="h-3.5 w-3.5" />
-                  Remind me
-                </button>
+              {bundleHint(subscription.merchant) && (
+                <p className="mt-1 text-[11.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
               )}
-            </div>
 
-            {answers[subscription.id] === 'no' && (
-              <div className="mt-2 flex flex-wrap items-center gap-2 rounded-xl bg-primary/[0.08] px-3 py-2 text-[12px] text-foreground animate-rise">
-                <span className="flex-1">Added &quot;Cancel {subscription.merchant}&quot; to your goal path.</span>
-                {onDraftCancel && (
-                  <button type="button" onClick={() => onDraftCancel(subscription)} className="rounded-full bg-primary px-2.5 py-1 font-bold text-primary-foreground">
-                    Draft cancel email
+              <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} />
+
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="text-[11.5px] text-muted-foreground">Would you sign up for it today?</span>
+                {ANSWERS.map((option) => (
+                  <button
+                    key={option.key}
+                    type="button"
+                    aria-pressed={answers[subscription.id] === option.key}
+                    onClick={() => answer(subscription, option.key)}
+                    className={cn(
+                      'rounded-full border px-2.5 py-0.5 text-[11.5px] font-bold transition-colors',
+                      answers[subscription.id] === option.key
+                        ? 'border-primary bg-primary text-primary-foreground'
+                        : 'border-border text-muted-foreground hover:text-foreground',
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+                {subscription.lastDate && (
+                  <button
+                    type="button"
+                    onClick={() => downloadReminder(subscription)}
+                    className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-bold text-primary underline-offset-4 hover:underline"
+                  >
+                    <CalendarPlus className="h-3.5 w-3.5" />
+                    Remind me
                   </button>
                 )}
-                {onOpenPath && (
-                  <button type="button" onClick={onOpenPath} className="font-bold text-primary underline underline-offset-4">See goal path</button>
-                )}
               </div>
-            )}
-          </CardItem>
-        ))}
-      </CardList>
+
+            </CardItem>
+          ))}
+        </CardList>
+      ) : (
+        <p className="mt-2 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3 text-[13px] font-semibold text-foreground">
+          All decided. Your answers are below.
+        </p>
+      )}
+
+      {decided.length > 0 && (
+        <div className="mt-5">
+          <h3 className="text-[14px] font-semibold text-white">Decided</h3>
+          <ul className="mt-2 space-y-2">
+            {decided.map((subscription) => {
+              const keep = answers[subscription.id] === 'yes';
+              return (
+                <li key={subscription.id} className={cn('animate-rise rounded-2xl border px-4 py-3', keep ? 'border-white/[0.07] bg-white/[0.025]' : 'border-primary/30 bg-primary/[0.06]')}>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
+                      <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold', keep ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary/15 text-primary')}>
+                        {keep ? 'Keeping it' : 'To cancel'}
+                      </span>
+                    </span>
+                    <span className="flex shrink-0 items-center gap-3">
+                      <span className="text-[14px] font-semibold tabular-nums text-white">{money(subscription.monthly)}<span className="text-[12px] font-normal text-muted-foreground">/mo</span></span>
+                      <button type="button" onClick={() => undo(subscription.id)} className="text-[12px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">Undo</button>
+                    </span>
+                  </div>
+                  {!keep && (
+                    <>
+                      <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} />
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px]">
+                        <span className="flex-1 text-foreground">Added &quot;Cancel {subscription.merchant}&quot; to your goal path.</span>
+                        {onDraftCancel && (
+                          <button type="button" onClick={() => onDraftCancel(subscription)} className="rounded-full bg-primary px-3 py-1 font-bold text-primary-foreground">
+                            Draft cancel email
+                          </button>
+                        )}
+                        {onOpenPath && (
+                          <button type="button" onClick={onOpenPath} className="font-bold text-primary underline underline-offset-4">See goal path</button>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
 
       {(keeping > 0 || cancelling.length > 0) && (
         <p className="mt-2.5 text-[12.5px] text-muted-foreground">
