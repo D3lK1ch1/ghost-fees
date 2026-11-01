@@ -3,7 +3,7 @@ import { Share2 } from 'lucide-react';
 import { BadgePop } from '@/components/GhostAnimations';
 import { money } from '@/lib/ghostFees/format';
 import { badgesFor, levelFor } from '@/lib/ghostFees/levels';
-import { STATUSES, daysSince, ghostTotals } from '@/lib/ghostFees/ghostList';
+import { STATUSES, daysSince, ghostTotals, savedSoFar } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
 import { ProofSummary } from './ProofDialog';
 
@@ -15,6 +15,8 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
   const { ghosted, confirmed } = ghostTotals(items);
   const { current, next, progress } = levelFor(ghosted);
   const badges = badgesFor(items, { overlapIds, priceRiseIds });
+  const saved = savedSoFar(items);
+
 
   const share = async () => {
     const text = `I ghosted ${money(ghosted)}/yr of forgotten subscriptions. Level: ${current.name} 👻 hunt-ghost-fees.base44.app`;
@@ -37,6 +39,11 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
           <span className="font-bold text-[#5ee6c8]">{money(confirmed)}/yr</span> confirmed stopped
         </p>
       </div>
+      {saved >= 0.01 && (
+        <p className="mt-1 text-[13px] font-semibold text-[#5ee6c8]">
+          Saved so far: {money(saved)} <span className="text-[11px] font-normal text-muted-foreground">(each price, per day since you ghosted it)</span>
+        </p>
+      )}
       <p className="mt-1 text-[11.5px] text-muted-foreground">Saved in this browser only. Clear my data removes it.</p>
 
       <div className="mt-3 rounded-xl bg-white/[0.03] px-3 py-2.5">
