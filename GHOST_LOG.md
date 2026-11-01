@@ -106,3 +106,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/site/SiteFooter.jsx
 - How to test: scroll to the bottom of the landing page in any theme; the disclaimer, links and font credit are centred under Meet the founders.
 - User feedback that drove this: "some inconsistency regarding the text alignment, especially on the footer" (tester, 4 of 5).
+
+### Every ghost lights up on hover and says what it is
+- What: in all three themes, hovering a ghost lights it up and shows what it is, using the real names and amounts from the scan, so it works on uploaded statements too. Haunted House: each ghost shows its name, type and amount. My Ex Ghosted Me: each ex's avatar shows the subscription and its monthly and yearly cost. Ghosts of Christmas: Jacob's chain links, Dusty's fee cards (with the reason) and Jolly's plates. Screen readers hear the names too.
+- Files: src/components/results/GhostTip.jsx (new), HauntedHouse.jsx, ExStory.jsx, ChristmasStory.jsx
+- How to test: Try a sample statement in each theme and hover the ghosts: Haunted House tab, the exes chat, and each Christmas stave.
+- User feedback that drove this: ghosts should be highlighted and say what they are on hover, in every theme.
