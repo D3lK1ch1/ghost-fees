@@ -8,6 +8,7 @@ import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
+import GuessReveal from './GuessReveal';
 import FeedbackPanel from './FeedbackPanel';
 import LeakEmailDialog from './LeakEmailDialog';
 import FileErrors from './FileErrors';
@@ -59,6 +60,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [subAnswers, setSubAnswers] = useState({});
   const [confirmClear, setConfirmClear] = useState(false);
   const [lifeGoal, setLifeGoal] = useState({ name: '', amount: 0 });
+  // Guess-your-number comes first; the guess stays in this tab only.
+  const [guessDone, setGuessDone] = useState(false);
   const cancelSubs = subscriptions.filter((item) => subAnswers[item.id] === 'no');
   const draftCancel = (item) => openEmail({ id: `sub:${item.id}`, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' });
   const current = TABS.find((item) => item.key === tab);
@@ -159,7 +162,9 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           </label>
         </div>
 
-        {leaks.length ? (
+        {leaks.length > 0 && !guessDone ? (
+          <GuessReveal total={total} months={analysis.monthSpan} onDone={() => setGuessDone(true)} />
+        ) : leaks.length ? (
           <LeakTotal
             total={total}
             months={analysis.monthSpan}
@@ -174,7 +179,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
 
-        {leaks.length > 0 && <ThemeStory subscriptions={subscriptions} leaksTotal={total} />}
+        {leaks.length > 0 && guessDone && <ThemeStory subscriptions={subscriptions} leaksTotal={total} />}
 
         <p className="mt-3 flex items-start gap-2 rounded-2xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-4 py-2.5 text-[12.5px] leading-relaxed text-[#bff5e8]">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />

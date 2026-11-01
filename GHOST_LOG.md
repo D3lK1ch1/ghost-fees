@@ -63,3 +63,9 @@ One entry per change. Newest at the bottom.
 - Files: src/data/founders.js, src/components/landing/FounderCard.jsx, FoundersSection.jsx, src/pages/About.jsx (all new), App.jsx, Landing.jsx, SiteFooter.jsx
 - How to test: landing page scroll to Meet the founders (mobile stacks, desktop side by side); open /about. To do: fill in MOMENT in src/data/founders.js, add photos at public/founders/sanjay.jpg and bella.jpg (square, 400px+), check both bios.
 - User feedback that drove this: (fill in)
+
+### Guess-your-number reveal
+- What: before the total, people guess how much forgotten subscriptions and fees took from them (slider $0 to $3,000+), tap Reveal, and the real number counts up: "You guessed $100. It's actually $296.92 in 7 months." Skip is always there. Reduced motion shows the number straight away. The guess is never stored or sent.
+- Files: src/components/results/GuessReveal.jsx (new), ResultsView.jsx
+- How to test: run the sample statement: the guess card appears where the total was; Reveal counts up, "Show me the ghosts" shows the usual total and story.
+- User feedback that drove this: (fill in)
