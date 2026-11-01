@@ -1,0 +1,40 @@
+/* My Ex Ghosted Me design kit, ported from the Claude Design canvas.
+   Same keyframes, timings and bubble art as every screen in the design. */
+.ex-root{color:#fbf8fa;font-family:Nunito,system-ui,sans-serif}
+.ex-root .ex-fredoka{font-family:Fredoka,system-ui,sans-serif}
+@keyframes exIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes exFade{from{opacity:0}to{opacity:1}}
+@keyframes exDot{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+@keyframes exTw{0%,100%{opacity:.15}50%{opacity:.85}}
+@keyframes exRise{0%{transform:translateY(0) scale(.8);opacity:0}15%{opacity:.85}85%{opacity:.6}100%{transform:translateY(-560px) scale(1.15);opacity:0}}
+@keyframes exShine{0%{background-position:150% 0}100%{background-position:-100% 0}}
+@keyframes exDrift{0%,100%{transform:translateX(calc(var(--gdx,6px) * -1))}50%{transform:translateX(var(--gdx,6px))}}
+@keyframes exWiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+@keyframes exAvBob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-3px) rotate(5deg)}}
+@keyframes exDance{0%,100%{transform:translate(0,0) rotate(-6deg)}20%{transform:translate(5px,-18px) rotate(3deg)}40%{transform:translate(2px,-4px) rotate(8deg) scale(1.04,.96)}60%{transform:translate(-5px,-17px) rotate(-3deg)}80%{transform:translate(-2px,-3px) rotate(-8deg) scale(1.04,.96)}}
+@keyframes exShock{0%,100%{transform:translateY(0) rotate(0)}6%{transform:translateY(-16px) scale(1.06)}10%{transform:translateY(-12px) rotate(-4deg)}14%{transform:translateY(-14px) rotate(4deg)}18%{transform:translateY(-12px) rotate(-3deg)}24%{transform:translateY(-10px) rotate(0)}60%{transform:translateY(-4px) rotate(2deg)}}
+@keyframes exBreathe{0%,100%{transform:scale(1,1) rotate(0)}50%{transform:scale(1.015,1.03) rotate(-1deg)}}
+@keyframes exFloat{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+@keyframes gpShadow{0%,100%{transform:scaleX(1);opacity:.3}50%{transform:scaleX(.72);opacity:.14}}
+.ex-in{animation:exIn .45s cubic-bezier(.2,.8,.3,1) both}
+.ex-dot{display:inline-block;width:6px;height:6px;border-radius:50%;animation:exDot 1.2s ease-in-out infinite}
+.ex-star{animation:exTw 3s ease-in-out infinite}
+.ex-mote{animation:exRise linear infinite}
+.ex-bar{transition:width .8s cubic-bezier(.2,.9,.3,1)}
+.ex-dance{animation:exDance var(--gs,1.9s) ease-in-out infinite;transform-origin:50% 85%}
+.ex-shock{animation:exShock 2.8s ease-in-out infinite;transform-origin:50% 80%}
+.ex-breathe{animation:exBreathe 4.2s ease-in-out infinite;transform-origin:50% 100%}
+.ex-float{animation:exFloat var(--gs,3.6s) ease-in-out infinite;transform-origin:50% 80%}
+.ex-av{transform-origin:50% 90%;box-shadow:0 0 0 2px rgba(255,255,255,.12);animation:exAvBob 2.6s ease-in-out infinite}
+.ex-ghost{animation:exDrift var(--gd,7s) ease-in-out infinite;animation-delay:var(--gdl,0s)}
+.ex-ghost:hover .ex-wig{animation:exWiggle .5s ease-in-out;transform-origin:50% 70%}
+.ex-shine{background:linear-gradient(100deg,#ff6f7d 20%,#ffe3a3 40%,#5ee6c8 55%,#ff6f7d 75%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:exShine 4.5s linear infinite}
+.gp-shadow{animation:gpShadow 3.6s ease-in-out infinite}
+.ex-btn:focus-visible{outline:3px solid #5ee6c8;outline-offset:3px}
+.bub-l,.bub-r,.bub-t,.bub-s{background-color:transparent;background-repeat:no-repeat;background-position:center;background-size:100% 100%;color:#15131a;text-align:center;box-sizing:border-box;filter:drop-shadow(0 6px 12px rgba(0,0,0,.35))}
+.bub-l{background-image:url(/themes/ex/bub-speech-left.webp);padding:20px 30px 34px;min-width:140px;line-height:1.25}
+.bub-r{background-image:url(/themes/ex/bub-speech-right.webp);padding:20px 30px 34px;min-width:140px;line-height:1.25}
+.bub-t{position:relative;background-image:url(/themes/ex/bub-thought.webp);padding:24px 26px 26px;min-width:150px;line-height:1.25}
+.bub-t::after{content:'';position:absolute;left:14px;bottom:-12px;width:11px;height:11px;border-radius:50%;background:#fbf8fa;box-shadow:-9px 11px 0 -2px #fbf8fa}
+.bub-s{background-image:url(/themes/ex/bub-shout.webp);padding:24px 34px;min-width:176px;line-height:1.2}
+@media (prefers-reduced-motion:reduce){.ex-in{animation-name:exFade}.ex-av,.ex-float,.ex-dance,.ex-shock,.ex-breathe,.ex-star,.ex-ghost,.gp-shadow{animation:none}.ex-mote{display:none}.ex-bar{transition:none}.ex-shine{animation:none;color:#ff6f7d;background:none}}
