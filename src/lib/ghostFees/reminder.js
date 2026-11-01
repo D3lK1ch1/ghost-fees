@@ -116,3 +116,12 @@ export function googleCalendarUrl({ title, details = '', date }) {
   const params = new URLSearchParams({ action: 'TEMPLATE', text: title, details, dates: `${start}/${icsDate(next)}` });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
+
+// Outlook (outlook.com / Microsoft 365) "new event" page with the task filled in.
+// Opened only when the person taps it; the task text goes to Microsoft then.
+export function outlookCalendarUrl({ title, details = '', date }, work = false) {
+  const next = new Date(`${date}T00:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  const params = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: title, body: details, startdt: date, enddt: next.toISOString().slice(0, 10), allday: 'true' });
+  return `https://outlook.${work ? 'office' : 'live'}.com/calendar/0/deeplink/compose?${params.toString()}`;
+}

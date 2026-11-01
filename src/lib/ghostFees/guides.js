@@ -45,6 +45,7 @@ export const GUIDES = {
   cass: {
     name: 'Cass',
     role: 'the cancel ghost',
+    bonus: true, // bonus assistant: looks things up online
     color: '#f2a65a',
     job: 'Cancelling for you',
     does: 'Searches the official site for the cancel link, the steps and the phone number, then drafts the email.',
