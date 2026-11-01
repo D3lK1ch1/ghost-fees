@@ -22,12 +22,9 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
       aria-pressed={active}
       className={cn(
         'relative flex flex-col items-center overflow-hidden rounded-2xl border-2 px-2 pb-2.5 pt-4 transition-colors',
-        lit ? 'border-[#5ee6c8] bg-[#5ee6c8]/10' : active ? 'border-primary bg-white/[0.06]' : 'border-white/10 bg-black/30 hover:border-primary/50',
+        lit ? 'border-[#5ee6c8] bg-[#5ee6c8]/10' : active ? 'border-primary bg-[#15131a]' : 'border-white/10 bg-[#15131a] hover:border-primary/50',
       )}
     >
-      {!lit && (
-        <span aria-hidden="true" className="pointer-events-none absolute inset-x-4 bottom-8 top-2 rounded-full bg-[radial-gradient(ellipse_at_50%_60%,rgba(255,111,125,0.22),transparent_70%)]" />
-      )}
       <span
         className={cn('relative', !lit && 'ex-ghost')}
         style={{ '--gd': `${6 + (index % 3) * 0.9}s`, '--gdx': '7px', '--gdl': `${-index * 1.3}s` }}
@@ -38,7 +35,7 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
             alt=""
             width={56}
             height={56}
-            className={cn('h-14 w-14 object-contain drop-shadow-[0_6px_14px_rgba(255,111,125,0.35)]', lit && 'opacity-60 grayscale')}
+            className={cn('h-14 w-14 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.45)]', lit && 'opacity-60 grayscale')}
           />
           <span className="absolute -right-6 -top-1 rounded-full bg-white/85 px-1.5 text-[10px] font-black leading-4 text-[#141218]">{lit ? '✓' : '•••'}</span>
         </span>
@@ -106,7 +103,6 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
       <div className="relative mt-6">
         <div className="mx-auto h-0 w-0 border-x-[150px] border-b-[70px] border-x-transparent border-b-[#2a1c2c]" aria-hidden="true" />
         <Heart className="absolute left-1/2 top-6 h-7 w-7 -translate-x-1/2 fill-primary text-primary drop-shadow-[0_0_12px_hsl(var(--primary))]" aria-hidden="true" />
-        <span className="absolute right-2 top-0 h-12 w-12 rounded-full bg-[#f3e9f0] shadow-[0_0_30px_rgba(255,255,255,0.35)]" aria-hidden="true" />
         {DRIFTERS.map((d) => (
           <span
             key={d.left + d.top}
@@ -119,7 +115,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             </span>
           </span>
         ))}
-        <div className="rounded-b-2xl border-2 border-t-0 border-primary/40 bg-[#1d1520] p-3 shadow-[inset_0_0_40px_hsl(var(--primary)/0.15)]">
+        <div className="rounded-b-2xl border-2 border-t-0 border-primary/40 bg-[#1d1a22] p-3">
           <div className="grid grid-cols-2 gap-3">
             {shown.map((item, index) => (
               <Tile
