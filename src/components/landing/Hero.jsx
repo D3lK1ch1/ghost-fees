@@ -8,9 +8,7 @@ export default function Hero({ onSample, onUpload }) {
   const { theme } = useTheme();
   return (
     <section className="mx-auto flex w-full max-w-3xl animate-rise flex-col items-center px-5 pb-16 pt-6 text-center sm:px-8">
-      <h2
-        className="mb-4 font-heading text-[1.6rem] font-bold leading-none text-black [text-shadow:0_0_2px_rgba(245,241,235,0.85),0_0_20px_hsl(var(--primary)/0.55)] sm:text-[1.9rem]"
-      >
+      <h2 className="mb-4 font-heading text-[1.6rem] font-bold leading-none text-white [text-shadow:2px_0_0_#000,-2px_0_0_#000,0_2px_0_#000,0_-2px_0_#000,2px_2px_0_#000,-2px_2px_0_#000,2px_-2px_0_#000,-2px_-2px_0_#000] sm:text-[1.9rem]">
         Ghost Fees
       </h2>
 
