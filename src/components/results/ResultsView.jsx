@@ -21,6 +21,7 @@ import GhostGuide from '@/components/guide/GhostGuide';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
+import { clearGhostList } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
 
 // One tab per feature so each is easy to find.
@@ -65,6 +66,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const clearData = () => {
     setConfirmClear(false);
     window.history.replaceState(null, '', window.location.pathname);
+    clearGhostList();
     onRestart();
     toast({ title: 'Your data is cleared', description: 'Nothing from your statement is left in this tab.' });
   };
