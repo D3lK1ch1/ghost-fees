@@ -1,7 +1,8 @@
 import { CardList, CardItem } from '@/components/GhostAnimations';
-import { CalendarPlus } from 'lucide-react';
+import { CalendarPlus, ExternalLink } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
 import { downloadReminder } from '@/lib/ghostFees/reminder';
+import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { cn } from '@/lib/utils';
 
 const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|SNAP|F45|CROSSFIT|PILATES|YOGA)\b/i;
@@ -46,7 +47,9 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
         </div>
       )}
 
-      <CardList className="mt-3 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
+      <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
+
+      <CardList className="mt-2 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
         {subscriptions.map((subscription, index) => (
           <CardItem key={subscription.id} index={index} className={cn('py-3 transition-opacity', answers[subscription.id] === 'yes' && 'opacity-55')}>
             <div className="flex items-center justify-between gap-4">
@@ -64,6 +67,8 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
             {bundleHint(subscription.merchant) && (
               <p className="mt-1 text-[11.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
             )}
+
+            <CancelHelp subscription={subscription} />
 
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span className="text-[11.5px] text-muted-foreground">Would you sign up for it today?</span>
@@ -125,5 +130,26 @@ export default function SubscriptionsSection({ subscriptions, answers = {}, onAn
         <a href="https://www.accc.gov.au/" target="_blank" rel="noreferrer" className="font-bold text-primary underline underline-offset-4">ACCC</a>.
       </p>
     </section>
+  );
+}
+
+// Official cancel link and steps for this merchant. Never a guessed link.
+function CancelHelp({ subscription }) {
+  const info = cancelInfo(subscription.merchant);
+  return (
+    <div className="mt-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+      {info.url && (
+        <a
+          href={info.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[12px] font-bold text-primary underline-offset-4 hover:underline"
+        >
+          Cancel on {info.name}
+          <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      )}
+      <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">{info.steps}</p>
+    </div>
   );
 }
