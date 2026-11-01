@@ -71,3 +71,48 @@ export function downloadAllReminders(subscriptions) {
   link.click();
   URL.revokeObjectURL(url);
 }
+
+// A task the person schedules from the calendar popup: any title, any day.
+export function buildTaskIcs({ title, details = '', date }, today = new Date()) {
+  const start = new Date(`${date}T00:00:00Z`);
+  if (Number.isNaN(start.getTime())) return null;
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+  const clean = (text) => String(text).replace(/[,;\\\n]/g, ' ');
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Ghost Fees//Task//EN',
+    'BEGIN:VEVENT',
+    `UID:${icsDate(start)}-${clean(title).replace(/\s+/g, '-')}@ghostfees`,
+    `DTSTAMP:${icsDate(today)}T000000Z`,
+    `DTSTART;VALUE=DATE:${icsDate(start)}`,
+    `DTEND;VALUE=DATE:${icsDate(end)}`,
+    `SUMMARY:${clean(title)}`,
+    `DESCRIPTION:${clean(details)}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
+
+export function downloadTask(task) {
+  const ics = buildTaskIcs(task);
+  if (!ics) return false;
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${task.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.ics`;
+  link.click();
+  URL.revokeObjectURL(url);
+  return true;
+}
+
+// Google Calendar's "new event" page with the task filled in. Only opened when the
+// person taps the button; the task text goes to Google at that moment.
+export function googleCalendarUrl({ title, details = '', date }) {
+  const start = date.replace(/-/g, '');
+  const next = new Date(`${date}T00:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  const params = new URLSearchParams({ action: 'TEMPLATE', text: title, details, dates: `${start}/${icsDate(next)}` });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}

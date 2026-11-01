@@ -1,6 +1,6 @@
-export default function GhostMark({ className = '', eyeColor = '#0e0d13' }) {
+export default function GhostMark({ className = '', eyeColor = '#0e0d13', style }) {
   return (
-    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+    <svg viewBox="0 0 64 64" className={className} style={style} aria-hidden="true">
       <path
         d="M32 4C20.4 4 11 13.4 11 25v30.4c0 1.7 1.9 2.6 3.2 1.6l5.8-4.3c.9-.7 2.2-.7 3.1 0l5.6 4.2c1 .7 2.3.7 3.3 0l5.6-4.2c.9-.7 2.2-.7 3.1 0l5.8 4.3c1.3 1 3.2.1 3.2-1.6V25C53 13.4 43.6 4 32 4Z"
         fill="currentColor"

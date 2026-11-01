@@ -39,7 +39,7 @@ export default function ExLeakCard({ leak, onDraft, avatar, primary = false }) {
   return (
     <div className="flex flex-col gap-3 rounded-[20px] p-4" style={{ background: C.card, border: `1px solid ${C.line}`, color: C.text }}>
       <div className="flex items-center gap-3">
-        <img src={avatar || exAvatar(leak.merchant)} alt="" width={42} height={42} className="ex-av h-[42px] w-[42px] flex-none rounded-full object-cover" />
+        <img src={avatar || exAvatar(leak.merchant)} alt="" width={42} height={42} className="ex-av h-[42px] w-[42px] flex-none object-contain" />
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-[17px] font-extrabold">{name}</span>
           <span className="text-[13px]" style={{ color: C.muted }}>

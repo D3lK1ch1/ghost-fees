@@ -72,7 +72,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
                 selected ? 'border-[#5ee6c8] shadow-[0_0_24px_rgba(94,230,200,0.25)]' : 'border-border hover:border-primary/60',
               )}
             >
-              <img src={item.avatar} alt="" width={76} height={76} className="h-[76px] w-[76px] rounded-full object-cover" />
+              <img src={item.pickArt || item.avatar} alt="" width={76} height={88} className="h-[88px] w-[76px] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.45)]" />
               <span className="mt-2 font-heading text-[15px] font-bold text-foreground">{item.label}</span>
               <span className={cn('text-[12.5px] font-semibold', selected ? 'text-[#5ee6c8]' : 'text-muted-foreground')}>
                 {selected ? 'Selected' : item.note}

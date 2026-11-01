@@ -1,3 +1,4 @@
+import ReceiptGhost from '@/components/site/ReceiptGhost';
 import { Upload } from 'lucide-react';
 import { C, GhostPal, PrimaryButton, SilverPhone } from './ExKit';
 
@@ -19,7 +20,7 @@ export default function ExScanChat({ pick, pickKey, count, fileName, sample, onN
   return (
     <SilverPhone screenClassName="min-h-[740px]">
       <div className="relative z-[1] flex items-center gap-3 px-4 pb-3.5 pt-[52px]" style={{ background: C.bar, borderBottom: `1px solid ${C.barLine}` }}>
-        <img src={pick.avatar} alt="" className="h-[42px] w-[42px] flex-none rounded-full object-cover" />
+        <ReceiptGhost width={34} className="flex-none" />
         <div className="flex min-w-0 flex-col gap-0.5">
           <div className="ex-fredoka text-[18px] font-semibold">Ghost Fees</div>
           <div className="flex items-center gap-1.5 text-[13px] font-bold" style={{ color: C.mint }}>Ghost Fees is typing <Dots color={C.mint} /></div>

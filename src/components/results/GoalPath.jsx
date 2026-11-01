@@ -4,6 +4,19 @@ import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { downloadAllReminders } from '@/lib/ghostFees/reminder';
 import GhostMark from '@/components/site/GhostMark';
+import { useTheme } from '@/lib/ThemeContext';
+import { useSavedChoice } from '@/hooks/use-saved-choice';
+import { SEASON_KEY, SEASONS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
+
+// One colour set per theme for the hill, road, house and stops. Haunted keeps its
+// purple; 💔 is charcoal with coral and mint; 🎄 is green and gold (Summer: blue).
+const HAUNTED = { gold: '#ffcf73', goldSoft: '#ffe2a0', nodeBorder: '#6b5aa0', tree: '#2a1f45', roof: '#3a2c5c', star: '#c3b8db', wall: '#33264f', wall2: '#2f2349', door: '#22183a', sky1: '#1f1438', sky2: '#22174a', sky3: '#1b1236', moon: '#e9e2d0', hill: '#2a1d52', hill2: '#2f2160', roadEdge: '#150e2a', road: '#3d2e6b', dash: '#8f80c8', ink: '#1a1230', card: '#140c22', current: '#2a1840', node: '#2a1d47', nodeText: '#e6defa', tomb: '#3d3060', tombText: '#a99cd0', ghost: '#f4efe8' };
+const PALETTES = {
+  haunted: HAUNTED,
+  ex: { ...HAUNTED, gold: '#5ee6c8', goldSoft: '#a8f3e2', nodeBorder: '#5c5668', tree: '#2f2b38', roof: '#3a3444', star: '#d6d1db', wall: '#2f2b38', wall2: '#2a2632', door: '#15131a', sky1: '#2a2530', sky2: '#1d1a22', sky3: '#15131a', moon: '#f3e9f0', hill: '#221f29', hill2: '#2a2632', roadEdge: '#0f0d13', road: '#34303e', dash: '#bdb7c6', ink: '#15131a', card: '#1b1921', current: '#2a1f29', node: '#221f29', nodeText: '#fbf8fa', tomb: '#34303e', tombText: '#ff6f7d', ghost: '#fbf8fa' },
+  christmas: { ...HAUNTED, gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#2d5a48', tree: '#0b1a13', roof: '#7a2e2a', star: '#f5f0e8', wall: '#24433a', wall2: '#1d3b2c', door: '#0d1f17', sky1: '#1d3b2c', sky2: '#13291f', sky3: '#0d1f17', moon: '#f5f0e8', hill: '#13291f', hill2: '#1a3528', roadEdge: '#081510', road: '#24433a', dash: '#b9c9bf', ink: '#15131a', card: '#0d1f17', current: '#1d3b2c', node: '#13291f', nodeText: '#f5f0e8', tomb: '#24433a', tombText: '#f2c14e', ghost: '#f5f0e8' },
+  summer: { gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3b4c80', tree: '#0c1222', roof: '#2c3a63', star: '#f6efe0', wall: '#1a2340', wall2: '#22305a', door: '#10172a', sky1: '#22305a', sky2: '#1a2340', sky3: '#10172a', moon: '#f6efe0', hill: '#1a2340', hill2: '#22305a', roadEdge: '#0a0f1c', road: '#2c3a63', dash: '#b8c0d8', ink: '#15131a', card: '#10172a', current: '#22305a', node: '#1a2340', nodeText: '#f6efe0', tomb: '#2c3a63', tombText: '#f2c14e', ghost: '#f6efe0' },
+};
 
 const KINDS = {
   cancel: { Icon: Mail, label: (name) => `Cancel ${name}`, steps: ['Open the cancel email', 'Send it from your mail app', 'Check it is gone from your next statement'] },
@@ -39,29 +52,29 @@ function curve(points) {
 }
 
 // Purple silhouette of the house at the top of the hill. Windows glow once every goal is done.
-function House({ lit }) {
-  const glow = lit ? '#ffe2a0' : '#6b5aa0';
+function House({ lit, P }) {
+  const glow = lit ? P.goldSoft : P.nodeBorder;
   return (
     <g transform={`translate(${VIEW_W / 2} 150)`}>
-      <path d="M-150 60 C-150 40 -140 10 -132 -10 M-136 18 l-16 -14 M-138 0 l12 -12" stroke="#2a1f45" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <path d="M150 60 C150 40 140 14 134 -6 M138 22 l16 -12 M140 6 l-12 -12" stroke="#2a1f45" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <path d="M-78 -10 L-62 -78 L-46 -10 Z" fill="#3a2c5c" />
-      <circle cx="-62" cy="-80" r="2" fill="#c3b8db" />
-      <rect x="-74" y="-12" width="24" height="76" fill="#33264f" />
+      <path d="M-150 60 C-150 40 -140 10 -132 -10 M-136 18 l-16 -14 M-138 0 l12 -12" stroke={P.tree} strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M150 60 C150 40 140 14 134 -6 M138 22 l16 -12 M140 6 l-12 -12" stroke={P.tree} strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M-78 -10 L-62 -78 L-46 -10 Z" fill={P.roof} />
+      <circle cx="-62" cy="-80" r="2" fill={P.star} />
+      <rect x="-74" y="-12" width="24" height="76" fill={P.wall} />
       <rect x="-67" y="4" width="10" height="16" rx="5" fill={glow} className={lit ? '' : 'animate-window-flicker'} />
-      <path d="M-50 2 L8 -48 L66 2 Z" fill="#3a2c5c" />
-      <rect x="-44" y="0" width="104" height="64" fill="#33264f" />
-      <path d="M40 -6 L58 -30 L76 -6 Z" fill="#3a2c5c" />
-      <rect x="44" y="-8" width="28" height="72" fill="#2f2349" />
+      <path d="M-50 2 L8 -48 L66 2 Z" fill={P.roof} />
+      <rect x="-44" y="0" width="104" height="64" fill={P.wall} />
+      <path d="M40 -6 L58 -30 L76 -6 Z" fill={P.roof} />
+      <rect x="44" y="-8" width="28" height="72" fill={P.wall2} />
       <circle cx="8" cy="18" r="9" fill={glow} opacity="0.9" />
       <rect x="-30" y="28" width="12" height="16" rx="6" fill={glow} opacity="0.85" />
       <rect x="34" y="28" width="12" height="16" rx="6" fill={glow} opacity="0.85" />
       <rect x="51" y="14" width="12" height="16" rx="6" fill={glow} opacity="0.85" />
-      <path d="M-2 64 v-18 a10 10 0 0 1 20 0 v18 z" fill="#22183a" />
+      <path d="M-2 64 v-18 a10 10 0 0 1 20 0 v18 z" fill={P.door} />
       {Array.from({ length: 9 }, (_, i) => (
-        <circle key={i} cx={-44 + i * 13} cy={2 - Math.sin((i / 8) * Math.PI) * 10} r="2.2" fill="#ffcf73" className="animate-window-flicker" style={{ animationDelay: `${(i % 4) * 0.5}s` }} />
+        <circle key={i} cx={-44 + i * 13} cy={2 - Math.sin((i / 8) * Math.PI) * 10} r="2.2" fill={P.gold} className="animate-window-flicker" style={{ animationDelay: `${(i % 4) * 0.5}s` }} />
       ))}
-      {lit && <circle cx="8" cy="20" r="110" fill="#ffd27a" opacity="0.1" />}
+      {lit && <circle cx="8" cy="20" r="110" fill={P.gold} opacity="0.1" />}
     </g>
   );
 }
@@ -70,7 +83,13 @@ function House({ lit }) {
 // Busting a ghost in the house ticks its goal here too. Everything stays in memory.
 const LIFE_GOALS = ['A holiday', 'Emergency fund', 'Study', 'Family', 'A new home', 'Something fun'];
 
-export default function GoalPath({ leaks, subscriptions, cleared, onClearedChange, remindersDone, onRemindersDone, onDraft, onOpenHouse, cancelSubs = [], lifeGoal = {}, onLifeGoal }) {
+export default function GoalPath({ leaks, subscriptions, cleared, onClearedChange, remindersDone, onRemindersDone, onDraft, onOpenHouse, cancelSubs = [], lifeGoal = {}, onLifeGoal, avatarFor }) {
+  const { theme } = useTheme();
+  const [season] = useSavedChoice(SEASON_KEY, SEASONS, 'winter');
+  const P = theme.key === 'christmas' ? PALETTES[season === 'summer' ? 'summer' : 'christmas'] : PALETTES[theme.key] || HAUNTED;
+  const gpVars = Object.fromEntries(Object.entries(P).map(([key, value]) => [`--gp-${key}`, value]));
+  // Each stop's ghost is the theme's own: 💔 the ex, 🎄 the festive ghost, Haunted the plain ghost.
+  const themeGhost = (merchant) => (theme.key === 'ex' && avatarFor ? avatarFor(merchant) : theme.key === 'christmas' ? xmasAvatar(merchant, season) : null);
   const leakGoals = leaks.map((leak) => {
     const kind = leak.action || 'check';
     return { id: leak.id, kind, leak, label: KINDS[kind].label(leak.title || leak.merchant), save: leak.amount, why: leak.reason, done: cleared.includes(leak.id) };
@@ -126,43 +145,43 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
   const Kind = KINDS[selected?.kind];
 
   return (
-    <section className="mt-4">
+    <section className="mt-4" style={gpVars}>
       <div className="mb-3 flex justify-end">
         <div className="w-full max-w-[280px]">
           <div className="flex items-baseline justify-between text-[12.5px] font-bold">
             <span className="text-foreground">{doneCount} of {goals.length} done</span>
-            <span className="tabular-nums text-[#ffcf73]">{money(saved)} of {money(total)}</span>
+            <span className="tabular-nums text-[var(--gp-gold)]">{money(saved)} of {money(total)}</span>
           </div>
           <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
-            <div className="h-full rounded-full bg-[#ffcf73] transition-[width] duration-700" style={{ width: goals.length ? pct(doneCount, goals.length) : '0%' }} />
+            <div className="h-full rounded-full bg-[var(--gp-gold)] transition-[width] duration-700" style={{ width: goals.length ? pct(doneCount, goals.length) : '0%' }} />
           </div>
         </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
-        <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-gradient-to-b from-[#1f1438] via-[#22174a] to-[#1b1236] lg:self-start">
-          <div className="pointer-events-none absolute left-1/2 top-6 h-12 w-12 translate-x-6 animate-moon-glow rounded-full bg-[#e9e2d0]" />
+        <div className="relative overflow-hidden rounded-3xl border border-white/[0.06] bg-gradient-to-b from-[var(--gp-sky1)] via-[var(--gp-sky2)] to-[var(--gp-sky3)] lg:self-start">
+          <div className="pointer-events-none absolute left-1/2 top-6 h-12 w-12 translate-x-6 animate-moon-glow rounded-full bg-[var(--gp-moon)]" />
           {[[8, 40], [20, 120], [78, 60], [90, 150], [62, 24]].map(([x, y]) => (
             <span key={`${x}-${y}`} className="pointer-events-none absolute h-1 w-1 animate-flicker rounded-full bg-white/50" style={{ left: `${x}%`, top: `${y}px` }} />
           ))}
           <div className="relative mx-auto w-full max-w-[640px]" style={{ aspectRatio: `${VIEW_W} / ${height}` }}>
             <svg viewBox={`0 0 ${VIEW_W} ${height}`} className="absolute inset-0 h-full w-full" aria-hidden="true">
-              <path d={`M 0 ${height} L 0 300 Q ${VIEW_W / 2} 250 ${VIEW_W} 300 L ${VIEW_W} ${height} Z`} fill="#2a1d52" />
-              <path d={`M 0 ${height} L 0 ${height * 0.55} Q ${VIEW_W * 0.3} ${height * 0.5} ${VIEW_W} ${height * 0.6} L ${VIEW_W} ${height} Z`} fill="#2f2160" opacity="0.6" />
-              <House lit={allDone} />
-              <path d={fullPath} stroke="#150e2a" strokeWidth="50" fill="none" strokeLinecap="round" />
-              <path d={fullPath} stroke="#3d2e6b" strokeWidth="40" fill="none" strokeLinecap="round" />
-              <path d={fullPath} stroke="#8f80c8" strokeWidth="2.5" strokeDasharray="7 11" fill="none" strokeLinecap="round" opacity="0.55" />
+              <path d={`M 0 ${height} L 0 300 Q ${VIEW_W / 2} 250 ${VIEW_W} 300 L ${VIEW_W} ${height} Z`} fill={P.hill} />
+              <path d={`M 0 ${height} L 0 ${height * 0.55} Q ${VIEW_W * 0.3} ${height * 0.5} ${VIEW_W} ${height * 0.6} L ${VIEW_W} ${height} Z`} fill={P.hill2} opacity="0.6" />
+              <House lit={allDone} P={P} />
+              <path d={fullPath} stroke={P.roadEdge} strokeWidth="50" fill="none" strokeLinecap="round" />
+              <path d={fullPath} stroke={P.road} strokeWidth="40" fill="none" strokeLinecap="round" />
+              <path d={fullPath} stroke={P.dash} strokeWidth="2.5" strokeDasharray="7 11" fill="none" strokeLinecap="round" opacity="0.55" />
               {donePath && (
                 <>
-                  <path d={donePath} stroke="#ffcf73" strokeWidth="22" fill="none" strokeLinecap="round" opacity="0.18" />
-                  <path d={donePath} stroke="#ffcf73" strokeWidth="9" fill="none" strokeLinecap="round" className="drop-shadow-[0_0_8px_rgba(255,207,115,0.9)]" />
+                  <path d={donePath} stroke={P.gold} strokeWidth="22" fill="none" strokeLinecap="round" opacity="0.18" />
+                  <path d={donePath} stroke={P.gold} strokeWidth="9" fill="none" strokeLinecap="round" className="drop-shadow-[0_0_8px_rgba(255,207,115,0.9)]" />
                 </>
               )}
             </svg>
 
             <span
-              className={cn('absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-[12px] font-bold', allDone ? 'border-[#ffcf73] bg-[#ffcf73] text-[#1a1230]' : 'border-white/10 bg-[#140c22]/90 text-[#ffcf73]')}
+              className={cn('absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-[12px] font-bold', allDone ? 'border-[var(--gp-gold)] bg-[var(--gp-gold)] text-[var(--gp-ink)]' : 'border-white/10 bg-[var(--gp-card)]/90 text-[var(--gp-gold)]')}
               style={{ top: pct(238, height) }}
             >
               {allDone ? 'Ghost-free house!' : `Ghost-free house · ${money(total)}`}
@@ -188,9 +207,9 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                     <span
                       className={cn(
                         'flex h-12 w-12 items-center justify-center rounded-full border-[3px] shadow-[0_6px_16px_rgba(0,0,0,0.4)] transition-all duration-500 sm:h-14 sm:w-14',
-                        goal.done && 'border-[#ffe2a0] bg-[#ffcf73] text-[#1a1230] shadow-[0_0_24px_rgba(255,207,115,0.7)]',
-                        !goal.done && isCurrent && 'border-primary bg-[#2a1840] text-primary shadow-[0_0_22px_hsl(var(--primary)/0.55)]',
-                        !goal.done && !isCurrent && 'border-[#6b5aa0] bg-[#2a1d47] text-[#e6defa] group-hover:border-primary/70',
+                        goal.done && 'border-[var(--gp-goldSoft)] bg-[var(--gp-gold)] text-[var(--gp-ink)] shadow-[0_0_24px_rgba(255,207,115,0.7)]',
+                        !goal.done && isCurrent && 'border-primary bg-[var(--gp-current)] text-primary shadow-[0_0_22px_hsl(var(--primary)/0.55)]',
+                        !goal.done && !isCurrent && 'border-[var(--gp-nodeBorder)] bg-[var(--gp-node)] text-[var(--gp-nodeText)] group-hover:border-primary/70',
                       )}
                     >
                       {goal.done ? <Check className="h-6 w-6 animate-poof" strokeWidth={3} /> : <Icon className="h-5 w-5" />}
@@ -199,31 +218,35 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                       className={cn(
                         'absolute top-1/2 w-[150px] -translate-y-1/2 rounded-xl border px-3 py-2 text-[11.5px] font-bold leading-snug shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition-colors sm:w-[190px] sm:text-[12.5px]',
                         left ? 'left-full ml-2.5 text-left' : 'right-full mr-2.5 text-right',
-                        isCurrent || isSelected ? 'border-primary/80 bg-[#2a1840]' : 'border-white/10 bg-[#140c22]/95 group-hover:border-white/25',
+                        isCurrent || isSelected ? 'border-primary/80 bg-[var(--gp-current)]' : 'border-white/10 bg-[var(--gp-card)]/95 group-hover:border-white/25',
                       )}
                     >
                       <span className="block text-foreground">{goal.label}</span>
-                      <span className={cn('block text-[11px]', goal.done ? 'text-[#ffcf73]' : 'text-primary')}>{goal.done ? 'Done' : goal.monthly ? `${money(goal.monthly)} a month` : `saves ${money(goal.save)}`}</span>
+                      <span className={cn('block text-[11px]', goal.done ? 'text-[var(--gp-gold)]' : 'text-primary')}>{goal.done ? 'Done' : goal.monthly ? `${money(goal.monthly)} a month` : `saves ${money(goal.save)}`}</span>
                     </span>
                   </button>
 
                   {!goal.done && goal.leak && !isCurrent && (
                     <span className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 animate-bob" style={{ left: pct(sideX, VIEW_W), top: pct(point.y - 16, height), animationDelay: `${i * 0.4}s` }}>
-                      <GhostMark className="h-8 w-8 text-[#f4efe8] drop-shadow-[0_0_10px_rgba(255,255,255,0.35)]" eyeColor="#1a1230" />
+                      {themeGhost(goal.leak.merchant) ? (
+                        <img src={themeGhost(goal.leak.merchant)} alt="" width={40} height={40} className="h-10 w-10 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.45)]" />
+                      ) : (
+                        <GhostMark className="h-8 w-8 text-[var(--gp-ghost)] drop-shadow-[0_0_10px_rgba(255,255,255,0.35)]" eyeColor={P.ink} />
+                      )}
                     </span>
                   )}
                   {goal.done && goal.leak && (
-                    <span className="pointer-events-none absolute flex h-14 w-11 -translate-x-1/2 -translate-y-1/2 animate-rise flex-col items-center justify-center rounded-t-full bg-[#3d3060] shadow-[0_6px_0_#140c22]" style={{ left: pct(sideX, VIEW_W), top: pct(point.y, height) }}>
-                      <span className="text-[8px] font-bold tracking-[0.15em] text-[#a99cd0]">RIP</span>
-                      <span className="text-[9.5px] font-bold text-[#f4efe8]">{money(goal.save || goal.monthly)}</span>
+                    <span className="pointer-events-none absolute flex h-14 w-11 -translate-x-1/2 -translate-y-1/2 animate-rise flex-col items-center justify-center rounded-t-full bg-[var(--gp-tomb)] shadow-[0_6px_0_#140c22]" style={{ left: pct(sideX, VIEW_W), top: pct(point.y, height) }}>
+                      <span className="text-[8px] font-bold tracking-[0.15em] text-[var(--gp-tombText)]">RIP</span>
+                      <span className="text-[9.5px] font-bold text-[var(--gp-ghost)]">{money(goal.save || goal.monthly)}</span>
                     </span>
                   )}
                   {isCurrent && (
                     <span className="pointer-events-none absolute z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center transition-[left,top] duration-700" style={{ left: pct(sideX, VIEW_W), top: pct(point.y - 18, height) }}>
                       <span className="relative animate-float">
                         <span className="absolute -top-1 left-1/2 h-3 w-6 -translate-x-1/2 rounded-t-full bg-primary" />
-                        <GhostMark className="h-8 w-8 text-[#f4efe8]" eyeColor="#1a1230" />
-                        <span className="absolute -right-2 top-4 h-2.5 w-2.5 animate-flicker rounded-full bg-[#ffcf73] shadow-[0_0_12px_4px_rgba(255,190,90,0.6)]" />
+                        <GhostMark className="h-8 w-8 text-[var(--gp-ghost)]" eyeColor={P.ink} />
+                        <span className="absolute -right-2 top-4 h-2.5 w-2.5 animate-flicker rounded-full bg-[var(--gp-gold)] shadow-[0_0_12px_4px_rgba(255,190,90,0.6)]" />
                       </span>
                       <span className="mt-1 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10.5px] font-bold text-primary-foreground">You are here</span>
                     </span>
@@ -234,7 +257,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
 
             {allDone && [0, 1, 2].map((n) => (
               <span key={n} className="pointer-events-none absolute animate-fly-away" style={{ left: `${44 + n * 6}%`, top: pct(170, height), animationDelay: `${n * 0.25}s` }}>
-                <GhostMark className="h-6 w-6 text-[#f4efe8]" eyeColor="#1a1230" />
+                <GhostMark className="h-6 w-6 text-[var(--gp-ghost)]" eyeColor={P.ink} />
               </span>
             ))}
           </div>

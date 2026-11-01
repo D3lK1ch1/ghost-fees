@@ -8,6 +8,7 @@ import { glowUp, kindOf, yearly } from '@/lib/ghostFees/exJourney';
 import { cn } from '@/lib/utils';
 import GlowUpFund from './GlowUpFund';
 import './exKit.css';
+import GhostMark from '@/components/site/GhostMark';
 
 const SHOWN = 5;
 
@@ -21,12 +22,9 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
       aria-pressed={active}
       className={cn(
         'relative flex flex-col items-center overflow-hidden rounded-2xl border-2 px-2 pb-2.5 pt-4 transition-colors',
-        lit ? 'border-[#5ee6c8] bg-[#5ee6c8]/10' : active ? 'border-primary bg-white/[0.06]' : 'border-white/10 bg-black/30 hover:border-primary/50',
+        lit ? 'border-[#5ee6c8] bg-[#5ee6c8]/10' : active ? 'border-primary bg-[#15131a]' : 'border-white/10 bg-[#15131a] hover:border-primary/50',
       )}
     >
-      {!lit && (
-        <span aria-hidden="true" className="pointer-events-none absolute inset-x-4 bottom-8 top-2 rounded-full bg-[radial-gradient(ellipse_at_50%_60%,rgba(255,111,125,0.22),transparent_70%)]" />
-      )}
       <span
         className={cn('relative', !lit && 'ex-ghost')}
         style={{ '--gd': `${6 + (index % 3) * 0.9}s`, '--gdx': '7px', '--gdl': `${-index * 1.3}s` }}
@@ -37,7 +35,7 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
             alt=""
             width={56}
             height={56}
-            className={cn('h-14 w-14 rounded-full drop-shadow-[0_6px_14px_rgba(255,111,125,0.35)]', lit && 'opacity-60 grayscale')}
+            className={cn('h-14 w-14 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.45)]', lit && 'opacity-60 grayscale')}
           />
           <span className="absolute -right-6 -top-1 rounded-full bg-white/85 px-1.5 text-[10px] font-black leading-4 text-[#141218]">{lit ? '✓' : '•••'}</span>
         </span>
@@ -48,8 +46,8 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
   );
 }
 
-// Little exes drifting around outside the house, like the bats and ghosts in the
-// Haunted House. Decoration only; they use the same avatars as the windows.
+// Plain white ghosts (the logo ghost) drifting around outside the house, like the
+// bats in the Haunted House. Decoration only, not exes.
 const DRIFTERS = [
   { left: '-6%', top: '18%', size: 34, gs: 3.4, gd: 7.2, delay: -1.1 },
   { left: '94%', top: '34%', size: 30, gs: 3.9, gd: 6.4, delay: -2.6 },
@@ -78,6 +76,18 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   ));
   const unblock = (item) => setGhostList((current) => current.filter((entry) => entry.id !== item.id));
 
+  // The storyline from the design: sad in bed (none blocked) > focused (1-2) >
+  // sassy "F**k my ex" (3-5) > dressed up for a night out (all of them).
+  const n = glow.blockedCount;
+  const all = subscriptions.length > 0 && n >= subscriptions.length;
+  const mood = all
+    ? { key: 'out', art: pick.clear, line: pick.clearBubble, alt: 'Your ghost dressed up for a night out' }
+    : n >= 3
+      ? { key: 'sassy', art: pick.moving, line: `${pick.movingBubble[0]} ${pick.movingBubble[1]}`, alt: 'Your ghost, done with their exes' }
+      : n >= 1
+        ? { key: 'focused', art: pick.scan, line: `${n} down. ${subscriptions.length - n} to go.`, alt: 'Your ghost, focused on blocking exes' }
+        : { key: 'sad', art: pick.house, line: pick.houseBubble, alt: 'Your ghost, sad in bed' };
+
   if (!selected) return null;
   const info = cancelInfo(selected.merchant);
   const line = theme.lines.find((entry) => entry.match.test(selected.merchant))?.text || theme.fallbackLine;
@@ -99,30 +109,25 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         <span>{glow.blockedCount} of {subscriptions.length} exes blocked</span>
         <span>{money(stillMonthly * 12)}/yr still texting</span>
       </div>
-      <GlowUpFund glow={glow} milestonesOnly className="mt-4" />
+      <GlowUpFund glow={glow} milestonesOnly hide={['savings']} className="mt-4" />
 
       {/* The house */}
       <div className="relative mt-6">
         <div className="mx-auto h-0 w-0 border-x-[150px] border-b-[70px] border-x-transparent border-b-[#2a1c2c]" aria-hidden="true" />
         <Heart className="absolute left-1/2 top-6 h-7 w-7 -translate-x-1/2 fill-primary text-primary drop-shadow-[0_0_12px_hsl(var(--primary))]" aria-hidden="true" />
-        <span className="absolute right-2 top-0 h-12 w-12 rounded-full bg-[#f3e9f0] shadow-[0_0_30px_rgba(255,255,255,0.35)]" aria-hidden="true" />
-        {DRIFTERS.map((d, index) => {
-          const item = subscriptions[(index + 1) % subscriptions.length];
-          if (!item || blocked.has(item.id)) return null;
-          return (
-            <span
-              key={d.left + d.top}
-              aria-hidden="true"
-              className="ex-ghost pointer-events-none absolute z-10 opacity-80"
-              style={{ left: d.left, top: d.top, '--gd': `${d.gd}s`, '--gdx': '10px', '--gdl': `${d.delay}s` }}
-            >
-              <span className="ex-float block" style={{ '--gs': `${d.gs}s`, animationDelay: `${d.delay}s` }}>
-                <img src={avatarFor(item.merchant)} alt="" width={d.size} height={d.size} className="rounded-full drop-shadow-[0_0_10px_rgba(255,111,125,0.45)]" style={{ width: d.size, height: d.size }} />
-              </span>
+        {DRIFTERS.map((d) => (
+          <span
+            key={d.left + d.top}
+            aria-hidden="true"
+            className="ex-ghost pointer-events-none absolute z-10 opacity-70"
+            style={{ left: d.left, top: d.top, '--gd': `${d.gd}s`, '--gdx': '10px', '--gdl': `${d.delay}s` }}
+          >
+            <span className="ex-float block" style={{ '--gs': `${d.gs}s`, animationDelay: `${d.delay}s` }}>
+              <GhostMark className="block text-[#fbf8fa] drop-shadow-[0_0_10px_rgba(255,255,255,0.35)]" eyeColor="#15131a" style={{ width: d.size, height: d.size }} />
             </span>
-          );
-        })}
-        <div className="rounded-b-2xl border-2 border-t-0 border-primary/40 bg-[#1d1520] p-3 shadow-[inset_0_0_40px_hsl(var(--primary)/0.15)]">
+          </span>
+        ))}
+        <div className="rounded-b-2xl border-2 border-t-0 border-primary/40 bg-[#1d1a22] p-3">
           <div className="grid grid-cols-2 gap-3">
             {shown.map((item, index) => (
               <Tile
@@ -159,10 +164,10 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             <span className="mt-1 text-[11.5px] font-bold text-[#5ee6c8]">Glow-up jar</span>
           </div>
           <div className="relative">
-            <ThoughtBubble trail="right" tones="text-[#2a1020]" size="sm" className="absolute -left-36 -top-10 w-max max-w-[170px]">
-              {pick.houseBubble}
+            <ThoughtBubble key={mood.key} trail="right" tones="text-[#2a1020]" size="sm" className="animate-rise absolute -left-36 -top-10 w-max max-w-[170px]">
+              {mood.line}
             </ThoughtBubble>
-            <img src={pick.house} alt="" width={360} className="h-auto w-[120px]" />
+            <img key={mood.art} src={mood.art} alt={mood.alt} width={360} className={`animate-rise h-auto w-[120px] ${mood.key !== 'sad' ? 'ex-dance' : ''}`} style={{ '--gs': '2.2s' }} />
           </div>
         </div>
       </div>
@@ -170,7 +175,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
       {/* The selected ex */}
       <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
         <div className="flex items-start gap-3">
-          <img src={avatarFor(selected.merchant)} alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-full" />
+          <img src={avatarFor(selected.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="font-heading text-[17px] font-bold text-white">{selected.merchant}</p>
             <p className="text-[12.5px] text-white/60">{kindOf(selected.merchant)}</p>

@@ -72,7 +72,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
           <div className="mt-3 flex items-center gap-2.5 border-b border-white/10 px-1 pb-3">
             <div className="flex -space-x-3">
               {shown.slice(0, 3).map((item) => (
-                <img key={item.id} src={avatar(item.merchant)} alt="" width={36} height={36} className="h-9 w-9 rounded-full ring-2 ring-[#141218]" />
+                <img key={item.id} src={avatar(item.merchant)} alt="" width={36} height={36} className="object-contain h-9 w-9" />
               ))}
             </div>
             <div className="min-w-0 flex-1">
@@ -88,7 +88,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
               return (
                 <motion.li key={item.id} {...enter(index)} className="flex items-end gap-2">
                   <GhostTip className="shrink-0" align="start" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={tip(item)}>
-                    <img src={avatar(item.merchant)} alt={item.merchant} width={34} height={34} className="h-[34px] w-[34px] rounded-full" />
+                    <img src={avatar(item.merchant)} alt={item.merchant} width={34} height={34} className="object-contain h-[34px] w-[34px]" />
                   </GhostTip>
                   <div className="min-w-0 flex-1">
                     <div className="pl-1 text-[12px] font-bold text-primary">{item.merchant}</div>
