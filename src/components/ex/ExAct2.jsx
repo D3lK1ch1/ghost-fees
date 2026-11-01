@@ -153,10 +153,14 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         <div aria-hidden="true" className="absolute -left-1 bottom-[150px] h-[26px] w-[70px] -rotate-[20deg] rounded-[50%]" style={{ background: '#2c5a52' }} />
         <div aria-hidden="true" className="absolute bottom-[156px] left-[22px] h-6 w-[70px] rotate-[18deg] rounded-[50%]" style={{ background: '#3f7d72' }} />
         <div aria-hidden="true" className="absolute bottom-[26px] right-[26px] h-11 w-14 rounded-lg" style={{ background: C.coral, border: `3px solid ${C.coralDeep}` }} />
-        <div className="absolute bottom-[46px] left-1/2 -ml-[70px]"><GhostPal pickKey={pickKey} mood="happy" motion="dance" width={140} speed={2.2} drift={8.2} /></div>
+        <div className="absolute bottom-[46px] left-1/2 -ml-[70px]">
+          <GhostPal pickKey={pickKey} mood="happy" motion="dance" width={140} speed={2.2} drift={8.2} />
+          {/* Speech bubble with its tail at the ghost's mouth. */}
+          <Bubble kind="l" className="ex-in absolute bottom-[78px] left-[78px] w-[132px] !min-w-0 !px-4 !pb-6 !pt-3 text-[11.5px] leading-tight" style={{ animationDelay: '1s' }}>Paid for by {name}&apos;s tears.</Bubble>
+        </div>
         </>
         )}
-        <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>{pick?.weekendArt ? `Paid for by ${name}.` : <>Paid for by {name}&apos;s tears.</>}</Bubble>
+        {pick?.weekendArt && <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>Paid for by {name}.</Bubble>}
       </div>
       <div className="relative flex flex-col items-center gap-0.5 text-center">
         <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>{funded ? `${pick?.weekendTitle || 'Weekend away: funded.'}`.replace('funded.', preview ? 'yours to fund.' : 'funded.') : 'Month 6: getting there.'}</div>
