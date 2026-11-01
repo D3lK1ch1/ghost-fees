@@ -12,6 +12,9 @@ import { trackEvent } from '@/lib/session';
 import { useAuth } from '@/lib/AuthContext';
 import { canScanFree, recordScan } from '@/lib/ghostFees/scanQuota';
 import Paywall from '@/components/scan/Paywall';
+import FromGhostIt from '@/components/landing/FromGhostIt';
+import { readGhostItParams } from '@/lib/ghostFees/ghostItLink';
+import { base44 } from '@/api/base44Client';
 
 const DEEP_LINK_TABS = ['ghosts', 'house', 'path', 'calendar', 'emails', 'subscriptions', 'receipt', 'feedback'];
 
@@ -23,6 +26,13 @@ export default function Landing() {
   const { user, isAuthenticated } = useAuth();
   const [paywall, setPaywall] = useState(false);
   const unlimited = Boolean(isAuthenticated && (user?.paid || user?.role === 'admin'));
+  const [ghostIt] = useState(() => readGhostItParams(typeof window !== 'undefined' ? window.location.search : ''));
+
+  // Count visits from the Ghost It agent (ref + how many subs only).
+  useEffect(() => {
+    if (!ghostIt.ref) return;
+    base44.functions.invoke('logRefVisit', { ref: ghostIt.ref, subs_count: ghostIt.subs.length }).catch(() => {});
+  }, [ghostIt]);
 
   const handleScanDone = useCallback(() => setScanDone(true), []);
 
@@ -79,6 +89,7 @@ export default function Landing() {
         <UploadErrors errors={fileErrors} onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
       ) : (
         <>
+          {ghostIt.subs.length > 0 && <FromGhostIt subs={ghostIt.subs} onScan={() => inputRef.current?.click()} />}
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <UseCases />
           <SiteFooter />

@@ -45,3 +45,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/scan/Paywall.jsx
 - How to test: Use the free scan, then upload a different file: the new paywall opens on mobile and desktop.
 - User feedback that drove this: (fill in)
+
+### From Ghost.it: visitors sent by the Ghost It agent
+- What: Links from the Ghost It agent on ASI:One (?ref=asi1&subs=netflix,stan&prices=netflix:18.99,stan:16.00) open a "From Ghost.it" section: overlap table by type, yearly cost chart, "Keep 1, save $X a year" cards, a 6-month streaming rotation calendar and a "Track your ghosts in ASI:One: @ghostit" button. Visits are counted in a new Analytics table with only the date, the ref and how many subscriptions were passed. No paid integrations.
+- Files: src/lib/ghostFees/ghostItLink.js, src/components/landing/FromGhostIt.jsx, base44/entities/Analytics.jsonc, base44/functions/logRefVisit (all new), Landing.jsx
+- How to test: Open /?ref=asi1&subs=netflix,stan,disney,spotify,youtube&prices=netflix:18.99,stan:16.00,disney:16.00,spotify:13.99,youtube:16.99
+- User feedback that drove this: (fill in)

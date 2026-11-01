@@ -1,0 +1,23 @@
+{
+  "name": "Analytics",
+  "type": "object",
+  "properties": {
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Day of the visit (UTC)"
+    },
+    "ref": {
+      "type": "string",
+      "description": "Where the visit came from, e.g. asi1 (the Ghost It agent)"
+    },
+    "subs_count": {
+      "type": "number",
+      "description": "How many subscriptions the agent passed in. Never the names or prices."
+    }
+  },
+  "required": [
+    "date",
+    "ref"
+  ]
+}
