@@ -191,9 +191,10 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
           <div className="absolute bottom-1.5 left-1/2 -ml-14 flex flex-col items-center">
-            <div key={stage} className={`animate-rise flex flex-col items-center ${allClear ? 'hh-walk' : ''}`}>
-              <div className="bub-l mb-0.5 whitespace-nowrap text-[12px] font-extrabold">{mood.line}</div>
-              <img src={mood.art} alt={mood.alt} width={92} className={`h-auto w-[92px] ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }} />
+            <div key={stage} className={`animate-rise relative ${allClear ? 'hh-walk' : ''}`}>
+              <img src={mood.art} alt={mood.alt} width={92} className={`block h-auto w-[92px] ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }} />
+              {/* Tail of the bubble sits just above the ghost's mouth. */}
+              <div className="bub-l absolute bottom-[calc(100%-30px)] left-[58px] z-10 w-[132px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight">{mood.line}</div>
             </div>
           </div>
         </div>
