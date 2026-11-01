@@ -33,7 +33,7 @@ export const GUIDES = {
     name: 'Gus',
     role: 'the hype ghost',
     color: '#ff6fa3',
-    job: 'Busting and goals',
+    job: 'Busting your ghosts',
     does: 'Cheers you on, keeps score as you bust ghosts and turns the savings into goals.',
     chips: ['What should I do first?', 'Make my goals', 'Show me the haunted house'],
     intro: (count, total) => `LET'S GO! ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(total)} on the line. Bust 'em!`,
