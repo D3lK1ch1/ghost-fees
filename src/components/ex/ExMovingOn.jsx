@@ -2,7 +2,7 @@ import { money } from '@/lib/ghostFees/format';
 import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { findOverlaps } from '@/lib/ghostFees/overlaps';
 import { kindOf, yearly } from '@/lib/ghostFees/exJourney';
-import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen, Stars } from './ExKit';
+import { C, GhostButton, GhostPal, PrimaryButton, Screen, Stars } from './ExKit';
 import GlowUpFund from './GlowUpFund';
 
 const card = { background: C.card, border: `1px solid ${C.line}`, borderRadius: 20 };
@@ -35,12 +35,19 @@ export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, 
 
       <div className="ex-in relative flex flex-col gap-3.5 overflow-hidden rounded-[26px] px-4 pb-4 pt-[18px]" style={{ animationDelay: '.1s', background: 'radial-gradient(ellipse at 20% 30%, #332c3a 0%, #262230 55%, #1b1921 100%)', border: '1px solid #3a3444' }}>
         <Stars n={16} maxY={40} />
-        <div className="relative flex items-end gap-1">
-          <GhostPal pickKey={pickKey} mood="power" motion="dance" width={132} speed={1.93} drift={6.4} />
-          <Bubble kind="l" className="mb-[70px] flex min-w-0 flex-1 flex-col gap-0.5">
-            <span className="ex-fredoka whitespace-nowrap text-[21px] font-bold leading-none" style={{ color: C.coralDeep }}>{bubbleTop}</span>
-            <span className="text-[15px] font-extrabold leading-snug">{bubbleRest}</span>
-          </Bubble>
+        <div className="relative flex items-end pr-[150px] pt-14">
+          <GhostPal
+            pickKey={pickKey}
+            mood="power"
+            motion="dance"
+            width={132}
+            speed={1.93}
+            drift={6.4}
+            side="right"
+            bubbleWidth={190}
+            bubbleClass="!pb-8 !pt-4 text-[15px]"
+            bubble={<><span className="ex-fredoka block whitespace-nowrap text-[21px] font-bold leading-none" style={{ color: C.coralDeep }}>{bubbleTop}</span><span className="block text-[15px] font-extrabold leading-snug">{bubbleRest}</span></>}
+          />
         </div>
         <GlowUpFund glow={glow} />
       </div>

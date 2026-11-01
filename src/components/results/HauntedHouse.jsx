@@ -408,6 +408,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                     >
                       {item.name.replace('Sir ', '')}
                     </span>
+                    {item.bonus && <span className="mt-0.5 rounded-full bg-[#f2a65a] px-1.5 text-[9.5px] font-black uppercase tracking-wide text-[#1b1233]">Bonus</span>}
                     <span className="mt-1 text-[12px] font-bold leading-tight" style={{ color: item.color }}>{item.job}</span>
                   </button>
                 );

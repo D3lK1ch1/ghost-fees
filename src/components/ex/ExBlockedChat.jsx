@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { yearly } from '@/lib/ghostFees/exJourney';
-import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
+import { C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import GlowUpFund from './GlowUpFund';
 
 // Scene 4, design screen Ex5Story: the chat with one ex after you block them.
@@ -43,9 +43,8 @@ export default function ExBlockedChat({ theme, pick, pickKey, ex, glow, avatarFo
             </div>
             <GlowUpFund glow={glow} compact className="w-[200px] rounded-2xl px-3 py-2.5" />
           </div>
-          <div className="flex flex-col items-end">
-            <Bubble kind="r" className="ex-in -mb-2 text-[13px]" style={{ animationDelay: '2.2s' }}>{pick.healedBubble}</Bubble>
-            <GhostPal pickKey={pickKey} mood="happy" motion="dance" width={112} speed={2.1} />
+          <div className="flex flex-col items-end pt-14">
+            <GhostPal pickKey={pickKey} mood="happy" motion="dance" width={112} speed={2.1} side="left" bubble={pick.healedBubble} bubbleWidth={120} bubbleDelay="2.2s" bubbleClass="text-[13px]" />
           </div>
         </div>
       </div>

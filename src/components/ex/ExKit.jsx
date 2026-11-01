@@ -31,8 +31,12 @@ const SKINS = {
 
 const MOTION = { float: 'ex-float', dance: 'ex-dance', shock: 'ex-shock', breathe: 'ex-breathe' };
 
-export function GhostPal({ pickKey = 'heartbroken', mood = 'sad', width = 140, motion = 'float', speed = 3.4, drift = 7, className, style }) {
+// bubble: optional speech bubble that sits inside the ghost's animation, so it
+// bobs and dances along, with its tail at the mouth. side: 'right' puts it to the
+// right of the ghost (tail pointing left), 'left' to the left (tail pointing right).
+export function GhostPal({ pickKey = 'heartbroken', mood = 'sad', width = 140, motion = 'float', speed = 3.4, drift = 7, className, style, bubble, side = 'right', kind, bubbleWidth = 150, bubbleDelay = '.6s', bubbleClass = '' }) {
   const file = (SKINS[pickKey] || SKINS.heartbroken)[mood] || SKINS.heartbroken.sad;
+  const bubbleKind = kind || (side === 'right' ? 'l' : 'r');
   return (
     <div className={`ex-ghost relative flex flex-none ${className || ''}`} style={{ '--gd': `${drift}s`, '--gdx': '6px', ...style }}>
       <div className="ex-wig relative">
@@ -40,6 +44,14 @@ export function GhostPal({ pickKey = 'heartbroken', mood = 'sad', width = 140, m
           <div className="relative" style={{ width, height: Math.round(width * 1.15), filter: 'drop-shadow(0 0 16px rgba(255,170,200,0.25))' }}>
             <div className="gp-shadow absolute rounded-[50%]" aria-hidden="true" style={{ left: '22%', right: '22%', bottom: '-4%', height: '7%', background: 'rgba(0,0,0,0.38)', filter: 'blur(2px)' }} />
             <img src={`${ART}/${file}.webp`} alt="" className="relative block h-full w-full object-contain object-bottom" />
+            {bubble && (
+              <div
+                className={`bub-${bubbleKind} ex-in absolute z-10 !min-w-0 font-extrabold leading-tight ${bubbleClass}`}
+                style={{ width: bubbleWidth, bottom: '50%', animationDelay: bubbleDelay, ...(side === 'right' ? { left: '58%' } : { right: '58%' }) }}
+              >
+                {bubble}
+              </div>
+            )}
           </div>
         </div>
       </div>

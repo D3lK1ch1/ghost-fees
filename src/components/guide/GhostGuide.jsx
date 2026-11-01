@@ -194,7 +194,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     setMessages((current) => [...current, { role: 'user', text }]);
     setInput('');
 
-    // Cass: name a subscription (or ask about cancelling one) and she looks it up.
+    // Cassy: name a subscription (or ask about cancelling one) and she looks it up.
     const subs = [...(analysis.subscriptions || [])].sort((a, b) => b.monthly - a.monthly);
     const named = [...subs, ...leaks].find((item) => {
       const word = String(item.merchant || '').split(/\s+/)[0];
@@ -266,21 +266,26 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">
                 {guide.name} <span className="text-[13px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
+                {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
-              <div className="mt-0.5 flex gap-1" role="group" aria-label="Pick your ghost guide">
+              <div className="mt-1 grid grid-cols-2 gap-1" role="group" aria-label="Pick your ghost guide">
                 {GUIDE_KEYS.map((key) => (
                   <button
                     key={key}
                     type="button"
                     onClick={() => onGuide(key)}
                     aria-pressed={guideKey === key}
+                    title={GUIDES[key].does}
                     className={cn(
-                      'rounded-full px-2 py-0.5 text-[10.5px] font-bold transition-colors',
+                      'flex flex-col items-center rounded-xl px-1 py-1 text-center transition-colors',
                       guideKey === key ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:text-foreground',
                     )}
                   >
-                    <span className="mr-1 inline-block h-2 w-2 rounded-full align-middle" style={{ background: GUIDES[key].color }} aria-hidden="true" />
-                    {GUIDES[key].name.replace('Sir ', '')}
+                    <span className="flex items-center gap-1 text-[11.5px] font-bold leading-tight">
+                      <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
+                      {GUIDES[key].name.replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
+                    </span>
+                    <span className={cn('mt-0.5 text-[10.5px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
                   </button>
                 ))}
               </div>

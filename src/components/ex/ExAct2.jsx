@@ -1,6 +1,7 @@
 import ReceiptGhost from '@/components/site/ReceiptGhost';
 import { useState } from 'react';
 import { useGhostList } from '@/hooks/use-ghost-list';
+import FkJar from './FkJar';
 import { money } from '@/lib/ghostFees/format';
 import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import { MilestoneIcon } from './GlowUpFund';
@@ -44,8 +45,7 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
         </div>
       </div>
       <div className="relative flex h-[190px] items-end justify-center gap-1">
-        <Bubble kind="s" className="ex-in mb-[120px] text-[14px]" style={{ animationDelay: '.9s' }}>{pick?.backShout || 'New phone. Who dis?'}</Bubble>
-        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} />
+        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="left" kind="s" bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={150} bubbleDelay=".9s" bubbleClass="!px-5 text-[13px]" />
       </div>
       <div className="ex-in relative flex flex-col gap-2.5 p-4" style={{ ...card, animationDelay: '1.45s' }}>
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>
@@ -123,12 +123,15 @@ export function ExGlowupPlan({ pick, pickKey, glow, blockedCount, onNext, monthl
 // Design screen Ex10Weekend: month 6, on the beach, paid for by your exes.
 export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = false }) {
   const [sent, setSent] = useState(false);
-  const six = blockedMonthly(glow) * 6;
-  // By month 6 the weekend-away money in the plan is there, by definition.
-  const funded = six > 0;
+  // The weekend-away saving goal is the third milestone: 6 months of every ex.
+  // Progress is the yearly money from the exes you've blocked, up to the goal.
+  const goal = glow.steps.find((step) => step.key === 'weekend')?.amount || 0;
+  const saved = preview ? 0 : Math.min(goal, glow.fund);
+  const pct = goal > 0 ? Math.round((saved / goal) * 100) : 0;
+  const reached = goal > 0 && saved >= goal;
   const name = biggest?.merchant || 'my exes';
   const send = async () => {
-    const text = `Wish you weren't here, ${name}. ${money(six)} back in 6 months. ${SITE}`;
+    const text = `Wish you weren't here, ${name}. ${money(saved)} saved for my weekend away. ${SITE}`;
     try {
       if (navigator.share) await navigator.share({ title: 'My Ex Ghosted Me', text, url: `https://${SITE}` });
       else await navigator.clipboard.writeText(text);
@@ -154,18 +157,26 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         <div aria-hidden="true" className="absolute -left-1 bottom-[150px] h-[26px] w-[70px] -rotate-[20deg] rounded-[50%]" style={{ background: '#2c5a52' }} />
         <div aria-hidden="true" className="absolute bottom-[156px] left-[22px] h-6 w-[70px] rotate-[18deg] rounded-[50%]" style={{ background: '#3f7d72' }} />
         <div aria-hidden="true" className="absolute bottom-[26px] right-[26px] h-11 w-14 rounded-lg" style={{ background: C.coral, border: `3px solid ${C.coralDeep}` }} />
-        <div className="absolute bottom-[46px] left-1/2 -ml-[70px]">
-          <GhostPal pickKey={pickKey} mood="happy" motion="dance" width={140} speed={2.2} drift={8.2} />
-          {/* Speech bubble with its tail at the ghost's mouth. */}
-          <Bubble kind="l" className="ex-in absolute bottom-[78px] left-[78px] w-[132px] !min-w-0 !px-4 !pb-6 !pt-3 text-[11.5px] leading-tight" style={{ animationDelay: '1s' }}>Paid for by {name}&apos;s tears.</Bubble>
+        {/* Ghost and bubble dance together; the bubble's tail sits at the mouth. */}
+        <div className="ex-dance absolute bottom-[46px] left-1/2 -ml-[70px]" style={{ '--gs': '2.2s' }}>
+          <GhostPal pickKey={pickKey} mood="happy" motion="none" width={140} speed={2.2} drift={8.2} style={{ '--gdx': '0px' }} />
+          <Bubble kind="l" className="ex-in absolute bottom-[74px] left-[74px] w-[132px] !min-w-0 !px-4 !pb-6 !pt-3 text-[11.5px] leading-tight" style={{ animationDelay: '1s' }}>Paid for by {name}&apos;s tears.</Bubble>
         </div>
         </>
         )}
         {pick?.weekendArt && <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>Paid for by {name}.</Bubble>}
       </div>
       <div className="relative flex flex-col items-center gap-0.5 text-center">
-        <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>{funded ? `${pick?.weekendTitle || 'Weekend away: funded.'}`.replace('funded.', preview ? 'yours to fund.' : 'funded.') : 'Month 6: getting there.'}</div>
-        <div className="ex-in ex-fredoka text-[22px] font-semibold" style={{ color: C.mint, animationDelay: '1.3s' }}>{money(six)} back {preview ? 'once you block them' : 'since you blocked them'}.</div>
+        <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>
+          {reached ? pick?.weekendTitle || 'Weekend away: funded.' : `${(pick?.weekendTitle || 'Weekend away: funded.').split(':')[0]}: ${pct}% there.`}
+        </div>
+        <div className="ex-in w-full max-w-[300px]" style={{ animationDelay: '1.3s' }}>
+          <div className="ex-fredoka text-[20px] font-semibold" style={{ color: C.mint }}>{money(saved)} of {money(goal)} saved</div>
+          <div className="mt-1.5 h-2.5 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.12)' }}>
+            <div className="ex-bar h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${C.coral}, ${C.mint})` }} />
+          </div>
+          <div className="mt-1 text-[12.5px]" style={{ color: C.muted }}>{reached ? 'Paid for by the exes you blocked.' : 'Block more exes to fill it.'}</div>
+        </div>
       </div>
       <div className="flex-1" />
       <div className="ex-in relative flex items-center gap-3.5 rounded-[22px] px-[18px] py-4" style={{ animationDelay: '1.85s', background: C.text, color: C.bg, transform: 'rotate(-1.5deg)', boxShadow: '0 16px 40px -18px rgba(0,0,0,0.7)' }}>
@@ -206,8 +217,7 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
           <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>Deal.</div>
         </div>
         <div className="mt-auto flex items-end gap-1 pt-6">
-          <GhostPal pickKey={pickKey} mood="happy" width={112} speed={3.3} />
-          <Bubble kind="t" className="ex-in mb-[90px] text-[13px]" style={{ animationDelay: '2s' }}>I don&apos;t do trials anymore.</Bubble>
+          <GhostPal pickKey={pickKey} mood="happy" width={112} speed={3.3} side="right" kind="t" bubble="I don't do trials anymore." bubbleWidth={160} bubbleDelay="2s" bubbleClass="text-[13px]" />
         </div>
       </div>
       <div className="flex flex-col gap-2.5 px-4 pb-[22px] pt-3.5" style={{ background: C.bar, borderTop: `1px solid ${C.barLine}` }}>
@@ -268,22 +278,21 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
         <div className="text-[14px]" style={{ color: C.soft }}>{pick.splurgeSub}</div>
       </div>
 
-      {/* F**k-ex jar: progress toward every treat, with the party ghost beside it. */}
-      <div className="relative flex items-end gap-2 rounded-[20px] p-3" style={{ ...card }}>
-        <div className="flex min-w-0 flex-1 flex-col gap-1.5 pb-1">
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="ex-fredoka text-[16px] font-semibold">F**k-ex jar</span>
-            <span className="text-[13px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
-          </div>
-          <div className="h-3 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.1)' }}>
-            <div className="ex-bar h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${C.coral}, ${C.mint})` }} />
-          </div>
-          <div className="text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</div>
+      {/* The F**k-ex jar fills with coins as you block exes (amount counts up), with
+          the party ghost beside it; her bubble dances with her, tail at her mouth. */}
+      <div className="relative flex flex-col gap-2 rounded-[20px] px-3 pb-2 pt-3" style={{ ...card }}>
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="ex-fredoka text-[17px] font-semibold">F**k-ex jar</span>
+          <span className="text-[13px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
         </div>
-        <div className="relative flex flex-none flex-col items-center">
-          <Bubble kind="r" className="ex-in -mb-1 !min-w-0 !px-4 !pb-6 !pt-2.5 text-[12px]" style={{ animationDelay: '.6s' }}>Feel it.</Bubble>
-          <img src={pick.party} alt="Your party ghost" className="ex-dance h-[84px] w-auto object-contain" style={{ '--gs': '1.8s' }} />
+        <div className="flex items-end justify-between">
+          <FkJar amount={fund} total={total} size={112} />
+          <div className="ex-dance relative mr-2 flex-none" style={{ '--gs': '1.8s' }}>
+            <img src={pick.party} alt="Your party ghost" className="block h-[104px] w-auto object-contain" />
+            <Bubble kind="r" className="ex-in absolute bottom-[calc(100%-46px)] right-[calc(100%-40px)] !min-w-0 whitespace-nowrap !px-4 !pb-6 !pt-2.5 text-[13px]" style={{ animationDelay: '.6s' }}>Feel it.</Bubble>
+          </div>
         </div>
+        <span className="text-center text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</span>
       </div>
 
       <div className="relative grid grid-cols-2 gap-x-3 gap-y-5 pt-3">

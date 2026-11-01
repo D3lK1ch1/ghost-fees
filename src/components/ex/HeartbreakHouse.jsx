@@ -7,6 +7,7 @@ import { glowUp, kindOf, yearly } from '@/lib/ghostFees/exJourney';
 import { cn } from '@/lib/utils';
 import GlowUpFund from './GlowUpFund';
 import FkJar from './FkJar';
+import ProofDialog, { proofLine } from '@/components/results/ProofDialog';
 import './exKit.css';
 import GhostMark from '@/components/site/GhostMark';
 
@@ -69,11 +70,14 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   const rest = subscriptions.slice(SHOWN);
   const stillMonthly = subscriptions.filter((item) => !blocked.has(item.id)).reduce((sum, item) => sum + item.monthly, 0);
 
-  const block = (item) => setGhostList((current) => (
+  // Blocking asks for proof first: how and when you cancelled, and any reference.
+  const [proofFor, setProofFor] = useState(null);
+  const block = (item, proof) => setGhostList((current) => (
     current.some((entry) => entry.id === item.id)
-      ? current.map((entry) => (entry.id === item.id ? { ...entry, status: 'requested' } : entry))
-      : [...current, { id: item.id, merchant: item.merchant, monthly: item.monthly, status: 'requested', date: new Date().toISOString() }]
+      ? current.map((entry) => (entry.id === item.id ? { ...entry, status: 'requested', proof } : entry))
+      : [...current, { id: item.id, merchant: item.merchant, monthly: item.monthly, status: 'requested', date: new Date().toISOString(), proof }]
   ));
+  const proofOf = (item) => ghostList.find((entry) => entry.id === item.id)?.proof;
   const unblock = (item) => setGhostList((current) => current.filter((entry) => entry.id !== item.id));
 
   // The F**k-ex jar stages from the design: the ghost gets happier as the jar
@@ -191,9 +195,12 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
           <div className="absolute bottom-1.5 left-1/2 -ml-14 flex flex-col items-center">
-            <div key={stage} className={`animate-rise flex flex-col items-center ${allClear ? 'hh-walk' : ''}`}>
-              <div className="bub-l mb-0.5 whitespace-nowrap text-[12px] font-extrabold">{mood.line}</div>
-              <img src={mood.art} alt={mood.alt} width={92} className={`h-auto w-[92px] ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }} />
+            <div key={stage} className={`animate-rise relative ${allClear ? 'hh-walk' : ''}`}>
+              {/* Ghost and bubble move together; the bubble's tail sits at the mouth. */}
+              <div className={`relative ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }}>
+                <img src={mood.art} alt={mood.alt} width={92} className="block h-auto w-[92px]" />
+                <div className="bub-l absolute bottom-[calc(100%-30px)] left-[58px] z-10 w-[132px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight">{mood.line}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -227,16 +234,24 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
           <p className="mt-3 text-[13px] text-white/70">{info.steps}</p>
         )}
         {isBlocked ? (
-          <div className="mt-3 flex items-center justify-between rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
-            <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(selected.monthly)}/yr in your jar</span>
-            <button type="button" onClick={() => unblock(selected)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+          <div className="mt-3 rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(selected.monthly)}/yr in your jar</span>
+              <button type="button" onClick={() => unblock(selected)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+            </div>
+            {proofOf(selected) ? (
+              <p className="mt-1.5 text-[12.5px] text-white/75"><span className="font-bold text-white">Proof:</span> {proofLine(proofOf(selected))}</p>
+            ) : (
+              <button type="button" onClick={() => setProofFor(selected)} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
+            )}
           </div>
         ) : (
-          <button type="button" onClick={() => block(selected)} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
+          <button type="button" onClick={() => setProofFor(selected)} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
             💔 Block and delete
           </button>
         )}
-        <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. The room lights up and the money goes in your jar.</p>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) as proof, then the room lights up and the money goes in your jar.</p>
+        <ProofDialog target={proofFor} onClose={() => setProofFor(null)} onSave={(proof) => { block(proofFor, proof); setProofFor(null); }} />
       </div>
     </div>
   );

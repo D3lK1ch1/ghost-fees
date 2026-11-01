@@ -3,8 +3,9 @@ import { CalendarPlus, ExternalLink } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { money } from '@/lib/ghostFees/format';
-import { downloadTask, googleCalendarUrl } from '@/lib/ghostFees/reminder';
+import { downloadTask, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ghostFees/reminder';
 import { cn } from '@/lib/utils';
+import { loadSync, syncEvents, taskEvent } from '@/lib/ghostFees/calendarSync';
 
 const longDay = (date) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 
@@ -75,27 +76,51 @@ export default function TaskDialog({ target, onClose }) {
           </label>
         </div>
 
-        <div className="mt-1 grid gap-2 sm:grid-cols-2">
+        {loadSync() && (
           <button
             type="button"
             disabled={!date}
-            onClick={() => downloadTask(task) && scheduled('added from the calendar file')}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-[14px] font-bold text-primary-foreground disabled:opacity-40"
+            onClick={async () => {
+              try {
+                await syncEvents([taskEvent(task)]);
+                scheduled('added to your synced calendar');
+              } catch {
+                toast({ title: 'Could not add it', description: 'Try again in a moment.' });
+              }
+            }}
+            className="mt-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#5ee6c8] px-4 py-3 text-[14px] font-bold text-[#12302a] disabled:opacity-40"
           >
-            <CalendarPlus className="h-4 w-4" /> Add to my calendar
+            <CalendarPlus className="h-4 w-4" /> Add to my synced calendar
           </button>
-          <a
-            href={date ? googleCalendarUrl(task) : undefined}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => date && scheduled('opened in Google Calendar')}
-            className={cn('inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-primary/70 px-4 py-3 text-[14px] font-bold text-foreground', !date && 'pointer-events-none opacity-40')}
-          >
-            Google Calendar <ExternalLink className="h-4 w-4" />
-          </a>
+        )}
+        <button
+          type="button"
+          disabled={!date}
+          onClick={() => downloadTask(task) && scheduled('saved for Apple Calendar or any calendar app')}
+          className="mt-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-[14px] font-bold text-primary-foreground disabled:opacity-40"
+        >
+          <CalendarPlus className="h-4 w-4" /> Apple Calendar or any app
+        </button>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: 'Google', href: date ? googleCalendarUrl(task) : undefined, where: 'opened in Google Calendar' },
+            { label: 'Outlook', href: date ? outlookCalendarUrl(task) : undefined, where: 'opened in Outlook' },
+            { label: 'Work Outlook', href: date ? outlookCalendarUrl(task, true) : undefined, where: 'opened in Outlook (Microsoft 365)' },
+          ].map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => date && scheduled(item.where)}
+              className={cn('inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-primary/70 px-2 py-2.5 text-center text-[13px] font-bold text-foreground', !date && 'pointer-events-none opacity-40')}
+            >
+              {item.label} <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+            </a>
+          ))}
         </div>
         <p className="text-[11px] leading-relaxed text-muted-foreground">
-          &quot;Add to my calendar&quot; saves a file for Apple Calendar, Outlook or any calendar app. Google Calendar opens with the task filled in, and only then is the task text sent to Google.
+          The first button saves a calendar file for Apple Calendar or any app. Google and Outlook open with the task filled in, and only then is the task text sent to them.
         </p>
       </DialogContent>
     </Dialog>

@@ -1,0 +1,30 @@
+{
+  "name": "CalendarFeed",
+  "type": "object",
+  "properties": {
+    "token": {
+      "type": "string",
+      "description": "Private random id in the subscribe link. Whoever has the link can read the feed."
+    },
+    "events": {
+      "type": "array",
+      "description": "Reminders the person chose to sync: title, short details and a date. No statement rows.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "uid": { "type": "string" },
+          "title": { "type": "string" },
+          "details": { "type": "string" },
+          "date": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "description": "When the reminders last changed (ISO time)"
+    }
+  },
+  "required": [
+    "token"
+  ]
+}
