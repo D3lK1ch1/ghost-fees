@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Check, ExternalLink, Heart } from 'lucide-react';
 import { useGhostList } from '@/hooks/use-ghost-list';
 import { money } from '@/lib/ghostFees/format';
@@ -94,6 +94,19 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
     { art: pick.clear, line: "Cheers! Party's on them.", motion: 'ex-dance', alt: 'Your ghost, dressed up to party' },
   ];
   const mood = STAGES[stage];
+  // Getting out of bed: when the first ex is blocked (stage 0 -> 1), play it once.
+  const prevStage = useRef(stage);
+  const [wakeUp, setWakeUp] = useState(false);
+  useEffect(() => {
+    if (prevStage.current === 0 && stage === 1) {
+      setWakeUp(true);
+      const timer = setTimeout(() => setWakeUp(false), 2600);
+      prevStage.current = stage;
+      return () => clearTimeout(timer);
+    }
+    prevStage.current = stage;
+    return undefined;
+  }, [stage]);
 
   if (!selected) return null;
   const info = cancelInfo(selected.merchant);
@@ -195,11 +208,23 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
           <div className="absolute bottom-1.5 left-1/2 -ml-14 flex flex-col items-center">
-            <div key={stage} className={`animate-rise relative ${allClear ? 'hh-walk' : ''}`}>
+            <div key={stage} className={`${wakeUp ? '' : 'animate-rise'} relative ${allClear ? 'hh-walk' : ''}`}>
+              {/* Out of bed: the covers fly off and the bed sinks away, she pops up cross. */}
+              {wakeUp && (
+                <>
+                  <img src={pick.house} alt="" aria-hidden="true" width={92} className="hh-bed-out pointer-events-none absolute bottom-0 left-0 h-auto w-[92px]" />
+                  {['-34px,-20px,-25deg', '38px,-28px,20deg', '-6px,-44px,0deg'].map((v, i) => {
+                    const [x, y, r] = v.split(',');
+                    return <span key={v} aria-hidden="true" className="hh-huff pointer-events-none absolute left-1/2 top-3 z-20 text-[18px]" style={{ '--hx': x, '--hy': y, '--hr': r, animationDelay: `${0.75 + i * 0.12}s` }}>💢</span>;
+                  })}
+                </>
+              )}
               {/* Ghost and bubble move together; the bubble's tail sits at the mouth. */}
-              <div className={`relative ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }}>
-                <img src={mood.art} alt={mood.alt} width={92} className="block h-auto w-[92px]" />
-                <div className="bub-l absolute bottom-[calc(100%-30px)] left-[58px] z-10 w-[132px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight">{mood.line}</div>
+              <div className={wakeUp ? 'hh-rise' : ''}>
+                <div className={`relative ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }}>
+                  <img src={mood.art} alt={mood.alt} width={92} className="block h-auto w-[92px]" />
+                  <div className="bub-l ex-in absolute bottom-[calc(100%-30px)] left-[58px] z-10 w-[132px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
+                </div>
               </div>
             </div>
           </div>

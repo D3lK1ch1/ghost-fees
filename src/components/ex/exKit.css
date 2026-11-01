@@ -43,3 +43,11 @@
 .hh-walk{animation:hhWalk 1.2s .3s ease-in-out forwards}
 .hh-conf{animation:hhConf 2.6s linear infinite}
 @media (prefers-reduced-motion:reduce){.hh-conf{display:none}.hh-walk{animation:none}}
+/* Out of bed: the bed sinks and fades, the ghost pops up cross with anger puffs. */
+@keyframes hhBedOut{0%{opacity:1;transform:none}25%{opacity:1;transform:translateY(-4px) rotate(-2deg)}100%{opacity:0;transform:translateY(22px) scaleY(.85)}}
+@keyframes hhRise{0%,30%{opacity:0;transform:translateY(34px) scale(.75)}65%{opacity:1;transform:translateY(-16px) scale(1.06)}82%{transform:translateY(4px) scale(.98)}100%{opacity:1;transform:none}}
+@keyframes hhHuff{0%{opacity:0;transform:translate(-50%,0) scale(.3) rotate(0)}40%{opacity:1;transform:translate(calc(-50% + var(--hx)),var(--hy)) scale(1.2) rotate(var(--hr))}100%{opacity:0;transform:translate(calc(-50% + var(--hx)),calc(var(--hy) - 10px)) scale(.9) rotate(var(--hr))}}
+.hh-bed-out{animation:hhBedOut 1.1s ease-in both}
+.hh-rise{animation:hhRise 1.3s cubic-bezier(.3,.7,.4,1) both;transform-origin:50% 100%}
+.hh-huff{animation:hhHuff .9s ease-out both}
+@media (prefers-reduced-motion:reduce){.hh-bed-out{display:none}.hh-rise,.hh-huff{animation:none}.hh-huff{display:none}}
