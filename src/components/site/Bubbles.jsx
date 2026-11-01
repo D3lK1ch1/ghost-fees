@@ -1,50 +1,114 @@
 import { cn } from '@/lib/utils';
 
-// Speech and thought bubbles drawn in code: no image assets, no outlines, so
-// every size stays crisp. Both are white shapes with a soft shadow, meant to
-// sit next to a ghost on a dark card.
+// Speech and thought bubbles drawn in code, in the cartoon style of the
+// reference sheets: white fill, thick near-black ink outline, a soft pink
+// shadow underneath and no image assets. Text stays real HTML on top of the
+// shape, so it wraps and stays selectable at any size.
 
-const TAILS = {
-  left: 'M0 0 L26 0 C22 12 14 22 0 30 Z',
-  right: 'M26 0 L0 0 C4 12 12 22 26 30 Z',
-};
+const INK = '#2E1A23';
+const SHADOW = 'drop-shadow-[0_5px_0_rgba(255,143,156,0.5)]';
+
+// Scalloped blob path: points around an inset ellipse joined by outward arcs,
+// which gives the soft cloud edge. Stretched to the text box, so the ink stays
+// even thanks to vector-effect="non-scaling-stroke".
+function scallopPath(w, h, bumps = 16, depth = 7) {
+  const cx = w / 2;
+  const cy = h / 2;
+  const rx = cx - depth;
+  const ry = cy - depth;
+  const at = (i) => {
+    const angle = (i / bumps) * Math.PI * 2 - Math.PI / 2;
+    return [cx + rx * Math.cos(angle), cy + ry * Math.sin(angle)];
+  };
+
+  let d = '';
+  for (let i = 0; i <= bumps; i += 1) {
+    const [x, y] = at(i);
+    if (i === 0) {
+      d = `M ${x.toFixed(1)} ${y.toFixed(1)}`;
+    } else {
+      const [px, py] = at(i - 1);
+      const radius = Math.hypot(x - px, y - py) * 0.62;
+      d += ` A ${radius.toFixed(1)} ${radius.toFixed(1)} 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }
+  }
+  return `${d} Z`;
+}
+
+const CLOUD_PATH = scallopPath(200, 100);
+
+const TAIL_PATH = 'M2 0 H22 C19 9 13 17 4 26 C6 17 7 9 2 0 Z';
+
+const DOT_SIZES = ['h-3 w-3', 'h-2 w-2', 'h-1.5 w-1.5'];
+
+// Three dots stepping down towards whoever is thinking.
+function TrailDots({ trail }) {
+  const left = trail === 'left';
+  const offsets = left
+    ? ['bottom-[-14px] left-5', 'bottom-[-27px] left-1', 'bottom-[-37px] -left-3']
+    : ['bottom-[-14px] right-5', 'bottom-[-27px] right-1', 'bottom-[-37px] -right-3'];
+
+  return DOT_SIZES.map((size, index) => (
+    <span
+      key={size}
+      aria-hidden="true"
+      className={cn('absolute rounded-full border-2 bg-white', size, offsets[index])}
+      style={{ borderColor: INK }}
+    />
+  ));
+}
 
 export function SpeechBubble({ children, side = 'left', className }) {
+  const left = side !== 'right';
+
   return (
-    <div className={cn('relative block w-fit max-w-full drop-shadow-[0_6px_16px_rgba(0,0,0,0.28)]', className)}>
-      <div className="rounded-[20px] bg-white px-3.5 py-2 text-[12.5px] font-bold leading-snug text-[#14301f]">
-        {children}
+    <div className={cn('relative w-fit max-w-full', SHADOW, className)}>
+      <div className="relative">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 24 28"
+          className={cn(
+            'absolute bottom-[-15px] h-[21px] w-[18px] overflow-visible',
+            left ? 'left-4' : 'right-4 -scale-x-100',
+          )}
+        >
+          <path d={TAIL_PATH} fill="#fff" stroke={INK} strokeWidth={2.2} strokeLinejoin="round" strokeLinecap="round" />
+        </svg>
+        <div
+          className="relative z-10 rounded-full border-[2.2px] bg-white px-4 py-2 text-[12.5px] font-semibold leading-snug"
+          style={{ borderColor: INK, color: INK }}
+        >
+          {children}
+        </div>
       </div>
-      <svg
-        aria-hidden="true"
-        viewBox="0 0 26 30"
-        className={cn(
-          'absolute -bottom-[9px] h-[14px] w-[13px] fill-white',
-          side === 'right' ? 'right-5' : 'left-5',
-        )}
-      >
-        <path d={TAILS[side === 'right' ? 'right' : 'left']} />
-      </svg>
     </div>
   );
 }
 
-// Cloud body: the same white fill overlapping in bumps, so the ruffled edge
-// reads as one shape. Two shrinking dots trail towards the speaker.
-export function ThoughtBubble({ children, className, trail = 'right', tones = 'text-[#14301f]' }) {
+export function ThoughtBubble({ children, className, trail = 'right', tones }) {
   return (
-    <div className={cn('relative block w-fit max-w-full', className)}>
-      <div className="relative drop-shadow-[0_6px_16px_rgba(0,0,0,0.28)]">
-        <div className={cn('relative z-10 rounded-[24px] bg-white px-4 py-2.5 text-[13px] font-bold leading-snug', tones)}>
+    <div className={cn('relative w-fit max-w-full', SHADOW, className)}>
+      <div className="relative">
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 200 100"
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-full overflow-visible"
+        >
+          <path
+            d={CLOUD_PATH}
+            fill="#fff"
+            stroke={INK}
+            strokeWidth={2.3}
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+        <div className={cn('relative z-10 px-5 py-3.5 text-[13px] font-semibold leading-snug', tones)} style={{ color: INK }}>
           {children}
         </div>
-        <span aria-hidden="true" className="absolute -left-1.5 top-2 h-4 w-4 rounded-full bg-white" />
-        <span aria-hidden="true" className="absolute -right-1.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-white" />
-        <span aria-hidden="true" className="absolute -bottom-1 left-3 h-3.5 w-3.5 rounded-full bg-white" />
-        <span aria-hidden="true" className="absolute -bottom-1 right-4 h-3 w-3 rounded-full bg-white" />
       </div>
-      <span aria-hidden="true" className={cn('absolute -bottom-3 h-2.5 w-2.5 rounded-full bg-white/95', trail === 'left' ? 'left-5' : 'right-5')} />
-      <span aria-hidden="true" className={cn('absolute -bottom-6 h-1.5 w-1.5 rounded-full bg-white/90', trail === 'left' ? 'left-2.5' : 'right-3')} />
+      <TrailDots trail={trail} />
     </div>
   );
 }
