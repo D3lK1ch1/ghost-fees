@@ -115,7 +115,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
 
       {monthly > 0 && (
         <motion.div {...enter(shown.length)} className="mt-5 rounded-[22px] border border-[#5ee6c8]/60 bg-[#173b33] px-5 py-4 text-[15px] leading-relaxed text-white">
-          Cut them loose and that&apos;s <span className="font-heading text-[24px] font-bold text-[#5ee6c8]">{money(monthly * 12)}</span> a year back for brunch, travel or your savings.
+          Cut them loose and that&apos;s <span className="font-heading text-[24px] font-bold text-[#5ee6c8]">{money(monthly * 12)}</span> a year back.
         </motion.div>
       )}
 
