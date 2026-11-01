@@ -5,6 +5,7 @@ import { SpeechBubble } from '@/components/site/Bubbles';
 import { money } from '@/lib/ghostFees/format';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS, XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
+import GhostTip from './GhostTip';
 
 // The Ghosts of Christmas: Jacob Ledger, then the ghosts of Past, Present and
 // Yet to Come, then Christmas morning. One stave at a time, real numbers only.
@@ -46,10 +47,14 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           </div>
           <ul className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4">
             {subscriptions.slice(0, 8).map((item) => (
-              <li key={item.id} className="flex flex-col items-center rounded-xl bg-[#fbf3e4] px-1.5 py-2 text-center text-[#14301f] shadow">
-                <img src={xmasAvatar(item.merchant, season)} alt="" width={40} height={40} className="h-10 w-10 rounded-full" />
-                <span className="mt-1 line-clamp-1 text-[11px] font-bold">{item.merchant}</span>
-                <span className="text-[11px] font-bold text-[#c0392b]">{money(item.monthly)}</span>
+              <li key={item.id} className="flex">
+                <GhostTip className="w-full" align="fill" label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
+                  <span className="flex w-full flex-col items-center rounded-xl bg-[#fbf3e4] px-1.5 py-2 text-center text-[#14301f] shadow">
+                    <img src={xmasAvatar(item.merchant, season)} alt={item.merchant} width={40} height={40} className="h-10 w-10 rounded-full" />
+                    <span className="mt-1 line-clamp-1 text-[11px] font-bold">{item.merchant}</span>
+                    <span className="text-[11px] font-bold text-[#c0392b]">{money(item.monthly)}</span>
+                  </span>
+                </GhostTip>
               </li>
             ))}
           </ul>
@@ -74,10 +79,14 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           </div>
           <ul className="mt-3 grid grid-cols-3 gap-2">
             {leaks.slice(0, 3).map((leak) => (
-              <li key={leak.id} className="rounded-xl bg-[#fbf3e4] px-2 py-2 text-[#14301f] shadow">
-                <span className="block rounded-md bg-[#1f5c3a] px-1.5 py-1 text-center text-[10.5px] font-bold text-white">{leak.badge}</span>
-                <span className="mt-1.5 block line-clamp-2 text-[11.5px] font-bold">{leak.title || leak.merchant}</span>
-                <span className="text-[11px] font-bold text-[#c0392b]">{money(leak.amount)}</span>
+              <li key={leak.id} className="flex">
+                <GhostTip className="w-full" align="fill" label={leak.title || leak.merchant} detail={leak.reason || `${leak.badge} · ${money(leak.amount)}`}>
+                  <span className="block w-full rounded-xl bg-[#fbf3e4] px-2 py-2 text-[#14301f] shadow">
+                    <span className="block rounded-md bg-[#1f5c3a] px-1.5 py-1 text-center text-[10.5px] font-bold text-white">{leak.badge}</span>
+                    <span className="mt-1.5 block line-clamp-2 text-[11.5px] font-bold">{leak.title || leak.merchant}</span>
+                    <span className="text-[11px] font-bold text-[#c0392b]">{money(leak.amount)}</span>
+                  </span>
+                </GhostTip>
               </li>
             ))}
           </ul>
@@ -103,11 +112,15 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           </div>
           <ul className="mt-3 grid grid-cols-3 gap-2 rounded-2xl border-t-4 border-dashed border-[#c0392b] bg-[#5a3a24] p-3">
             {subscriptions.slice(0, 6).map((item) => (
-              <li key={item.id} className="flex flex-col items-center text-center">
-                <span className="h-5 w-14 rounded-[50%] bg-[#efe6d8] shadow-inner" aria-hidden="true" />
-                <span className="mt-1 rounded bg-[#fbf3e4] px-1.5 py-0.5 text-[10.5px] font-bold text-[#14301f]">
-                  {item.merchant} <span className="text-[#c0392b]">{money(item.monthly)}</span>
-                </span>
+              <li key={item.id} className="flex">
+                <GhostTip className="w-full" align="fill" label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
+                  <span className="flex w-full flex-col items-center text-center">
+                    <span className="h-5 w-14 rounded-[50%] bg-[#efe6d8] shadow-inner" aria-hidden="true" />
+                    <span className="mt-1 rounded bg-[#fbf3e4] px-1.5 py-0.5 text-[10.5px] font-bold text-[#14301f]">
+                      {item.merchant} <span className="text-[#c0392b]">{money(item.monthly)}</span>
+                    </span>
+                  </span>
+                </GhostTip>
               </li>
             ))}
           </ul>
