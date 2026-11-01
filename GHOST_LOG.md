@@ -137,3 +137,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Landing.jsx, ResultsView.jsx, SubscriptionsSection.jsx
 - How to test: Try a sample statement, Subscriptions, answer Yes and No, open About us, press Back; then press Set a life goal.
 - User feedback that drove this: "clicked yes or no ... came back, the item was reset. Nothing actually happened ... Add a section on life goals and what matters to you" (tester, 4 of 5).
+
+### My Ex Ghosted Me: pink, photo avatars, landing matched to the design
+- What: step 1 of rebuilding 💔 to match the design pack. Colours move from near-black to deep berry pink. Every ex gets its own round photo avatar from Bella's ghost art (pink ghosts for Heartbroken, hoodie ghosts for I'm Fine, piggy bank for bank fees), with no doubles. The 💔 landing now matches the ChooseGhost design.
+- Files: themes.js, LeakCard.jsx, exArt.js, ResultsView.jsx, ThemeStory.jsx, ExStory.jsx, ExHero.jsx (new, replaces ExHeroArt.jsx), Hero.jsx, public/themes/ex/avatars (new)
+- How to test: pick 💔, compare the landing with the design, switch picks, then Try a sample statement and check the chat and cards.
+- User feedback that drove this: "should be more pink than black", "avatars double up", "very different from what's on the web app".
