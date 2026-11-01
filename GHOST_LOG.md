@@ -88,3 +88,15 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Privacy.jsx (new), App.jsx, SiteFooter.jsx
 - How to test: footer > Privacy. To do: add a contact email for deletion requests, and update the PDF row once PDFs are deleted after reading.
 - User feedback that drove this: (fill in)
+
+### My Ex Ghosted Me: new art, Choose your ghost and the exes chat
+- What: the 💔 landing now shows the ghost art with a thought bubble and a Choose your ghost picker (Heartbroken, her pick, or I'm Fine, his pick). The pick changes the art and headline only and is remembered in this browser. On results, "Unread messages from your exes" is now a group chat: one avatar and message per real subscription, a shocked ghost, the real yearly total, and Help me move on, which opens the Subscriptions tab. Art is WebP, about 190 KB in total.
+- Files: public/themes/ex (new), src/components/landing/ExHeroArt.jsx (new), src/components/results/ExStory.jsx (new), src/lib/ghostFees/exArt.js (new), src/hooks/use-saved-choice.jsx (new), Hero.jsx, ThemeStory.jsx, ResultsView.jsx
+- How to test: pick 💔, switch between Heartbroken and I'm Fine on the landing page, then Try a sample statement, Reveal, and check the exes chat and Help me move on.
+- User feedback that drove this: (fill in)
+
+### Ghosts of Christmas: new art, Winter and Summer, and the three staves
+- What: the 🎄 landing now shows the living room at 11:59 on Christmas Eve with the Sleeper, and a Winter / Aussie Summer toggle (remembered in this browser, art only). On results, the story is now one stave at a time: Jacob Ledger with one chain link per real subscription, Dusty (Fees Past) with the top leaks and the real total lost, Jolly (Present) with the real monthly cost, the Hooded One (Yet to Come) with 12 months of it, then Christmas morning and Show me what to cancel, which opens the Subscriptions tab. A stave with no real figure is left out. Art is WebP, about 480 KB in total.
+- Files: public/themes/christmas (new), src/components/landing/ChristmasHeroArt.jsx (new), src/components/results/ChristmasStory.jsx (new), src/components/site/SeasonToggle.jsx (new), src/lib/ghostFees/christmasArt.js (new), Hero.jsx, ThemeStory.jsx, ResultsView.jsx
+- How to test: pick 🎄, switch Winter and Summer on the landing page, then Try a sample statement, Reveal, and step through all five staves.
+- User feedback that drove this: (fill in)
