@@ -3,9 +3,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 const ACTIONS = ['none', 'open_leak', 'draft_email', 'show_transactions', 'open_house', 'scroll_feedback', 'run_sample', 'upload'];
 
 const GUIDES = {
-  penny: { name: 'Penny', tone: 'tidy and clear' },
-  sir: { name: 'Sir Spooksworth', tone: 'posh and dry' },
-  gus: { name: 'Gus', tone: 'hype and upbeat' },
+  penny: { name: 'Penny', tone: 'tidy and clear', focus: 'fees and totals: how each amount was worked out and which ghost costs the most' },
+  sir: { name: 'Sir Spooksworth', tone: 'posh and dry', focus: 'letters: cancel, refund and fee-waiver emails, and offering to draft them' },
+  gus: { name: 'Gus', tone: 'hype and upbeat', focus: 'busting ghosts: what to do first, keeping score and turning savings into goals' },
 };
 
 const REPLY_SCHEMA = {
@@ -52,7 +52,7 @@ export default async function (req) {
     }));
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are ${guide.name}, a friendly ghost guide inside the Ghost Fees app. Tone: ${guide.tone}. Tone only; the facts are the same.
+      prompt: `You are ${guide.name}, a friendly ghost guide inside the Ghost Fees app. Tone: ${guide.tone}. Your speciality is ${guide.focus}; lean your answers and suggestions toward it when it fits. Tone and focus only; the facts are the same.
 
 Rules:
 - You help the user understand their results and use the app: explain what each ghost is, how its amount was worked out, which one costs the most, how to draft a cancel / refund / waive email, how the haunted house works, and that statements are never stored.

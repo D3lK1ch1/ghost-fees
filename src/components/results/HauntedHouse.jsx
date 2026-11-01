@@ -380,6 +380,38 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
           <div className="bg-[#1d1720] p-3 [background-image:linear-gradient(#ffffff0a_2px,transparent_2px),linear-gradient(90deg,#ffffff0a_2px,transparent_2px)] [background-size:44px_22px]">
             <Room room={ROOMS[4]} leaks={byRoom.basement} cleared={clearedSet} flying={flyingSet} biggestId={leaks[0]?.id} active={room.key === 'basement'} onSelect={() => selectRoom('basement')} delay={3.5} />
           </div>
+          <div className="bg-[#1d1720] px-3 pb-3 pt-2" role="group" aria-label="Your ghost guides on the front porch">
+            <p className="text-center text-[11.5px] font-bold text-[#e6defa]/80">Front porch · your guides</p>
+            <div className="mt-2 flex items-end justify-around gap-2">
+              {GUIDE_KEYS.map((key, index) => {
+                const item = GUIDES[key];
+                const chosen = guideKey === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => onGuide?.(key)}
+                    aria-pressed={chosen}
+                    aria-label={`${item.name}, ${item.job}. ${item.does}`}
+                    className="flex flex-col items-center rounded-2xl px-2 pt-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                  >
+                    <GhostTip label={`${item.name} · ${item.job}`} detail={item.does}>
+                      <span className="block animate-float" style={{ color: item.color, animationDelay: `${index * 0.5}s` }}>
+                        <GhostMark className={cn('h-11 w-11', chosen && 'drop-shadow-[0_0_12px_currentColor]')} eyeColor="#1a1230" />
+                      </span>
+                    </GhostTip>
+                    <span
+                      className={cn('mt-1 rounded-full px-2 py-0.5 text-[11px] font-bold', chosen ? 'text-[#1b1233]' : 'bg-[#170f2a]/80 text-[#e6defa]')}
+                      style={chosen ? { background: item.color } : undefined}
+                    >
+                      {item.name.replace('Sir ', '')}
+                    </span>
+                    <span className="mt-0.5 text-[10.5px] font-semibold" style={{ color: item.color }}>{item.job}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <div className="relative -mx-6 mt-1 h-10 sm:-mx-10" aria-hidden="true">
             <div className="absolute inset-x-0 bottom-2 h-7 [background-image:repeating-linear-gradient(90deg,#0b0716_0,#0b0716_3px,transparent_3px,transparent_14px)] [mask-image:linear-gradient(to_bottom,transparent,black_25%)]" />
             <div className="absolute inset-x-0 bottom-6 h-[3px] bg-[#0b0716]" />
@@ -486,8 +518,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   type="button"
                   onClick={() => onGuide?.(key)}
                   aria-pressed={guideKey === key}
-                  aria-label={`${GUIDES[key].name}, ${GUIDES[key].role}`}
-                  title={GUIDES[key].name}
+                  aria-label={`${GUIDES[key].name}, ${GUIDES[key].role}: ${GUIDES[key].job}`}
+                  title={`${GUIDES[key].name}: ${GUIDES[key].job}`}
                   className={cn(
                     'rounded-full border-2 p-1.5 transition-colors',
                     guideKey === key ? 'border-primary bg-background' : 'border-border bg-background/40 hover:border-primary/50',
@@ -500,7 +532,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
               ))}
             </div>
           </div>
-          <p className="mt-1 text-right text-[11.5px] font-bold text-primary">{guide.name} · {guide.role.replace(/^the /, '')}</p>
+          <p className="mt-1 text-right text-[11.5px] font-bold" style={{ color: guide.color }}>{guide.name} · {guide.job}</p>
+          <p className="mt-0.5 text-right text-[11.5px] leading-snug text-muted-foreground">{guide.does}</p>
 
           <div className="mt-3 flex gap-3">
             <span className="shrink-0 animate-bob" style={{ color: guide.color }}>
