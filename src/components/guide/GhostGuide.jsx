@@ -122,9 +122,10 @@ function summaryFor(analysis) {
   };
 }
 
-function starterChips(analysis) {
+// The guide's own speciality questions come first, then the rest.
+function starterChips(analysis, guide) {
   const biggest = analysis.leaks[0];
-  return [
+  const all = [
     'Make my goals',
     'What should I do first?',
     'Which ghost costs the most?',
@@ -136,6 +137,8 @@ function starterChips(analysis) {
     'What is price creep?',
     'Show me the haunted house',
   ].filter(Boolean);
+  const own = (guide?.chips || []).filter((chip) => all.includes(chip));
+  return [...own, ...all.filter((chip) => !own.includes(chip))];
 }
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
@@ -147,7 +150,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const guide = GUIDES[guideKey];
-  const chips = starterChips(analysis);
+  const chips = starterChips(analysis, guide);
   const { leaks, total, monthSpan } = analysis;
 
   useEffect(() => {
