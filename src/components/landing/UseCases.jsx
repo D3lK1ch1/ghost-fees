@@ -38,17 +38,24 @@ export default function UseCases() {
         Five kinds of money leak, all pulled from your own statement. Nothing guessed, nothing projected.
       </p>
 
-      <div className="mt-8 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
-        {USE_CASES.map(({ Icon, title, body }) => (
-          <div key={title} className="rounded-3xl border border-border bg-card/60 p-5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+      <ol className="mx-auto mt-8 max-w-2xl divide-y divide-border rounded-3xl border border-border bg-card/50">
+        {USE_CASES.map(({ Icon, title, body }, index) => (
+          <li key={title} className="flex items-start gap-4 px-5 py-5 sm:px-6">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/15 text-primary">
               <Icon className="h-5 w-5" strokeWidth={2.2} />
             </span>
-            <h3 className="mt-3.5 text-[15px] font-semibold text-foreground">{title}</h3>
-            <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground">{body}</p>
-          </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-[15.5px] font-semibold text-foreground">{title}</h3>
+                <span className="shrink-0 font-retro text-[15px] leading-none text-muted-foreground/60" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+              </div>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{body}</p>
+            </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </section>
   );
 }
