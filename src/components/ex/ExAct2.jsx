@@ -45,8 +45,7 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
         </div>
       </div>
       <div className="relative flex h-[190px] items-end justify-center gap-1">
-        <Bubble kind="s" className="ex-in mb-[120px] text-[14px]" style={{ animationDelay: '.9s' }}>{pick?.backShout || 'New phone. Who dis?'}</Bubble>
-        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} />
+        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="left" kind="s" bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={150} bubbleDelay=".9s" bubbleClass="!px-5 text-[13px]" />
       </div>
       <div className="ex-in relative flex flex-col gap-2.5 p-4" style={{ ...card, animationDelay: '1.45s' }}>
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>
@@ -218,8 +217,7 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
           <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>Deal.</div>
         </div>
         <div className="mt-auto flex items-end gap-1 pt-6">
-          <GhostPal pickKey={pickKey} mood="happy" width={112} speed={3.3} />
-          <Bubble kind="t" className="ex-in mb-[90px] text-[13px]" style={{ animationDelay: '2s' }}>I don&apos;t do trials anymore.</Bubble>
+          <GhostPal pickKey={pickKey} mood="happy" width={112} speed={3.3} side="right" kind="t" bubble="I don't do trials anymore." bubbleWidth={160} bubbleDelay="2s" bubbleClass="text-[13px]" />
         </div>
       </div>
       <div className="flex flex-col gap-2.5 px-4 pb-[22px] pt-3.5" style={{ background: C.bar, borderTop: `1px solid ${C.barLine}` }}>

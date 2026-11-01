@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Check } from 'lucide-react';
-import { Bubble, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
+import { GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import { money } from '@/lib/ghostFees/format';
 
 const SITE = 'hunt-ghost-fees.base44.app';
@@ -43,8 +43,7 @@ export default function ExInboxZero({ pick, pickKey, glow, total, onSeeAll, onBa
       <div className="relative mt-3 overflow-hidden rounded-[26px] border border-white/10 bg-gradient-to-b from-[#1d2a3a] to-[#141218] p-4">
         <div className="pointer-events-none absolute inset-x-6 top-6 h-24 rounded-xl border-2 border-white/10 [background-image:radial-gradient(circle,#5ee6c8_1px,transparent_1.5px)] [background-size:12px_12px] opacity-30" aria-hidden="true" />
         <div className="relative flex items-end justify-between">
-          <GhostPal pickKey={pickKey} mood="dinner" motion="dance" width={160} speed={2.2} />
-          <Bubble kind="l" className="ex-in mb-24 max-w-[180px] text-[13px]" style={{ animationDelay: '.6s' }}>{pick.clearBubble}</Bubble>
+          <GhostPal pickKey={pickKey} mood="dinner" motion="dance" width={160} speed={2.2} side="right" bubble={pick.clearBubble} bubbleWidth={170} bubbleClass="text-[13px]" />
         </div>
         {unlocked && (
           <p className="relative mt-2 inline-flex items-center gap-1.5 rounded-full bg-[#5ee6c8] px-3 py-1 text-[12.5px] font-bold text-[#0f2a24]">
