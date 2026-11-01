@@ -76,6 +76,18 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   ));
   const unblock = (item) => setGhostList((current) => current.filter((entry) => entry.id !== item.id));
 
+  // The storyline from the design: sad in bed (none blocked) > focused (1-2) >
+  // sassy "F**k my ex" (3-5) > dressed up for a night out (all of them).
+  const n = glow.blockedCount;
+  const all = subscriptions.length > 0 && n >= subscriptions.length;
+  const mood = all
+    ? { key: 'out', art: pick.clear, line: pick.clearBubble, alt: 'Your ghost dressed up for a night out' }
+    : n >= 3
+      ? { key: 'sassy', art: pick.moving, line: `${pick.movingBubble[0]} ${pick.movingBubble[1]}`, alt: 'Your ghost, done with their exes' }
+      : n >= 1
+        ? { key: 'focused', art: pick.scan, line: `${n} down. ${subscriptions.length - n} to go.`, alt: 'Your ghost, focused on blocking exes' }
+        : { key: 'sad', art: pick.house, line: pick.houseBubble, alt: 'Your ghost, sad in bed' };
+
   if (!selected) return null;
   const info = cancelInfo(selected.merchant);
   const line = theme.lines.find((entry) => entry.match.test(selected.merchant))?.text || theme.fallbackLine;
@@ -152,10 +164,10 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             <span className="mt-1 text-[11.5px] font-bold text-[#5ee6c8]">Glow-up jar</span>
           </div>
           <div className="relative">
-            <ThoughtBubble trail="right" tones="text-[#2a1020]" size="sm" className="absolute -left-36 -top-10 w-max max-w-[170px]">
-              {pick.houseBubble}
+            <ThoughtBubble key={mood.key} trail="right" tones="text-[#2a1020]" size="sm" className="animate-rise absolute -left-36 -top-10 w-max max-w-[170px]">
+              {mood.line}
             </ThoughtBubble>
-            <img src={pick.house} alt="" width={360} className="h-auto w-[120px]" />
+            <img key={mood.art} src={mood.art} alt={mood.alt} width={360} className={`animate-rise h-auto w-[120px] ${mood.key !== 'sad' ? 'ex-dance' : ''}`} style={{ '--gs': '2.2s' }} />
           </div>
         </div>
       </div>
