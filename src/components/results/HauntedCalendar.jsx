@@ -11,6 +11,7 @@ import GhostTip from './GhostTip';
 import TaskDialog from './TaskDialog';
 import CalendarSync from './CalendarSync';
 import { useGhostList } from '@/hooks/use-ghost-list';
+import '@/components/ex/exKit.css';
 import { EX_GHOST_KEY, EX_GHOSTS } from '@/lib/ghostFees/exArt';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -256,22 +257,33 @@ const NUDGE = {
   haunted: 'Scroll down to bust more ghosts, with help from Cassy.',
 };
 
+// Mouth (or face) spot in each art, as px inside the 130 x 140 picture box
+// (object-contain). The asset speech bubble's tail tip (9.4% across its bottom)
+// goes there, nudged a few px right so the mouth stays visible.
+const NUDGE_ART = {
+  heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [66, 63] },
+  fine: { src: '/themes/ex/men-block.webp', mouth: [70, 48] },
+  christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [60, 53] },
+  haunted: { src: '/themes/haunted/lantern-ghost.webp', mouth: [88, 37] },
+};
+
 function CassyNudge() {
   const { theme } = useTheme();
   const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
-  const art = theme.key === 'ex'
-    ? `/themes/ex/${exPick === 'fine' ? 'men-block' : 'ghost-sassy'}.webp`
-    : theme.key === 'christmas' ? '/themes/christmas/xc-festive.webp' : '/themes/haunted/lantern-ghost.webp';
+  const art = NUDGE_ART[theme.key === 'ex' ? (exPick === 'fine' ? 'fine' : 'heartbroken') : theme.key === 'christmas' ? 'christmas' : 'haunted'];
   const toCassy = () => document.querySelector('[aria-label="Cancellation assistant"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   return (
-    <div className="flex flex-1 items-center justify-center gap-3 rounded-3xl border border-dashed border-border/70 px-5 py-5">
-      <img src={art} alt="" width={130} height={140} className="animate-float h-[140px] w-[130px] flex-none object-contain" />
-      <div className="relative max-w-[280px] rounded-[22px] bg-white px-5 py-4 text-[#15131a] shadow-[0_8px_20px_rgba(0,0,0,0.35)]">
-        <span aria-hidden="true" className="absolute -left-2 top-1/2 h-5 w-5 -translate-y-1/2 rotate-45 rounded-[3px] bg-white" />
-        <p className="relative font-heading text-[17px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
-        <button type="button" onClick={toCassy} className="relative mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
-          Take me to Cassy ↓
-        </button>
+    <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-border/70 px-4 py-5">
+      <div className="animate-float relative h-[260px] w-[420px] max-w-full">
+        <img src={art.src} alt="" width={130} height={140} className="absolute bottom-0 left-0 h-[140px] w-[130px] object-contain" />
+        <div className="absolute z-10" style={{ left: art.mouth[0] + 6, top: 120 + art.mouth[1] - 4, transform: 'translate(-9.4%, -100%)' }}>
+          <div className="bub-l w-[300px] !min-w-0 !px-11 !pb-14 !pt-8 text-center">
+            <p className="font-heading text-[16px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
+            <button type="button" onClick={toCassy} className="mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
+              Take me to Cassy ↓
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
