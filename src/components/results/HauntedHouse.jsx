@@ -8,6 +8,7 @@ import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
+import GhostTip from './GhostTip';
 
 const PAY_PRESETS = [25, 35, 50];
 
@@ -123,7 +124,7 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
       onClick={onSelect}
       disabled={!leaks.length}
       aria-pressed={active}
-      aria-label={`${room.label}, ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}${leaks.length && !left ? ', all busted' : ''}`}
+      aria-label={`${room.label}, ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}${leaks.length ? `: ${leaks.map((leak) => leak.title || leak.merchant).join(', ')}` : ''}${leaks.length && !left ? ', all busted' : ''}`}
       className={cn(
         'relative isolate flex min-h-[130px] w-full flex-col overflow-hidden rounded-b-xl rounded-t-[3rem] border-[3px] p-3 pt-4 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         left
@@ -180,7 +181,9 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
               className={flying.has(leak.id) ? 'animate-fly-away' : 'animate-bob'}
               style={flying.has(leak.id) ? undefined : { animationDelay: `${index * 0.4}s` }}
             >
-              <HouseGhost room={room.key} index={index} className={size} />
+              <GhostTip label={leak.title || leak.merchant} detail={`${leak.badge} · ${money(leak.amount)}`}>
+                <HouseGhost room={room.key} index={index} className={size} />
+              </GhostTip>
             </span>
           )
         ))}
