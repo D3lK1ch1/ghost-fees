@@ -11,8 +11,9 @@ import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
 import { useAuth } from '@/lib/AuthContext';
-import { canScanFree, recordScan } from '@/lib/ghostFees/scanQuota';
-import Paywall from '@/components/scan/Paywall';
+import { claimScan } from '@/lib/ghostFees/allowance';
+import { useAllowance } from '@/lib/AllowanceContext';
+import { useToast } from '@/components/ui/use-toast';
 import FromGhostIt from '@/components/landing/FromGhostIt';
 import { readGhostItParams } from '@/lib/ghostFees/ghostItLink';
 import { base44 } from '@/api/base44Client';
@@ -26,9 +27,9 @@ export default function Landing() {
   const hadResults = useRef(status === 'done' && Boolean(results));
   const [scanDone, setScanDone] = useState(hadResults.current);
   const inputRef = useRef(null);
-  const { user, isAuthenticated } = useAuth();
-  const [paywall, setPaywall] = useState(false);
-  const unlimited = Boolean(isAuthenticated && (user?.paid || user?.role === 'admin'));
+  const { isAuthenticated } = useAuth();
+  const { openPaywall, refresh, charging } = useAllowance();
+  const { toast } = useToast();
   const [ghostIt] = useState(() => readGhostItParams(typeof window !== 'undefined' ? window.location.search : ''));
 
   // Count visits from the Ghost It agent (ref + how many subs only).
@@ -36,6 +37,21 @@ export default function Landing() {
     if (!ghostIt.ref) return;
     base44.functions.invoke('logRefVisit', { ref: ghostIt.ref, subs_count: ghostIt.subs.length }).catch(() => {});
   }, [ghostIt]);
+
+  // Back from Stripe: ?checkout=cs_... means paid (the server confirms it with Stripe).
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get('checkout');
+    if (!checkout) return;
+    params.delete('checkout');
+    const query = params.toString();
+    window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
+    if (checkout === 'cancelled') return;
+    refresh().then((next) => {
+      if (next?.paid) toast({ title: 'Unlocked. Thank you, founding ghost hunter!', description: 'Unlimited scans, ghosts and Cassy are yours, forever.' });
+      else toast({ title: 'Payment still processing', description: 'Refresh in a minute. If it doesn’t unlock, email us and we’ll sort it.' });
+    });
+  }, [refresh, toast]);
 
   const handleScanDone = useCallback(() => setScanDone(true), []);
 
@@ -47,26 +63,36 @@ export default function Landing() {
     if (DEEP_LINK_TABS.includes(window.location.hash.slice(1))) scan([], true);
   }, [reset]);
 
-  const scan = async (files, useSample) => {
+  const scan = async (files, useSample, ticket = '') => {
     setScanDone(false);
     setUsedSample(useSample);
     trackEvent('scan_started');
-    const outcome = await runScan({ files, useSample });
-    if (outcome && !useSample && files.length) recordScan(files);
+    const outcome = await runScan({ files, useSample, ticket });
     if (outcome) trackEvent('scan_finished');
+    if (!useSample) refresh();
   };
 
-  const handleFiles = (event) => {
+  // The free scan is counted on the server: sign in, then one upload of up to 6 files.
+  // Re-scanning the same files is free. Paid accounts get a ticket every time.
+  const handleFiles = async (event) => {
     // Unsupported files go through too, so the error screen can name them.
-    const picked = Array.from(event.target.files || []);
+    const picked = Array.from(event.target.files || []).slice(0, 6);
     event.target.value = '';
     if (!picked.length) return;
-    if (!unlimited && !canScanFree(picked)) {
-      trackEvent('paywall_shown');
-      setPaywall(true);
+    if (charging && !isAuthenticated) {
+      openPaywall('sign_in');
       return;
     }
-    scan(picked, false);
+    try {
+      const claim = await claimScan(picked);
+      if (!claim?.allowed) {
+        openPaywall(claim?.reason === 'sign_in' ? 'sign_in' : 'scan');
+        return;
+      }
+      scan(picked, false, claim.ticket);
+    } catch {
+      toast({ title: 'Could not check your free scan', description: 'Try again in a moment.' });
+    }
   };
 
   const analysisReady = Boolean(status === 'done' && results);
@@ -100,7 +126,6 @@ export default function Landing() {
           <SiteFooter />
         </>
       )}
-      <Paywall open={paywall} onClose={() => setPaywall(false)} signedIn={isAuthenticated} onSample={() => { setPaywall(false); scan([], true); }} />
       <input
         ref={inputRef}
         type="file"

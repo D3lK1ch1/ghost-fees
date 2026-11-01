@@ -1,4 +1,5 @@
 import { Lock, Upload } from 'lucide-react';
+import { useAllowance } from '@/lib/AllowanceContext';
 import { ThoughtBubble } from '@/components/site/Bubbles';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { EX_GHOST_KEY, EX_GHOSTS, EX_PICKS } from '@/lib/ghostFees/exArt';
@@ -19,6 +20,7 @@ const SPARKS = [
 // left-aligned two-tone headline and two full-width buttons. The pick only changes
 // the art and words, never the scan.
 export default function ExHero({ theme, onSample, onUpload }) {
+  const { charging } = useAllowance();
   const [pickKey, setPickKey] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const pick = EX_PICKS[pickKey];
   const [first, highlight, rest] = pick.headline;
@@ -108,7 +110,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
 
         <p className="mt-4 flex items-start justify-center gap-2 text-center text-[12.5px] text-muted-foreground">
           <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-          CSVs never leave your browser. PDFs are uploaded privately so they can be read. 1 free scan, no sign-in.
+          CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 1 free scan. The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
         </p>
       </div>
     </section>

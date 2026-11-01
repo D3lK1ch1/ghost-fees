@@ -50,7 +50,7 @@ export function ScanProvider({ children }) {
     setFileCount(0);
   }, []);
 
-  const runScan = useCallback(async ({ files = [], useSample = false }) => {
+  const runScan = useCallback(async ({ files = [], useSample = false, ticket = '' }) => {
     setFileErrors([]);
     setTransactions(null);
     setWindowMonths(0);
@@ -81,7 +81,7 @@ export function ScanProvider({ children }) {
             names.push(label);
           } else if (/\.pdf$/i.test(file.name)) {
             const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-            const response = await base44.functions.invoke('parseStatement', { file_uri });
+            const response = await base44.functions.invoke('parseStatement', { file_uri, ticket });
             const data = response?.data || {};
             if (data.error) errors.push({ name: file.name, message: data.error });
             else if (Array.isArray(data.transactions) && data.transactions.length) {
