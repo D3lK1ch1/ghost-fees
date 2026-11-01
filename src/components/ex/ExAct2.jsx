@@ -16,6 +16,12 @@ const card = { background: C.card, border: `1px solid ${C.line}`, borderRadius: 
 const blockedMonthly = (glow) => glow.fund / 12;
 
 // Design screen Ex8Back: an ex texts again after you cancelled.
+// Mouth of each party ghost, as % of the art (shown at its own size, no padding).
+const PARTY_MOUTH = {
+  '/themes/ex/men-footy.webp': [44, 34],
+  '/themes/ex/ghost-dinner.webp': [49, 36],
+};
+
 export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If the ex comes back' }) {
   const [copied, setCopied] = useState(false);
   const now = new Date();
@@ -45,7 +51,7 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
         </div>
       </div>
       <div className="relative flex h-[190px] items-end justify-center gap-1">
-        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="left" kind="s" bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={150} bubbleDelay=".9s" bubbleClass="!px-5 text-[13px]" />
+        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="left" atMouth bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={150} bubbleDelay=".9s" bubbleClass="!px-5 !pt-4 !pb-7 text-[13px]" />
       </div>
       <div className="ex-in relative flex flex-col gap-2.5 p-4" style={{ ...card, animationDelay: '1.45s' }}>
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>
@@ -144,7 +150,7 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
   return (
     <Screen background="linear-gradient(180deg, #1d2a3a 0%, #2a2530 45%, #15131a 75%)" className="gap-3 px-4 pb-[22px] pt-[18px]">
       <div className="relative text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{pick?.weekendTag || 'Act 2 · Month 6'}</div>
-      <div className="ex-in relative h-[330px] overflow-hidden rounded-[26px]" style={{ animationDelay: '.2s', background: 'linear-gradient(180deg, #ffb48a 0%, #ff8a7d 38%, #6a4a7a 70%, #2b3a55 100%)', border: `1px solid ${C.line}` }}>
+      <div className="ex-in relative h-[330px] overflow-hidden rounded-[26px]" style={{ containerType: 'inline-size', animationDelay: '.2s', background: 'linear-gradient(180deg, #ffb48a 0%, #ff8a7d 38%, #6a4a7a 70%, #2b3a55 100%)', border: `1px solid ${C.line}` }}>
         {pick?.weekendArt ? (
           <img src={pick.weekendArt} alt="The I'm Fine ghost fishing off a boat with a cold drink" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: 'center 30%' }} />
         ) : (
@@ -164,7 +170,20 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         </div>
         </>
         )}
-        {pick?.weekendArt && <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>Paid for by {name}.</Bubble>}
+        {/* Bubble tail at his mouth. The art is a square cropped to fill this 330px-high
+            card (object-cover, 30% from the top), and his mouth sits at 44% across and
+            37.5% down the art, so the mouth's spot is worked out from the card's width
+            (cqw). The tail tip is at 9% across, 94% down the bubble, hence the translate. */}
+        {pick?.weekendArt && (
+          <div
+            className="pointer-events-none absolute z-10"
+            style={{ left: 'calc(min(44cqw, 50cqw - 19.8px) + 8px)', top: 'calc(max(123.75px, 99px + 7.5cqw) - 10px)', transform: 'translate(-9%, -94%)' }}
+          >
+            <Bubble kind="l" className="ex-in w-[176px] !min-w-0 !px-5 !pb-8 !pt-4 text-[13px] leading-tight" style={{ animationDelay: '1s', transformOrigin: '9% 94%' }}>
+              Paid for by {name}.
+            </Bubble>
+          </div>
+        )}
       </div>
       <div className="relative flex flex-col items-center gap-0.5 text-center">
         <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>
@@ -289,7 +308,13 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
           <FkJar amount={fund} total={total} size={112} />
           <div className="ex-dance relative mr-2 flex-none" style={{ '--gs': '1.8s' }}>
             <img src={pick.party} alt="Your party ghost" className="block h-[104px] w-auto object-contain" />
-            <Bubble kind="r" className="ex-in absolute bottom-[calc(100%-46px)] right-[calc(100%-40px)] !min-w-0 whitespace-nowrap !px-4 !pb-6 !pt-2.5 text-[13px]" style={{ animationDelay: '.6s' }}>Feel it.</Bubble>
+            {/* Tail tip (86.4% across the bubble's bottom) sits at the mouth. */}
+            <div
+              className="pointer-events-none absolute z-10"
+              style={{ left: `calc(${(PARTY_MOUTH[pick.party] || [46, 35])[0]}% - 3px)`, top: `calc(${(PARTY_MOUTH[pick.party] || [46, 35])[1]}% - 2px)`, transform: 'translate(-86.4%, -100%)' }}
+            >
+              <Bubble kind="r" className="ex-in !min-w-0 whitespace-nowrap !px-6 !pb-8 !pt-3.5 text-[16px]" style={{ animationDelay: '.6s', transformOrigin: '86.4% 100%' }}>Feel it.</Bubble>
+            </div>
           </div>
         </div>
         <span className="text-center text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</span>

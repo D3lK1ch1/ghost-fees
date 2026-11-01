@@ -152,6 +152,12 @@ One entry per change. Newest at the bottom.
 
 ## Mon 2 Nov 2026
 
+### 💔 Speech bubbles come out of the mouth: Gone fishing, Who dis?, Feel it.
+- What: on I'm Fine's Gone fishing photo the bubble's tail now lands on his mouth (worked out from the card's width, so it holds on any phone). "Mid-game. Who dis?" / "New phone. Who dis?" swaps the tail-less spiky shout for a speech bubble with its tail on the mouth. "Feel it." by the F**k-ex jar is bigger, with its tail at the party ghost's mouth (footy ghost and dinner ghost).
+- Files: src/components/ex/ExAct2.jsx, src/components/ex/ExKit.jsx (GhostPal atMouth)
+- How to test: pick 💔, I'm Fine and Heartbroken, Try a sample statement: Glow-up plan (Gone fishing), Messages to exes, What they cost you.
+- User feedback that drove this: "the speech bubble come out of his mouth please", "make speech bubble coming out of his mouth cleaner", "need better speech bubble for him".
+
 ### 💔 every tab matches the design, silver phone and upload, new logo
 - What: the scanning chat sits in the silver phone, "Deep breath. Show me." is a chat message and the message bar is an upload button. All 8 tabs are back in 💔, each opening with its design screen: Glow-up plan (I'm Fine: power-on plan) with Weekend away (Gone fishing), Monthly check-in, The ex comes back, What your exes paid for. I'm Fine has its own words and art. Heartbreak House exes float and drift. Bank fees get a pink ghost instead of the piggy bank. Receipt Ghost logo and Baloo 2 wordmark in the header.
 - Files: src/components/ex/ExTabScreens.jsx (new), ExAct2.jsx, ExScanChat.jsx, ExKit.jsx, HeartbreakHouse.jsx, src/components/site/ReceiptGhost.jsx (new), src/lib/ghostFees/exArt.js, ResultsView.jsx
