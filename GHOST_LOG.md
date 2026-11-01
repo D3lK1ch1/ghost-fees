@@ -112,6 +112,7 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/GhostTip.jsx (new), HauntedHouse.jsx, ExStory.jsx, ChristmasStory.jsx
 - How to test: Try a sample statement in each theme and hover the ghosts: Haunted House tab, the exes chat, and each Christmas stave.
 - User feedback that drove this: ghosts should be highlighted and say what they are on hover, in every theme.
+- Also: the biggest ghost in each theme (largest leak, or largest subscription in the exes chat and Jacob's and Jolly's lists) has a steady orange glow and a Biggest tag in its label, in the Haunted orange for every theme.
 
 ### Penny, Spooksworth and Gus: own colours, own jobs, all in the house
 - What: the three guides looked alike (two were yellow-orange). Penny stays mint, Sir Spooksworth is now violet and Gus pink. Each has a job and a one-line description: Penny does fees and totals, Spooksworth writes the cancel, refund and fee-waiver emails, and Gus handles busting and goals. The chat opens with questions from the chosen guide's speciality, and the AI guide leans its answers toward it (facts unchanged). All three now stand on the Haunted House front porch; tap one to pick them, hover to see what they do.

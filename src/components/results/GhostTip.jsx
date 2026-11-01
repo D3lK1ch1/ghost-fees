@@ -6,10 +6,18 @@ import { cn } from '@/lib/utils';
 // extra: give the ghost an alt or aria-label too so screen readers hear the name.
 // align="start" anchors the label to the left, for ghosts near a left edge.
 // align="fill" makes the label as wide as the ghost, for tiles in a tight grid.
-export default function GhostTip({ label, detail, className, children, side = 'top', align = 'center' }) {
+// biggest marks the largest leak or subscription with a steady orange glow (the
+// Haunted orange in every theme) and says so in the label.
+export default function GhostTip({ label, detail, className, children, side = 'top', align = 'center', biggest = false }) {
   return (
     <span className={cn('group/ghost relative inline-flex', className)}>
-      <span className="w-full transition-transform duration-200 group-hover/ghost:-translate-y-0.5 group-hover/ghost:scale-110 group-hover/ghost:drop-shadow-[0_0_14px_hsl(var(--primary)/0.85)]">
+      <span
+        className={cn(
+          'w-full transition-transform duration-200 group-hover/ghost:-translate-y-0.5 group-hover/ghost:scale-110 group-hover/ghost:drop-shadow-[0_0_14px_hsl(var(--primary)/0.85)]',
+          biggest && '[filter:drop-shadow(0_0_4px_hsl(30_100%_62%))_drop-shadow(0_0_14px_hsl(30_100%_62%))]',
+          biggest && align === 'fill' && 'rounded-xl ring-2 ring-[hsl(30_100%_62%)]',
+        )}
+      >
         {children}
       </span>
       <span
@@ -20,7 +28,10 @@ export default function GhostTip({ label, detail, className, children, side = 't
           { start: 'left-0 text-left', fill: 'inset-x-0 w-auto max-w-none', center: 'left-1/2 -translate-x-1/2' }[align],
         )}
       >
-        <span className="block font-bold">{label}</span>
+        <span className="block font-bold">
+          {biggest && <span className="mr-1 inline-block rounded-full bg-[hsl(30_100%_62%)] px-1.5 align-[1px] text-[9.5px] font-bold uppercase tracking-wide text-[#1b1233]">Biggest</span>}
+          {label}
+        </span>
         {detail && <span className="block text-[#d9cff5]">{detail}</span>}
       </span>
     </span>

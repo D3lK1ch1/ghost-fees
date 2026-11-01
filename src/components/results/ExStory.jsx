@@ -49,7 +49,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn })
         <div className="flex items-center gap-2.5 border-b border-border pb-2.5">
           <div className="flex -space-x-2">
             {shown.slice(0, 3).map((item) => (
-              <GhostTip key={item.id} side="bottom" align="start" label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
+              <GhostTip key={item.id} side="bottom" align="start" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
                 <img src={exAvatar(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full ring-2 ring-background" />
               </GhostTip>
             ))}
@@ -66,7 +66,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn })
             const line = theme.lines.find((entry) => entry.match.test(item.merchant))?.text || theme.fallbackLine;
             return (
               <motion.li key={item.id} {...enter(index)} className="flex items-end gap-2">
-                <GhostTip className="shrink-0" align="start" label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
+                <GhostTip className="shrink-0" align="start" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
                   <img src={exAvatar(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full" />
                 </GhostTip>
                 <div className="max-w-[85%]">
