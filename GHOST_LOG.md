@@ -149,3 +149,17 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/ (new: ExJourney, ExScanChat, ExMovingOn, ExBlockedChat, ExInboxZero, HeartbreakHouse, GlowUpFund), src/lib/ghostFees/exJourney.js (new), src/hooks/use-ghost-list.jsx (new), ghostList.js, exArt.js, ResultsView.jsx, SubscriptionsSection.jsx, public/themes/ex
 - How to test: pick 💔, Try a sample statement and go through every screen; block an ex, then check Heartbreak House and Subscriptions.
 - User feedback that drove this: "why can't the UI be fully implemented ... the storyline ... look how different that is".
+
+## Mon 2 Nov 2026
+
+### 💔 every tab matches the design, silver phone and upload, new logo
+- What: the scanning chat sits in the silver phone, "Deep breath. Show me." is a chat message and the message bar is an upload button. All 8 tabs are back in 💔, each opening with its design screen: Glow-up plan (I'm Fine: power-on plan) with Weekend away (Gone fishing), Monthly check-in, The ex comes back, What your exes paid for. I'm Fine has its own words and art. Heartbreak House exes float and drift. Bank fees get a pink ghost instead of the piggy bank. Receipt Ghost logo and Baloo 2 wordmark in the header.
+- Files: src/components/ex/ExTabScreens.jsx (new), ExAct2.jsx, ExScanChat.jsx, ExKit.jsx, HeartbreakHouse.jsx, src/components/site/ReceiptGhost.jsx (new), src/lib/ghostFees/exArt.js, ResultsView.jsx
+- How to test: pick 💔, upload a CSV, try both ghosts and open every tab.
+- User feedback that drove this: "each theme should have same content and functionality as the haunted house"
+
+### 🎄 every tab matches the design, Winter and Summer
+- What: each Christmas tab opens with its stave from the design. Fees Past (Dusty), Jacob's chain (break a link per leak), Christmas morning (dawn breaks as links break), Yet to come (the Hooded One), Jolly's letters (every subscription a dish), Changed my ways (Tiny Savings and the cancel list), Gift to yourself (gift tag). Features underneath unchanged.
+- Files: src/components/xmas/ (new: XmasKit, XmasLeakCard, XmasTabScreens, JacobsChain, ChangedMyWays), ResultsView.jsx
+- How to test: pick 🎄, upload a CSV, open every tab in Winter and Summer.
+- Checked: CSV upload works in all three themes; email drafting opens from 🎄 cards.
