@@ -51,3 +51,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/ghostItLink.js, src/components/landing/FromGhostIt.jsx, base44/entities/Analytics.jsonc, base44/functions/logRefVisit (all new), Landing.jsx
 - How to test: Open /?ref=asi1&subs=netflix,stan,disney,spotify,youtube&prices=netflix:18.99,stan:16.00,disney:16.00,spotify:13.99,youtube:16.99
 - User feedback that drove this: (fill in)
+
+### Public progress page (/progress)
+- What: a public "Ghost Log" page linked from the footer as "Our progress": live scoreboard (statements scanned, $ found on real statements from feedback, feedback responses, "found something real", "would pay", visits from the Ghost It agent), a "You said, we changed" timeline and a dated build streak. "Copy today's update" copies a ready LinkedIn line. Numbers come from a backend function that returns aggregate counts only, never names or statement data; anything unavailable shows "coming soon".
+- Files: src/pages/Progress.jsx, src/data/changelog.json, src/data/shipped.json, base44/functions/progressStats (all new), App.jsx, SiteFooter.jsx
+- How to test: open /progress on mobile and desktop. To add a real change, edit src/data/changelog.json: {"date", "quote", "who" (first name only if they said OK), "change", "beforeImg", "afterImg"} and delete the example entry. Add each day's work to src/data/shipped.json.
+- User feedback that drove this: (fill in)

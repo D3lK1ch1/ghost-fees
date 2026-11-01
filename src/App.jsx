@@ -10,6 +10,7 @@ import { ScanProvider } from '@/lib/ScanContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import Landing from '@/pages/Landing';
 import FeedbackAdmin from '@/pages/FeedbackAdmin';
+import Progress from '@/pages/Progress';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -46,6 +47,7 @@ const AuthenticatedApp = () => {
     <ScanProvider>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/progress" element={<Progress />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
