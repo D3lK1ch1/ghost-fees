@@ -292,7 +292,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
               <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
 
-              {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} />}
+              {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
 
               {tab === 'ghosts' && (
                 <CardList className="mt-4 grid gap-3">
