@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -24,6 +24,8 @@ import SiteFooter from '@/components/site/SiteFooter';
 import GhostGuide from '@/components/guide/GhostGuide';
 import { CardList, CardItem } from '@/components/GhostAnimations';
 import { useScan } from '@/lib/ScanContext';
+import { useSavedChoice } from '@/hooks/use-saved-choice';
+import { EX_GHOST_KEY, EX_GHOSTS, exAvatarMap } from '@/lib/ghostFees/exArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { trackEvent } from '@/lib/session';
 import { clearGhostList } from '@/lib/ghostFees/ghostList';
@@ -60,6 +62,12 @@ const WINDOWS = [
 
 export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
+  // 💔 only: one photo avatar per ex, the same on every screen.
+  const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
+  const avatarFor = useMemo(
+    () => exAvatarMap([...subscriptions.map((item) => item.merchant), ...leaks.map((leak) => leak.merchant)], exPick),
+    [subscriptions, leaks, exPick],
+  );
   const { windowMonths, setWindowMonths, fileErrors, fileNames } = useScan();
   const { theme } = useTheme();
   const [emailLeak, setEmailLeak] = useState(null);
@@ -188,6 +196,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
         {leaks.length > 0 && guessDone && (
           <ThemeStory
+            avatarFor={avatarFor}
             subscriptions={subscriptions}
             leaks={leaks}
             leaksTotal={total}
@@ -267,7 +276,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                             Most useful
                           </span>
                         )}
-                        <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
+                        <LeakCard leak={leak} avatar={avatarFor(leak.merchant)} onDraft={() => openEmail(leak)} />
                       </div>
                     </CardItem>
                   ))}

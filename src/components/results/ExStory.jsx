@@ -6,7 +6,7 @@ import GhostTip from './GhostTip';
 
 // My Ex Ghosted Me: "Unread messages from your exes".
 // One message per real subscription, with the real monthly price. Kind jokes only.
-export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn }) {
+export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, avatarFor }) {
   const reduce = useReducedMotion();
   const [pickKey] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const pick = EX_PICKS[pickKey];
@@ -50,7 +50,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn })
           <div className="flex -space-x-2">
             {shown.slice(0, 3).map((item) => (
               <GhostTip key={item.id} side="bottom" align="start" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
-                <img src={exAvatar(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full ring-2 ring-background" />
+                <img src={(avatarFor || exAvatar)(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full ring-2 ring-background" />
               </GhostTip>
             ))}
           </div>
@@ -67,7 +67,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn })
             return (
               <motion.li key={item.id} {...enter(index)} className="flex items-end gap-2">
                 <GhostTip className="shrink-0" align="start" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
-                  <img src={exAvatar(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full" />
+                  <img src={(avatarFor || exAvatar)(item.merchant)} alt={item.merchant} width={28} height={28} className="h-7 w-7 rounded-full" />
                 </GhostTip>
                 <div className="max-w-[85%]">
                   <div className="pl-1 text-[11px] font-bold text-primary">{item.merchant}</div>
