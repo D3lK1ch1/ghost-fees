@@ -21,7 +21,7 @@ function rowDate(value) {
   return date.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: '2-digit', timeZone: 'UTC' });
 }
 
-export default function LeakCard({ leak, onDraft }) {
+export default function LeakCard({ leak, onDraft, avatar }) {
   const [open, setOpen] = useState(false);
   const { theme } = useTheme();
   // The My Ex theme uses dark cards with the merchant's ex ghost on the left.
@@ -43,7 +43,7 @@ export default function LeakCard({ leak, onDraft }) {
         <div className="flex min-w-0 items-start gap-3">
           {dark && (
             <img
-              src={exAvatar(leak.merchant)}
+              src={avatar || exAvatar(leak.merchant)}
               alt=""
               width={44}
               height={44}
