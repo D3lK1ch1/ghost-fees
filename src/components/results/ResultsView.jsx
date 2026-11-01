@@ -179,7 +179,16 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
 
-        {leaks.length > 0 && guessDone && <ThemeStory subscriptions={subscriptions} leaksTotal={total} />}
+        {leaks.length > 0 && guessDone && (
+          <ThemeStory
+            subscriptions={subscriptions}
+            leaksTotal={total}
+            onMoveOn={() => {
+              setTab('subscriptions');
+              setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);
+            }}
+          />
+        )}
 
         <p className="mt-3 flex items-start gap-2 rounded-2xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-4 py-2.5 text-[12.5px] leading-relaxed text-[#bff5e8]">
           <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />

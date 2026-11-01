@@ -88,3 +88,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Privacy.jsx (new), App.jsx, SiteFooter.jsx
 - How to test: footer > Privacy. To do: add a contact email for deletion requests, and update the PDF row once PDFs are deleted after reading.
 - User feedback that drove this: (fill in)
+
+### My Ex Ghosted Me: new art, Choose your ghost and the exes chat
+- What: the 💔 landing now shows the ghost art with a thought bubble and a Choose your ghost picker (Heartbroken, her pick, or I'm Fine, his pick). The pick changes the art and headline only and is remembered in this browser. On results, "Unread messages from your exes" is now a group chat: one avatar and message per real subscription, a shocked ghost, the real yearly total, and Help me move on, which opens the Subscriptions tab. Art is WebP, about 190 KB in total.
+- Files: public/themes/ex (new), src/components/landing/ExHeroArt.jsx (new), src/components/results/ExStory.jsx (new), src/lib/ghostFees/exArt.js (new), src/hooks/use-saved-choice.jsx (new), Hero.jsx, ThemeStory.jsx, ResultsView.jsx
+- How to test: pick 💔, switch between Heartbroken and I'm Fine on the landing page, then Try a sample statement, Reveal, and check the exes chat and Help me move on.
+- User feedback that drove this: (fill in)
