@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 
-// Cass, the cancel ghost. Looks up one company online and returns how to cancel:
+// Cassy, the cancel ghost. Looks up one company online and returns how to cancel:
 // the official cancel page, the steps, the support phone number and hours, a
 // support email or contact page, and the sources it used.
 // Only the merchant name is sent here, never statement data. Nothing is stored.
@@ -44,7 +44,7 @@ export default async function (req) {
     if (merchant.length < 2) return Response.json({ error: 'Which subscription should I look up?' }, { status: 400 });
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `You are Cass, the cancel ghost in the Ghost Fees app. An Australian customer wants to cancel "${merchant}" (as it appears on a bank statement; it may be abbreviated).
+      prompt: `You are Cassy, the cancel ghost in the Ghost Fees app. An Australian customer wants to cancel "${merchant}" (as it appears on a bank statement; it may be abbreviated).
 
 Search the web and find, from the company's own official website wherever possible:
 - the exact page where a customer cancels
@@ -83,6 +83,6 @@ Rules:
       checkedAt: new Date().toISOString().slice(0, 10),
     });
   } catch (error) {
-    return Response.json({ error: error?.message || 'Cass could not reach the internet just now.' }, { status: 500 });
+    return Response.json({ error: error?.message || 'Cassy could not reach the internet just now.' }, { status: 500 });
   }
 }

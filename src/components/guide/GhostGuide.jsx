@@ -194,7 +194,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     setMessages((current) => [...current, { role: 'user', text }]);
     setInput('');
 
-    // Cass: name a subscription (or ask about cancelling one) and she looks it up.
+    // Cassy: name a subscription (or ask about cancelling one) and she looks it up.
     const subs = [...(analysis.subscriptions || [])].sort((a, b) => b.monthly - a.monthly);
     const named = [...subs, ...leaks].find((item) => {
       const word = String(item.merchant || '').split(/\s+/)[0];

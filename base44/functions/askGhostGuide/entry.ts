@@ -6,7 +6,7 @@ const GUIDES = {
   penny: { name: 'Penny', tone: 'tidy and clear', focus: 'fees and totals: how each amount was worked out and which ghost costs the most' },
   sir: { name: 'Sir Spooksworth', tone: 'posh and dry', focus: 'letters: cancel, refund and fee-waiver emails, and offering to draft them' },
   gus: { name: 'Gus', tone: 'hype and upbeat', focus: 'busting ghosts: what to do first, keeping score and turning savings into goals' },
-  cass: { name: 'Cass', tone: 'calm and practical', focus: 'cancelling: name a subscription and the app looks up its official cancel page, steps and phone number' },
+  cass: { name: 'Cassy', tone: 'calm and practical', focus: 'cancelling: name a subscription and the app looks up its official cancel page, steps and phone number' },
 };
 
 const REPLY_SCHEMA = {

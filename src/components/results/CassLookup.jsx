@@ -24,7 +24,7 @@ Kind regards,
   return { subject, body };
 }
 
-// Cass's answer card: official cancel page, steps, phone, support email or page,
+// Cassy's answer card: official cancel page, steps, phone, support email or page,
 // a ready email to that address, and where it came from. Works in every theme.
 export default function CassLookup({ merchant, monthly, auto = false, className = '' }) {
   const [info, setInfo] = useState(() => cachedLookup(merchant));
@@ -50,10 +50,10 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
       <div className={cn('flex items-center gap-3 rounded-2xl border border-dashed p-3', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
         <GhostMark className="h-8 w-8 shrink-0 animate-float" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
         <div className="min-w-0 flex-1 text-[13px] text-foreground">
-          {state === 'error' ? 'Cass couldn’t reach the internet just now.' : <>Ask <b>Cass</b>, the cancel ghost, to find the official link, steps and phone number for {merchant}.</>}
+          {state === 'error' ? 'Cassy couldn’t reach the internet just now.' : <>Ask <b>Cassy</b>, the cancel ghost, to find the official link, steps and phone number for {merchant}.</>}
         </div>
         <button type="button" onClick={look} className="shrink-0 rounded-full px-3 py-1.5 text-[12.5px] font-bold text-[#1a1230]" style={{ background: CASS_COLOR }}>
-          {state === 'error' ? 'Try again' : 'Ask Cass'}
+          {state === 'error' ? 'Try again' : 'Ask Cassy'}
         </button>
       </div>
     );
@@ -63,7 +63,7 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
     return (
       <div className={cn('flex items-center gap-3 rounded-2xl border p-3', className)} style={{ borderColor: `${CASS_COLOR}88` }} aria-live="polite">
         <span className="flex gap-1">{[0, 1, 2].map((i) => <GhostMark key={i} className="h-5 w-5 animate-bob" style={{ color: CASS_COLOR, animationDelay: `${i * 0.2}s` }} eyeColor="#1a1230" />)}</span>
-        <span className="text-[13px] text-muted-foreground">Cass is searching {merchant}&apos;s official site...</span>
+        <span className="text-[13px] text-muted-foreground">Cassy is searching {merchant}&apos;s official site...</span>
       </div>
     );
   }
@@ -71,7 +71,7 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
   if (!info?.found) {
     return (
       <div className={cn('rounded-2xl border p-3 text-[13px] text-foreground', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
-        <b>Cass couldn&apos;t confirm who &quot;{merchant}&quot; is.</b> Check your sign-up email for the company name, or search their official site for &quot;cancel subscription&quot;.
+        <b>Cassy couldn&apos;t confirm who &quot;{merchant}&quot; is.</b> Check your sign-up email for the company name, or search their official site for &quot;cancel subscription&quot;.
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
       </div>
 
       <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-        Cass checked online on {info.checkedAt}. {info.confidence === 'high' ? 'From the official site.' : 'Not all from the official site, so double-check before you call or pay.'}
+        Cassy checked online on {info.checkedAt}. {info.confidence === 'high' ? 'From the official site.' : 'Not all from the official site, so double-check before you call or pay.'}
         {info.sources.length > 0 && <> Sources: {info.sources.map((src, i) => <a key={src} href={src} target="_blank" rel="noreferrer" className="underline">{i ? ', ' : ''}{new URL(src).hostname.replace(/^www\./, '')}</a>)}.</>}
       </p>
     </div>

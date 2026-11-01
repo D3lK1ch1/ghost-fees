@@ -220,7 +220,7 @@ export default function HauntedCalendar({ leaks, subscriptions, avatarFor }) {
             ))}
             {!upcoming.length && <li className="py-2 text-[13px] text-muted-foreground">No subscriptions to remind you about.</li>}
           </ul>
-          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">Schedule picks a task and a day, then adds it to your calendar or Google Calendar. Add all puts a reminder 2 days before every charge.</p>
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">Schedule picks a task and a day, then adds it to Google, Outlook or Apple Calendar. Add all puts a reminder 2 days before every charge.</p>
         </div>
       </div>
       <TaskDialog target={task} onClose={() => setTask(null)} />

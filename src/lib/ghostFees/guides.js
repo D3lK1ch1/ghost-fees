@@ -43,7 +43,7 @@ export const GUIDES = {
     done: (total) => `HOUSE CLEARED! ${money(total)} of ghosts, gone! Legend!`,
   },
   cass: {
-    name: 'Cass',
+    name: 'Cassy',
     role: 'the cancel ghost',
     bonus: true, // bonus assistant: looks things up online
     color: '#f2a65a',

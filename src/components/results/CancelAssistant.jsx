@@ -45,8 +45,8 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
   return (
     <section className="mt-6 rounded-3xl border border-border bg-card p-4 sm:p-5" aria-label="Cancellation assistant">
       <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-primary">Cancellation assistant</p>
-      <h3 className="mt-1 font-heading text-[20px] font-bold text-foreground">Cancel it, step by step</h3>
-      <p className="mt-1 text-[13px] text-muted-foreground">Pick a subscription. We&apos;ll take you to the official cancel page and walk you through it.</p>
+      <h3 className="mt-1 font-heading text-[20px] font-bold text-foreground">Meet Cassy, your cancellation assistant</h3>
+      <p className="mt-1 text-[13px] text-muted-foreground">Pick a subscription. Cassy finds the official cancel page, the steps and the phone number, and walks you through it.</p>
 
       <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Subscription to cancel">
         {subs.map((item, index) => {
