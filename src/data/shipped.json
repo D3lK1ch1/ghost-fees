@@ -78,5 +78,33 @@
   {
     "date": "2026-11-01",
     "title": "Privacy page: exactly what we keep"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "Free beta, with server-side limits and Stripe unlock ready for when charging starts"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "Sourced stats on the home page and your own number next to the price"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "Do you have any of these? Typical prices, no upload"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "Filter and sort subscriptions by type"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "PDF report"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "Saved so far and House Cleared badge on the Ghost List"
+  },
+  {
+    "date": "2026-11-02",
+    "title": "Feedback to Slack, Delete my server data, life-stage tips"
   }
 ]
