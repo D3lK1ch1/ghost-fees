@@ -235,7 +235,7 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
                 ) : (
                   <img src={treat.art} alt="" className="ex-dance block h-[92%] w-[86%] object-contain object-bottom" style={{ '--gs': `${1.7 + index * 0.2}s` }} />
                 )}
-                <img src={avatarFor(item.merchant)} alt="" className="absolute left-2 top-2 h-8 w-8 rounded-full ring-2 ring-[#15131a]" />
+                <img src={avatarFor(item.merchant)} alt="" className="object-contain absolute left-2 top-2 h-8 w-8" />
               </div>
               <div className="flex flex-col gap-0.5 px-3 pb-3 pt-2.5">
                 <span className="ex-fredoka text-[17px] font-semibold">{treat.label}</span>

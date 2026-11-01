@@ -13,7 +13,7 @@ export default function ExBlockedChat({ theme, pick, pickKey, ex, glow, avatarFo
   return (
     <Screen key={run} stars={false}>
       <div className="relative z-[1] flex items-center gap-3 px-4 pb-3.5 pt-[18px]" style={{ background: C.bar, borderBottom: `1px solid ${C.barLine}` }}>
-        <img src={avatarFor(ex.merchant)} alt="" className="h-[42px] w-[42px] flex-none rounded-full object-cover opacity-50 grayscale" />
+        <img src={avatarFor(ex.merchant)} alt="" className="h-[42px] w-[42px] flex-none object-contain opacity-50 grayscale" />
         <div className="flex flex-col gap-0.5">
           <div className="ex-fredoka text-[18px] font-semibold">{ex.merchant}</div>
           <div className="text-[13px] font-bold" style={{ color: C.muted }}>Blocked</div>

@@ -25,7 +25,7 @@
 .ex-shock{animation:exShock 2.8s ease-in-out infinite;transform-origin:50% 80%}
 .ex-breathe{animation:exBreathe 4.2s ease-in-out infinite;transform-origin:50% 100%}
 .ex-float{animation:exFloat var(--gs,3.6s) ease-in-out infinite;transform-origin:50% 80%}
-.ex-av{transform-origin:50% 90%;box-shadow:0 0 0 2px rgba(255,255,255,.12);animation:exAvBob 2.6s ease-in-out infinite}
+.ex-av{transform-origin:50% 90%;filter:drop-shadow(0 4px 8px rgba(0,0,0,.35));animation:exAvBob 2.6s ease-in-out infinite}
 .ex-ghost{animation:exDrift var(--gd,7s) ease-in-out infinite;animation-delay:var(--gdl,0s)}
 .ex-ghost:hover .ex-wig{animation:exWiggle .5s ease-in-out;transform-origin:50% 70%}
 .ex-shine{background:linear-gradient(100deg,#ff6f7d 20%,#ffe3a3 40%,#5ee6c8 55%,#ff6f7d 75%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:exShine 4.5s linear infinite}

@@ -37,7 +37,7 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
             alt=""
             width={56}
             height={56}
-            className={cn('h-14 w-14 rounded-full drop-shadow-[0_6px_14px_rgba(255,111,125,0.35)]', lit && 'opacity-60 grayscale')}
+            className={cn('h-14 w-14 object-contain drop-shadow-[0_6px_14px_rgba(255,111,125,0.35)]', lit && 'opacity-60 grayscale')}
           />
           <span className="absolute -right-6 -top-1 rounded-full bg-white/85 px-1.5 text-[10px] font-black leading-4 text-[#141218]">{lit ? '✓' : '•••'}</span>
         </span>
@@ -117,7 +117,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
               style={{ left: d.left, top: d.top, '--gd': `${d.gd}s`, '--gdx': '10px', '--gdl': `${d.delay}s` }}
             >
               <span className="ex-float block" style={{ '--gs': `${d.gs}s`, animationDelay: `${d.delay}s` }}>
-                <img src={avatarFor(item.merchant)} alt="" width={d.size} height={d.size} className="rounded-full drop-shadow-[0_0_10px_rgba(255,111,125,0.45)]" style={{ width: d.size, height: d.size }} />
+                <img src={avatarFor(item.merchant)} alt="" width={d.size} height={d.size} className="object-contain  drop-shadow-[0_0_10px_rgba(255,111,125,0.45)]" style={{ width: d.size, height: d.size }} />
               </span>
             </span>
           );
@@ -170,7 +170,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
       {/* The selected ex */}
       <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
         <div className="flex items-start gap-3">
-          <img src={avatarFor(selected.merchant)} alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-full" />
+          <img src={avatarFor(selected.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
           <div className="min-w-0 flex-1">
             <p className="font-heading text-[17px] font-bold text-white">{selected.merchant}</p>
             <p className="text-[12.5px] text-white/60">{kindOf(selected.merchant)}</p>

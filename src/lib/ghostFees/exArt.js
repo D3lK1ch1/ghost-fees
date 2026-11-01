@@ -104,33 +104,34 @@ export function exAvatar(merchant = '') {
   return `${ART}/exav-${avatarKey(merchant)}.webp`;
 }
 
-// Avatars for the exes. Known exes (Netflix, Stan, gym, Adobe, Streammax) keep their
-// drawn character from the design. Everyone else gets a photo avatar, one set per
-// pick: pink ghosts for Heartbroken, hoodie ghosts for I'm Fine. Every merchant gets its own face (no doubles until
-// the set runs out), and the same merchant keeps
+// Avatars for the exes: cut-out ghosts, no circle behind them. Known exes (Netflix,
+// Stan, gym, Adobe, Streammax) keep their own character from the design. Everyone
+// else first gets an ex character nobody is using yet, then a full-body ghost from
+// the pick's art. No doubles until the set runs out, and the same merchant keeps
 // the same face on every screen because the map is built once per results page.
-const PHOTO_SETS = {
-  heartbroken: ['pf-card', 'pf-phone', 'pf-rose', 'pf-determined', 'pf-sassy', 'pf-shocked', 'pf-sad'],
-  fine: ['pm-hoodie', 'pm-block', 'pm-bbq', 'pm-fish', 'pm-couch', 'pm-kicks', 'pm-footy', 'pm-lift', 'pm-shock', 'pm-cap'],
+const EX_KEYS = ['more', 'streammax', 'stan', 'adobe', 'gym', 'netflix'];
+const BODY_SETS = {
+  heartbroken: ['pink-phone', 'ghost-shocked', 'ghost-focused', 'ghost-happy', 'ghost-sad', 'ghost-dinner', 'ghost-sassy'],
+  fine: ['men-cap', 'men-shaker', 'men-shock', 'men-couch', 'men-footy', 'men-bbqshades', 'men-lift', 'men-block'],
 };
 
 export function exAvatarMap(merchants = [], pickKey = 'heartbroken') {
-  const pool = PHOTO_SETS[pickKey] || PHOTO_SETS.heartbroken;
+  const unique = [...new Set(merchants.filter(Boolean))];
   const map = new Map();
-  const used = new Set();
-  let next = 0;
-  merchants.forEach((merchant) => {
-    if (!merchant || map.has(merchant)) return;
-    // Known exes keep their drawn character from the design.
-    if (avatarKey(merchant) !== 'more') {
+  const usedKeys = new Set(unique.map((merchant) => avatarKey(merchant)).filter((key) => key !== 'more'));
+  const freeKeys = EX_KEYS.filter((key) => !usedKeys.has(key));
+  const bodies = BODY_SETS[pickKey] || BODY_SETS.heartbroken;
+  let body = 0;
+  unique.forEach((merchant) => {
+    const key = avatarKey(merchant);
+    if (key !== 'more') {
       map.set(merchant, exAvatar(merchant));
-      return;
+    } else if (freeKeys.length) {
+      map.set(merchant, `${ART}/exav-${freeKeys.shift()}.webp`);
+    } else {
+      map.set(merchant, `${ART}/${bodies[body % bodies.length]}.webp`);
+      body += 1;
     }
-    const free = pool.find((name) => !used.has(name));
-    const file = free || pool[next % pool.length];
-    next += 1;
-    used.add(file);
-    map.set(merchant, `${ART}/avatars/${file}.webp`);
   });
   return (merchant) => map.get(merchant) || exAvatar(merchant);
 }

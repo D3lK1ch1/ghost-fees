@@ -72,7 +72,7 @@ export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, 
         return (
           <div key={item.id} className="ex-in flex flex-col gap-3 p-4" style={{ ...card, animationDelay: `${Math.min(1.2 + index * 0.25, 2.2)}s` }}>
             <div className="flex items-center gap-3">
-              <img src={avatarFor(item.merchant)} alt="" className="ex-av h-[42px] w-[42px] flex-none rounded-full object-cover" />
+              <img src={avatarFor(item.merchant)} alt="" className="ex-av h-[42px] w-[42px] flex-none object-contain" />
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="text-[17px] font-extrabold">{item.merchant}</span>
                 <span className="text-[13px]" style={{ color: C.muted }}>{kindOf(item.merchant)}{tag && ` · ${tag}`}</span>
