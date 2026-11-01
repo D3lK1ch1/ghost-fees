@@ -14,7 +14,7 @@ export default function ExHeroArt({ pickKey, setPickKey }) {
         <ThoughtBubble
           trail="left"
           tones="text-[#2a1020]"
-          className="absolute -right-6 top-2 max-w-[150px] text-left sm:-right-16"
+          className="absolute -right-6 top-3 max-w-[164px] sm:-right-16"
         >
           {pick.heroBubble}
         </ThoughtBubble>
