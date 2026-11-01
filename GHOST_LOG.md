@@ -75,3 +75,10 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/levels.js (new), GhostList.jsx, SubscriptionsSection.jsx, ResultsView.jsx
 - How to test: sample statement > Subscriptions: cancel Netflix (a double-up) and see Level and Overlap Buster unlock; cancel Fitlife Gym to reach Exorcist.
 - User feedback that drove this: (fill in)
+
+### Upload safety: 5 MB limit, PDF/CSV only, shorter file links
+- What: files over 5 MB are refused in the browser before anything is uploaded, and again on the server for PDFs; the server also refuses anything that isn't a PDF. The private link used to read a PDF now expires after 2 minutes instead of 10. Checked: no statement text is logged anywhere and no keys are in the code.
+- Not possible yet (honest note): the Base44 SDK has no call to delete an uploaded private file, so PDFs stay in Base44 private storage. CSVs never leave the browser. Next: read PDFs in the browser so files never leave the device, or delete them from the Base44 dashboard storage settings.
+- Files: src/lib/ScanContext.jsx, base44/functions/parseStatement
+- How to test: upload a CSV or PDF over 5 MB: the error screen names the file and says it's over 5 MB.
+- User feedback that drove this: (fill in)
