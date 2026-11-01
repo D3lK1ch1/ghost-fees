@@ -189,6 +189,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             fileName={usedSample ? 'sample-statement.csv' : fileNames[0] || 'your-statement.csv'}
             avatarFor={avatarFor}
             onSeeAll={() => document.getElementById('see-everything')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            onUpload={onRestart}
           />
         )}
         {exStory && <h2 id="see-everything" className="mt-10 scroll-mt-4 font-heading text-[22px] font-bold text-foreground">See everything</h2>}

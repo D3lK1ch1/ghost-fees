@@ -10,13 +10,16 @@ import ExScanChat from './ExScanChat';
 import ExMovingOn from './ExMovingOn';
 import ExBlockedChat from './ExBlockedChat';
 import ExInboxZero from './ExInboxZero';
+import { ExCheckin, ExComesBack, ExGlowupPlan, ExWeekend } from './ExAct2';
+import { Screen } from './ExKit';
 
 // My Ex Ghosted Me story mode, Act 1 of the design, one phone screen at a time:
-// scanning chat > Unread messages > Moving on > Blocked chat per ex > Inbox zero.
+// scanning chat > Unread messages > Moving on > Blocked chat per ex > Inbox zero,
+// then Act 2: the ex comes back > glow-up plan > weekend away > monthly check-in.
 // Same features as the other themes underneath: blocking an ex adds it to the Ghost
 // List (this browser only), cancel steps and links are the official ones, and every
 // number comes from the scan. The full results stay below under See everything.
-export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeAll }) {
+export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeAll, onUpload }) {
   const { subscriptions, leaks } = analysis;
   const [pickKey] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const pick = EX_PICKS[pickKey];
@@ -32,6 +35,8 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
   const glow = glowUp(subscriptions, blocked);
   const priceRiseIds = useMemo(() => new Set(leaks.filter((leak) => leak.priceRise).map((leak) => leak.id)), [leaks]);
   const ex = subscriptions.find((item) => item.id === exId);
+  // The biggest ex you blocked stars in Act 2 (subscriptions are sorted biggest first).
+  const firstBlocked = subscriptions.find((item) => blocked.has(item.id));
 
   const go = (next, id = null) => {
     setHistory((list) => [...list, { scene, exId }]);
@@ -82,16 +87,18 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -24 }}
           transition={{ duration: 0.25 }}
-          className="rounded-[34px] border border-white/10 bg-[#17131c]/90 p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-5"
         >
-          {scene === 'scan' && <ExScanChat pick={pick} count={subscriptions.length} fileName={fileName} onNext={() => go('reveal')} />}
+          {scene === 'scan' && <ExScanChat pick={pick} pickKey={pickKey} count={subscriptions.length} fileName={fileName} onNext={() => go('reveal')} />}
           {scene === 'reveal' && (
-            <ExStory theme={theme} subscriptions={subscriptions} avatarFor={avatarFor} onSkip={() => go('moving')} onMoveOn={() => go('moving')} />
+            <Screen className="px-4 pb-6 pt-5">
+              <ExStory theme={theme} subscriptions={subscriptions} avatarFor={avatarFor} onSkip={() => go('moving')} onMoveOn={() => go('moving')} />
+            </Screen>
           )}
           {scene === 'moving' && (
             <ExMovingOn
               theme={theme}
               pick={pick}
+              pickKey={pickKey}
               subscriptions={subscriptions}
               glow={glow}
               blocked={blocked}
@@ -103,10 +110,16 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
             />
           )}
           {scene === 'blocked' && ex && (
-            <ExBlockedChat theme={theme} pick={pick} ex={ex} glow={glow} avatarFor={avatarFor} onNext={nextEx} />
+            <ExBlockedChat theme={theme} pick={pick} pickKey={pickKey} ex={ex} glow={glow} avatarFor={avatarFor} onNext={nextEx} />
           )}
           {scene === 'clear' && (
-            <ExInboxZero pick={pick} glow={glow} total={subscriptions.length} onSeeAll={onSeeAll} onBack={() => go('moving')} />
+            <ExInboxZero pick={pick} pickKey={pickKey} glow={glow} total={subscriptions.length} onSeeAll={onSeeAll} onBack={() => go('moving')} onNext={glow.blockedCount ? () => go('back') : null} />
+          )}
+          {scene === 'back' && firstBlocked && <ExComesBack pickKey={pickKey} ex={firstBlocked} onNext={() => go('plan')} />}
+          {scene === 'plan' && <ExGlowupPlan pickKey={pickKey} glow={glow} blockedCount={glow.blockedCount} onNext={() => go('weekend')} />}
+          {scene === 'weekend' && <ExWeekend pickKey={pickKey} glow={glow} biggest={firstBlocked} onNext={() => go('checkin')} />}
+          {scene === 'checkin' && (
+            <ExCheckin pick={pick} pickKey={pickKey} blockedCount={glow.blockedCount} onUpload={onUpload} onSeeAll={onSeeAll} />
           )}
         </motion.div>
       </AnimatePresence>
