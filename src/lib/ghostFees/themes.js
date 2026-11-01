@@ -75,4 +75,4 @@ export const THEMES = {
 };
 
 export const THEME_LIST = Object.values(THEMES);
-export const DEFAULT_THEME = 'haunted';
+export const DEFAULT_THEME = 'ex';
