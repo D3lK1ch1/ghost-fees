@@ -104,7 +104,10 @@ export function ThoughtBubble({ children, className, trail = 'right', tones }) {
             vectorEffect="non-scaling-stroke"
           />
         </svg>
-        <div className={cn('relative z-10 px-5 py-3.5 text-[13px] font-semibold leading-snug', tones)} style={{ color: INK }}>
+        <div
+          className={cn('relative z-10 flex min-h-[58px] items-center justify-center px-6 py-3 text-center text-[13px] font-semibold leading-[1.3] text-balance', tones)}
+          style={{ color: INK }}
+        >
           {children}
         </div>
       </div>
