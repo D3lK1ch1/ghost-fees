@@ -13,7 +13,7 @@ const card = { background: C.card, border: `1px solid ${C.line}`, borderRadius: 
 const blockedMonthly = (glow) => glow.fund / 12;
 
 // Design screen Ex8Back: an ex texts again after you cancelled.
-export function ExComesBack({ pickKey, ex, onNext }) {
+export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If the ex comes back' }) {
   const [copied, setCopied] = useState(false);
   const now = new Date();
   const time = now.toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' }).replace(/\s?[ap]m/i, '');
@@ -31,7 +31,7 @@ export function ExComesBack({ pickKey, ex, onNext }) {
   return (
     <Screen background="radial-gradient(ellipse at 50% 20%, #2e2834 0%, #15131a 60%)" maxY={26} className="gap-3 px-4 py-[22px]">
       <div className="relative flex flex-col items-center">
-        <div className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>Act 2 · If the ex comes back</div>
+        <div className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{label}</div>
         <div className="ex-fredoka text-[56px] font-semibold leading-none">{time}</div>
         <div className="text-[14px] font-bold" style={{ color: C.soft }}>{date}</div>
       </div>
@@ -42,7 +42,7 @@ export function ExComesBack({ pickKey, ex, onNext }) {
         </div>
       </div>
       <div className="relative flex h-[190px] items-end justify-center gap-1">
-        <Bubble kind="s" className="ex-in mb-[120px] text-[14px]" style={{ animationDelay: '.9s' }}>New phone. Who dis?</Bubble>
+        <Bubble kind="s" className="ex-in mb-[120px] text-[14px]" style={{ animationDelay: '.9s' }}>{pick?.backShout || 'New phone. Who dis?'}</Bubble>
         <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} />
       </div>
       <div className="ex-in relative flex flex-col gap-2.5 p-4" style={{ ...card, animationDelay: '1.45s' }}>
@@ -52,28 +52,39 @@ export function ExComesBack({ pickKey, ex, onNext }) {
       </div>
       <div className="flex-1" />
       <PrimaryButton onClick={copy} delay="2s">{copied ? 'Copied' : 'Copy refund message'}</PrimaryButton>
-      <GhostButton onClick={onNext} delay="2s">Next: your glow-up plan</GhostButton>
+      {onNext && <GhostButton onClick={onNext} delay="2s">Next: your glow-up plan</GhostButton>}
     </Screen>
   );
 }
 
 // Design screen Ex9Glowup: the better-life plan, month by month.
-export function ExGlowupPlan({ pickKey, glow, blockedCount, onNext }) {
-  const monthly = blockedMonthly(glow);
+export function ExGlowupPlan({ pick, pickKey, glow, blockedCount, onNext, monthlyIfAll = 0, label = 'Act 2 · The glow-up' }) {
+  // With nothing blocked yet, show what the plan would be if you blocked them all.
+  const preview = glow.fund <= 0 && monthlyIfAll > 0;
+  const monthly = preview ? monthlyIfAll : blockedMonthly(glow);
   // A timeline from today: nothing is done yet, month 1 is next. Each milestone's
   // money is what your blocked exes would have charged by that month.
-  const badge = (index) => (index === 0
-    ? { text: 'Next up', style: { color: C.coralSoft, border: '1.5px solid #ffa3ab' } }
-    : { text: 'Later', style: { color: C.muted, border: `1.5px solid ${C.line}` } });
+  // Done once the blocked exes' yearly money covers that milestone, as in the design.
+  const nextIndex = glow.steps.findIndex((step) => !step.unlocked);
+  const badge = (index) => {
+    if (!preview && glow.steps[index].unlocked) {
+      return index === nextIndex - 1
+        ? { text: 'Unlocked', style: { background: C.coral, color: C.bg } }
+        : { text: 'Done', style: { background: C.mint, color: C.mintInk } };
+    }
+    if (index === (nextIndex < 0 ? -1 : nextIndex)) return { text: 'Next up', style: { color: C.coralSoft, border: '1.5px solid #ffa3ab' } };
+    return { text: 'Later', style: { color: C.muted, border: `1.5px solid ${C.line}` } };
+  };
+  const lit = (index) => !preview && glow.steps[index].unlocked;
 
   return (
     <Screen background="radial-gradient(ellipse at 80% 10%, #2a2530 0%, #15131a 55%)" className="gap-3.5 px-4 pb-[22px] pt-[18px]">
       <div className="relative flex items-end gap-1.5">
         <div className="flex min-w-0 flex-1 flex-col gap-1 pb-2">
-          <div className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>Act 2 · The glow-up</div>
-          <h2 className="ex-fredoka m-0 text-[26px] font-bold leading-tight">Your better-life plan</h2>
+          <div className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{label}</div>
+          <h2 className="ex-fredoka m-0 text-[26px] font-bold leading-tight">{pick?.planTitle || 'Your better-life plan'}</h2>
           <div className="text-[14px]" style={{ color: C.soft }}>
-            {monthly > 0 ? `${money(monthly)} a month you're not giving your exes.` : 'Block an ex to start your plan.'}
+            {monthly > 0 ? `${money(monthly)} a month ${preview ? 'once you block them all' : "you're not giving your exes"}.` : 'Block an ex to start your plan.'}
           </div>
         </div>
         <GhostPal pickKey={pickKey} mood="focused" width={104} speed={3.5} drift={5.95} />
@@ -84,14 +95,14 @@ export function ExGlowupPlan({ pickKey, glow, blockedCount, onNext }) {
           const last = index === glow.steps.length - 1;
           return (
             <div key={step.key} className="ex-in relative flex items-start gap-3" style={{ animationDelay: `${0.2 + index * 0.55}s` }}>
-              {!last && <div aria-hidden="true" className="absolute left-[21px] top-[46px] w-[3px] rounded" style={{ bottom: -14, background: index === 0 ? C.mint : C.line }} />}
-              <div className="relative z-[1]"><MilestoneIcon icon={step.icon} on={index === 0 && monthly > 0} /></div>
-              <div className="flex min-w-0 flex-1 flex-col gap-1 px-3.5 py-3" style={{ ...card, borderRadius: 16, border: index === 0 ? `1.5px solid ${C.coral}` : card.border }}>
+              {!last && <div aria-hidden="true" className="absolute left-[21px] top-[46px] w-[3px] rounded" style={{ bottom: -14, background: lit(index + 1) ? C.mint : C.line }} />}
+              <div className="relative z-[1]"><MilestoneIcon icon={step.icon} on={lit(index)} /></div>
+              <div className="flex min-w-0 flex-1 flex-col gap-1 px-3.5 py-3" style={{ ...card, borderRadius: 16, border: b.text === 'Unlocked' || (b.text === 'Next up' && nextIndex === 0) ? `1.5px solid ${C.coral}` : card.border }}>
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[13px] font-extrabold" style={{ color: C.muted }}>Month {step.months}</span>
                   <span className="rounded-full px-2.5 py-0.5 text-[12px] font-extrabold" style={b.style}>{b.text}</span>
                 </div>
-                <div className="ex-fredoka text-[19px] font-semibold">{step.label}</div>
+                <div className="ex-fredoka text-[19px] font-semibold">{pick?.planLabels?.[index] || step.label}</div>
                 <div className="text-[14px]" style={{ color: C.soft }}><span className="font-extrabold" style={{ color: C.mint }}>{money(monthly * step.months)}</span> back from your exes</div>
               </div>
             </div>
@@ -99,14 +110,16 @@ export function ExGlowupPlan({ pickKey, glow, blockedCount, onNext }) {
         })}
       </div>
       <div className="flex-1" />
-      <div className="text-center text-[12px]" style={{ color: C.muted }}>Based on the {blockedCount} {blockedCount === 1 ? 'ex' : 'exes'} you blocked: {money(glow.fund)} a year.</div>
-      <PrimaryButton onClick={onNext} delay="2.4s">Fast-forward to month 6</PrimaryButton>
+      <div className="text-center text-[12px]" style={{ color: C.muted }}>
+        {preview ? `Based on all your exes: ${money(monthly * 12)} a year. Block them to make it real.` : `Based on the ${blockedCount} ${blockedCount === 1 ? 'ex' : 'exes'} you blocked: ${money(glow.fund)} a year.`}
+      </div>
+      {onNext && <PrimaryButton onClick={onNext} delay="2.4s">Fast-forward to month 6</PrimaryButton>}
     </Screen>
   );
 }
 
 // Design screen Ex10Weekend: month 6, on the beach, paid for by your exes.
-export function ExWeekend({ pickKey, glow, biggest, onNext }) {
+export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = false }) {
   const [sent, setSent] = useState(false);
   const six = blockedMonthly(glow) * 6;
   // By month 6 the weekend-away money in the plan is there, by definition.
@@ -125,8 +138,12 @@ export function ExWeekend({ pickKey, glow, biggest, onNext }) {
 
   return (
     <Screen background="linear-gradient(180deg, #1d2a3a 0%, #2a2530 45%, #15131a 75%)" className="gap-3 px-4 pb-[22px] pt-[18px]">
-      <div className="relative text-[13px] font-extrabold" style={{ color: C.coralSoft }}>Act 2 · Month 6</div>
+      <div className="relative text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{pick?.weekendTag || 'Act 2 · Month 6'}</div>
       <div className="ex-in relative h-[330px] overflow-hidden rounded-[26px]" style={{ animationDelay: '.2s', background: 'linear-gradient(180deg, #ffb48a 0%, #ff8a7d 38%, #6a4a7a 70%, #2b3a55 100%)', border: `1px solid ${C.line}` }}>
+        {pick?.weekendArt ? (
+          <img src={pick.weekendArt} alt="The I'm Fine ghost fishing off a boat with a cold drink" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: 'center 30%' }} />
+        ) : (
+        <>
         <div aria-hidden="true" className="absolute left-1/2 top-[120px] -ml-[60px] h-[120px] w-[120px] rounded-full" style={{ background: '#ffe3a3', boxShadow: '0 0 60px rgba(255,211,140,0.7)' }} />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-[120px]" style={{ background: '#1f3a55' }} />
         <div aria-hidden="true" className="absolute inset-x-0 bottom-[104px] h-[3px]" style={{ background: 'rgba(255,227,163,0.6)' }} />
@@ -136,11 +153,13 @@ export function ExWeekend({ pickKey, glow, biggest, onNext }) {
         <div aria-hidden="true" className="absolute bottom-[156px] left-[22px] h-6 w-[70px] rotate-[18deg] rounded-[50%]" style={{ background: '#3f7d72' }} />
         <div aria-hidden="true" className="absolute bottom-[26px] right-[26px] h-11 w-14 rounded-lg" style={{ background: C.coral, border: `3px solid ${C.coralDeep}` }} />
         <div className="absolute bottom-[46px] left-1/2 -ml-[70px]"><GhostPal pickKey={pickKey} mood="happy" motion="dance" width={140} speed={2.2} drift={8.2} /></div>
-        <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>Paid for by {name}&apos;s tears.</Bubble>
+        </>
+        )}
+        <Bubble kind="r" className="ex-in absolute right-3.5 top-4 max-w-[184px] text-[13px]" style={{ animationDelay: '1s' }}>{pick?.weekendArt ? `Paid for by ${name}.` : <>Paid for by {name}&apos;s tears.</>}</Bubble>
       </div>
       <div className="relative flex flex-col items-center gap-0.5 text-center">
-        <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>{funded ? 'Weekend away: funded.' : 'Month 6: getting there.'}</div>
-        <div className="ex-in ex-fredoka text-[22px] font-semibold" style={{ color: C.mint, animationDelay: '1.3s' }}>{money(six)} back since you blocked them.</div>
+        <div className="ex-in ex-fredoka text-[34px] font-bold leading-tight" style={{ animationDelay: '.75s' }}>{funded ? `${pick?.weekendTitle || 'Weekend away: funded.'}`.replace('funded.', preview ? 'yours to fund.' : 'funded.') : 'Month 6: getting there.'}</div>
+        <div className="ex-in ex-fredoka text-[22px] font-semibold" style={{ color: C.mint, animationDelay: '1.3s' }}>{money(six)} back {preview ? 'once you block them' : 'since you blocked them'}.</div>
       </div>
       <div className="flex-1" />
       <div className="ex-in relative flex items-center gap-3.5 rounded-[22px] px-[18px] py-4" style={{ animationDelay: '1.85s', background: C.text, color: C.bg, transform: 'rotate(-1.5deg)', boxShadow: '0 16px 40px -18px rgba(0,0,0,0.7)' }}>
@@ -151,9 +170,9 @@ export function ExWeekend({ pickKey, glow, biggest, onNext }) {
         </div>
         <div aria-hidden="true" className="flex h-16 w-[54px] flex-none items-center justify-center rounded-md" style={{ border: `2px dashed ${C.coral}`, color: C.coral }}>♥</div>
       </div>
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className={`grid gap-2.5 ${onNext ? 'grid-cols-2' : 'grid-cols-1'}`}>
         <PrimaryButton onClick={send} delay="2.4s">{sent ? 'Sent' : 'Send postcard'}</PrimaryButton>
-        <GhostButton onClick={onNext} delay="2.4s">Next month</GhostButton>
+        {onNext && <GhostButton onClick={onNext} delay="2.4s">Next month</GhostButton>}
       </div>
     </Screen>
   );
@@ -187,7 +206,48 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
       </div>
       <div className="flex flex-col gap-2.5 px-4 pb-[22px] pt-3.5" style={{ background: C.bar, borderTop: `1px solid ${C.barLine}` }}>
         <PrimaryButton onClick={onUpload}>Upload this month&apos;s statement</PrimaryButton>
-        <GhostButton onClick={onSeeAll}>See all my results</GhostButton>
+        {onSeeAll && <GhostButton onClick={onSeeAll}>See all my results</GhostButton>}
+      </div>
+    </Screen>
+  );
+}
+
+// Design screen FineSplurge: what your exes paid for. One treat per ex, biggest
+// first, with that ex's real yearly price. The treats are the pick's art set.
+export function ExSplurge({ pick, subscriptions, avatarFor }) {
+  const top = [...subscriptions].sort((a, b) => b.monthly - a.monthly).slice(0, pick.splurge.length);
+  const total = top.reduce((sum, item) => sum + item.monthly * 12, 0);
+  const [lead, shine] = pick.splurgeTitle;
+  return (
+    <Screen background="radial-gradient(ellipse at 50% 0%, #2a2530 0%, #15131a 55%)" className="gap-3.5 px-4 pb-[22px] pt-[18px]">
+      <div className="relative flex flex-col gap-0.5">
+        <h2 className="ex-fredoka m-0 text-[26px] font-bold leading-tight">{lead}<span className="ex-shine">{shine}</span></h2>
+        <div className="text-[14px]" style={{ color: C.soft }}>{pick.splurgeSub}</div>
+      </div>
+      <div className="relative grid grid-cols-2 gap-3">
+        {top.map((item, index) => {
+          const treat = pick.splurge[index];
+          return (
+            <div key={item.id} className="ex-in flex flex-col overflow-hidden" style={{ ...card, borderRadius: 22, animationDelay: `${0.3 + index * 0.55}s` }}>
+              <div className="relative flex h-[150px] items-end justify-center" style={{ background: 'radial-gradient(ellipse at 50% 70%, #2c3a3a 0%, #1b1921 70%)' }}>
+                {treat.cover ? (
+                  <img src={treat.art} alt="" className="block h-full w-full object-cover" />
+                ) : (
+                  <img src={treat.art} alt="" className="ex-dance block h-[92%] w-[86%] object-contain object-bottom" style={{ '--gs': `${1.7 + index * 0.2}s` }} />
+                )}
+                <img src={avatarFor(item.merchant)} alt="" className="absolute left-2 top-2 h-8 w-8 rounded-full ring-2 ring-[#15131a]" />
+              </div>
+              <div className="flex flex-col gap-0.5 px-3 pb-3 pt-2.5">
+                <span className="ex-fredoka text-[17px] font-semibold">{treat.label}</span>
+                <span className="text-[12px]" style={{ color: C.muted }}>Paid for by {item.merchant}</span>
+                <span className="ex-fredoka text-[16px] font-semibold" style={{ color: C.mint }}>{money(item.monthly * 12)}/yr</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div className="relative text-center text-[13px]" style={{ color: C.muted }}>
+        {money(total)} a year from {top.length} {top.length === 1 ? 'ex' : 'exes'}, once they're blocked.
       </div>
     </Screen>
   );

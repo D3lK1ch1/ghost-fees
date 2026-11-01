@@ -8,6 +8,7 @@ import LeakTotal from './LeakTotal';
 import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import ExLeakCard from '@/components/ex/ExLeakCard';
+import ExTabScreens from '@/components/ex/ExTabScreens';
 import SubscriptionsSection from './SubscriptionsSection';
 import ThemeStory from './ThemeStory';
 import ExJourney from '@/components/ex/ExJourney';
@@ -47,9 +48,16 @@ const TABS = [
   { key: 'feedback', label: 'Feedback', Icon: MessageSquareHeart, title: 'Tell us in 20 seconds', blurb: 'Did it find something real? It helps us tune the ghost detector.' },
 ];
 
-// 💔 only shows the sections that exist in its design: the ex cards, Heartbreak
-// House, the subscriptions list and feedback. The rest are Haunted House screens.
-const EX_TABS = new Set(['ghosts', 'house', 'subscriptions', 'feedback']);
+// 💔 names and intros for each tab, in the story's words. Same features underneath.
+const EX_TAB_TEXT = {
+  ghosts: { title: 'Your exes, biggest first', blurb: 'Every ex still charging you, with the transactions behind it. Tap a card to mark it most useful.' },
+  house: { label: 'Heartbreak House', title: 'Heartbreak House', blurb: 'Every ex has a window. Block one once you have cancelled and its window lights up.' },
+  path: { label: 'Glow-up plan', title: 'Your glow-up plan', blurb: 'What blocking your exes pays for, month by month. Tick them off one by one below.' },
+  calendar: { label: 'Check-ins & reminders', title: 'Check-ins and reminders', blurb: 'The days your exes charged you, and reminders for their next charge in your own calendar.' },
+  emails: { label: 'Messages to exes', title: 'Messages to your exes', blurb: 'Cancel, refund and fee-waiver messages, ready to edit and send.' },
+  subscriptions: { title: 'Still seeing these?', blurb: 'Your regular subscriptions. Keep the ones you love, block the rest.' },
+  receipt: { label: 'What they cost you', title: 'What your exes paid for', blurb: 'What your exes could pay for instead, then every charge on one receipt.' },
+};
 
 const ANSWERS_KEY = 'ghostFees.subAnswers';
 
@@ -104,11 +112,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [guessDone, setGuessDone] = useState(false);
   const cancelSubs = subscriptions.filter((item) => subAnswers[item.id] === 'no');
   const draftCancel = (item) => openEmail({ id: `sub:${item.id}`, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' });
-  const tabs = useMemo(() => (theme.key === 'ex' ? TABS.filter((item) => EX_TABS.has(item.key)) : TABS), [theme.key]);
-  useEffect(() => {
-    if (!tabs.some((item) => item.key === tab)) setTab('ghosts');
-  }, [tabs, tab]);
-  const current = tabs.find((item) => item.key === tab) || tabs[0];
+  const exText = theme.key === 'ex' ? EX_TAB_TEXT : {};
+  const current = { ...TABS.find((item) => item.key === tab), ...exText[tab] };
 
   // Wipes everything from this tab: results, busted ghosts, goals and chat.
   const clearData = () => {
@@ -252,7 +257,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               aria-label="Results sections"
               className="sticky top-0 z-20 -mx-5 mb-4 flex gap-1.5 overflow-x-auto border-b border-border bg-background/90 px-5 py-2.5 backdrop-blur sm:-mx-8 sm:px-8 lg:top-4 lg:mx-0 lg:mb-0 lg:flex-col lg:self-start lg:overflow-visible lg:rounded-2xl lg:border lg:bg-card/80 lg:p-2"
             >
-              {tabs.map((item) => (
+              {TABS.map((item) => (
                 <button
                   key={item.key}
                   type="button"
@@ -264,7 +269,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   )}
                 >
                   <item.Icon className={cn('h-4 w-4 shrink-0', tab === item.key && 'text-primary')} />
-                  {item.key === 'house' && theme.key === 'ex' ? 'Heartbreak House' : item.label}
+                  {exText[item.key]?.label || item.label}
                   {item.key === 'ghosts' && (
                     <span className="ml-auto rounded-full bg-white/10 px-1.5 text-[11px]">{leaks.length}</span>
                   )}
@@ -281,8 +286,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             </nav>
 
             <div key={tab} className="min-w-0 animate-rise">
-              <h2 className="font-heading text-xl font-semibold text-foreground">{tab === 'house' && theme.key === 'ex' ? 'Heartbreak House' : current.title}</h2>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{tab === 'house' && theme.key === 'ex' ? 'Every ex has a window. Block one once you have cancelled and its window lights up.' : current.blurb}</p>
+              <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
 
               {tab === 'ghosts' && (
                 <CardList className="mt-4 grid gap-3">
@@ -318,6 +323,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {tab === 'house' && theme.key !== 'ex' && (
                 <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
+              {theme.key === 'ex' && ['path', 'calendar', 'emails', 'receipt'].includes(tab) && (
+                <ExTabScreens tab={tab} subscriptions={subscriptions} avatarFor={avatarFor} onUpload={onRestart} />
+              )}
+
               {tab === 'path' && (
                 <GoalPath
                   leaks={leaks}

@@ -118,3 +118,51 @@ export function Screen({ children, background, className = '', stars = true, max
     </div>
   );
 }
+
+// The silver phone from design screen Ex3Reveal: brushed-metal edge, side buttons,
+// black bezel, camera pill and a soft glare. Children fill the screen.
+const SIDE = [
+  { side: 'left', top: 92, h: 22 },
+  { side: 'left', top: 132, h: 40 },
+  { side: 'left', top: 180, h: 40 },
+  { side: 'right', top: 150, h: 56 },
+];
+
+export function SilverPhone({ children, className = '', screenClassName = '', width = 360 }) {
+  return (
+    <div
+      className={`relative mx-auto box-border w-full ${className}`}
+      style={{
+        maxWidth: width,
+        padding: 5,
+        borderRadius: 52,
+        background: 'linear-gradient(145deg, #ffffff 0%, #dfe2e6 10%, #8e939b 26%, #f6f7f9 44%, #a9aeb6 60%, #eef0f3 78%, #7c8189 100%)',
+        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.95), inset 0 2px 3px rgba(255,255,255,0.9), 0 0 0 1px #575b62, 0 28px 60px -22px rgba(0,0,0,0.9), 0 0 50px -14px rgba(255,170,200,0.25)',
+      }}
+    >
+      {SIDE.map((button) => (
+        <div
+          key={`${button.side}${button.top}`}
+          aria-hidden="true"
+          className="absolute w-[3px]"
+          style={{
+            [button.side]: -3,
+            top: button.top,
+            height: button.h,
+            borderRadius: button.side === 'left' ? '2px 0 0 2px' : '0 2px 2px 0',
+            background: `linear-gradient(${button.side === 'left' ? 90 : 270}deg, #8d9198, #d9dbe0)`,
+          }}
+        />
+      ))}
+      <div className="relative" style={{ borderRadius: 47, background: '#050506', padding: 7 }}>
+        <div aria-hidden="true" className="pointer-events-none absolute z-[3]" style={{ inset: 7, borderRadius: 40, background: 'linear-gradient(118deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 28%, rgba(255,255,255,0) 40%)' }} />
+        <div aria-hidden="true" className="absolute left-1/2 z-[4] -ml-[42px] h-[24px] w-[84px] rounded-full bg-black" style={{ top: 18, boxShadow: 'inset 0 0 0 1px #16161a' }}>
+          <div className="absolute right-[10px] top-[7px] h-[10px] w-[10px] rounded-full" style={{ background: 'radial-gradient(circle at 35% 35%, #2a3550, #07080c)' }} />
+        </div>
+        <div className={`ex-root relative flex flex-col overflow-hidden ${screenClassName}`} style={{ borderRadius: 40, background: C.bg }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
