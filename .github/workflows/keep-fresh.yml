@@ -1,0 +1,35 @@
+# Automatic update: whenever main changes (and every 6 hours), every open feat/* PR
+# is brought up to date with main in order, checked with lint and build, and pushed.
+# Nothing is merged into main and nothing is published: you still merge and Publish in Base44.
+name: Keep feature branches fresh
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: keep-fresh
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Git identity
+        run: |
+          git config user.name "ghost-fees-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Update open feat/* PRs
+        run: bash scripts/keep-branches-fresh.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
