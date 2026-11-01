@@ -361,6 +361,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   cancelSubs={cancelSubs}
                   lifeGoal={lifeGoal}
                   onLifeGoal={setLifeGoal}
+                  avatarFor={avatarFor}
                   guideKey={guideKey}
                 />
               )}
