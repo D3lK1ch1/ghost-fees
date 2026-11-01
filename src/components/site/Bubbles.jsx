@@ -75,7 +75,7 @@ export function SpeechBubble({ children, side = 'left', className }) {
           <path d={TAIL_PATH} fill="#fff" stroke={INK} strokeWidth={2.8} strokeLinejoin="round" strokeLinecap="round" />
         </svg>
         <div
-          className="relative z-10 flex items-center justify-center rounded-full border-[2.6px] bg-white px-4 py-2 text-center text-[12.5px] font-semibold leading-[1.35] text-balance"
+          className="relative z-10 flex items-center justify-center rounded-full border-[2.6px] bg-white px-[18px] py-2.5 text-center text-[13.5px] font-semibold leading-[1.45] text-balance"
           style={{ borderColor: INK, color: INK }}
         >
           {children}
@@ -105,7 +105,7 @@ export function ThoughtBubble({ children, className, trail = 'right', tones }) {
           />
         </svg>
         <div
-          className={cn('relative z-10 flex min-h-[58px] items-center justify-center px-6 py-3 text-center text-[13px] font-semibold leading-[1.3] text-balance', tones)}
+          className={cn('relative z-10 flex min-h-[64px] items-center justify-center px-7 py-4 text-center text-[14px] font-semibold leading-[1.4] text-balance', tones)}
           style={{ color: INK }}
         >
           {children}

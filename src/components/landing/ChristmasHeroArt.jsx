@@ -1,4 +1,5 @@
 import SeasonToggle from '@/components/site/SeasonToggle';
+import RoomClock from '@/components/landing/RoomClock';
 import { ThoughtBubble } from '@/components/site/Bubbles';
 import { XMAS } from '@/lib/ghostFees/christmasArt';
 
@@ -13,10 +14,7 @@ export default function ChristmasHeroArt({ season, setSeason }) {
         <ThoughtBubble className="absolute left-3 top-3 max-w-[190px]">
           Bah, humbug. One more streaming service can&apos;t hurt.
         </ThoughtBubble>
-        <div className="absolute bottom-3 left-3 rounded-2xl border border-primary/40 bg-background/85 px-3 py-1.5 text-left">
-          <div className="font-heading text-[22px] font-bold leading-none text-primary">11:59</div>
-          <div className="text-[10.5px] font-semibold text-muted-foreground">24 December</div>
-        </div>
+        <RoomClock />
         <img src={XMAS.sleeper(season)} alt="The Sleeper, a ghost asleep in bed" width={320} className="absolute -bottom-2 -right-2 h-auto w-[150px] sm:w-[170px]" />
       </div>
     </div>
