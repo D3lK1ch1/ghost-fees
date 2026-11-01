@@ -6,6 +6,7 @@ import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { nextChargeDate } from '@/lib/ghostFees/reminder';
 import { cn } from '@/lib/utils';
 import TaskDialog from './TaskDialog';
+import CassLookup from './CassLookup';
 
 const STEPS = ['Open the cancel page', 'Follow their steps', 'No luck? Email them', 'Mark it cancelled'];
 
@@ -93,9 +94,10 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
                 <p className="mt-2 text-[12px] text-muted-foreground">Official page, opens in a new tab. Sign in there. We never see your login.</p>
               </>
             ) : (
-              <p className="mt-2 text-[13.5px] text-foreground">{info.steps}</p>
+              <CassLookup key={sub.id} merchant={sub.merchant} monthly={sub.monthly} auto className="mt-3" />
             )}
             <p className="mt-2 text-[12px] text-muted-foreground">{APP_STORE_NOTE}</p>
+            {info.url && <CassLookup key={`c-${sub.id}`} merchant={sub.merchant} monthly={sub.monthly} className="mt-3" />}
           </>
         )}
         {step === 1 && (
