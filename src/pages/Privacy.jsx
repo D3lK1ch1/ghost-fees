@@ -1,4 +1,5 @@
 import BrandHeader from '@/components/site/BrandHeader';
+import DeleteServerData from '@/components/site/DeleteServerData';
 import SiteFooter from '@/components/site/SiteFooter';
 
 // Exactly what is kept, where, and for how long. Keep this true: update it with every data change.
@@ -53,8 +54,10 @@ export default function Privacy() {
           <li>Results and Ghost List: press <span className="font-bold text-foreground">Clear my data</span> on the results page.</li>
           <li>Calendar sync: press <span className="font-bold text-foreground">Stop syncing</span> in the calendar and the reminders are deleted.</li>
           <li>Feedback, usage events and uploaded PDFs: these are anonymous, so tell us roughly when you scanned and we will delete them.</li>
+          <li>Free-tier counters and payment flag: the button below deletes them straight away.</li>
           <li>Your account: ask us and we will delete it.</li>
         </ul>
+        <DeleteServerData />
         <p className="mt-3 rounded-xl border border-dashed border-[#ffc27a] bg-[#ffc27a]/10 px-3 py-2 text-[13.5px] font-bold text-[#ffc27a]">
           [FOUNDERS: add a contact email for deletion requests]
         </p>

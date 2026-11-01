@@ -27,3 +27,12 @@ export const TYPE_LABELS = { video: 'Streaming', music: 'Music', storage: 'Cloud
 export function typeOf(merchant = '') {
   return GROUPS.find((group) => group.match.test(merchant))?.key || 'other';
 }
+
+// Life-stage tips for double-ups. General, never "you should".
+export const LIFE_STAGES = [
+  { key: 'solo', label: 'Just me', tip: OVERLAP_TIPS },
+  { key: 'student', label: 'Student', tip: "Some services have student plans for about half price (Spotify Student is $7.99 a month, Selectra, Jun 2026). Worth checking before you keep two." },
+  { key: 'couple', label: 'Couple', tip: 'Couples often keep one account between them, or move to a duo or family plan, instead of paying twice.' },
+  { key: 'sharehouse', label: 'Sharehouse', tip: 'In a sharehouse, someone else may already pay for the same service. One shared plan split between you is common.' },
+  { key: 'family', label: 'Family', tip: 'Family plans usually cover several people on one bill, so separate accounts for each person are a common double-up.' },
+];

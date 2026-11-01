@@ -1,4 +1,31 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
+import { secrets } from 'base44:runtime';
+
+// Optional: post each new feedback to Slack if SLACK_WEBHOOK_URL is set.
+// Only the answers people chose to send. Never statement data.
+async function postToSlack(record) {
+  let hook = '';
+  try {
+    hook = secrets.get('SLACK_WEBHOOK_URL') || '';
+  } catch {
+    hook = '';
+  }
+  if (!/^https:\/\/hooks\.slack\.com\//.test(hook)) return;
+  const parts = [
+    record.found_real ? `Found real: ${record.found_real}` : '',
+    record.would_pay ? `Would pay: ${record.would_pay}` : '',
+    record.yearly_total ? `Found $${record.yearly_total}` : '',
+    record.used_sample ? 'sample' : 'real scan',
+    record.confusion_text ? `'${record.confusion_text.slice(0, 200)}'` : '',
+    record.builder_name ? `from ${record.builder_name}` : '',
+  ].filter(Boolean);
+  await fetch(hook, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: `👻 New Ghost Fees feedback | ${parts.join(' | ')}` }),
+    signal: AbortSignal.timeout(5000),
+  }).catch(() => {});
+}
 
 const FOUND_REAL = ['Yes', 'Kinda', 'No'];
 const WOULD_PAY = ['Yes', 'Maybe', 'No'];
@@ -39,6 +66,8 @@ export default async function (req) {
       event_type: 'feedback_submitted',
       created_at: createdAt,
     });
+
+    await postToSlack({ ...record, used_sample: Boolean(body.used_sample), found_real: foundReal, would_pay: wouldPay, yearly_total: number(body.yearly_total), confusion_text: text(body.confusion_text, 500), builder_name: text(body.builder_name, 80) });
 
     return Response.json({ id: record.id });
   } catch (error) {
