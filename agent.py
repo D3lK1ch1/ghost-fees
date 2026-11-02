@@ -51,7 +51,7 @@ PACK_PRICE_CENTS = 200
 ALL_PRICE_CENTS = 500
 STRIPE_SUCCESS_URL = os.environ.get("STRIPE_SUCCESS_URL", "https://agentverse.ai/payment-success")
 # Set the secret GHOSTIT_ADMIN_CODE in Agentverse (or change the word here), then type: evidence <your code>
-ADMIN_CODE = os.environ.get("GHOSTIT_ADMIN_CODE", "change-me")
+ADMIN_CODE = os.environ.get("GHOSTIT_ADMIN_CODE") or os.environ.get("GHOST_IT_ADMIN_CODE") or "change-me"
 USE_CARDS = True          # set False to send text only
 
 # "You said, we changed" pairs. Add one each time you ship a fix from feedback.
