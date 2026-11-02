@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" fill="#1B1530"/>
+
+  <!-- waving arm (behind body) -->
+  <path d="M330,560 Q255,520 228,395" fill="none" stroke="#7CE0B6" stroke-width="104" stroke-linecap="round"/>
+  <path d="M330,560 Q255,520 228,395" fill="none" stroke="#FFFFFF" stroke-width="64" stroke-linecap="round"/>
+  <!-- wave motion lines -->
+  <path d="M150,330 Q140,370 152,410" fill="none" stroke="#7CE0B6" stroke-width="14" stroke-linecap="round"/>
+  <path d="M190,290 Q225,272 262,282" fill="none" stroke="#7CE0B6" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- scissor arm (behind body) -->
+  <path d="M700,600 Q780,600 832,640" fill="none" stroke="#7CE0B6" stroke-width="104" stroke-linecap="round"/>
+  <path d="M700,600 Q780,600 832,640" fill="none" stroke="#FFFFFF" stroke-width="64" stroke-linecap="round"/>
+
+  <!-- ghost body -->
+  <path d="M287,400 A225,225 0 0 1 737,400 L737,790
+           Q699.5,850 662,790 Q624.5,730 587,790 Q549.5,850 512,790
+           Q474.5,730 437,790 Q399.5,850 362,790 Q324.5,730 287,790 Z"
+        fill="#FFFFFF" stroke="#7CE0B6" stroke-width="36" stroke-linejoin="round"/>
+
+  <!-- face -->
+  <ellipse cx="450" cy="420" rx="30" ry="42" fill="#1B1530"/>
+  <ellipse cx="574" cy="420" rx="30" ry="42" fill="#1B1530"/>
+  <circle cx="460" cy="403" r="10" fill="#FFFFFF"/>
+  <circle cx="584" cy="403" r="10" fill="#FFFFFF"/>
+  <circle cx="398" cy="495" r="24" fill="#FF8A65"/>
+  <circle cx="626" cy="495" r="24" fill="#FF8A65"/>
+  <path d="M480,488 Q512,530 544,488" fill="none" stroke="#1B1530" stroke-width="18" stroke-linecap="round"/>
+
+  <!-- credit card cut in two -->
+  <g transform="rotate(-9 700 830)">
+    <rect x="645" y="765" width="108" height="135" rx="20" fill="#FF8A65" stroke="#1B1530" stroke-width="10"/>
+    <rect x="650" y="792" width="98" height="26" fill="#1B1530" opacity="0.85"/>
+    <rect x="668" y="840" width="40" height="30" rx="6" fill="#FFD3C2"/>
+  </g>
+  <g transform="rotate(9 820 830) translate(8 10)">
+    <rect x="772" y="765" width="108" height="135" rx="20" fill="#FF8A65" stroke="#1B1530" stroke-width="10"/>
+    <rect x="777" y="792" width="98" height="26" fill="#1B1530" opacity="0.85"/>
+    <rect x="795" y="858" width="60" height="12" rx="6" fill="#FFD3C2"/>
+  </g>
+
+  <!-- scissors -->
+  <path d="M800,705 L758,778 L746,768 Z" fill="#FFFFFF" stroke="#1B1530" stroke-width="4"/>
+  <path d="M800,705 L776,785 L762,782 Z" fill="#FFFFFF" stroke="#1B1530" stroke-width="4"/>
+  <path d="M818,672 L800,705 L838,690" fill="none" stroke="#7CE0B6" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="815" cy="645" r="24" fill="#1B1530" stroke="#7CE0B6" stroke-width="14"/>
+  <circle cx="858" cy="675" r="24" fill="#1B1530" stroke="#7CE0B6" stroke-width="14"/>
+  <circle cx="800" cy="705" r="8" fill="#1B1530" stroke="#7CE0B6" stroke-width="5"/>
+</svg>
