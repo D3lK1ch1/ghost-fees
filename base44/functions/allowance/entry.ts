@@ -85,6 +85,13 @@ async function confirmCheckout(base44, user, allowance) {
   return { ...allowance, ...update };
 }
 
+// This founder's place in line, by the time they paid (1 = first).
+async function foundingNumber(base44, allowance) {
+  const rows = await base44.asServiceRole.entities.Allowance.filter({ paid: true, tier: 'founding' }).catch(() => []);
+  const mine = Date.parse(allowance.paid_at || '') || Date.now();
+  return (rows || []).filter((row) => (Date.parse(row.paid_at || '') || 0) <= mine).length || 1;
+}
+
 async function ticketFor(userId) {
   const body = btoa(JSON.stringify({ u: userId, exp: Date.now() + TICKET_MINUTES * 60000 }));
   return `${body}.${await hmac(`ticket:${body}`)}`;
@@ -160,6 +167,10 @@ export default async function (req) {
       cassLeft: unlimited ? null : Math.max(0, FREE_CASS - (allowance.cass_prints || []).length),
       foundingLeft: spots,
       priceCents: price,
+      // For /unlocked: what they paid and, for founders, their real member number.
+      paidCents: allowance.paid ? Number(allowance.amount_cents) || null : null,
+      tier: allowance.paid ? allowance.tier || null : null,
+      foundingNumber: allowance.paid && allowance.tier === 'founding' ? await foundingNumber(base44, allowance) : null,
     });
   } catch (error) {
     return Response.json({ error: error?.message || 'Could not check your free scans.' }, { status: 500 });

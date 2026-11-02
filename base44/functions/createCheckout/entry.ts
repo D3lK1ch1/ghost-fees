@@ -90,7 +90,9 @@ export default async function (req) {
     if (isUnlimited(user, allowance)) return Response.json({ alreadyPaid: true });
 
     const founders = await base44.asServiceRole.entities.Allowance.filter({ paid: true, tier: 'founding' });
-    const tier = (founders?.length || 0) < FOUNDING_SPOTS ? 'founding' : 'standard';
+    // The plan picked on /upgrade: Founding ($5) only while spots are left, else $10.
+    const spotsLeft = (founders?.length || 0) < FOUNDING_SPOTS;
+    const tier = body.plan === 'standard' ? 'standard' : spotsLeft ? 'founding' : 'standard';
     const origin = safeOrigin(body.origin);
 
     const form = new URLSearchParams({
@@ -103,8 +105,8 @@ export default async function (req) {
       client_reference_id: user.id,
       'metadata[user_id]': user.id,
       'metadata[tier]': tier,
-      success_url: `${origin}/?checkout={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/?checkout=cancelled`,
+      success_url: `${origin}/unlocked?checkout={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/upgrade?checkout=cancelled`,
     });
     if (user.email) form.set('customer_email', user.email);
 

@@ -42,20 +42,25 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
   const { theme } = useTheme();
   const { results, usedSample } = useScan();
   const { signedIn, foundingLeft } = useAllowance();
-  const returnTo = encodeURIComponent(window.location.pathname + window.location.hash);
+  const returnTo = encodeURIComponent(reason === 'sign_in' && window.location.pathname !== '/upgrade' ? window.location.pathname + window.location.hash : '/upgrade');
 
 
+  // B8: sign in before unlocking (or before a counted scan once charging is on).
   if (reason === 'sign_in') {
     return (
       <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
-        <DialogContent className="max-w-md rounded-3xl border-border bg-card p-5 sm:p-6">
-          <DialogTitle className="font-heading text-[21px] leading-tight">{TITLES.sign_in}</DialogTitle>
-          <p className="text-[14px] text-muted-foreground">
-            Your first 3 scans are free. Each one can be up to 6 statements, so a bank account and a credit card can be read together. Signing in keeps those free scans yours. We keep a count, never your statement.
+        <DialogContent className="max-w-md rounded-3xl border-border bg-card p-5 text-center sm:p-6">
+          <div className="relative mx-auto h-20 w-20">
+            <img src={SHEET_ART[theme.key] || SHEET_ART.haunted} alt="" className="h-20 w-auto object-contain" />
+            <span aria-hidden="true" className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-[16px]">🔒</span>
+          </div>
+          <DialogTitle className="font-heading text-[22px] leading-tight">Save your ghosts and unlock</DialogTitle>
+          <p className="text-[14px] text-muted-foreground">Sign in so your Ghost List and payment stay with you on any device.</p>
+          <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="block rounded-2xl bg-primary py-3 text-[15px] font-bold text-primary-foreground">Continue with Google</Link>
+          <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="block rounded-2xl border border-border py-3 text-[15px] font-bold">Continue with email</Link>
+          <p className="rounded-2xl border border-border bg-background/50 px-3 py-2 text-[12.5px] text-muted-foreground">
+            We store your email and your scan count. Never your statement. <Link to="/privacy" onClick={onClose} className="underline">Privacy</Link>
           </p>
-          <Link to={`/login?returnTo=${returnTo}`} className="mt-2 block rounded-2xl bg-primary py-3 text-center text-[15px] font-bold text-primary-foreground">
-            Sign in, then upload
-          </Link>
         </DialogContent>
       </Dialog>
     );
