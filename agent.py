@@ -871,6 +871,33 @@ def track_usage(ctx, sender, intent):
 
 
 FEEDBACK_RE = re.compile(r"^\s*(feedback|suggestion)\b[\s:,-]*", re.I)
+STATS_RE = re.compile(r"^\s*stats(?:\s+(\S+))?\s*$", re.I)
+
+
+def bump_stat(ctx, key, n=1):
+    raw = ctx.storage.get("stats")
+    st = json.loads(raw) if raw else {"messages": 0, "users": []}
+    st[key] = st.get(key, 0) + n
+    ctx.storage.set("stats", json.dumps(st))
+
+
+def stats_reply(ctx, code=None) -> str:
+    """Evidence for the hackathon. Counts for anyone; feedback text only with the owner code
+    (set GHOSTIT_OWNER_KEY in the agent's Agentverse secrets)."""
+    st = json.loads(ctx.storage.get("stats") or "{}")
+    fb = json.loads(ctx.storage.get("feedback") or "[]")
+    lines = ["## Ghost.it so far",
+             f"- People who've tried it: **{len(st.get('users', []))}**",
+             f"- Messages: **{st.get('messages', 0)}**",
+             f"- Feedback messages: **{len(fb)}**",
+             f"- Ghost Packs given out: **{st.get('packs', 0)}** (free tries used: {st.get('free_packs', 0)})"]
+    owner = os.environ.get("GHOSTIT_OWNER_KEY", "")
+    if owner and code and code == owner:
+        lines.append("\n**Latest feedback** (newest last):")
+        lines += [f"- {x.get('date', '')[:10]} ...{x.get('user', '')}: {x.get('text', '')}" for x in fb[-20:]] or ["- none yet"]
+    elif code:
+        lines.append("\n(That code didn't match, so feedback text stays private.)")
+    return "\n".join(lines)
 DELETE_RE = re.compile(r"\b(delete|erase|forget|wipe)\b.*\b(my data|my info\w*|my details|everything|all my)\b", re.I)
 
 
@@ -902,6 +929,10 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     if FEEDBACK_RE.match(text) and FEEDBACK_RE.sub("", text, count=1).strip():
         track_usage(ctx, sender, "feedback")
         await ctx.send(sender, reply(save_feedback(ctx, sender, FEEDBACK_RE.sub("", text, count=1).strip())))
+        return
+    m_stats = STATS_RE.match(text)
+    if m_stats:
+        await ctx.send(sender, reply(stats_reply(ctx, m_stats.group(1))))
         return
     if DELETE_RE.search(text):
         track_usage(ctx, sender, "delete")
@@ -968,9 +999,15 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
             body = TRIAL_HELP
         elif intent in ("buy_all", "buy_pack") and (intent == "buy_all" or d.get("pack")):
             asked = [p for p in PACKS if p != "other"] if intent == "buy_all" else [d["pack"]]
+            before_free = bool(data.get("free_pack_used"))
             allowed, note = pack_gate(data, asked)  # one free try, then the price (see pack_gate)
             body = deliver_pack(ctx, sender, data, allowed or asked) if (allowed or not packs_with_subs(data, asked)) else ""
             body = (note + "\n\n" + body).strip() if note else body
+            was_free = bool(allowed) and not before_free
+            if allowed:
+                bump_stat(ctx, "packs", len(allowed))
+            if was_free:
+                bump_stat(ctx, "free_packs")
             ctx.logger.info(f"PACK by ...{sender[-6:]}: asked={asked} delivered={allowed} free_used={data.get('free_pack_used')}")
         elif ROTATE_RE.search(text):
             body = rotation_plan(data, text)

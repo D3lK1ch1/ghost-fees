@@ -271,5 +271,38 @@ class PackGateTests(unittest.TestCase):
         self.assertIn("first one is free", A.free_check(self.data, {}))
 
 
+class StatsTests(unittest.TestCase):
+    def setUp(self):
+        self.ctx = FakeCtx()
+        A.track_usage(self.ctx, "agent1aaaaaa", "check")
+        A.track_usage(self.ctx, "agent1bbbbbb", "check")
+        A.save_feedback(self.ctx, "agent1bbbbbb", "add Foxtel please")
+        A.bump_stat(self.ctx, "packs", 2)
+
+    def test_counts_for_anyone_without_feedback_text(self):
+        text = A.stats_reply(self.ctx)
+        self.assertIn("**2**", text)  # two people
+        self.assertIn("Feedback messages: **1**", text)
+        self.assertIn("Ghost Packs given out: **2**", text)
+        self.assertNotIn("Foxtel", text)
+
+    def test_owner_code_shows_feedback(self):
+        import os
+        os.environ["GHOSTIT_OWNER_KEY"] = "s3cret"
+        try:
+            self.assertIn("add Foxtel please", A.stats_reply(self.ctx, "s3cret"))
+            wrong = A.stats_reply(self.ctx, "guess")
+            self.assertNotIn("Foxtel", wrong)
+            self.assertIn("didn't match", wrong)
+        finally:
+            del os.environ["GHOSTIT_OWNER_KEY"]
+
+    def test_no_owner_key_set_never_shows_feedback(self):
+        self.assertNotIn("Foxtel", A.stats_reply(self.ctx, ""))
+        self.assertTrue(A.STATS_RE.match("stats"))
+        self.assertTrue(A.STATS_RE.match("STATS abc123"))
+        self.assertFalse(A.STATS_RE.match("stats for netflix please"))
+
+
 if __name__ == "__main__":
     unittest.main()
