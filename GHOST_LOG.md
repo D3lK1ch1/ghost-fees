@@ -440,3 +440,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostTeam.jsx (new), src/components/landing/PlansAtAGlance.jsx, src/pages/Landing.jsx, src/pages/Upgrade.jsx
 - How to test: Home page: the team row under the stats in every theme. Free vs Pro tab: the badges line.
 - User feedback that drove this: "where's the different ghost agents", "what's the badges"
+
+### Badges explained before you earn them
+- What: A "Badges you can earn" card shows each badge (First Ghost, Overlap Buster, Price Rise Spotter, House Cleared) with how to earn it, plus the levels (Rookie, Hunter at $100/yr ghosted, Exorcist at $500/yr, Legend at $1,000/yr). It's in the Free vs Pro tab on the home page and on the Subscriptions tab until your Ghost List has something on it (the Ghost List, where badges live, only appears after you cancel one).
+- Files: src/components/results/BadgesExplainer.jsx (new), src/components/landing/PlansAtAGlance.jsx, src/components/results/SubscriptionsSection.jsx
+- How to test: Home > Free vs Pro: the card under the plans. Sample > Subscriptions with an empty Ghost List: the same card above the list.
+- User feedback that drove this: "explain badges better"

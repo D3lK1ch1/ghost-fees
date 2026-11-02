@@ -8,6 +8,7 @@ import { useGhostList } from '@/hooks/use-ghost-list';
 import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
+import BadgesExplainer from './BadgesExplainer';
 import { useCancelProof } from './ProofDialog';
 import PickTimeDialog from './PickTimeDialog';
 import { LIFE_STAGES, TYPE_LABELS, findOverlaps, tipFor, typeOf } from '@/lib/ghostFees/overlaps';
@@ -120,6 +121,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
         </div>
       )}
 
+      {ghosts.length === 0 && <BadgesExplainer compact className="mt-3" />}
       <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} onAddProof={proof.addProof} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />
       {proof.dialog}
       <PickTimeDialog target={planFor} onClose={() => setPlanFor(null)} />

@@ -3,6 +3,7 @@ import { Check, Sparkles } from 'lucide-react';
 import { statFor } from '@/data/stats';
 import { useAuth } from '@/lib/AuthContext';
 import { useAllowance } from '@/lib/AllowanceContext';
+import BadgesExplainer from '@/components/results/BadgesExplainer';
 
 // The "Free vs Pro" home tab, laid out like a pro app's plan picker: Free and Pro
 // side by side, a big price, one button each, then what you get, and the savings
@@ -70,6 +71,8 @@ export default function PlansAtAGlance({ onSample }) {
         </section>
       </div>
 
+
+      <BadgesExplainer compact className="mt-4" />
 
       <p className="mt-4 text-center text-[14.5px] leading-snug text-foreground">
         {waste && <><b className="text-primary">{waste.stat}</b> {waste.text} <span className="text-muted-foreground">({waste.source})</span>. </>}
