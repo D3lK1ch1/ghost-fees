@@ -8,6 +8,7 @@ import { money } from '@/lib/ghostFees/format';
 import { useTheme } from '@/lib/ThemeContext';
 import { lastRealTotal } from '@/lib/ghostFees/payback';
 import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
+import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
 // The limit-reached sheet (B7) and the sign-in screen (B8), styled to the Claude
 // Design canvas "Ghost Fees upgrade flow" (screens 1A, 1B, 2, and the 💔 / 🎄 variants).
@@ -123,8 +124,15 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
 
         {/* What the free trial includes, so "one try" is clear (app and Ghost It). */}
         <div className="rounded-2xl px-4 py-3 text-left text-[14px] leading-snug" style={{ background: P.card, color: P.soft }}>
-          <p className="font-bold" style={{ color: '#FFFFFF' }}>Your free trial</p>
-          <p className="mt-0.5">Ghost Fees: 3 statement scans, 1 chat with a ghost guide and 1 Cassy lookup. Ghost It: your first Ghost Pack (1 try), then $2 a pack or $5 for all in ASI:One.</p>
+          <p className="text-[12.5px] font-bold uppercase tracking-[0.12em]" style={{ color: P.muted }}>Your free trial</p>
+          <div className="mt-2 flex items-center gap-3">
+            <img src={art} alt="" className="h-10 w-10 shrink-0 object-contain" />
+            <p><b style={{ color: '#FFFFFF' }}>Ghost Fees:</b> 3 statement scans, 1 ghost guide chat, 1 Cassy lookup.</p>
+          </div>
+          <div className="mt-2 flex items-center gap-3 border-t pt-2" style={{ borderColor: P.line }}>
+            <img src={GHOST_IT_MASCOT} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+            <p><b style={{ color: '#FFFFFF' }}>Ghost It:</b> 1 free try (your first Ghost Pack), then $2 a pack or $5 for all, in ASI:One.</p>
+          </div>
         </div>
         {/* The promise, in one line, right before the button. */}
         <p className="text-[15px] leading-snug" style={{ color: P.soft }}>

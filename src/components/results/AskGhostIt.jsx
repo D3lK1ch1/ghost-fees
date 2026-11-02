@@ -1,4 +1,4 @@
-import { MessageCircle } from 'lucide-react';
+import { Check, MessageCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
@@ -53,12 +53,12 @@ function benefitFor(leak, name) {
   if (leak?.priceRise) {
     const yearly = (Number(leak.priceRise.newPrice) - Number(leak.priceRise.oldPrice)) * 12;
     return {
-      line: `Works out what the rise really costs you${yearly > 0 ? ` ($${yearly.toFixed(2)} more a year)` : ''}, asks if you'd still sign up at the new price, and gives you the cancel steps.`,
+      points: [`Works out the rise a year${yearly > 0 ? ` ($${yearly.toFixed(2)} more)` : ''}`, 'Asks if you’d still sign up at the new price', 'Gives you the official cancel steps'],
       text: `@ghostit ${name} went from $${Number(leak.priceRise.oldPrice).toFixed(2)} to $${Number(leak.priceRise.newPrice).toFixed(2)}`,
     };
   }
   return {
-    line: `Shows the yearly cost, spots double-ups, gives the official cancel steps and a ready email, then tracks that ${name} really stopped.`,
+    points: ['Shows the yearly cost, line by line', 'Spots double-ups', 'Official cancel steps and a ready email', `Tracks that ${name} really stopped`],
     text: null,
   };
 }
@@ -83,7 +83,12 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
         <Avatar size="h-11 w-11" />
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-bold text-foreground">Let Ghost It handle {name} in chat</p>
-          <p className="text-[14px] leading-snug text-muted-foreground">{benefit.line} {whatIs}</p>
+          <ul className="mt-1 grid gap-x-4 gap-y-0.5 text-[14px] leading-snug text-muted-foreground sm:grid-cols-2">
+            {benefit.points.map((point) => (
+              <li key={point} className="flex gap-1.5"><Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: BLUE }} aria-hidden="true" />{point}</li>
+            ))}
+          </ul>
+          <p className="mt-1.5 text-[13.5px] text-muted-foreground"><b className="text-foreground">1 free try,</b> then $2 a pack or $5 for all (free in the beta). {whatIs}</p>
         </div>
         <button type="button" onClick={go} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-[14.5px] font-bold text-[#0f1730]" style={{ background: BLUE }}>
           <MessageCircle className="h-4 w-4" aria-hidden="true" /> Message Ghost It
