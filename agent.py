@@ -276,12 +276,33 @@ def cancel_email(name):
 
 # ---------------------------------------------------------------- storage
 def get(ctx, key, default):
+    """Read storage safely. An earlier Ghost It version on Agentverse saved some values
+    as JSON text, so a string is parsed, and anything of the wrong shape (a string
+    where a dict or list is expected) falls back to the default instead of crashing."""
     v = ctx.storage.get(key)
-    return default if v is None else v
+    if v is None:
+        return default
+    if isinstance(v, str) and isinstance(default, (dict, list)):
+        try:
+            v = json.loads(v)
+        except (ValueError, TypeError):
+            return default
+    if isinstance(default, dict) and not isinstance(v, dict):
+        return default
+    if isinstance(default, list) and not isinstance(v, list):
+        return default
+    return v
+
+
+def last_subs(ctx, sender):
+    """The subscriptions this person has told us about, skipping anything an older
+    version saved in another shape."""
+    return [s for s in get(ctx, f"last:{sender}", []) if isinstance(s, dict) and s.get("key") and s.get("name")]
 
 
 def ghost_list(ctx, sender):
-    return get(ctx, f"gl:{sender}", {})
+    gl = get(ctx, f"gl:{sender}", {})
+    return {k: v for k, v in gl.items() if isinstance(v, dict)}
 
 
 def save_list(ctx, sender, gl):
@@ -409,7 +430,7 @@ def check_reply(ctx, sender, text, subs, missing):
 
     # Remember everything they've told us, not just this message (newest price wins),
     # so `screen pack` after an AI-tools check still finds their streaming services.
-    known = {s["key"]: s for s in get(ctx, f"last:{sender}", [])}
+    known = {s["key"]: s for s in last_subs(ctx, sender) if isinstance(s, dict) and "key" in s}
     known.update({s["key"]: s for s in subs})
     ctx.storage.set(f"last:{sender}", list(known.values())[-40:])
     bump(ctx, "checks")
@@ -769,15 +790,15 @@ def route(ctx, sender, raw):
             return help_reply()
         if a == "pack":
             pack = sel.get("pack") if sel.get("pack") in PACKS else "Screen"
-            last = [s for s in get(ctx, f"last:{sender}", []) if s.get("known") and C[s["key"]]["pack"] == pack]
+            last = [s for s in last_subs(ctx, sender) if s.get("known") and C[s["key"]]["pack"] == pack]
             if not last:
                 browse = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
                 return gated_ghost(ctx, sender, browse, f"{pack} pack", browse=True)
             return gated_ghost(ctx, sender, last, f"{pack} pack")
         if a == "ghost_all":
-            return gated_ghost(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps", everything=True)
+            return gated_ghost(ctx, sender, last_subs(ctx, sender), "Cancel steps", everything=True)
         if a == "scan":
-            last = get(ctx, f"last:{sender}", [])
+            last = last_subs(ctx, sender)
             return (f"Scan your bank statement free (CSV or PDF, no bank login): "
                     f"{app_link([s['key'] for s in last if s.get('known')])}\n"
                     "It finds the subscriptions you forgot, trials that turned paid, and price rises.", None)
@@ -818,11 +839,11 @@ def route(ctx, sender, raw):
         key = find_merchant(m.group(1)) or m.group(1).strip()
         return status_reply(ctx, sender, key, "Stopped" if m.group(2) == "stopped" else "Still charging")
     if re.search(r"ghost everything|all packs|ghost all|cancel all", low):
-        return gated_ghost(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps for everything", everything=True)
+        return gated_ghost(ctx, sender, last_subs(ctx, sender), "Cancel steps for everything", everything=True)
     pm = re.search(r"\b(screen|sound|music|gym|fitness|food|tech|play|gaming)\s+pack\b", low)
     if pm:
         pack = PACK_WORDS[pm.group(1)]
-        last = [s for s in get(ctx, f"last:{sender}", []) if s.get("known") and C[s["key"]]["pack"] == pack]
+        last = [s for s in last_subs(ctx, sender) if s.get("known") and C[s["key"]]["pack"] == pack]
         if not last:
             browse = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
             return gated_ghost(ctx, sender, browse, f"{pack} pack", browse=True)
@@ -830,7 +851,7 @@ def route(ctx, sender, raw):
     cm = re.search(r"\b(cancel|ghost|stop)\b\s+(.+)", low)
     if cm and "$" not in low:
         key = find_merchant(cm.group(2))
-        last = {s["key"]: s for s in get(ctx, f"last:{sender}", [])}
+        last = {s["key"]: s for s in last_subs(ctx, sender)}
         if key:
             s = last.get(key) or dict(key=key, known=True, name=C[key]["name"], price=None)
             return gated_ghost(ctx, sender, [s], f"Cancel {C[key]['name']}")
@@ -876,18 +897,21 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     raw = " ".join(c.text for c in msg.content if isinstance(c, TextContent)).strip()
     if not raw:
         return
-    if not ctx.storage.get(f"seen:{sender}"):
-        ctx.storage.set(f"seen:{sender}", True)
-        bump(ctx, "users")
-    bump(ctx, "messages")
+    try:
+        if not ctx.storage.get(f"seen:{sender}"):
+            ctx.storage.set(f"seen:{sender}", True)
+            bump(ctx, "users")
+        bump(ctx, "messages")
+    except Exception as e:  # counters must never stop a reply
+        ctx.logger.error(f"stats error: {e}")
     try:
         text, card = route(ctx, sender, raw)
     except Exception as e:  # never crash on odd input
-        ctx.logger.error(f"route error: {e}")
+        ctx.logger.error(f"route error: {type(e).__name__}: {e}")
         text, card = help_reply()
     await ctx.send(sender, make_msg(text, card))
     pending = get(ctx, f"pending_pay:{sender}", None)
-    if paying() and pending and not pending.get("session"):
+    if paying() and isinstance(pending, dict) and not pending.get("session"):
         await send_payment_request(ctx, sender)
 
 

@@ -470,3 +470,31 @@ class AsiOneGreeting(unittest.TestCase):
         self.assertIn("AI tools double up", reply)
         self.assertIn("Try it", reply)
         self.assertEqual(card[0], "form")
+
+
+class OldStorage(unittest.TestCase):
+    """An earlier Ghost It on Agentverse saved some values as JSON text (2 Nov crash:
+    'str' object has no attribute 'get')."""
+
+    def test_stats_saved_as_text_does_not_crash(self):
+        import asyncio
+
+        class Ctx(FakeCtx):
+            def __init__(self):
+                super().__init__()
+                self.sent = []
+
+            async def send(self, to, msg):
+                self.sent.append(msg)
+
+        ctx = Ctx()
+        ctx.storage.set("stats", "not a dict")
+        ctx.storage.set(f"last:{SENDER}", '[{"key": "netflix"}]')
+        ctx.storage.set(f"gl:{SENDER}", "old text")
+        msg = type("M", (), {})()
+        msg.msg_id = "x"
+        msg.content = [A.TextContent(type="text", text="@ghostit netflix $8.99 espn plus 11.99 paramount 13.99")]
+        asyncio.run(A.handle_message(ctx, SENDER, msg))
+        self.assertEqual(len(ctx.sent), 2)  # the acknowledgement and the reply
+        reply = ctx.sent[1].content[0].text
+        self.assertIn("$419.64", reply)
