@@ -14,7 +14,9 @@
         "feedback_submitted",
         "guide_opened",
         "guide_message",
-        "paywall_shown"
+        "paywall_shown",
+        "try_completed",
+        "ask_ghostit_click"
       ]
     },
     "created_at": {

@@ -44,6 +44,10 @@ export default async function (req) {
       return Number.isFinite(parsed) ? Math.round(parsed * 100) / 100 : 0;
     };
 
+    const score = (value) => {
+      const parsed = Math.round(Number(value));
+      return parsed >= 1 && parsed <= 5 ? parsed : null;
+    };
     const foundReal = FOUND_REAL.includes(body.found_real) ? body.found_real : '';
     const wouldPay = WOULD_PAY.includes(body.would_pay) ? body.would_pay : '';
     const createdAt = new Date().toISOString();
@@ -58,12 +62,16 @@ export default async function (req) {
       confusion_text: text(body.confusion_text, 500),
       would_pay: wouldPay,
       builder_name: text(body.builder_name, 80),
+      kind: body.kind === 'journey' ? 'journey' : 'result',
+      clarity_app: score(body.clarity_app),
+      clarity_agent: score(body.clarity_agent),
+      quote_ok: body.quote_ok === true,
       created_at: createdAt,
     });
 
     await base44.asServiceRole.entities.Event.create({
       session_id: sessionId,
-      event_type: 'feedback_submitted',
+      event_type: body.kind === 'journey' ? 'try_completed' : 'feedback_submitted',
       created_at: createdAt,
     });
 

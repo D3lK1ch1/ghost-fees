@@ -43,6 +43,15 @@
     "builder_name": {
       "type": "string"
     },
+    "kind": {
+      "type": "string",
+      "enum": ["result", "journey"],
+      "default": "result",
+      "description": "result: the form under the results. journey: the /try tester walk-through."
+    },
+    "clarity_app": { "type": "number", "description": "/try: how clear the app was, 1 to 5" },
+    "clarity_agent": { "type": "number", "description": "/try: how clear Ghost It was, 1 to 5" },
+    "quote_ok": { "type": "boolean", "default": false, "description": "Said yes to being quoted (with builder_name as the first name)" },
     "created_at": {
       "type": "string",
       "format": "date-time"
