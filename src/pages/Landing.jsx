@@ -13,6 +13,7 @@ import ValueLine from '@/components/landing/ValueLine';
 import HomeTabs from '@/components/landing/HomeTabs';
 import IsThisYou from '@/components/landing/IsThisYou';
 import PlansAtAGlance from '@/components/landing/PlansAtAGlance';
+import GhostTeam from '@/components/landing/GhostTeam';
 import { Link } from 'react-router-dom';
 import { TRY_RETURN, markTry } from '@/pages/Try';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -154,6 +155,7 @@ export default function Landing() {
           <ValueLine onSample={() => scan([], true)} />
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
+          <GhostTeam />
           <HomeTabs tabs={[
             { key: 'you', label: 'Is this you?', content: <IsThisYou /> },
             { key: 'plans', label: 'Free vs Pro', content: <PlansAtAGlance onSample={() => scan([], true)} /> },

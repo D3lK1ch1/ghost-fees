@@ -21,7 +21,7 @@ const FEATURES = [
   { full: 'Ghost List tracker', body: 'Requested, confirmed, still charging' },
   { full: 'Did it actually stop?', body: 'Your next statement proves it' },
   { full: 'Cancel reminders', body: 'Pick a time, it lands in your calendar' },
-  { full: 'PDF report, levels and badges', body: 'Share what you ghosted' },
+  { full: 'PDF report, levels and badges', body: 'Badges like First Ghost and Price Rise Spotter as you cancel. Share what you ghosted' },
   { full: 'Your full total', body: 'Always shown, on every plan', free: 'Your full total', always: true },
 ];
 
