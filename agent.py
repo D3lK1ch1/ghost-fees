@@ -331,6 +331,23 @@ def help_reply(full=False):
     return text, help_card()
 
 
+def about_reply():
+    """v8: "what were you created to do?" (ASI:One's suggested question on the profile),
+    "who are you", "what is this": the purpose, what it does, one thing to try."""
+    text = (
+        "**I'm Ghost It.** I find subscriptions you're paying for twice and help you cancel them.\n\n"
+        "I'm the chat side of the Ghost Fees app. Here's what I do:\n"
+        "1. **Add up the real cost**, line by line: $8.99/mo x 12 = $107.88/yr\n"
+        "2. **Find doubles**, like 3 streaming services or 4 AI tools\n"
+        "3. **Give the official cancel steps** and a ready-to-send email. I never guess a link\n"
+        "4. **Check it stopped:** I keep your ghost list and ask after 7 days\n\n"
+        "**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or fill in the card below.\n"
+        "Something unclear? Tell me with `feedback: ...` and I'll change it.\n\n"
+        + DISCLAIMER
+    )
+    return text, help_card()
+
+
 def help_card():
     return ("form", {
         "title": "What do you pay for?",
@@ -781,6 +798,8 @@ def route(ctx, sender, raw):
         if ADMIN_CODE != "change-me" and code == ADMIN_CODE:
             return evidence_reply(ctx)
         return ("Evidence is for the Ghost It team only.", None)
+    if re.search(r"(created|made|built|designed) (you )?(to|for)|what (were|are) you (for|made|built|created)|who are you|what is this|what are you|about you|your purpose", low):
+        return about_reply()
     if re.fullmatch(r"\s*(commands|menu|what can you do\??|all commands)\s*", low):
         return help_reply(full=True)
     if re.search(r"what'?s new|changelog", low):

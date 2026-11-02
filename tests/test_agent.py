@@ -443,3 +443,19 @@ class V8(unittest.TestCase):
         for msg in ["hi", "Netflix $19, Stan $16", "screen pack", "my ghost list", "what's new", "ChatGPT $30, Cursor $30"]:
             reply, _ = A.route(ctx, SENDER, msg)
             self.assertNotIn("—", reply, msg)
+
+
+class About(unittest.TestCase):
+    """ASI:One's profile suggests "Tell me what you were created to do"."""
+
+    def test_created_to_do_gets_the_purpose_and_what_it_does(self):
+        for msg in ["Tell me what you were created to do", "who are you", "what is this", "what were you made for?"]:
+            reply, card = A.route(FakeCtx(), SENDER, msg)
+            self.assertIn("I find subscriptions you're paying for twice", reply, msg)
+            self.assertIn("Check it stopped", reply, msg)
+            self.assertEqual(card[0], "form", msg)
+            self.assertNotIn("—", reply)
+
+    def test_hi_is_still_one_line(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "hi")
+        self.assertEqual(reply, A.PURPOSE)
