@@ -498,3 +498,12 @@ class OldStorage(unittest.TestCase):
         self.assertEqual(len(ctx.sent), 2)  # the acknowledgement and the reply
         reply = ctx.sent[1].content[0].text
         self.assertIn("$419.64", reply)
+
+
+class OldCounters(unittest.TestCase):
+    def test_counter_saved_as_a_list_restarts(self):
+        ctx = FakeCtx()
+        ctx.storage.set("stats", {"users": ["a", "b"], "messages": 3})
+        A.bump(ctx, "users")
+        A.bump(ctx, "messages")
+        self.assertEqual(ctx.storage.get("stats"), {"users": 1, "messages": 4})

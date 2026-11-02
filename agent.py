@@ -311,7 +311,9 @@ def save_list(ctx, sender, gl):
 
 def bump(ctx, field, n=1):
     st = get(ctx, "stats", {})
-    st[field] = st.get(field, 0) + n
+    old = st.get(field, 0)
+    # An older version stored some counters as lists; start those again from 0.
+    st[field] = (old if isinstance(old, (int, float)) else 0) + n
     ctx.storage.set("stats", st)
 
 
