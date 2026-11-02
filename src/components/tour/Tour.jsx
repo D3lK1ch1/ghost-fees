@@ -121,7 +121,11 @@ export default function Tour({ name, steps, ready = true, auto = false, onFinish
       place = { top: spot.top - cardH - 14, left };
       arrow = { bottom: -9, left: arrowX, borderRightWidth: 2, borderBottomWidth: 2 };
     } else {
-      place = { right: 20, bottom: 20 };
+      // Big target: use the empty space to its right if there's room, otherwise a
+      // narrower card in the bottom corner.
+      const gutter = vw - (spot.left + spot.width) - 24;
+      if (gutter >= 280) place = { top: Math.max(16, Math.min(spot.top, vh - cardH - 16)), left: spot.left + spot.width + 12, width: Math.min(cardW, gutter) };
+      else place = { right: 16, bottom: 16, width: Math.min(340, vw - 32) };
     }
   }
   const current = live[step];
