@@ -404,7 +404,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
-                        <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} small className="ml-4 mt-2" />
+                        <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} leak={leak} variant="strip" className="mx-3 -mt-4" />
                         {cardStats[leak.id] && <StatNote statKey={cardStats[leak.id]} className="mx-4 mt-1" />}
                       </div>
                     </CardItem>
