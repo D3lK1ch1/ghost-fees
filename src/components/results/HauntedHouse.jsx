@@ -7,9 +7,6 @@ import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
-import GhostItDialog from './GhostItDialog';
-import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
-import { useGo } from './AskGhostIt';
 import HouseGhost from './HouseGhost';
 import GhostTip from './GhostTip';
 import GhostNameField from './GhostNameField';
@@ -202,8 +199,6 @@ function Room({ room, leaks, cleared, flying, active, onSelect, className, delay
 
 // Leaks drawn as ghosts in a five-room house. Busting is kept in this component only.
 export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey = 'penny', onGuide, cleared: sharedCleared, onClearedChange, onSetGoals, onAskGuide, focusLeakId }) {
-  const [ghostItOpen, setGhostItOpen] = useState(false);
-  const ghostItGo = useGo('@ghostit packs');
   // Busted ghosts can be shared with the goal path; falls back to local state.
   const [localCleared, setLocalCleared] = useState([]);
   const cleared = sharedCleared ?? localCleared;
@@ -433,22 +428,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   </button>
                 );
               })}
-              {/* Ghost It: our AI agent in ASI:One. Not a guide here; it opens its Ghost Packs. */}
-              <button
-                type="button"
-                onClick={() => setGhostItOpen(true)}
-                aria-label="Ghost It, AI agent. Ghost Packs analyse each kind of leak, in chat."
-                className="flex flex-col items-center rounded-2xl px-2 pt-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-              >
-                <GhostTip label="Ghost It · AI agent" detail="Ghost Packs analyse each kind of leak in chat: doubles, bundles and weekly costs.">
-                  <img src={GHOST_IT_MASCOT} alt="" width={48} height={48} className="block h-12 w-12 animate-float object-contain" style={{ animationDelay: '2s' }} />
-                </GhostTip>
-                <span className="mt-1.5 rounded-full bg-[#170f2a]/80 px-2.5 py-0.5 font-heading text-[14px] font-semibold text-[#e6defa]">Ghost It</span>
-                <span className="mt-0.5 rounded-full bg-[#8FB8FF] px-1.5 text-[9.5px] font-black uppercase tracking-wide text-[#1b1233]">AI agent</span>
-                <span className="mt-1 text-[13px] font-bold leading-tight text-[#8FB8FF]">Ghost Packs</span>
-              </button>
             </div>
-            <GhostItDialog open={ghostItOpen} onClose={() => setGhostItOpen(false)} onMessage={ghostItGo} />
           </div>
           <div className="relative -mx-6 mt-1 h-10 sm:-mx-10" aria-hidden="true">
             <div className="absolute inset-x-0 bottom-2 h-7 [background-image:repeating-linear-gradient(90deg,#0b0716_0,#0b0716_3px,transparent_3px,transparent_14px)] [mask-image:linear-gradient(to_bottom,transparent,black_25%)]" />

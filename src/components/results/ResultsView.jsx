@@ -421,6 +421,15 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {tab === 'house' && theme.key !== 'ex' && theme.key !== 'christmas' && (
                 <HauntedHouse focusLeakId={houseFocus ? houseFocus.slice(0, houseFocus.lastIndexOf('@')) : null} leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
+              {tab === 'house' && (
+                <GhostItPacks
+                  items={subscriptions}
+                  className="mt-6"
+                  kicker="Ghost It · specialised AI agent"
+                  title="Want a deeper fee analysis?"
+                  intro="Here you sort each ghost. Ghost It's Ghost Packs dig deeper in chat: which ones double up, what's hidden in Apple or Google bundles, what weekly costs add up to, and what you'd save keeping just one."
+                />
+              )}
               {theme.key === 'ex' && ['path', 'calendar', 'emails', 'receipt'].includes(tab) && (
                 <ExTabScreens tab={tab} subscriptions={subscriptions} avatarFor={avatarFor} onUpload={onRestart} />
               )}

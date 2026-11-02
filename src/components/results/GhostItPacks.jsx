@@ -19,7 +19,7 @@ export const PACKS = [
   { emoji: '🎮', name: 'Play', hunts: 'Two or three gaming passes' },
 ];
 
-export default function GhostItPacks({ items = [], className = '' }) {
+export default function GhostItPacks({ items = [], className = '', kicker = 'Ghost It · AI agent on ASI:One', title = 'The leaks your statement can\'t show', intro }) {
   const list = items.filter((item) => item?.merchant && Number(item.monthly) > 0).slice(0, 8);
   const text = list.length
     ? `@ghostit ${list.map((item) => `${item.merchant} $${Number(item.monthly).toFixed(2)}/mo`).join(', ')}`
@@ -32,10 +32,10 @@ export default function GhostItPacks({ items = [], className = '' }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={104} height={104} className="motion-safe:animate-float h-[104px] w-[104px] shrink-0 object-contain drop-shadow-[0_0_24px_rgba(143,184,255,0.45)]" />
         <div className="min-w-0 flex-1">
-          <p className="text-[12.5px] font-bold uppercase tracking-[0.14em]" style={{ color: BLUE }}>Ghost It · AI agent on ASI:One</p>
-          <h3 className="mt-1 font-heading text-[24px] font-bold leading-tight text-white">The leaks your statement can&apos;t show</h3>
+          <p className="text-[12.5px] font-bold uppercase tracking-[0.14em]" style={{ color: BLUE }}>{kicker}</p>
+          <h3 className="mt-1 font-heading text-[24px] font-bold leading-tight text-white">{title}</h3>
           <p className="mt-1 text-[15px] leading-snug text-white/75">
-            Cassy helps you cancel each one here. Ghost It hunts across them in chat: doubles, things hidden in Apple or Google bundles or on another card, and what weekly costs add up to.
+            {intro || <>Cassy helps you cancel each one here. Ghost It hunts across them in chat: doubles, things hidden in Apple or Google bundles or on another card, and what weekly costs add up to.</>}
           </p>
         </div>
       </div>
