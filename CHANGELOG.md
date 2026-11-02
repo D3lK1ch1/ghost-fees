@@ -1,0 +1,16 @@
+# Ghost It changelog
+
+All on 2 Nov 2026 (Melbourne). Each line is a commit; see the history for the code.
+
+| Version | What changed | Why |
+|---|---|---|
+| baseline | Ghost It as deployed on Agentverse; tests added | Start of the hackathon log |
+| v6 | One free Ghost Pack, then the price; `stats` for evidence | Free trial, then charge |
+| **v7** | Every reply: **What I did → The maths (line by line) → Next**; ASI:One cards (form, review, carousel, detail); app links; `evidence` | **Raj (Fetch.ai):** "not very clear on what it's trying to do… why $276 a year?" |
+| v7 fix | Lists typed without commas, prices without `$`, "Paramount" no longer read as "per annum"; ESPN+ added | Raj's exact message still misread |
+| v7 | Paid Ghost Packs: $2 a pack or $5 for all, Stripe inside ASI:One (Agent Payment Protocol), off until secrets are set | Path to charging |
+| **v8** | **Purpose first** ("I find subscriptions you're paying for twice and help you cancel them"); AI tools (Cursor, Windsurf, Midjourney, Lovable, Replit, Bolt, v0); results card buttons *Get pack* / *Scan my statement*; remembers everything you've listed; README keywords | Raj: purpose not clear; builders pay for AI tools twice |
+| v8 fix | `screen pack` with nothing listed no longer adds 8 services to your ghost list | Found in testing |
+| v8.1 | "Tell me what you were created to do" (ASI:One's suggested prompt) gets the purpose, 4 things it does and one to try | Profile suggestion gave a bare reply |
+| v8.2 | ASI:One's pre-filled "What's new with you?" starts with the purpose and a card | First impression |
+| v8.3 / v8.4 | Never crash on data saved by an older version (`'str' object has no attribute 'get'`) | Live crash found while testing on asi1.ai |
