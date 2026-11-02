@@ -14,3 +14,14 @@ export const statFor = (key) => STATS.find((item) => item.key === key);
 export const statsFor = (place) => STATS.filter((item) => item.matches.includes(place));
 // Shown on the home strip: stats 1 to 3.
 export const HEADLINE_STATS = statsFor('home');
+
+// One stat per ghost card, only where it fits (B9). Returns a stat key or null.
+const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45|SNAP|PILATES|YOGA)\b/i;
+export function statKeyForLeak(leak = {}) {
+  const name = `${leak.merchant || ''} ${leak.title || ''}`;
+  if (GYM_RE.test(name)) return 'gym';
+  if (/trial/i.test(leak.badge || '')) return 'trial';
+  if (/NETFLIX/i.test(name)) return 'netflix';
+  if (/duplicate/i.test(leak.badge || '')) return 'double';
+  return null;
+}

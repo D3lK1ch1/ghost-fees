@@ -354,3 +354,10 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/ExAct2.jsx, src/components/results/HauntedCalendar.jsx
 - How to test: pick 💔, Try a sample statement, See everything: Glow-up plan (postcard) and Check-ins & reminders (the bubble), for I'm Fine and Heartbroken.
 - User feedback that drove this: "can this link here to the actual cancel link on the website"; "comma before Cassy and do not cut off the sunnies".
+
+### Research next to your own numbers (B9)
+- What: the guess reveal now says "You guessed $100. It's actually $296.92 in 7 months, 197% more than you thought." (or "Good guess, you were close."), with "20% more spent on subscriptions than people think (Westpac, 2025)" underneath. Each ghost card shows one matched stat, only where it fits and each stat once: gym ($1,116 unused gym), a trial that turned paid (38% forgot a trial), Netflix (57% name Netflix), a duplicate (3 in 10 lose up to $600). The home strip already shows stats 1 to 3 and Cassy's screen the cancel stat. Every stat shows its source and year.
+- Not done: /progress "Our users vs the research" (average guess vs average real total). The guess never leaves the browser today; it would need a new, aggregate-only log.
+- Files: src/components/results/GuessReveal.jsx, src/data/stats.js (statKeyForLeak), src/components/results/ResultsView.jsx
+- How to test: Try a sample statement, Reveal with $100: "197% more than you thought". Ghosts tab: Streammax shows the trial stat, Adobe the duplicate stat.
+- User feedback that drove this: research shown next to users' own numbers (FINAL_UPDATE_PACK 1.7).

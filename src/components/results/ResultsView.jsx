@@ -12,6 +12,8 @@ import CancelAssistant from './CancelAssistant';
 import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
+import StatNote from '@/components/stats/StatNote';
+import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
 import LeakFilter, { filterLeaks } from './LeakFilter';
 import ExTabScreens from '@/components/ex/ExTabScreens';
@@ -134,6 +136,16 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [leakSort, setLeakSort] = useState('biggest');
   // A new scan may not have the type picked before: fall back to All.
   const activeLeakType = leaks.some((leak) => leak.badge === leakType) ? leakType : 'all';
+  // B9: one matched stat per ghost card, each stat shown once, biggest ghost first.
+  const cardStats = {};
+  const usedStats = new Set();
+  leaks.forEach((leak) => {
+    const key = statKeyForLeak(leak);
+    if (key && !usedStats.has(key)) {
+      cardStats[leak.id] = key;
+      usedStats.add(key);
+    }
+  });
   const [lifeGoal, setLifeGoal] = useState({ name: '', amount: 0 });
   // Guess-your-number comes first; the guess stays in this tab only.
   const [guessDone, setGuessDone] = useState(false);
@@ -366,6 +378,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
                         <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} small className="ml-4 mt-1.5" />
+                        {cardStats[leak.id] && <StatNote statKey={cardStats[leak.id]} className="mx-4 mt-1" />}
                       </div>
                     </CardItem>
                   ))}
