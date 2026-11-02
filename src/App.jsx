@@ -18,6 +18,7 @@ import Privacy from '@/pages/Privacy';
 import Upgrade from './pages/Upgrade';
 import Unlocked from './pages/Unlocked';
 import Try from './pages/Try';
+import GhostIt from './pages/GhostIt';
 import DoneLink from '@/components/site/DoneLink';
 import Demo from './pages/Demo';
 import Login from '@/pages/Login';
@@ -64,6 +65,7 @@ const AuthenticatedApp = () => {
         <Route path="/upgrade" element={<Upgrade />} />
         <Route path="/unlocked" element={<Unlocked />} />
         <Route path="/try" element={<Try />} />
+        <Route path="/ghostit" element={<GhostIt />} />
         <Route path="/demo" element={<Demo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
