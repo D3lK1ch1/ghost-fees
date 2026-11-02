@@ -1,0 +1,13 @@
+[
+  { "id": "half", "big": "1 in 2", "text": "Australians pay for subscriptions they don't use", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["home"] },
+  { "id": "waste", "big": "$1,600+", "text": "a year potentially wasted on unused subscriptions", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["home", "paywall"] },
+  { "id": "aussies", "big": "8.4M", "text": "Aussies paying for subscriptions they don't use", "source": "ING, 2025", "matches": ["home"] },
+  { "id": "realise", "big": "20%", "text": "more spent on subscriptions than people think", "source": "Westpac, 2025", "matches": ["reveal"] },
+  { "id": "trial", "big": "38%", "text": "of overspenders forgot to cancel a free trial", "source": "Westpac, 2025", "matches": ["trial"] },
+  { "id": "gym", "big": "$1,116", "text": "a year for an unused gym membership", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["gym"] },
+  { "id": "cancel", "big": "9 months", "text": "on average before people cancel, about $964 lost", "source": "ING, 2023", "url": "https://newsroom.ing.com.au/unused-subscriptions-and-forgotten-outgoings-could-cost-each-aussie-up-to-1261-a-year/", "matches": ["cancel"] },
+  { "id": "traps", "big": "1 Jul 2027", "text": "subscription traps become illegal in Australia", "source": "Unfair Trading Practices Act, 2026", "matches": ["paywall"] },
+  { "id": "netflix", "big": "57%", "text": "of people wasting money name Netflix as their unused subscription", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["streaming"] },
+  { "id": "double", "big": "3 in 10", "text": "lose up to $600 a year on duplicate services and unused apps", "source": "Westpac, 2025", "matches": ["double"] },
+  { "id": "hard", "big": "31%", "text": "find cancelling a subscription hard", "source": "Westpac, 2025", "matches": ["cancel"] }
+]

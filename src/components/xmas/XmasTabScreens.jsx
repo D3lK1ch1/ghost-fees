@@ -1,4 +1,5 @@
 import { SpeechBubble } from '@/components/site/Bubbles';
+import { statFor } from '@/data/stats';
 import { money } from '@/lib/ghostFees/format';
 import { XMAS } from '@/lib/ghostFees/christmasArt';
 import ChangedMyWays from './ChangedMyWays';
@@ -124,8 +125,9 @@ function GiftTag({ leaks, subscriptions, total, X, season }) {
           <div key={small} className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{big}</b>: {small}</div></div>
         ))}
         <div className="pt-2 text-[12px] font-extrabold tracking-wide" style={{ borderTop: '1px dashed #c9b28a', color: '#6b5a40' }}>AND FOR EVERYONE</div>
-        <div className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>Up to $1,667 a year</b>: wasted on unused subscriptions <span style={{ color: '#6b5a40' }}>(Compare the Market, 2026)</span></div></div>
-        <div className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>9 months</b>: how long people take to cancel <span style={{ color: '#6b5a40' }}>(ING)</span></div></div>
+        {['waste', 'cancel'].map(statFor).map((fact) => (
+          <div key={fact.key} className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{fact.stat}</b>: {fact.text} <span style={{ color: '#6b5a40' }}>({fact.source})</span></div></div>
+        ))}
       </div>
       <div className="relative text-center text-[13px] font-extrabold" style={{ color: X.mint }}>Every charge is on the receipt below. Print it, or keep it for the bank.</div>
       <Disclaimer X={X} />

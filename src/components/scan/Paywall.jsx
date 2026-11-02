@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { HEADLINE_STATS } from '@/data/stats';
+import { statsFor } from '@/data/stats';
 import { useScan } from '@/lib/ScanContext';
 import { useAllowance } from '@/lib/AllowanceContext';
 import { paybackLine } from '@/lib/ghostFees/payback';
@@ -81,7 +81,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
         ) : (
           <>
             <ul className="mt-1 space-y-2">
-              {HEADLINE_STATS.map((fact) => (
+              {statsFor('paywall').map((fact) => (
                 <li key={fact.key} className="flex gap-2.5 rounded-2xl bg-secondary/60 px-3 py-2">
                   <span className="text-[18px]" aria-hidden="true">{fact.emoji}</span>
                   <span className="text-[13px] leading-snug text-muted-foreground">
