@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Compass } from 'lucide-react';
+import GhostMark from '@/components/site/GhostMark';
 
 // A short step-by-step tour. Each step scrolls to the real thing on the page and
 // rings it. Opt-in: it never pops up on its own (testers found pop-ups distracting);
 // people start it with a "Take the tour" button, via replayTour(name). Testers: "quite overwhelmed at the beginning", "information overload".
-const EVENT = 'ghostFees:tour';
+export const TOUR_EVENT = 'ghostFees:tour';
+const EVENT = TOUR_EVENT;
 const storageKey = (name) => `ghostFees.tourSeen.${name}.v1`;
 
 const seen = (name) => {
@@ -19,15 +21,18 @@ export function replayTour(name) {
   window.dispatchEvent(new CustomEvent(EVENT, { detail: name }));
 }
 
-export default function Tour({ name, steps, ready = true, auto = false, onFinish }) {
+// guide: optional ghost guide ({ name, role, color }) who leads the tour.
+export default function Tour({ name, steps, ready = true, auto = false, onFinish, guide }) {
   const [step, setStep] = useState(() => (auto && !seen(name) ? 0 : -1));
-  // Only the steps whose target is on the page right now (checked after it renders).
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const live = useMemo(
-    () => (mounted && step >= 0 ? steps.filter((item) => document.querySelector(`[data-tour="${item.target}"]`)) : []),
-    [mounted, step === -1, steps],
-  );
+  // Only the steps whose target is on the page, checked after the page has drawn
+  // (so a total that appears as the tour starts is included).
+  const [live, setLive] = useState([]);
+  const starting = step >= 0 && ready;
+  useEffect(() => {
+    if (!starting) return;
+    setLive(steps.filter((item) => document.querySelector(`[data-tour="${item.target}"]`)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [starting]);
   const active = ready && step >= 0 && step < live.length;
 
   useEffect(() => {
@@ -75,6 +80,14 @@ export default function Tour({ name, steps, ready = true, auto = false, onFinish
   const last = step === live.length - 1;
   return (
     <div role="dialog" aria-label="Quick tour" className="fixed inset-x-3 bottom-4 z-[60] mx-auto max-w-md rounded-3xl border-2 border-primary bg-card p-4 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.8)] sm:inset-x-auto sm:left-1/2 sm:w-[28rem] sm:-translate-x-1/2">
+      {guide && (
+        <div className="mb-2 flex items-center gap-2.5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ background: `${guide.color}2e` }} aria-hidden="true">
+            <GhostMark className="h-7 w-7 motion-safe:animate-float" style={{ color: guide.color }} eyeColor="#1a1230" />
+          </span>
+          <p className="text-[14px] leading-tight text-muted-foreground"><b style={{ color: guide.color }}>{guide.name}</b>, {guide.role}, shows you round</p>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         <p className="text-[13px] font-bold uppercase tracking-wide text-primary">Quick tour · {step + 1} of {live.length}</p>
         <div className="flex gap-1" aria-hidden="true">

@@ -1,4 +1,5 @@
 import Tour from '@/components/tour/Tour';
+import { GUIDES } from '@/lib/ghostFees/guides';
 
 // The results tour: a click-through walk round the results. It opens each tab for
 // you so you see the real thing. Opt-in: start it from "Take the tour" under your
@@ -16,6 +17,7 @@ const stepsFor = (setTab) => [
   { target: 'ask', title: 'Stuck? Ask a ghost', body: 'Our ghost guides answer questions about your own results, any time.' },
 ];
 
-export default function ResultsTour({ ready, setTab }) {
-  return <Tour name={RESULTS_TOUR} steps={stepsFor(setTab)} ready={ready} />;
+export default function ResultsTour({ ready, setTab, guideKey = 'penny' }) {
+  const guide = GUIDES[guideKey] || GUIDES.penny;
+  return <Tour name={RESULTS_TOUR} steps={stepsFor(setTab)} ready={ready} guide={guide} />;
 }
