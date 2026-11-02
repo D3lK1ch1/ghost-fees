@@ -134,3 +134,32 @@ export function TinySavings({ X, size = 84, hop = 0 }) {
 export const Disclaimer = ({ X }) => (
   <div className="relative text-center text-[12.5px]" style={{ color: X.muted }}>General information about subscriptions, not financial advice.</div>
 );
+
+// A spirit with its own speech bubbles (the asset bubbles): the first comes out of
+// its mouth and goes up and right, the second sits just under it. Both tails point
+// back at the ghost. mouth: where the tail tip goes, as % of the picture (width x
+// height). Bubbles never cover the eyes.
+export function SpiritSays({ src, name, alt = '', width = 130, ratio = 1.3, mouth = [80, 40], lines = [], X }) {
+  const height = Math.round(width * ratio);
+  const tipX = (mouth[0] / 100) * width;
+  const tipY = (mouth[1] / 100) * height;
+  const [first, second] = lines;
+  return (
+    <div className="relative" style={{ paddingTop: 70, minHeight: height + 110 }}>
+      <div className="relative" style={{ width }}>
+        <img src={src} alt={alt} width={width} height={height} className="x-breathe block h-auto" style={{ width }} />
+        <div className="x-fredoka mx-auto mt-1 w-fit rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
+        {first && (
+          <div className="absolute z-10" style={{ left: tipX, top: tipY, transform: 'translate(-9.4%, -100%)' }}>
+            <div className="bub-l x-rise !min-w-0 text-[14.5px] font-semibold" style={{ width: 210, animationDelay: '.3s' }}>{first}</div>
+          </div>
+        )}
+        {second && (
+          <div className="absolute z-10" style={{ left: tipX + 34, top: tipY + 8 }}>
+            <div className="bub-l x-rise !min-w-0 text-[14.5px] font-semibold" style={{ width: 210, animationDelay: '.9s' }}>{second}</div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
