@@ -93,3 +93,7 @@
 .gl-leave { animation: glLeave 2.4s ease-in 0.4s forwards; }
 .gl-confetti { animation: glConfetti 2.2s linear forwards; }
 @media (prefers-reduced-motion: reduce) { .gl-cheer, .gl-leave { animation: none; } .gl-confetti { display: none; } }
+
+/* Results tour: ring the thing being explained. */
+.tour-ring { position: relative; z-index: 55; border-radius: 1.5rem; box-shadow: 0 0 0 3px hsl(var(--primary)), 0 0 0 9999px rgba(8, 5, 18, 0.55); transition: box-shadow 0.3s; }
+@media (prefers-reduced-motion: reduce) { .tour-ring { transition: none; } }

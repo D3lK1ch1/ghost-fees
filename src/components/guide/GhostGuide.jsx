@@ -268,6 +268,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           type="button"
           onClick={openPanel}
           className="fixed bottom-5 right-5 z-40 flex animate-bob items-center gap-2 rounded-full border border-primary/60 bg-card p-3.5 font-bold text-foreground shadow-[0_8px_30px_rgba(0,0,0,0.35)] sm:px-5"
+          data-tour="ask"
           aria-label="Ask a ghost"
         >
           <GhostMark className="h-6 w-6 text-primary" eyeColor="hsl(var(--card))" />
