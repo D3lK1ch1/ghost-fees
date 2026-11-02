@@ -1037,18 +1037,20 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     if not raw:
         return
     try:
+        text, card = route(ctx, sender, raw)
+    except Exception as e:  # never crash on odd input
+        ctx.logger.error(f"route error: {type(e).__name__}: {e}")
+        text, card = help_reply()
+    # Reply first: ASI:One stops waiting after about 30 seconds, and the counters
+    # below are extra storage writes, so they happen after the person has their answer.
+    await ctx.send(sender, make_msg(text, card))
+    try:
         if not ctx.storage.get(f"seen:{sender}"):
             ctx.storage.set(f"seen:{sender}", True)
             bump(ctx, "users")
         bump(ctx, "messages")
     except Exception as e:  # counters must never stop a reply
         ctx.logger.error(f"stats error: {e}")
-    try:
-        text, card = route(ctx, sender, raw)
-    except Exception as e:  # never crash on odd input
-        ctx.logger.error(f"route error: {type(e).__name__}: {e}")
-        text, card = help_reply()
-    await ctx.send(sender, make_msg(text, card))
     pending = get(ctx, f"pending_pay:{sender}", None)
     if paying() and isinstance(pending, dict) and not pending.get("session"):
         await send_payment_request(ctx, sender)
