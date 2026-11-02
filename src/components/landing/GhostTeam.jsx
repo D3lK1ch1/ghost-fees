@@ -13,7 +13,7 @@ const BLURBS = {
   gus: 'Keeps score as you bust ghosts, and sets goals.',
   cass: 'Finds the real cancel page, steps and phone number.',
 };
-const TEAM = [
+export const TEAM = [
   ...['penny', 'sir', 'gus', 'cass'].map((key) => ({ key, ...GUIDES[key], Icon: ICONS[key], does: BLURBS[key] })),
   {
     key: 'ghostit',
