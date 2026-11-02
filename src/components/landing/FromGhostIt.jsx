@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { money } from '@/lib/ghostFees/format';
 import { groupSubs, rotationPlan } from '@/lib/ghostFees/ghostItLink';
@@ -7,15 +8,18 @@ const ORANGE = '#ffb37c';
 
 // "From Ghost.it": what the Ghost It agent on ASI:One already found.
 export default function FromGhostIt({ subs, onScan }) {
+  const [hidden, setHidden] = useState(false);
   const groups = groupSubs(subs);
   const overlaps = groups.filter((group) => group.overlap && group.saving > 0);
   const rotation = rotationPlan(subs);
   const chart = groups.filter((group) => group.yearly > 0).map((group) => ({ name: group.label, yearly: Math.round(group.yearly), overlap: group.overlap }));
   const missingPrices = subs.some((item) => item.monthly == null);
 
+  if (hidden) return null;
   return (
     <section className="mx-auto mt-2 w-full max-w-3xl px-5 sm:px-8" aria-label="From Ghost.it">
-      <div className="rounded-3xl border border-primary/40 bg-card/80 p-4 sm:p-6">
+      <div className="relative rounded-3xl border border-primary/40 bg-card/80 p-4 sm:p-6">
+        <button type="button" onClick={() => setHidden(true)} aria-label="Close" className="absolute right-3 top-3 rounded-full px-2 text-[18px] text-muted-foreground hover:text-foreground">×</button>
         <p className="text-[12px] font-bold uppercase tracking-wide text-primary">From Ghost.it</p>
         <h2 className="mt-1 font-heading text-[20px] font-semibold text-foreground">Ghost.it found these subscriptions. Scan your statement to find the rest.</h2>
 
