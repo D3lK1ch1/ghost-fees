@@ -1,23 +1,33 @@
-import { useState } from 'react';
+
 import { Link } from 'react-router-dom';
-import { Check } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { statsFor } from '@/data/stats';
 import { useScan } from '@/lib/ScanContext';
 import { useAllowance } from '@/lib/AllowanceContext';
-import { paybackLine } from '@/lib/ghostFees/payback';
-import { startCheckout } from '@/lib/ghostFees/allowance';
+import { money } from '@/lib/ghostFees/format';
+import { useTheme } from '@/lib/ThemeContext';
+import { lastRealTotal } from '@/lib/ghostFees/payback';
 
-const INCLUDED = [
-  'Unlimited scans, forever',
-  'Unlimited chat with all four ghosts',
-  'Cassy finds the cancel page and phone number for every subscription',
-  'Your Ghost Fees PDF report',
-  'Ghost List: check next month that it actually stopped',
-];
+// The theme's own ghost floats at the top of the sheet.
+const SHEET_ART = {
+  haunted: '/themes/haunted/lantern-ghost.webp',
+  ex: '/themes/ex/tilly.webp',
+  christmas: '/themes/christmas/xc-festive.webp',
+};
 
-// Set to false to hide the refund promise.
-const SHOW_GUARANTEE = true;
+const LIMIT_TITLES = {
+  scan: "You've used your 3 free scans",
+  guide: "You've used your free ghost try",
+  cass: 'Cassy looked up your first one for free',
+  report: 'The PDF report comes with the unlock',
+};
+
+// The person's own total: this scan if it's real, otherwise their last real scan
+// (kept as one number in this browser). Never the sample.
+function foundTotal(results, usedSample) {
+  if (results && !usedSample && Number(results.total) > 0) return Number(results.total);
+  return lastRealTotal();
+}
 
 const TITLES = {
   sign_in: 'Sign in for your 3 free scans',
@@ -29,27 +39,11 @@ const TITLES = {
 
 // Shown at every free limit. Leads with the person's own number when there is one.
 export default function Paywall({ open, reason = 'scan', onClose }) {
-  const { results } = useScan();
-  const { signedIn, priceCents, foundingLeft } = useAllowance();
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
-  const founding = priceCents <= 500;
-  const payback = paybackLine(results, priceCents);
+  const { theme } = useTheme();
+  const { results, usedSample } = useScan();
+  const { signedIn, foundingLeft } = useAllowance();
   const returnTo = encodeURIComponent(window.location.pathname + window.location.hash);
 
-  const pay = async () => {
-    setBusy(true);
-    setError('');
-    try {
-      const outcome = await startCheckout();
-      if (outcome?.alreadyPaid) window.location.reload();
-      else if (!outcome?.redirected) setError(outcome?.error || 'Payments open soon.');
-    } catch (err) {
-      setError(err?.response?.data?.error || 'Payments open soon.');
-    } finally {
-      setBusy(false);
-    }
-  };
 
   if (reason === 'sign_in') {
     return (
@@ -67,74 +61,48 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
     );
   }
 
+  // B7: the limit-reached sheet. Slides up on phones, centred on bigger screens.
+  // Leads with the person's own total (never hidden on the results page).
+  const total = foundTotal(results, usedSample);
+  const times = Math.floor(total / 10);
+  const art = SHEET_ART[theme.key] || SHEET_ART.haunted;
+  const unlockTo = signedIn ? '/upgrade' : `/login?returnTo=${encodeURIComponent('/upgrade')}`;
   return (
     <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
-      <DialogContent className="max-h-[92vh] max-w-md overflow-y-auto rounded-3xl border-border bg-card p-5 sm:p-6">
-        <DialogTitle className="font-heading text-[21px] leading-tight">{TITLES[reason] || TITLES.scan}</DialogTitle>
+      <DialogContent className="limit-sheet max-h-[92vh] max-w-md overflow-y-auto rounded-3xl border-border bg-card p-5 pt-3 sm:p-6 max-sm:bottom-0 max-sm:top-auto max-sm:translate-y-0 max-sm:rounded-b-none">
+        <div aria-hidden="true" className="mx-auto mb-1 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
+        <img src={art} alt="" className="motion-safe:animate-float mx-auto h-20 w-auto object-contain" />
+        <DialogTitle className="text-center font-heading text-[21px] leading-tight">{LIMIT_TITLES[reason] || LIMIT_TITLES.scan}</DialogTitle>
 
-        {payback ? (
-          <p className="mt-1 rounded-2xl border border-primary/40 bg-primary/10 px-3.5 py-3 text-center text-[14.5px] font-semibold leading-snug text-foreground">
-            {payback.found}<br />
-            <span className="text-primary">{payback.price}</span>
-            {payback.times && <><br />{payback.times}</>}
-          </p>
-        ) : (
-          <>
-            <ul className="mt-1 space-y-2">
-              {statsFor('paywall').map((fact) => (
-                <li key={fact.key} className="flex gap-2.5 rounded-2xl bg-secondary/60 px-3 py-2">
-                  <span className="text-[18px]" aria-hidden="true">{fact.emoji}</span>
-                  <span className="text-[13px] leading-snug text-muted-foreground">
-                    <span className="font-bold text-foreground">{fact.stat}</span> {fact.text}
-                    <span className="block text-[10.5px] opacity-75">{fact.source}</span>
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 rounded-2xl border border-primary/40 bg-primary/10 px-3.5 py-2.5 text-center text-[14px] font-semibold leading-snug text-foreground">
-              Ghost Fees is <span className="text-primary">{founding ? '$5' : '$10'}, once</span>. Never a subscription.
+        {total > 0 ? (
+          <div className="rounded-2xl border border-primary/40 bg-primary/10 px-4 py-3 text-center">
+            <p className="text-[14px] font-semibold text-foreground">Your scans found</p>
+            <p className="limit-pop font-heading text-[40px] font-bold leading-none text-primary">{money(total)}</p>
+            <p className="text-[14px] font-semibold text-foreground">in ghosts</p>
+            <p className="mt-2 text-[14px] text-foreground">
+              Ghost Fees is <b>$10 once</b>.{times >= 1 ? <> That&apos;s already paid back <b>{times}x</b>.</> : null}
             </p>
-          </>
-        )}
-
-        <div className="mt-4 grid grid-cols-2 gap-2.5">
-          <div className={`relative rounded-2xl px-3 py-3 text-center ${founding ? 'border-2 border-primary bg-primary/[0.08]' : 'border border-border opacity-60'}`}>
-            <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold text-primary-foreground">
-              {founding && foundingLeft != null ? `${foundingLeft} OF 50 LEFT` : 'FIRST 50 ONLY'}
-            </span>
-            <div className="font-heading text-[28px] font-bold leading-none text-foreground">$5</div>
-            <div className="mt-1 text-[11.5px] font-bold text-foreground">Founding member</div>
-            <div className="text-[11px] text-muted-foreground">once, forever</div>
           </div>
-          <div className={`rounded-2xl px-3 py-3 text-center ${founding ? 'border border-border' : 'border-2 border-primary bg-primary/[0.08]'}`}>
-            <div className="font-heading text-[28px] font-bold leading-none text-foreground">$10</div>
-            <div className="mt-1 text-[11.5px] font-bold text-foreground">After that</div>
-            <div className="text-[11px] text-muted-foreground">once, forever</div>
-          </div>
-        </div>
-
-        <ul className="mt-3 space-y-1.5">
-          {INCLUDED.map((item) => (
-            <li key={item} className="flex items-start gap-2 text-[13px] text-foreground">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
-              {item}
-            </li>
-          ))}
-        </ul>
-
-        <p className="mt-3 text-center text-[12px] font-bold text-muted-foreground">Never a subscription. No bank login. Card handled by Stripe.</p>
-        {SHOW_GUARANTEE && <p className="mt-1 text-center text-[12px] text-muted-foreground">Find less than $10? We refund you.</p>}
-
-        {signedIn ? (
-          <button type="button" onClick={pay} disabled={busy} className="mt-3 block w-full rounded-2xl bg-primary py-3 text-center text-[15px] font-bold text-primary-foreground disabled:opacity-60">
-            {busy ? 'Opening Stripe...' : `Unlock for ${founding ? '$5' : '$10'}`}
-          </button>
         ) : (
-          <Link to={`/login?returnTo=${returnTo}`} className="mt-3 block rounded-2xl bg-primary py-3 text-center text-[15px] font-bold text-primary-foreground">
-            Sign in to unlock for {founding ? '$5' : '$10'}
-          </Link>
+          <ul className="space-y-2">
+            {statsFor('paywall').map((fact) => (
+              <li key={fact.key} className="flex gap-2.5 rounded-2xl bg-secondary/60 px-3 py-2">
+                <span className="text-[18px]" aria-hidden="true">{fact.emoji}</span>
+                <span className="text-[13px] leading-snug text-muted-foreground">
+                  <span className="font-bold text-foreground">{fact.stat}</span> {fact.text}
+                  <span className="block text-[10.5px] opacity-75">{fact.source}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
         )}
-        {error && <p className="mt-2 text-center text-[12.5px] text-[#ffc27a]">{error}</p>}
+
+        <Link to={unlockTo} onClick={onClose} className="motion-safe:animate-pulse-soft mt-1 block rounded-2xl bg-primary py-3.5 text-center text-[16px] font-bold text-primary-foreground">
+          Unlock everything, $10
+        </Link>
+        <button type="button" onClick={onClose} className="text-center text-[14px] font-bold text-muted-foreground underline underline-offset-4">Maybe later</button>
+        <Link to="/upgrade#compare" onClick={onClose} className="text-center text-[12.5px] font-semibold text-muted-foreground hover:text-foreground">See how we compare</Link>
+        {foundingLeft > 0 && <p className="text-center text-[11.5px] text-muted-foreground">Founding members: $5 for the first 50 ({foundingLeft} left).</p>}
       </DialogContent>
     </Dialog>
   );

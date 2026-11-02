@@ -76,3 +76,11 @@
     }
   }
 }
+/* B7 limit sheet: slides up on phones, the total pops in, the unlock button breathes. */
+@keyframes limitUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes limitPop { 0% { opacity: 0; transform: scale(0.6); } 70% { opacity: 1; transform: scale(1.08); } 100% { transform: scale(1); } }
+@keyframes pulseSoft { 0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.45); } 50% { box-shadow: 0 0 0 10px hsl(var(--primary) / 0); } }
+@media (max-width: 639px) { .limit-sheet[data-state='open'] { animation: limitUp 0.35s cubic-bezier(0.2, 0.8, 0.3, 1); } }
+.limit-pop { animation: limitPop 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) 0.2s both; }
+.animate-pulse-soft { animation: pulseSoft 2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .limit-sheet[data-state='open'], .limit-pop, .animate-pulse-soft { animation: none; } }
