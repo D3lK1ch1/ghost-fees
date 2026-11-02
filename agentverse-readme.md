@@ -18,6 +18,7 @@ Shows its working: every cost is broken down line by line, with tap-to-act cards
 Every pack shows the maths line by line, the pack total, the leaks with what you'd save, then the official cancel links and a ready email. Your first Ghost Pack is free.
 
 ## Try asking
+- "How does it work?" (a quick explainer on cards)
 - "packs" (see all six Ghost Packs and what each one hunts)
 - "Spotify $14, YouTube Premium $17. Am I paying twice?"
 - "ChatGPT $30, Claude $30, Cursor $30, Copilot $15" (builders: $1,260 a year, and which AI tools double up)
@@ -31,7 +32,7 @@ Every pack shows the maths line by line, the pack total, the leaks with what you
 - Secure Stripe card checkout inside ASI:One. Ghost It never sees your card.
 
 ## New here? Ask me
-- "How does it work?"  ·  "Is it free?"  ·  "Is my data safe?"  ·  "How do you calculate it?"
+"How does it work?" · "Is it free?" · "Is my data safe?" · "How do you calculate it?"
 Each answer comes on a card with a button to try it.
 
 ## How to use me
@@ -50,4 +51,4 @@ Scan your bank statement for free in the Ghost Fees app: https://hunt-ghost-fees
 - Prices are in AUD and built for Australia, but the advice works anywhere.
 - General information about subscriptions only, not financial advice.
 
-**Keywords:** money leaks, Ghost Packs, AI tools, ChatGPT, Claude, Cursor, too many AI subscriptions, paying twice, YouTube Premium, YouTube Music, Spotify, subscriptions, cancel subscription, subscription tracker, unused subscriptions, streaming costs, Netflix, Stan, Disney+, gym membership, save money, Australia
+**Keywords:** money leaks, Ghost Packs, AI tools, ChatGPT, Claude, Cursor, too many AI subscriptions, paying twice, YouTube Premium, YouTube Music, Spotify, subscriptions, cancel subscription, subscription tracker, unused subscriptions, streaming costs, Netflix, Stan, Disney+, gym membership, save money, Australia, Stripe, pay once, subscription audit
