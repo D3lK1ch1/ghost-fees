@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useGhostList } from '@/hooks/use-ghost-list';
 import FkJar from './FkJar';
 import { money } from '@/lib/ghostFees/format';
+import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
+import { askGuide } from '@/lib/ghostFees/askGuide';
 import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import { MilestoneIcon } from './GlowUpFund';
 
@@ -57,6 +59,19 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>
         <div className="text-[14px]" style={{ color: C.soft }}>You&apos;re owed that back. Here&apos;s a message ready to send:</div>
         <div className="px-3.5 py-3 text-[14px] font-bold leading-relaxed" style={{ borderRadius: '16px 16px 4px 16px', background: C.coral, color: C.bg }}>{message}</div>
+        {/* Straight to their page, or Cassy, who finds the contact details and helps. */}
+        <div className="flex flex-wrap items-center gap-2 pt-0.5">
+          {cancelInfo(ex.merchant).url ? (
+            <a href={cancelInfo(ex.merchant).url} target="_blank" rel="noreferrer" className="rounded-full px-3.5 py-2 text-[13.5px] font-extrabold" style={{ border: `1.5px solid ${C.coral}`, color: C.text }}>
+              Go to {cancelInfo(ex.merchant).name}&apos;s page ↗
+            </a>
+          ) : (
+            <span className="text-[13px]" style={{ color: C.muted }}>No checked page for {ex.merchant} yet. Cassy can find it.</span>
+          )}
+          <button type="button" onClick={() => askGuide('cass')} className="rounded-full px-3.5 py-2 text-[13.5px] font-extrabold" style={{ background: C.mint, color: C.bg }}>
+            Talk to Cassy
+          </button>
+        </div>
       </div>
       <div className="flex-1" />
       <PrimaryButton onClick={copy} delay="2s">{copied ? 'Copied' : 'Copy refund message'}</PrimaryButton>
