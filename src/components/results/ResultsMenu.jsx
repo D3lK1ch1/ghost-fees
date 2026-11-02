@@ -1,4 +1,5 @@
-import { MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react';
+import { Compass, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react';
+import { replayTour } from '@/components/tour/Tour';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,10 @@ export default function ResultsMenu({ onRestart, onClear }) {
         <DropdownMenuItem onClick={onRestart} className="gap-2 text-[13px] font-semibold">
           <RotateCcw className="h-4 w-4" />
           Scan another statement
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => replayTour('results')} className="gap-2 text-[13px] font-semibold">
+          <Compass className="h-4 w-4" />
+          Take the tour
         </DropdownMenuItem>
         <DropdownMenuItem onClick={onClear} className="gap-2 text-[13px] font-semibold">
           <Trash2 className="h-4 w-4" />

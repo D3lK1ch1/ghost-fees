@@ -7,7 +7,7 @@ export default function HomeTabs({ tabs }) {
   const [active, setActive] = useState(tabs[0]?.key);
   const current = tabs.find((tab) => tab.key === active) || tabs[0];
   return (
-    <section className="mx-auto mt-6 w-full max-w-4xl" aria-label="More about Ghost Fees">
+    <section data-tour="hometabs" className="mx-auto mt-6 w-full max-w-4xl" aria-label="More about Ghost Fees">
       <div className="mx-auto flex w-fit max-w-full gap-1 overflow-x-auto rounded-full border border-border bg-card/60 p-1" role="tablist" aria-label="More about Ghost Fees">
         {tabs.map((tab) => (
           <button

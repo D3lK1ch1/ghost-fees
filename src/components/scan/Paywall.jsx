@@ -14,7 +14,7 @@ import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 
 // The theme's own ghost floats at the top of the sheet.
 const SHEET_ART = {
-  haunted: '/themes/haunted/lantern-ghost.webp',
+  haunted: '/themes/haunted/card-ghost.webp',
   ex: '/themes/ex/tilly.webp',
   christmas: '/themes/christmas/xc-festive.webp',
 };
@@ -114,7 +114,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
             <ul className="space-y-1.5 text-left">
               {statsFor('paywall').map((fact) => (
                 <li key={fact.key} className="rounded-2xl px-3 py-2 text-[13.5px]" style={{ background: P.card, color: P.soft }}>
-                  <b style={{ color: P.accent }}>{fact.stat}</b> {fact.text} <span className="block text-[11px]" style={{ color: P.faint }}>{fact.source}</span>
+                  <b style={{ color: P.accent }}>{fact.stat}</b> {fact.text} <span className="block text-[11px]" style={{ color: P.faint }}>({fact.source})</span>
                 </li>
               ))}
             </ul>

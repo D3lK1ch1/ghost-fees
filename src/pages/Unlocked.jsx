@@ -9,7 +9,7 @@ import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 
 // /unlocked: where Stripe sends people after paying. The server confirms the
 // payment with Stripe; only then the confetti. Founders see their real number.
-const ART = { haunted: '/themes/haunted/lantern-ghost.webp', ex: '/themes/ex/tilly.webp', christmas: '/themes/christmas/xc-festive.webp' };
+const ART = { haunted: '/themes/haunted/card-ghost.webp', ex: '/themes/ex/tilly.webp', christmas: '/themes/christmas/xc-festive.webp' };
 
 export default function Unlocked() {
   const { theme } = useTheme();

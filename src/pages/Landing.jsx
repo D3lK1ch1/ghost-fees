@@ -11,6 +11,9 @@ import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import ValueLine from '@/components/landing/ValueLine';
 import HomeTabs from '@/components/landing/HomeTabs';
+import HomeTour from '@/components/landing/HomeTour';
+import IsThisYou from '@/components/landing/IsThisYou';
+import PlansAtAGlance from '@/components/landing/PlansAtAGlance';
 import { Link } from 'react-router-dom';
 import { TRY_RETURN, markTry } from '@/pages/Try';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -153,11 +156,14 @@ export default function Landing() {
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
           <HomeTabs tabs={[
+            { key: 'you', label: 'Is this you?', content: <IsThisYou /> },
+            { key: 'plans', label: 'Free vs Pro', content: <PlansAtAGlance onSample={() => scan([], true)} /> },
             { key: 'have', label: 'Have any of these?', content: <CommonSubsChecker onUpload={() => inputRef.current?.click()} onSample={() => scan([], true)} /> },
             { key: 'finds', label: 'What it finds', content: <UseCases /> },
             { key: 'who', label: 'Who made it', content: <FoundersSection /> },
           ]} />
           <SiteFooter />
+          <HomeTour />
         </>
       )}
       <input

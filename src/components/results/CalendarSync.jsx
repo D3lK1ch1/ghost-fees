@@ -29,6 +29,23 @@ export default function CalendarSync({ subscriptions }) {
     toast({ title: 'Sync stopped', description: 'Your calendar will drop the Ghost Fees reminders at its next refresh.' });
   };
 
+  // Outlook opens "Subscribe from web" but no longer fills in the link we pass it,
+  // so its buttons copy the link first and say to paste it (seen 2 Nov).
+  const copyLink = async (title) => {
+    try {
+      await navigator.clipboard.writeText(links.https);
+      toast({ title });
+    } catch {
+      toast({ title: 'Copy this link', description: links.https });
+    }
+  };
+  const calendars = links ? [
+    { label: 'Google Calendar', href: links.google },
+    { label: 'Outlook', href: links.outlook, paste: true },
+    { label: 'Work Outlook', href: links.work, paste: true },
+    { label: 'Apple Calendar', href: links.apple },
+  ] : [];
+
   if (!sync) {
     return (
       <div className="mt-3 rounded-2xl border border-primary/40 bg-primary/[0.06] p-3">
@@ -46,14 +63,24 @@ export default function CalendarSync({ subscriptions }) {
       <p className="flex items-center gap-2 font-heading text-[14px] font-semibold text-foreground"><CalendarCheck className="h-4 w-4 text-[#5ee6c8]" /> {sync.events.length} reminders syncing</p>
       <p className="mt-1 text-[12px] text-muted-foreground">Subscribe once in your calendar:</p>
       <div className="mt-2 grid grid-cols-2 gap-1.5">
-        {[['Google Calendar', links.google], ['Outlook', links.outlook], ['Work Outlook', links.work], ['Apple Calendar', links.apple]].map(([label, href]) => (
-          <a key={label} href={href} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-1 rounded-xl border border-border bg-background/60 px-2 py-2 text-[12.5px] font-bold text-foreground hover:border-primary/60">
+        {calendars.map(({ label, href, paste }) => (
+          <a
+            key={label}
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            onClick={paste ? () => copyLink(`Link copied. In ${label}, paste it into "Subscribe from web" and press Import.`) : undefined}
+            className="inline-flex items-center justify-center gap-1 rounded-xl border border-border bg-background/60 px-2 py-2 text-[12.5px] font-bold text-foreground hover:border-primary/60"
+          >
             {label} <ExternalLink className="h-3 w-3" />
           </a>
         ))}
       </div>
+      <p className="mt-2 rounded-xl bg-background/50 px-2.5 py-2 text-[11.5px] leading-relaxed text-muted-foreground">
+        <b className="text-foreground">Outlook:</b> the button copies your link and opens &quot;Subscribe from web&quot;. Paste the link in the box (Cmd or Ctrl + V), name it Ghost Fees and press Import.
+      </p>
       <div className="mt-2 flex items-center justify-between gap-2">
-        <button type="button" onClick={async () => { await navigator.clipboard.writeText(links.https); toast({ title: 'Calendar link copied' }); }} className="inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline">
+        <button type="button" onClick={() => copyLink('Calendar link copied')} className="inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline">
           <Copy className="h-3.5 w-3.5" /> Copy link
         </button>
         <button type="button" onClick={stop} className="text-[12px] font-bold text-muted-foreground underline">Stop syncing</button>

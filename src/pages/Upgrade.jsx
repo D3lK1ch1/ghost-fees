@@ -60,8 +60,8 @@ export default function Upgrade() {
 
   const plans = [
     { key: 'free', name: 'Free', line: '3 uploads · 1 ghost try', price: '$0', note: 'Current plan' },
-    { key: 'standard', name: 'Unlimited', line: 'Everything, forever', price: '$10', note: 'once', badge: 'Best value' },
-    ...(founding ? [{ key: 'founding', name: 'Founding member', line: 'Same as Unlimited · first 50 only', price: '$5', note: 'once', badge: `${foundingLeft} spots left` }] : []),
+    { key: 'standard', name: 'Pro', line: 'Everything, forever', price: '$10', note: 'once', badge: 'Best value' },
+    ...(founding ? [{ key: 'founding', name: 'Founding member', line: 'Same as Pro · first 50 only', price: '$5', note: 'once', badge: `${foundingLeft} spots left` }] : []),
   ];
   const chosen = plans.find((item) => item.key === plan) || plans[1];
 
@@ -151,7 +151,7 @@ export default function Upgrade() {
             {UPGRADE_STATS.slice(0, 8).map((item, index) => (
               <li key={item.id} className="up-fade flex items-center gap-3.5 py-3" style={{ borderBottom: `1px solid ${P.line}`, animationDelay: `${100 + index * 60}ms` }}>
                 <span className="w-[92px] shrink-0 font-heading text-[22px] font-bold leading-tight" style={{ color: P.accent }}>{item.big}</span>
-                <span className="flex flex-col gap-0.5"><span className="text-[14px] leading-snug">{item.text}</span><span className="text-[12px]" style={{ color: P.faint }}>{item.source}</span></span>
+                <span className="flex flex-col gap-0.5"><span className="text-[14px] leading-snug">{item.text}</span><span className="text-[12px]" style={{ color: P.faint }}>({item.source})</span></span>
               </li>
             ))}
           </ul>

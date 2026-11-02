@@ -52,8 +52,9 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
           <div className="text-[15px] leading-snug">u up? Just charged you {money(ex.monthly)}. For old times&apos; sake.</div>
         </div>
       </div>
-      <div className="relative flex h-[190px] items-end justify-center gap-1">
-        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="left" atMouth bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={150} bubbleDelay=".9s" bubbleClass="!px-5 !pt-4 !pb-7 text-[13px]" />
+      {/* Ghost sits left so her bubble has room on the right, clear of her sunglasses. */}
+      <div className="relative flex h-[190px] items-end justify-start gap-1 pl-[12%]">
+        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="right" atMouth bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={175} bubbleDelay=".9s" bubbleClass="!px-5 !pt-4 !pb-7 text-[13px]" />
       </div>
       <div className="ex-in relative flex flex-col gap-2.5 p-4" style={{ ...card, animationDelay: '1.45s' }}>
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>

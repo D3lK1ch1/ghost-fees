@@ -13,6 +13,7 @@ import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
 import ResultsTour from './ResultsTour';
+import { TourButton } from '@/components/landing/HomeTour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
@@ -33,6 +34,7 @@ import FileErrors from './FileErrors';
 import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import HauntedCalendar from './HauntedCalendar';
+import SubscriptionTracker from './SubscriptionTracker';
 import GoalPath from './GoalPath';
 import EmailsPanel from './EmailsPanel';
 import NightSky from './NightSky';
@@ -228,7 +230,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     <div className="relative min-h-screen">
       {theme.key === 'haunted' && <NightSky />}
       <div className="relative z-10">
-      <BrandHeader right={<ResultsMenu onRestart={onRestart} onClear={() => setConfirmClear(true)} />} />
+      <BrandHeader right={<><TourButton name="results" label="Tour" className="h-9 max-sm:hidden" /><ResultsMenu onRestart={onRestart} onClear={() => setConfirmClear(true)} /></>} />
       </div>
 
       <main className="relative mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">
@@ -421,6 +423,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {tab === 'calendar' && (
                 <>
                   <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
+                  <SubscriptionTracker subscriptions={subscriptions} answers={subAnswers} onAnswer={setSubAnswers} />
                   <CancelAssistant subscriptions={subscriptions} onDraft={openEmail} />
                 </>
               )}
