@@ -1,6 +1,7 @@
 import { Calculator, Mail, MessageCircle, Scissors, Trophy } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
+import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
 // Home page, under the stats: who does what. The four ghost guides in the app and
 // Ghost It, the chat agent in ASI:One. "Where's the different ghost agents?" (2 Nov)
@@ -20,7 +21,7 @@ const TEAM = [
     role: 'the chat agent',
     color: '#8FB8FF',
     job: 'Chat in ASI:One',
-    does: 'Tell @ghostit what you pay for. It finds double-ups and cancel steps.',
+    does: 'Tell @ghostit what you pay for. It shows the maths, finds double-ups and gives cancel steps. First Ghost Pack free.',
     Icon: MessageCircle,
   },
 ];
@@ -41,7 +42,11 @@ export default function GhostTeam() {
           >
             <span className="relative shrink-0" aria-hidden="true">
               <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full" style={{ background: `${agent.color}2e`, boxShadow: `0 0 24px ${agent.color}40` }}>
-                <GhostMark className="h-11 w-11 motion-safe:animate-float" style={{ color: agent.color }} eyeColor="#1a1230" />
+                {agent.key === 'ghostit' ? (
+                  <img src={GHOST_IT_MASCOT} alt="" className="h-[60px] w-[60px] object-contain motion-safe:animate-float" />
+                ) : (
+                  <GhostMark className="h-11 w-11 motion-safe:animate-float" style={{ color: agent.color }} eyeColor="#1a1230" />
+                )}
               </span>
               <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-card" style={{ background: agent.color, color: '#1a1230' }}>
                 <agent.Icon className="h-4 w-4" strokeWidth={2.5} />
