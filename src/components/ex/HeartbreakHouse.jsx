@@ -195,17 +195,17 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         </div>
 
         {/* Under the house: the F**k-ex jar, your ghost, and the Dinner or BBQ sign. */}
-        <div className="relative mt-[-2px] h-[200px] w-full overflow-hidden rounded-[10px]" style={{ background: 'linear-gradient(180deg, #111016 0%, #15131a 100%)' }}>
+        <div className="relative mt-[-2px] h-[250px] w-full overflow-hidden rounded-[10px]" style={{ background: 'linear-gradient(180deg, #111016 0%, #15131a 100%)' }}>
           {allClear && Array.from({ length: 18 }, (_, i) => (
             <span key={i} aria-hidden="true" className="hh-conf pointer-events-none absolute" style={{ left: `${(i * 23 + 9) % 96}%`, top: 30, width: i % 2 ? 6 : 8, height: i % 3 ? 10 : 6, borderRadius: i % 4 ? 2 : '50%', background: ['#ff6f7d', '#5ee6c8', '#f2c14e', '#fbf8fa', '#ffb8bf', '#8fb8ff'][i % 6], animationDelay: `${((i * 0.19) % 2.6).toFixed(2)}s` }} />
           ))}
-          <div className="absolute bottom-2.5 left-1.5"><FkJar amount={glow.fund} total={glow.goal} size={104} /></div>
-          <div aria-hidden="true" className="absolute bottom-3.5 right-2.5 flex w-24 flex-col items-center gap-[3px] transition-opacity duration-500" style={{ opacity: allClear ? 1 : 0.35 }}>
+          <div className="absolute bottom-3 left-3"><FkJar amount={glow.fund} total={glow.goal} size={104} /></div>
+          <div aria-hidden="true" className="absolute bottom-4 right-4 flex w-24 flex-col items-center gap-[3px] transition-opacity duration-500" style={{ opacity: allClear ? 1 : 0.35 }}>
             <div className="h-[18px] w-24 rounded-t-md" style={{ background: 'repeating-linear-gradient(90deg, #ff6f7d 0 12px, #fbf8fa 12px 24px)' }} />
             <div className="ex-fredoka w-[84px] rounded-b-lg py-1.5 text-center text-[13px] font-semibold" style={{ background: '#221f29', border: '1px solid #3a3644', color: '#ffd36e' }}>{fine ? 'BBQ' : 'Dinner'}</div>
             <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
-          <div className="absolute bottom-1.5 left-1/2 -ml-14 flex flex-col items-center">
+          <div className="absolute bottom-2 left-[44%] -ml-[46px] flex flex-col items-center">
             <div key={stage} className={`${wakeUp ? '' : 'animate-rise'} relative ${allClear ? 'hh-walk' : ''}`}>
               {/* Out of bed: the covers fly off and the bed sinks away, she pops up cross. */}
               {wakeUp && (
@@ -221,7 +221,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
               <div className={wakeUp ? 'hh-rise' : ''}>
                 <div className={`relative ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }}>
                   <img src={mood.art} alt={mood.alt} width={92} className="block h-auto w-[92px]" />
-                  <div className="bub-l ex-in absolute bottom-[calc(100%-30px)] left-[58px] z-10 w-[132px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
+                  <div className="bub-l ex-in absolute bottom-[calc(100%-14px)] left-[60px] z-10 w-[138px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
                 </div>
               </div>
             </div>
