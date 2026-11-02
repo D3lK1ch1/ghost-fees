@@ -1,3 +1,4 @@
+import StatNote from '@/components/stats/StatNote';
 import { useState } from 'react';
 import { CountUp } from '@/components/GhostAnimations';
 import { money } from '@/lib/ghostFees/format';
@@ -50,11 +51,11 @@ export default function GuessReveal({ total, months, onDone }) {
             <CountUp value={total} />
           </p>
           <p className="mt-3 text-[16px] font-semibold text-foreground">
-            You guessed {money(guess)}. It's actually {money(total)} in {period}.
+            {total > guess
+              ? <>You guessed {money(guess)}. It&apos;s actually {money(total)} in {period}, <span className="text-primary">{Math.round(((total - guess) / Math.max(guess, 1)) * 100)}% more than you thought</span>.</>
+              : <>You guessed {money(guess)}. It&apos;s {money(total)} in {period}. Good guess, you were close.</>}
           </p>
-          <p className="mt-1 text-[13.5px] text-muted-foreground">
-            {total > guess ? 'More than you thought. Let\'s find where it went.' : 'You know your money well. Let\'s see the details.'}
-          </p>
+          <StatNote statKey="realise" className="mx-auto mt-1.5 max-w-md text-[12.5px]" />
           <button type="button" onClick={() => onDone(guess)} className="mt-5 rounded-2xl bg-primary px-6 py-3 text-[16px] font-bold text-primary-foreground">
             Show me the ghosts
           </button>
