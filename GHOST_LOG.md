@@ -452,3 +452,13 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostTeam.jsx, src/index.css
 - How to test: Home page, under the stats: five rows, Penny to Ghost It.
 - User feedback that drove this: "make them cascade down the page vertically"
+
+### Honest Free vs Pro, first 3 steps on your results, what it doesn't find, founders
+- What:
+  - Plans now match what's really locked. Pro unlocks unlimited scans, all 4 ghost guide chats, Cassy for every subscription and the PDF report. Cancel links, steps and emails, the Ghost List, reminders, the tracker and badges are free for everyone (they were wrongly listed as Pro). Same on the home page, sign-in page, /upgrade and the badge popup.
+  - "Your first 3 steps" card above the tabs on your results: see your biggest ghost, keep or cancel your subscriptions, cancel one for real. Each has "Show me" (opens the right tab) and ticks itself off; hide it any time. Not a pop-up.
+  - "What it finds" tab: a new "What it doesn't find, and what to do instead" section (everyday spending, interest and BNPL fees, surcharges, short statements, changing bills, Apple and Google bundles, scanned PDFs), each with what to do instead. The results "What doesn't it detect?" pop-up shows the same tips.
+  - Founders: Sanjay removed (home and About); the two remaining cards sit side by side.
+- Files: src/components/landing/PlansAtAGlance.jsx, src/components/AuthLayout.jsx, src/pages/Upgrade.jsx, src/components/results/GhostList.jsx, src/components/results/FirstSteps.jsx (new), src/components/results/ResultsView.jsx, src/components/results/DetectionInfo.jsx, src/components/landing/UseCases.jsx, src/data/founders.js, src/components/landing/FoundersSection.jsx
+- How to test: Home > Free vs Pro: Pro lists 4 things. Home > What it finds: scroll to "What it doesn't find". Home > Who made it: Bella and Delia. Sample > Reveal: "Your first 3 steps" above the tabs; tap Show me on step 1.
+- User feedback that drove this: "are the blocks set properly on the free version", "how will we make a little tour on the trial so it's less information overload", "remove Sanjay on this", "what it finds, can we improve through addressing what it doesn't find"

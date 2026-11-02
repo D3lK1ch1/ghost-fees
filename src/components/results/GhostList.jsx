@@ -98,7 +98,7 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
                   <p className="font-heading text-[15px] font-bold text-foreground">{badge.emoji} {badge.name}</p>
                   <p className="mt-0.5 text-[13px] font-bold text-primary">{badge.earned ? 'You earned this one' : `How to earn it: ${badge.how.toLowerCase()}`}</p>
                   <p className="mt-1.5 leading-snug text-muted-foreground">{badge.about}</p>
-                  <p className="mt-2 border-t border-border pt-2 text-[12.5px] text-muted-foreground">Badges and levels are just for fun and never change your numbers. They come with Pro (free while we&apos;re in beta), along with the PDF report.</p>
+                  <p className="mt-2 border-t border-border pt-2 text-[12.5px] text-muted-foreground">Badges and levels are just for fun and never change your numbers. Everyone gets them, on Free too.</p>
                 </PopoverContent>
               </Popover>
             </li>
