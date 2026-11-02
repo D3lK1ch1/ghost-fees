@@ -26,7 +26,7 @@ export default function GhostItOffer({ className = '' }) {
           {PACKS.map((pack) => <span key={pack} className="rounded-full border border-[#8FB8FF55] bg-[#8FB8FF14] px-2.5 py-0.5 text-[13.5px] font-semibold text-foreground">{pack}</span>)}
         </span>
         <span className="mt-2.5 block text-[14px] leading-snug text-foreground/75">
-          <b className="text-foreground">Not a general chatbot:</b> every number is real maths you can check, and every cancel link is checked, never guessed.
+          <b className="text-foreground">Not a general chatbot:</b> every number is real maths you can check and every cancel link is checked and never guessed.
         </span>
       </span>
       <span className="hidden shrink-0 items-center gap-1 rounded-full bg-[#8FB8FF] px-4 py-2 text-[14.5px] font-bold text-[#0f1730] sm:inline-flex">
