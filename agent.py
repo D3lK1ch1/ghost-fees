@@ -528,6 +528,8 @@ def evidence_reply(ctx):
              f"- Subscriptions ghosted (requested): {st.get('ghosted', 0)}",
              f"- Confirmed stopped: {st.get('stopped', 0)} ({money(st.get('stopped_yearly_cents', 0) / 100)}/yr)",
              f"- Card taps: {st.get('card_taps', 0)}",
+             f"- Free Ghost Packs used: {st.get('free_packs', 0)}",
+             f"- Paid Ghost Packs: {st.get('paid_packs', 0)} ({money(st.get('paid_cents', 0) / 100)} taken)",
              f"- Feedback received: {len(fb)}", "", "**Feedback log**"]
     for f in fb[-30:]:
         lines.append(f"#{f['n']} {f['date']} ({f['who']}): {f['text']}")

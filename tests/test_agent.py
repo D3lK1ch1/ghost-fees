@@ -338,6 +338,10 @@ class PaidPacks(unittest.TestCase):
         self.assertIn("Paid, thank you", delivered)
         self.assertIn("spotify", delivered.lower())
         self.assertIn("Sound", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
+        self.P.ADMIN_CODE = "s3cret"
+        ev, _ = self.P.route(self.ctx, SENDER, "evidence s3cret")
+        self.assertIn("Paid Ghost Packs: 1 ($2.00 taken)", ev)
+        self.assertIn("Free Ghost Packs used: 1", ev)
         reply, _ = self.P.route(self.ctx, SENDER, "sound pack")  # unlocked now: no price
         self.assertNotIn("$2.00 once", reply)
 
