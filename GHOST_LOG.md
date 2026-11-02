@@ -240,3 +240,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/analyse.js
 - How to test: upload a CSV with "TRANSFER TO JANE SMITH 062-000 12345678" and "PAYPAL *bob@example.com" rows, open Show transactions or the possessed receipt.
 - User feedback that drove this: "clarity on information - can we scrub small amounts of identifying information from the csvs?" (tester, 31 Oct).
+
+### Uploads keep working in the free beta, and no emails in merchant names
+- What: from a click-through of the whole pack. If the free-scan check on the server can't be reached (or errors) while payments are off, the upload now goes ahead instead of stopping with "Could not check your free scan"; CSVs never need the server, and PDFs skip the scan ticket while charging is off. Once PAYMENTS_ENABLED=true nothing changes: the check is required again. Also, an email in a description ("PAYPAL *bob@example.com") no longer ends up in the merchant's name ("Paypal Bob Example" is now "Paypal").
+- Files: src/pages/Landing.jsx, base44/functions/parseStatement/entry.ts, src/lib/ghostFees/cleanMerchant.js
+- How to test: before publishing the new allowance function (or with it failing), upload a CSV: it scans. Upload a CSV with a "PAYPAL *name@example.com" monthly charge: the subscription reads Paypal.
+- User feedback that drove this: found while clicking through the pack; tester asked to "scrub small amounts of identifying information".

@@ -85,16 +85,27 @@ export default function Landing() {
       openPaywall('sign_in');
       return;
     }
+    let claim = null;
     try {
-      const claim = await claimScan(picked);
-      if (!claim?.allowed) {
-        openPaywall(claim?.reason === 'sign_in' ? 'sign_in' : 'scan');
-        return;
-      }
-      scan(picked, false, claim.ticket);
+      claim = await claimScan(picked);
     } catch {
-      toast({ title: 'Could not check your free scan', description: 'Try again in a moment.' });
+      claim = null;
     }
+    // Free beta: if the free-scan check can't be reached, scan anyway. CSVs never
+    // need the server, and parseStatement skips the ticket while charging is off.
+    if (!charging && (!claim || claim.reason === 'error')) {
+      scan(picked, false, '');
+      return;
+    }
+    if (!claim) {
+      toast({ title: 'Could not check your free scan', description: 'Try again in a moment.' });
+      return;
+    }
+    if (!claim.allowed) {
+      openPaywall(claim.reason === 'sign_in' ? 'sign_in' : 'scan');
+      return;
+    }
+    scan(picked, false, claim.ticket);
   };
 
   const analysisReady = Boolean(status === 'done' && results);
