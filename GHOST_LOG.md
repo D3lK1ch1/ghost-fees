@@ -542,3 +542,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/TrialTracker.jsx (new), src/components/results/ResultsView.jsx
 - How to test: Sample > Calendar & reminders > Trial tracker: add Paramount+, started 5 days ago, 7 days, $13.99: "1 day left, turns paid <date>", and the calendar buttons. Streammax shows under Already turned paid.
 - User feedback that drove this: "there should be some starter trial tracking that will track when trials get converted from free to paid, tracked and scheduled on the calendar"
+
+### The Ghost It offer by the upload button: bigger, clearer, to the point
+- What: The box under "Upload my CSV or PDF" now has a "Specialised AI agent" tag, a big headline "Ghost It finds what your statement can't show", three short points (subscriptions you pay for twice; apps hidden in Apple or Google bundles; what weekly costs add up to a year), a bigger mascot and a "Try it →" button. /ghostit now says to sign in to ASI:One first, because agents only reply to signed-in people.
+- Files: src/components/landing/GhostItOffer.jsx, src/pages/GhostIt.jsx
+- How to test: Home page in each theme: the box under the upload button.
+- User feedback that drove this: "writing needs to be bigger and needs to say something like specialised agent, make the purpose of the agent more clear and to the point"
