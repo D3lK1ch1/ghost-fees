@@ -15,6 +15,7 @@ import Progress from '@/pages/Progress';
 import About from '@/pages/About';
 import Privacy from '@/pages/Privacy';
 import DoneLink from '@/components/site/DoneLink';
+import Demo from './pages/Demo';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -56,6 +57,7 @@ const AuthenticatedApp = () => {
         <Route path="/progress" element={<Progress />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/demo" element={<Demo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

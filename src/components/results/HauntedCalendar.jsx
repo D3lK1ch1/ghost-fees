@@ -252,19 +252,19 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
 // asset bank: 💔 your own ghost (sassy for Heartbroken, blocking for I'm Fine),
 // 👻 the lantern ghost, 🎄 the festive ghost.
 const NUDGE = {
-  ex: 'Scroll down to f**k your exes more with help from Cassy.',
-  christmas: "Scroll down to break more of Jacob's chain with help from Cassy.",
-  haunted: 'Scroll down to bust more ghosts with help from Cassy.',
+  ex: 'Scroll down to f**k your exes more, with help from Cassy.',
+  christmas: "Scroll down to break more of Jacob's chain, with help from Cassy.",
+  haunted: 'Scroll down to bust more ghosts, with help from Cassy.',
 };
 
-// Mouth (or face) spot in each art, as px inside the 130 x 140 picture box
-// (object-contain). The asset speech bubble's tail tip (9.4% across its bottom)
-// goes there, nudged a few px right so the mouth stays visible.
+// Where the bubble's tail tip goes, as px inside the 130 x 140 picture box
+// (object-contain): just beside the face at eye level, so the bubble sits up
+// and to the right and never covers the sunglasses or the eyes.
 const NUDGE_ART = {
-  heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [66, 63] },
-  fine: { src: '/themes/ex/men-block.webp', mouth: [70, 48] },
-  christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [60, 53] },
-  haunted: { src: '/themes/haunted/lantern-ghost.webp', mouth: [88, 37] },
+  heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [116, 26] },
+  fine: { src: '/themes/ex/men-block.webp', mouth: [114, 24] },
+  christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [116, 30] },
+  haunted: { src: '/themes/haunted/lantern-ghost.webp', mouth: [112, 30] },
 };
 
 function CassyNudge() {
@@ -276,7 +276,7 @@ function CassyNudge() {
     <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-border/70 px-4 py-5">
       <div className="animate-float relative h-[260px] w-[420px] max-w-full">
         <img src={art.src} alt="" width={130} height={140} className="absolute bottom-0 left-0 h-[140px] w-[130px] object-contain" />
-        <div className="absolute z-10" style={{ left: art.mouth[0] + 6, top: 120 + art.mouth[1] - 4, transform: 'translate(-9.4%, -100%)' }}>
+        <div className="absolute z-10" style={{ left: art.mouth[0], top: 120 + art.mouth[1], transform: 'translate(-9.4%, -100%)' }}>
           <div className="bub-l w-[300px] !min-w-0 !px-11 !pb-14 !pt-8 text-center">
             <p className="font-heading text-[16px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
             <button type="button" onClick={toCassy} className="mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
