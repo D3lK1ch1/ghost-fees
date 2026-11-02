@@ -219,5 +219,57 @@ class CatalogueTests(unittest.TestCase):
                 seen[alias] = key
 
 
+class PackGateTests(unittest.TestCase):
+    """One free Ghost Pack, then the price. Beta delivers everything but explains it."""
+
+    def setUp(self):
+        self.saved = A.PAYMENTS_ENABLED
+        self.data = user_with([{"name": "Netflix", "price": 19}, {"name": "Spotify", "price": 14}, {"name": "Gym", "price": 25, "period": "week"}])
+
+    def tearDown(self):
+        A.PAYMENTS_ENABLED = self.saved
+
+    def test_beta_first_pack_free_then_explains(self):
+        A.PAYMENTS_ENABLED = False
+        packs, note = A.pack_gate(self.data, ["screen"])
+        self.assertEqual(packs, ["screen"])
+        self.assertIn("first Ghost Pack is free", note)
+        self.assertTrue(self.data["free_pack_used"])
+        packs, note = A.pack_gate(self.data, ["sound"])
+        self.assertEqual(packs, ["sound"])  # still free in beta
+        self.assertIn("Free while we're in beta", note)
+        self.assertIn(f"${A.PACK_PRICE} a pack", note)
+
+    def test_paid_one_free_try_then_price(self):
+        A.PAYMENTS_ENABLED = True
+        packs, note = A.pack_gate(self.data, ["screen"])
+        self.assertEqual(packs, ["screen"])
+        self.assertIn("free", note)
+        A.deliver_pack(FakeCtx(), "agent1test", self.data, packs)
+        packs, note = A.pack_gate(self.data, ["sound"])
+        self.assertEqual(packs, [])
+        self.assertIn("used your free Ghost Pack", note)
+        self.assertIn("Sound Pack", note)
+        packs, _ = A.pack_gate(self.data, ["screen"])
+        self.assertEqual(packs, ["screen"])  # already unlocked stays unlocked
+
+    def test_paid_ghost_everything_gives_one_free(self):
+        A.PAYMENTS_ENABLED = True
+        packs, note = A.pack_gate(self.data, ["screen", "sound", "fitness", "food"])
+        self.assertEqual(len(packs), 1)
+        self.assertIn("One pack is on us", note)
+        self.assertNotIn("Food", note)  # empty packs are never priced
+
+    def test_empty_pack_does_not_use_free_try(self):
+        A.PAYMENTS_ENABLED = True
+        packs, note = A.pack_gate(self.data, ["food"])
+        self.assertEqual((packs, note), ([], ""))
+        self.assertFalse(self.data["free_pack_used"])
+
+    def test_free_check_mentions_first_pack_free(self):
+        A.PAYMENTS_ENABLED = False
+        self.assertIn("first one is free", A.free_check(self.data, {}))
+
+
 if __name__ == "__main__":
     unittest.main()

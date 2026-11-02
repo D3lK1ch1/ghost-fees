@@ -203,7 +203,7 @@ def money(x):
 
 
 def new_data():
-    return {"subs": {}, "ghosts": {}, "trials": {}, "life_stage": None, "paid_packs": [], "goal": None, "mind": None}
+    return {"subs": {}, "ghosts": {}, "trials": {}, "life_stage": None, "paid_packs": [], "free_pack_used": False, "goal": None, "mind": None}
 
 
 def today_au():
@@ -306,7 +306,8 @@ def free_check(data, d) -> str:
     lines.append("⏰ **On a free trial?** Say e.g. \"started Paramount+ trial today\" and I'll set a reminder before it charges.")
 
     packs_here = sorted({s["pack"] for s in subs.values() if s["pack"] in PACKS and s["pack"] != "other"})
-    price_line = "free during beta" if not PAYMENTS_ENABLED else f"${PACK_PRICE} per pack, or ${ALL_PRICE} for all"
+    price_line = ("your first one is free, and every pack is free during the beta" if not PAYMENTS_ENABLED
+                  else f"your first one is free, then ${PACK_PRICE} per pack or ${ALL_PRICE} for all")
     lines.append(f"\n**Ghost them:** get a Ghost Pack ({price_line}) with official cancel steps, a ready cancel email, "
                  f"and follow-up tracking. Say e.g. \"{packs_here[0] if packs_here else 'screen'} pack\" or \"ghost everything\".")
     lines.append(renewal_section(data))
@@ -317,6 +318,41 @@ def free_check(data, d) -> str:
 def cancel_email(name):
     return (f"Subject: Cancel my {name} subscription\n\nHi {name} team,\nPlease cancel my subscription effective today "
             f"and confirm in writing that no further charges will be made.\nAccount email: [your email]\nThanks,\n[Your name]")
+
+
+def packs_with_subs(data, packs):
+    return [pk for pk in packs if any(s["pack"] == pk for s in data["subs"].values())]
+
+
+def pack_gate(data, packs):
+    """One free try, then charge. Returns (packs to deliver now, note for the reply).
+
+    Everyone's first Ghost Pack is free. While PAYMENTS_ENABLED is False (beta)
+    every pack is still delivered, and the note explains how it will work. Once
+    it's True, only the free pack and packs already unlocked are delivered; the
+    rest get the price. Packs with nothing in them never use up the free one.
+    """
+    wanted = packs_with_subs(data, packs)
+    unlocked = set(data.get("paid_packs") or [])
+    free_left = not data.get("free_pack_used")
+    price = f"${PACK_PRICE} a pack or ${ALL_PRICE} for every pack"
+    if not wanted:
+        return [], ""
+    if not PAYMENTS_ENABLED:
+        if free_left:
+            data["free_pack_used"] = True
+            return wanted, f"🎁 **Your first Ghost Pack is free.** After the beta, more packs are {price}. Everything is free while we're in beta."
+        return wanted, f"🎁 Free while we're in beta. After the beta, your first pack stays free, then it's {price}."
+    deliver = [pk for pk in wanted if pk in unlocked]
+    locked = [pk for pk in wanted if pk not in unlocked]
+    if free_left and locked:
+        deliver.append(locked.pop(0))
+        data["free_pack_used"] = True
+    if not locked:
+        return deliver, "🎁 **This Ghost Pack is free**, your one free try." if free_left else ""
+    names = ", ".join(PACKS[pk].split(" (")[0] for pk in locked)
+    lead = "🎁 One pack is on us. " if deliver else "You've used your free Ghost Pack. "
+    return deliver, f"{lead}**{names}**: {price}. Paying in chat is coming soon."
 
 
 def deliver_pack(ctx, sender, data, packs) -> str:
@@ -930,11 +966,12 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
             body = renewal_section(data).strip()
         elif d.get("intent") == "trial":
             body = TRIAL_HELP
-        elif intent == "buy_all":
-            packs = [p for p in PACKS if p != "other"]
-            body = deliver_pack(ctx, sender, data, packs)  # PAYMENTS_ENABLED: request ALL_PRICE first
-        elif intent == "buy_pack" and d.get("pack"):
-            body = deliver_pack(ctx, sender, data, [d["pack"]])  # PAYMENTS_ENABLED: request PACK_PRICE first
+        elif intent in ("buy_all", "buy_pack") and (intent == "buy_all" or d.get("pack")):
+            asked = [p for p in PACKS if p != "other"] if intent == "buy_all" else [d["pack"]]
+            allowed, note = pack_gate(data, asked)  # one free try, then the price (see pack_gate)
+            body = deliver_pack(ctx, sender, data, allowed or asked) if (allowed or not packs_with_subs(data, asked)) else ""
+            body = (note + "\n\n" + body).strip() if note else body
+            ctx.logger.info(f"PACK by ...{sender[-6:]}: asked={asked} delivered={allowed} free_used={data.get('free_pack_used')}")
         elif ROTATE_RE.search(text):
             body = rotation_plan(data, text)
         elif intent in ("list", "update_status"):
