@@ -163,6 +163,27 @@ class PackPrompts(unittest.TestCase):
         self.assertIn("add Foxtel", reply)
 
 
+class RajsPrompt(unittest.TestCase):
+    """Raj (Fetch.ai) typed this on 2 Nov; v6 said $276 a year without explaining it."""
+
+    def test_list_without_commas(self):
+        reply, card = A.route(FakeCtx(), SENDER, "@ghostit netflix $8.99 espn plus 11.99 paramount 13.99")
+        self.assertIn("Netflix: $8.99/mo x 12 = **$107.88/yr**", reply)
+        self.assertIn("ESPN+: $11.99/mo x 12 = **$143.88/yr**", reply)
+        self.assertIn("Paramount+: $13.99/mo x 12 = **$167.88/yr**", reply)
+        self.assertIn("$419.64", reply)
+        self.assertRegex(reply.lower(), r"3 video")
+        self.assertIsNotNone(card)
+
+    def test_paramount_is_not_yearly(self):
+        subs, _ = A.parse_subs("paramount 13.99")
+        self.assertEqual(subs[0]["per"], "mo")
+
+    def test_numbers_that_are_not_prices(self):
+        subs, _ = A.parse_subs("sharehouse of 4 with Netflix $19")
+        self.assertEqual([(s["name"], s["price"]) for s in subs], [("Netflix", 19.0)])
+
+
 class EdgeCases(unittest.TestCase):
     def test_disney_plus_keeps_price(self):
         subs, missing = A.parse_subs("Disney+ $16")

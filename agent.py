@@ -32,6 +32,8 @@ USE_CARDS = True          # set False to send text only
 CHANGES = [
     ("A Fetch.ai mentor", "the reply wasn't clear, why $276 a year?",
      "every reply now says what it did, shows the maths line by line, and uses cards"),
+    ("A Fetch.ai mentor", "netflix $8.99 espn plus 11.99 paramount 13.99 (typed without commas)",
+     "lists without commas are read item by item, prices without $ are understood, and Paramount+ is no longer read as yearly"),
 ]
 
 DISCLAIMER = "_General information about subscriptions, not financial advice._"
@@ -56,6 +58,7 @@ add("prime", "Amazon Prime", "Screen", ["amazon prime", "prime video", "prime"],
 add("paramount", "Paramount+", "Screen", ["paramount+", "paramount plus", "paramount"], None, None, "video")
 add("appletv", "Apple TV+", "Screen", ["apple tv+", "apple tv"], APPLE, "Settings > your name > Subscriptions > Cancel", "video")
 add("foxtel", "Foxtel", "Screen", ["foxtel"], None, None, "video")
+add("espn", "ESPN+", "Screen", ["espn plus", "espn+", "espn"], None, None, "video")
 add("spotify", "Spotify", "Sound", ["spotify"], "https://support.spotify.com/article/cancel-premium/", "Account > Manage your plan > Cancel subscription", "music")
 add("applemusic", "Apple Music", "Sound", ["apple music"], APPLE, "Settings > your name > Subscriptions > Cancel", "music")
 add("youtube", "YouTube Premium", "Sound", ["youtube premium", "youtube music", "youtube"], "https://www.youtube.com/paid_memberships", "Manage membership > Deactivate", "music")
@@ -109,19 +112,42 @@ def find_merchant(text):
     return None
 
 
+# Word boundaries matter: "p.a." must not match the "pa" in "Paramount".
 PERIODS = [
-    (r"week|wk|weekly|/w\b", "wk", 52), (r"fortnight", "fortnight", 26),
-    (r"quarter", "quarter", 4), (r"year|yr|annual|p\.?a\.?|/y\b", "yr", 1),
+    (r"\b(?:week|wk|weekly)\b|/w\b", "wk", 52), (r"\bfortnight", "fortnight", 26),
+    (r"\bquarter", "quarter", 4), (r"\b(?:year|yr|yearly|annual|annually)\b|\bp\.?a\.?(?![a-z])|/y\b", "yr", 1),
 ]
+
+# One "name price [period]" pair, for lists typed without commas, e.g.
+# "netflix $8.99 espn plus 11.99 paramount 13.99" (Raj's test, 2 Nov).
+PAIR_RE = re.compile(
+    r"[^$\d]*?\$?\s*\d+(?:\.\d{1,2})?"
+    r"(?:\s*(?:a|per|/|each|every)?\s*(?:week|wk|weekly|fortnight|quarter|year|yr|yearly|annual|month|mo|monthly)\b)?",
+    re.I)
+
+
+def split_pairs(chunk):
+    """Split a chunk holding several prices into one piece per price."""
+    prices = re.findall(r"\$?\s*\d+(?:\.\d{1,2})?", chunk)
+    if len(prices) < 2:
+        return [chunk]
+    return [m.group(0) for m in PAIR_RE.finditer(chunk) if m.group(0).strip()]
 
 
 def parse_subs(text):
     """Return (subs, names_without_price). Each sub: key, name, price, per, times."""
     subs, missing = [], []
     chunks = re.split(r",|;|\n|\band\b|\s\+\s|\.\s", text, flags=re.I)
+    chunks = [piece for ch in chunks for piece in split_pairs(ch)]
     for ch in chunks:
         key = find_merchant(ch)
         amt = re.search(r"\$\s*(\d+(?:\.\d{1,2})?)|(\d+(?:\.\d{1,2})?)\s*(?:dollars|aud)", ch, re.I)
+        if not amt:
+            # A bare number counts as a price only if it has cents ("11.99") or
+            # follows a known service ("netflix 19"), so "sharehouse of 4" isn't $4.
+            bare = re.search(r"(?<![\d.])(\d+\.\d{2})(?![\d.])", ch) or (key and re.search(r"(?<![\d.])(\d+(?:\.\d{1,2})?)(?![\d.])", ch))
+            if bare:
+                amt = re.match(r"(\d+(?:\.\d{1,2})?)()", bare.group(1))
         if not amt and key is None:
             continue
         if key:
