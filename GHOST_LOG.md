@@ -276,3 +276,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/ExAct2.jsx, src/lib/ghostFees/askGuide.js (new), src/components/results/ResultsView.jsx
 - How to test: pick 💔, Try a sample statement, See everything, Messages to exes: press Talk to Cassy and the chat opens on Cassy.
 - User feedback that drove this: "this should link to the web page to cancel directly and maybe have a talk to Cassy button that will link to the chat".
+
+### 💔 Heartbreak House: more room for the jar, your ghost and the sign
+- What: the scene under the house is taller (250px) and spread out: the jar and the Dinner / BBQ sign sit further in from the edges, your ghost is a little left of centre, and her speech bubble sits higher, so it no longer runs into the sign.
+- Files: src/components/ex/HeartbreakHouse.jsx
+- How to test: pick 💔, Try a sample statement, See everything, Heartbreak House, block one ex: "Out of bed. One down." has room.
+- User feedback that drove this: "spread this out a bit".
