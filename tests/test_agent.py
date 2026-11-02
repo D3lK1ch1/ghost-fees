@@ -642,3 +642,9 @@ class V10Paid(PaidPacks):
         self.assertEqual((pending["cents"], pending["packs"], pending["session"]), (500, ["all"], None))
         asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
         self.assertEqual(self.ctx.sent[-1].accepted_funds[0].amount, "5.00")
+
+
+class V10Prompts(unittest.TestCase):
+    def test_paying_twice_for_music_says_yes(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Spotify $14, YouTube Premium $17. Am I paying twice?")
+        self.assertIn("YouTube Premium already includes YouTube Music", reply)

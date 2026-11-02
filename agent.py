@@ -565,6 +565,10 @@ def check_reply(ctx, sender, text, subs, missing):
     else:
         lines.append("\nNo doubles found.")
         rows.append({"label": "Double-ups", "value": "None found"})
+    keys = {s["key"] for s in subs}
+    if {"spotify", "youtube"} <= keys:
+        lines.append("- **Yes, you're paying twice for music:** YouTube Premium already includes YouTube Music.")
+        rows.append({"label": "Bundle", "value": "YouTube Premium includes YouTube Music"})
 
     lines.append("\nAsk yourself for each one: would you sign up today at this price?")
     tip = life_stage(text)
