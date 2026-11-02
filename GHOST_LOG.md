@@ -521,3 +521,16 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/GhostItPacks.jsx (new), src/components/results/ResultsView.jsx, src/components/results/AskGhostIt.jsx, src/components/results/GhostItDialog.jsx
 - How to test: Sample > Reveal: the Ghost It box under the PDF button; ghost cards no longer have a Ghost It strip.
 - User feedback that drove this: "Ghost It doesn't handle the subscription, that's another agent, I think Cassy. What makes it unique, we need to make it stand out and have its own starter box with better design"
+
+### Ghost It on the porch and by the upload button, Cassy helps (not cancels), Cassy talks you through it, white Ask a ghost, See this ghost works
+- What:
+  - Ghost It joins the Haunted House "Front porch · your guides" as an AI agent (its own mascot, "Ghost Packs"); tapping it opens Meet Ghost It.
+  - Under "Upload my CSV or PDF" (Haunted and 💔 home pages): "Want to understand your fees more?", with Ghost It's mascot, linking to /ghostit (its Ghost Packs analyse each kind of leak).
+  - Cassy's job now reads "Helps you cancel" (was "Cancelling for you"), and every "Cassy cancels" line says "helps you cancel": people sign in and cancel themselves, so nobody thinks we hold their logins.
+  - Cassy talks you through each cancel step in an orange speech bubble ("You sign in there, I never see your login", "Tick each step as you go…", "Stuck? Send this email…", "Did it work? That's $X a year back…").
+  - The Haunted "Take me to Cassy" ghost is now orange Cassy (the card ghost is Ghost It's look).
+  - "Ask a ghost" (floating and sidebar) uses a white ghost, since there are several guides.
+  - Goal path's "See this ghost in the house" now opens that ghost's room and highlights it (it only switched tabs).
+- Files: src/components/landing/GhostItOffer.jsx (new), Hero.jsx, ExHero.jsx, src/components/results/HauntedHouse.jsx, GoalPath.jsx, ResultsView.jsx, CancelAssistant.jsx, HauntedCalendar.jsx, GhostItPacks.jsx, GhostItDialog.jsx, src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guides.js
+- How to test: Home: the Ghost It offer under Upload. Sample > Mark as sorted: Ghost It on the porch. Goal path > See this ghost in the house. Calendar > Cassy's bubble on each step.
+- User feedback that drove this: "Ghost It should be under agents or in its box where you upload fees", "can Cassy cancel for you? No, she can assist you in cancelling, people will be worried about security", "See this ghost in your house does not take you to the ghost", "put the orange Cassy image here", "this should also be a conversation with Cassy", "Ask a ghost on all UIs should be a white ghost"

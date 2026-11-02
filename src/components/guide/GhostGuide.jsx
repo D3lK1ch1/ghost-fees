@@ -271,7 +271,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           data-tour="ask"
           aria-label="Ask a ghost"
         >
-          <GhostMark className="h-6 w-6 text-primary" eyeColor="hsl(var(--card))" />
+          {/* White: there are several ghost guides now, so the button isn't one guide's colour. */}
+          <GhostMark className="h-6 w-6 text-white" eyeColor="#1a1230" />
           <span className="hidden text-[14px] sm:inline">Ask a ghost</span>
         </button>
       )}

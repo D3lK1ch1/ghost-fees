@@ -378,7 +378,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             </div>
             <div className="mt-4 flex items-center justify-between">
               {selected.kind !== 'reminders' ? (
-                <button type="button" onClick={onOpenHouse} className="text-[14px] font-bold underline underline-offset-4">See this ghost in the house</button>
+                <button type="button" onClick={() => onOpenHouse?.(selected.leak?.id)} className="text-[14px] font-bold underline underline-offset-4">See this ghost in the house</button>
               ) : <span />}
               {!allDone && (
                 <button type="button" onClick={nextGoal} className="inline-flex items-center gap-1 text-[14px] font-bold text-[#a24a00]">

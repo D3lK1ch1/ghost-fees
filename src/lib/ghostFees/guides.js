@@ -50,7 +50,7 @@ export const GUIDES = {
     role: 'the cancel ghost',
     bonus: true, // bonus assistant: looks things up online
     color: '#f2a65a',
-    job: 'Cancelling for you',
+    job: 'Helps you cancel',
     short: 'Finds cancel info',
     does: 'Searches the official site for the cancel link, the steps and the phone number, then drafts the email.',
     chips: ['How do I cancel my biggest one?', 'Find a phone number', 'Write my cancel email'],

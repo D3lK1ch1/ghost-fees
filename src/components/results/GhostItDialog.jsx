@@ -20,7 +20,7 @@ export default function GhostItDialog({ open, onClose, onMessage }) {
         <div className="text-center">
           <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={150} height={150} className="motion-safe:animate-float mx-auto h-[150px] w-[150px] object-contain drop-shadow-[0_0_24px_rgba(143,184,255,0.35)]" />
           <DialogTitle className="mt-3 font-heading text-[26px] font-bold text-foreground">Meet Ghost It</DialogTitle>
-          <p className="mt-1 text-[15px] leading-snug text-muted-foreground">Our AI agent on Fetch.ai&apos;s ASI:One. Ghost Fees reads your statement and Cassy cancels each subscription; Ghost It hunts the leaks a statement can&apos;t show.</p>
+          <p className="mt-1 text-[15px] leading-snug text-muted-foreground">Our AI agent on Fetch.ai&apos;s ASI:One. Ghost Fees reads your statement and Cassy helps you cancel each subscription; Ghost It hunts the leaks a statement can&apos;t show.</p>
         </div>
         <ul className="mt-4 grid gap-2">
           {FEATURES.map(({ Icon, title, line }) => (

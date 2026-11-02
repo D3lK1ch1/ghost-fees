@@ -10,8 +10,23 @@ import TaskDialog from './TaskDialog';
 import CassLookup from './CassLookup';
 import { useCancelProof } from './ProofDialog';
 import StatNote from '@/components/stats/StatNote';
+import GhostMark from '@/components/site/GhostMark';
 
 const STEPS = ['Open the cancel page', 'Follow their steps', 'No luck? Email them', 'Mark it cancelled'];
+
+// What Cassy says at each step, so it feels like she's walking you through it.
+// She helps; you do the cancelling (we never sign in for you).
+function cassySays(step, sub, info, done) {
+  const name = sub.merchant;
+  if (step === 0) return info.url
+    ? `Let's ghost ${name}. Their official cancel page is below. You sign in there, I never see your login.`
+    : `${name} doesn't have a checked cancel page yet, so let me look it up for you.`;
+  if (step === 1) return `Tick each step as you go. If they offer a discount to stay, you can say no thanks.`;
+  if (step === 2) return `Stuck? Some companies make it hard. Send this email and ask them to confirm in writing.`;
+  return done
+    ? `${name} is on your Ghost List. I'll check your next statement to be sure it really stopped.`
+    : `Did it work? That's ${money(sub.monthly * 12)} a year back. Save your proof and I'll check it stopped.`;
+}
 
 // Cancellation assistant, in every theme: pick a subscription and it walks you
 // through cancelling it, one step at a time. Direct link to the official cancel
@@ -99,7 +114,15 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
         ))}
       </ol>
 
-      <div key={`${sub.id}-${step}`} className="mt-4 animate-rise rounded-2xl border border-border bg-background/50 p-4">
+      {/* Cassy talks you through each step. */}
+      <div key={`say-${sub.id}-${step}`} className="mt-4 flex animate-rise items-end gap-2.5">
+        <GhostMark className="h-10 w-10 shrink-0 motion-safe:animate-float" style={{ color: '#f2a65a' }} eyeColor="#1a1230" />
+        <p className="relative rounded-2xl rounded-bl-md bg-[#f2a65a] px-4 py-2.5 text-[14.5px] font-semibold leading-snug text-[#1a1230]">
+          <span className="block text-[12px] font-bold uppercase tracking-wide opacity-70">Cassy</span>
+          {cassySays(step, sub, info, done)}
+        </p>
+      </div>
+      <div key={`${sub.id}-${step}`} className="mt-3 animate-rise rounded-2xl border border-border bg-background/50 p-4">
         {step === 0 && (
           <>
             {info.url && <p className="font-heading text-[16px] font-bold text-foreground">Go to {info.name}&apos;s cancel page</p>}

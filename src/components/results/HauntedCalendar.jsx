@@ -264,7 +264,8 @@ const NUDGE_ART = {
   heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [116, 26] },
   fine: { src: '/themes/ex/men-block.webp', mouth: [114, 24] },
   christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [116, 30] },
-  haunted: { src: '/themes/haunted/card-ghost.webp', mouth: [104, 44] },
+  // Haunted: Cassy herself (the orange guide ghost); the card ghost is Ghost It's look.
+  haunted: { cassy: true, mouth: [102, 40] },
 };
 
 function CassyNudge() {
@@ -275,7 +276,13 @@ function CassyNudge() {
   return (
     <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-border/70 px-4 py-5">
       <div className="animate-float relative h-[260px] w-[420px] max-w-full">
-        <img src={art.src} alt="" width={130} height={140} className="absolute bottom-0 left-0 h-[140px] w-[130px] object-contain" />
+        {art.cassy ? (
+          <span className="absolute bottom-0 left-0 flex h-[140px] w-[130px] items-end justify-center" aria-hidden="true">
+            <GhostMark className="h-[120px] w-[120px] drop-shadow-[0_0_18px_rgba(242,166,90,0.45)]" style={{ color: '#f2a65a' }} eyeColor="#1a1230" />
+          </span>
+        ) : (
+          <img src={art.src} alt="" width={130} height={140} className="absolute bottom-0 left-0 h-[140px] w-[130px] object-contain" />
+        )}
         <div className="absolute z-10" style={{ left: art.mouth[0], top: 120 + art.mouth[1], transform: 'translate(-9.4%, -100%)' }}>
           <div className="bub-l w-[300px] !min-w-0 !px-11 !pb-14 !pt-8 text-center">
             <p className="font-heading text-[16px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
