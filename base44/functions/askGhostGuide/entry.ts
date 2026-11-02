@@ -24,7 +24,7 @@ const REPLY_SCHEMA = {
 
 // ---- Free-tier limits (same block in allowance, parseStatement, askGhostGuide, findCancelInfo) ----
 // Only counters and salted one-way hashes are stored, on the Allowance entity.
-const FREE_SCANS = 1;
+const FREE_SCANS = 3; // 3 free statement uploads (one upload = up to 6 files). The sample never counts.
 const FREE_CASS = 1; // Cassy looks up one subscription for free
 const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
 const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass'];
@@ -75,16 +75,20 @@ async function takeAnonymous(base44, kind) {
 }
 // ---- end free-tier block ----
 
-// One free AI message per ghost for signed-in people; unlimited once paid.
-// Visitors who aren't signed in share a daily ceiling (the browser also limits them).
+// One free ghost guide try in total, on whichever ghost the person picks (Penny,
+// Spooksworth, Gus or Cassy); unlimited once paid. Usage is still recorded during
+// the free beta, so we have real numbers. Visitors who aren't signed in share a
+// daily ceiling (the browser also limits them).
+const FREE_GUIDE_TRIES = 1;
 async function guideGate(base44, guideKey) {
   const user = await currentUser(base44);
   if (!user) return (await takeAnonymous(base44, 'guide')) ? { ok: true } : { ok: false, reason: 'busy' };
   const allowance = await loadAllowance(base44, user);
-  if (isUnlimited(user, allowance)) return { ok: true };
   const used = Array.isArray(allowance.guides_used) ? allowance.guides_used : [];
-  if (used.includes(guideKey)) return { ok: false, reason: 'limit' };
-  return { ok: true, record: () => base44.asServiceRole.entities.Allowance.update(allowance.id, { guides_used: [...new Set([...used, guideKey])] }) };
+  const record = () => base44.asServiceRole.entities.Allowance.update(allowance.id, { guides_used: [...used, guideKey].slice(-50) });
+  if (isUnlimited(user, allowance)) return { ok: true, record };
+  if (used.length >= FREE_GUIDE_TRIES) return { ok: false, reason: 'limit' };
+  return { ok: true, record };
 }
 
 const clean = (value, max) => String(value ?? '').replace(/[\r\n]+/g, ' ').slice(0, max).trim();

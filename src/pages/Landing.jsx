@@ -74,7 +74,7 @@ export default function Landing() {
     if (!useSample) refresh();
   };
 
-  // The free scan is counted on the server: sign in, then one upload of up to 6 files.
+  // Free scans are counted on the server: sign in, then 3 uploads of up to 6 files each.
   // Re-scanning the same files is free. Paid accounts get a ticket every time.
   const handleFiles = async (event) => {
     // Unsupported files go through too, so the error screen can name them.

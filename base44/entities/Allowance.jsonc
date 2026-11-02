@@ -16,7 +16,7 @@
     "guides_used": {
       "type": "array",
       "items": { "type": "string", "enum": ["penny", "sir", "gus", "cass"] },
-      "description": "Ghosts whose one free AI message has been used"
+      "description": "Each ghost guide AI answer used, in order (last 50). Free: one try in total, on any ghost. Counted during the beta too."
     },
     "cass_prints": {
       "type": "array",

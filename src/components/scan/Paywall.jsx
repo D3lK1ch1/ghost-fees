@@ -20,9 +20,9 @@ const INCLUDED = [
 const SHOW_GUARANTEE = true;
 
 const TITLES = {
-  sign_in: 'Sign in for your free scan',
-  scan: 'Your free scan is used. Keep hunting ghosts.',
-  guide: "That's the free message from this ghost.",
+  sign_in: 'Sign in for your 3 free scans',
+  scan: "You've used your 3 free scans. Keep hunting ghosts.",
+  guide: "That's your free ghost try.",
   cass: 'Cassy looked up your first one for free.',
   report: 'The PDF report comes with the unlock.',
 };
@@ -57,7 +57,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
         <DialogContent className="max-w-md rounded-3xl border-border bg-card p-5 sm:p-6">
           <DialogTitle className="font-heading text-[21px] leading-tight">{TITLES.sign_in}</DialogTitle>
           <p className="text-[14px] text-muted-foreground">
-            Your first scan is free: one upload of up to 6 statements, so a bank account and a credit card can be read together. Signing in keeps that free scan yours. We keep a count, never your statement.
+            Your first 3 scans are free. Each one can be up to 6 statements, so a bank account and a credit card can be read together. Signing in keeps those free scans yours. We keep a count, never your statement.
           </p>
           <Link to={`/login?returnTo=${returnTo}`} className="mt-2 block rounded-2xl bg-primary py-3 text-center text-[15px] font-bold text-primary-foreground">
             Sign in, then upload
