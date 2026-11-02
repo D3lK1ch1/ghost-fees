@@ -1,16 +1,8 @@
 // All founder copy and photos in one place. Edit text here.
-// Photos: add square images (400px or bigger) at public/founders/<key>.jpg (sanjay, bella, delia).
+// Photos: add square images (400px or bigger) at public/founders/<key>.jpg (bella, delia).
 // Until a photo exists, the card shows initials.
 
 export const FOUNDERS = [
-  {
-    key: 'sanjay',
-    name: 'Sanjay',
-    initials: 'S',
-    role: 'Co-founder, data and detection',
-    bio: 'Bioinformatician at Monash University with a Master of Data Science. By day he finds patterns in messy biological data; here he finds them in bank statements.',
-    photo: '/founders/sanjay.jpg',
-  },
   {
     key: 'bella',
     name: 'Bella',

@@ -13,6 +13,7 @@ import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
 import ResultsTour from './ResultsTour';
+import FirstSteps from './FirstSteps';
 import { TourButton } from '@/components/tour/Tour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
@@ -302,6 +303,10 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               setTimeout(() => document.getElementById('ghosts')?.scrollIntoView({ behavior: 'smooth' }), 50);
             }}
           />
+        )}
+
+        {leaks.length > 0 && guessDone && !exStory && (
+          <FirstSteps setTab={setTab} answers={subAnswers} firstLeakTitle={[...leaks].sort((a, b) => b.amount - a.amount)[0]?.title || [...leaks].sort((a, b) => b.amount - a.amount)[0]?.merchant} />
         )}
 
         <p className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-[13.5px] leading-relaxed text-muted-foreground">

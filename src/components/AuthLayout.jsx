@@ -6,8 +6,8 @@ import ReceiptGhost from "@/components/site/ReceiptGhost";
 // Sign in, sign up and password pages. Beside the form (above it on phones): the
 // promise, what Free and Pro give you, and the privacy line, so people know what
 // they're signing up for. "Where's the sign in with a clean UVP description?" (2 Nov)
-const FREE = ["3 statement scans", "Your full total, every leak in dollars", "1 try of a ghost guide"];
-const PRO = ["Unlimited scans and all 4 ghost guides", "Cassy finds cancel pages and phone numbers", "Ghost List checks the charges stopped"];
+const FREE = ["3 statement scans, your full total", "Cancel steps, emails and the Ghost List", "1 ghost guide chat and 1 Cassy lookup"];
+const PRO = ["Unlimited scans", "All 4 ghost guides, as much as you like", "Cassy for every subscription, and the PDF report"];
 
 function BrandPanel() {
   return (

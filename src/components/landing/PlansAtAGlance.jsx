@@ -8,22 +8,21 @@ import BadgesExplainer from '@/components/results/BadgesExplainer';
 // The "Free vs Pro" home tab, laid out like a pro app's plan picker: Free and Pro
 // side by side, a big price, one button each, then what you get, and the savings
 // maths. Same plan facts as /upgrade. The ghost team has its own section (GhostTeam).
+// Only what Pro really unlocks goes in the Pro list. Everything else is free for
+// everyone (the server only limits scans, ghost guide chats, Cassy lookups and the PDF).
 const FREE = [
   'The sample statement, any time',
-  '3 statement scans',
-  'Your full total, every leak in dollars',
-  '1 try of a ghost guide',
-  'All 3 themes',
+  '3 statement scans, your full total every time',
+  'Cancel links, steps and ready-to-send emails',
+  'Ghost List, reminders, the tracker and badges',
+  '1 chat with a ghost guide, and Cassy looks up 1 subscription',
 ];
 
 const PRO = [
-  'Unlimited scans, every bank and card',
-  'All 4 ghost guides',
-  'Cassy finds the cancel page, steps and phone number',
-  'Ready-to-send cancel and refund emails',
-  'Ghost List: checks the charges actually stopped',
-  'Calendar reminders before each charge, and a PDF report',
-  'Levels and badges as you cancel, like First Ghost and Price Rise Spotter, to share',
+  'Unlimited scans, every bank and card, every month',
+  'Chat with all 4 ghost guides, as much as you like',
+  'Cassy looks up every subscription: the real cancel page, steps and phone number',
+  'A PDF report of your results to keep or share',
 ];
 
 function Feature({ children, pro }) {

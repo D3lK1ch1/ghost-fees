@@ -16,12 +16,13 @@ import './upgrade.css';
 const FEATURES = [
   { full: 'Unlimited uploads', body: 'Every bank and card, every month', free: '3 uploads' },
   { full: 'All 4 ghost guides', body: 'Penny, Spooksworth, Gus and Cassy', free: '1 try of one ghost' },
-  { full: 'Cassy for every subscription', body: 'Real cancel page, steps, AU phone and hours' },
-  { full: 'Ready cancel emails', body: 'Copy, paste, send' },
-  { full: 'Ghost List tracker', body: 'Requested, confirmed, still charging' },
-  { full: 'Did it actually stop?', body: 'Your next statement proves it' },
-  { full: 'Cancel reminders', body: 'Pick a time, it lands in your calendar' },
-  { full: 'PDF report, levels and badges', body: 'Badges like First Ghost and Price Rise Spotter as you cancel. Share what you ghosted' },
+  { full: 'Cassy for every subscription', body: 'Real cancel page, steps, AU phone and hours', free: 'Cassy looks up 1 subscription' },
+  { full: 'Ready cancel emails', body: 'Copy, paste, send', free: 'Ready cancel emails' },
+  { full: 'Ghost List tracker', body: 'Requested, confirmed, still charging', free: 'Ghost List tracker' },
+  { full: 'Did it actually stop?', body: 'Your next statement proves it', free: 'Did it actually stop?' },
+  { full: 'Cancel reminders', body: 'Pick a time, it lands in your calendar', free: 'Cancel reminders' },
+  { full: 'PDF report', body: 'Your results as a PDF to keep or share' },
+  { full: 'Levels and badges', body: 'First Ghost, Price Rise Spotter and more as you cancel', free: 'Levels and badges' },
   { full: 'Your full total', body: 'Always shown, on every plan', free: 'Your full total', always: true },
 ];
 
