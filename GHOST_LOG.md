@@ -258,3 +258,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/PossessedReceipt.jsx, src/components/results/LeakEmailDialog.jsx, src/components/results/ResultsView.jsx
 - How to test: Try a sample statement, Possessed receipt, Open the receipt, tick Streammax and Monthly Account Fee (2 ghosts · $218.94), Ask my bank; and press Dispute this on Adobe.
 - User feedback that drove this: "the possessed receipt can we do something more with it functionality wise"; the stamp covered "$15.00" in the user's screenshot.
+
+### 💔 Heartbreak House: a card for every ex
+- What: under the house there is now a card for every ex, biggest first, each with its line, cancel link or steps, and Block and delete (or Blocked, Undo and its proof). Tapping an ex in the house highlights its card and scrolls to it. The "Block once you've cancelled" note shows once, under the cards. Also: no comma before "with" in the Cassy lines under the calendar.
+- Files: src/components/ex/HeartbreakHouse.jsx, src/components/results/HauntedCalendar.jsx
+- How to test: pick 💔, Try a sample statement, See everything, Heartbreak House: all 7 exes have a card; tap Netflix in the house.
+- User feedback that drove this: "these cards should show all the ghosts"; "remove commas before with".
