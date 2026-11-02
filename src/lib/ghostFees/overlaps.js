@@ -31,8 +31,17 @@ export function typeOf(merchant = '') {
 // Life-stage tips for double-ups. General, never "you should".
 export const LIFE_STAGES = [
   { key: 'solo', label: 'Just me', tip: OVERLAP_TIPS },
-  { key: 'student', label: 'Student', tip: "Some services have student plans for about half price (Spotify Student is $7.99 a month, Selectra, Jun 2026). Worth checking before you keep two." },
+  // The Spotify example is only shown when one of the double-ups is music
+  // (tipFor below); other double-ups get the general line, with no number.
+  { key: 'student', label: 'Student', tip: 'Some services have student plans at a lower price. Worth checking before you keep two.', musicTip: "Some services have student plans for about half price (Spotify Student is $7.99 a month, Selectra, Jun 2026). Worth checking before you keep two." },
   { key: 'couple', label: 'Couple', tip: 'Couples often keep one account between them, or move to a duo or family plan, instead of paying twice.' },
   { key: 'sharehouse', label: 'Sharehouse', tip: 'In a sharehouse, someone else may already pay for the same service. One shared plan split between you is common.' },
   { key: 'family', label: 'Family', tip: 'Family plans usually cover several people on one bill, so separate accounts for each person are a common double-up.' },
 ];
+
+// The tip for a life stage, matched to the double-ups actually found.
+export function tipFor(stageKey, overlaps = []) {
+  const stage = LIFE_STAGES.find((item) => item.key === stageKey);
+  if (!stage) return '';
+  return stage.musicTip && overlaps.some((group) => group.key === 'music') ? stage.musicTip : stage.tip;
+}

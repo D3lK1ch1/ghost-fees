@@ -115,7 +115,8 @@ export default async function (req) {
     const bank = String(payload?.bank || '');
 
     if (!fileUri) return Response.json({ error: 'Missing statement file.' }, { status: 400 });
-    if (!(await validTicket(base44, payload?.ticket))) {
+    // Free beta: no ticket needed while charging is off.
+    if (chargingOn() && !(await validTicket(base44, payload?.ticket))) {
       return Response.json({ error: 'Sign in and use your free scan, or unlock to scan more.', locked: true });
     }
 

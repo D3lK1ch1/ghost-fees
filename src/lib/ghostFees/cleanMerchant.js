@@ -4,8 +4,13 @@
 
 const NOISE_RE = /\b(PTY|LTD|AB|AUS|AU|VISA|CARD|TRIAL|FREE|SUBSCRIPTION|PREMIUM|XX|SYDNEY|MELBOURNE|BRISBANE|PERTH|ADELAIDE|CANBERRA|HOBART|DARWIN|NEWCASTLE|GOLD COAST|AUSTRALIA|STOCKHOLM|LONDON|DUBLIN|SINGAPORE|TORONTO|NEW YORK|SAN FRANCISCO|SEATTLE|SWEDEN|IRELAND|UK|USA|NZ)\b/g;
 
+// Email addresses (e.g. "PAYPAL *bob@example.com") are dropped before anything
+// else, so a person's email never becomes part of a merchant's name.
+const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+
 export function cleanMerchant(raw) {
   return String(raw || '')
+    .replace(EMAIL_RE, ' ')
     .toUpperCase()
     // Reference codes mixing letters and 2+ digits (P0A1B2C3, XX4412) are noise, not part of the name.
     .replace(/\b(?=[A-Z0-9]*[A-Z])(?=(?:[A-Z]*[0-9]){2})[A-Z0-9]+\b/g, ' ')

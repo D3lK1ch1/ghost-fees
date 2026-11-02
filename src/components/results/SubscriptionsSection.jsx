@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
 import { useCancelProof } from './ProofDialog';
-import { LIFE_STAGES, TYPE_LABELS, findOverlaps, typeOf } from '@/lib/ghostFees/overlaps';
+import { LIFE_STAGES, TYPE_LABELS, findOverlaps, tipFor, typeOf } from '@/lib/ghostFees/overlaps';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import StatNote from '@/components/stats/StatNote';
 
@@ -113,7 +113,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
               </button>
             ))}
           </div>
-          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{LIFE_STAGES.find((item) => item.key === stage)?.tip}</p>
+          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{tipFor(stage, overlaps)}</p>
         </div>
       )}
 
