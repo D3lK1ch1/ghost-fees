@@ -1,4 +1,4 @@
-import ReceiptGhost from '@/components/site/ReceiptGhost';
+import { EX_CONTACT } from '@/lib/ghostFees/exArt';
 import { useState } from 'react';
 import { useGhostList } from '@/hooks/use-ghost-list';
 import FkJar from './FkJar';
@@ -214,15 +214,15 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
   );
 }
 
-// Design screen Ex11Checkin: next month, Ghost Fees checks the exes stayed blocked.
+// Design screen Ex11Checkin: next month, Tilly (EX_CONTACT) checks the exes stayed blocked.
 export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
   const them = { background: C.card, borderRadius: '20px 20px 20px 6px' };
   return (
     <Screen stars={false}>
       <div className="relative z-[1] flex items-center gap-3 px-4 pb-3.5 pt-[18px]" style={{ background: C.bar, borderBottom: `1px solid ${C.barLine}` }}>
-        <ReceiptGhost width={34} className="flex-none" />
+        <span className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-full" style={{ background: C.card, border: `1.5px solid ${C.mint}` }}><img src={EX_CONTACT.art} alt="" width={34} height={40} className="h-[36px] w-auto translate-y-[3px] object-contain" /></span>
         <div className="flex flex-col gap-0.5">
-          <div className="ex-fredoka text-[18px] font-semibold">Ghost Fees</div>
+          <div className="ex-fredoka text-[18px] font-semibold">{EX_CONTACT.name}</div>
           <div className="text-[13px] font-bold" style={{ color: C.mint }}>Monthly check-in</div>
         </div>
       </div>

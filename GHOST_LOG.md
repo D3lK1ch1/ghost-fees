@@ -264,3 +264,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/HeartbreakHouse.jsx, src/components/results/HauntedCalendar.jsx
 - How to test: pick 💔, Try a sample statement, See everything, Heartbreak House: all 7 exes have a card; tap Netflix in the house.
 - User feedback that drove this: "these cards should show all the ghosts"; "remove commas before with".
+
+### 💔 Meet Tilly, who texts you in the scanning chat
+- What: the scanning chat and the monthly check-in used "Ghost Fees" as the contact. The contact is now Tilly (as in the till that rings up every charge), a new ghost holding a bank card, from the Image Assets folder, in a round avatar: "Tilly is typing...". Same for Heartbroken and I'm Fine. Name and art live in EX_CONTACT, so they are easy to change.
+- Files: public/themes/ex/tilly.webp (new, 15 KB), src/lib/ghostFees/exArt.js (EX_CONTACT), src/components/ex/ExScanChat.jsx, src/components/ex/ExAct2.jsx
+- How to test: pick 💔, Try a sample statement: the phone chat header says Tilly. Monthly check-in tab: Tilly too.
+- User feedback that drove this: "this should be new agent from the image folder, we cannot have the agent be called Ghost Fees as that's very lame".

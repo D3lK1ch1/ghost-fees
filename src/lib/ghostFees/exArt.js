@@ -6,6 +6,10 @@ const ART = '/themes/ex';
 export const EX_GHOST_KEY = 'ghostFees.exGhost';
 export const EX_GHOSTS = ['fine', 'heartbroken']; // display order, as in the design
 
+// The 💔 chat contact who reads your statement and texts you: Tilly, as in the
+// till that rings up every charge. Her art is from the Image Assets folder.
+export const EX_CONTACT = { name: 'Tilly', art: `${ART}/tilly.webp` };
+
 export const EX_SHOUT_BUBBLE = `${ART}/bubble-shout.webp`;
 
 export const EX_PICKS = {
