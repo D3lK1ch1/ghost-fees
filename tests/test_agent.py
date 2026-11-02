@@ -311,7 +311,9 @@ class PaidPacks(unittest.TestCase):
         self.assertIn("https://www.netflix.com/cancelplan", reply)
         reply, card = self.P.route(self.ctx, SENDER, "sound pack")
         self.assertIn("$2.00 once", reply)
-        self.assertIsNone(card)
+        self.assertEqual(card[0], "detail")  # v10: the price explained on a card
+        self.assertEqual([c["selection"] for c in card[1]["ctas"]][:2],
+                         [{"action": "buy", "plan": "pack"}, {"action": "buy", "plan": "all"}])
         self.assertNotIn("spotify.com", reply)  # steps only after paying
         pending = self.P.get(self.ctx, f"pending_pay:{SENDER}", None)
         self.assertEqual((pending["cents"], pending["packs"]), (200, ["Sound"]))
@@ -593,3 +595,50 @@ class QuickStarts(unittest.TestCase):
     def test_use_my_own_opens_the_form(self):
         _, card = A.route(FakeCtx(), SENDER, json.dumps({"action": "form"}))
         self.assertEqual(card[0], "form")
+
+
+class V10(unittest.TestCase):
+    """Explanation cards, more tap-to-try prompts, and the $2 / $5 choice at the paywall."""
+
+    def test_first_reply_offers_explainer(self):
+        _, card = A.route(FakeCtx(), SENDER, "hi")
+        actions = [i["primary_cta"]["selection"]["action"] for i in card[1]["items"]]
+        self.assertIn("explain", actions)
+
+    def test_explainer_questions(self):
+        for msg, topic in [("how does it work?", "How Ghost It works"), ("is it free?", "What does it cost"),
+                           ("is my data safe?", "What I keep"), ("how do you calculate it?", "How I do the maths"),
+                           ("explain packs", "Ghost Pack")]:
+            reply, card = A.route(FakeCtx(), SENDER, msg)
+            self.assertIn(topic, reply, msg)
+            self.assertEqual(card[0], "detail", msg)
+            self.assertEqual(len(card[1]["ctas"]), 2, msg)
+
+    def test_explain_menu_and_taps(self):
+        _, card = A.route(FakeCtx(), SENDER, "explain")
+        self.assertEqual(card[0], "carousel")
+        self.assertEqual(len(card[1]["items"]), len(A.EXPLAINERS))
+        reply, card = A.route(FakeCtx(), SENDER, json.dumps({"action": "explain", "topic": "price"}))
+        self.assertIn("$2 AUD", reply)
+        self.assertIn("free while we're in beta", reply)  # no keys in tests
+
+    def test_list_with_how_much_is_still_maths(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Netflix $19, Stan $16. How much is that a year?")
+        self.assertIn("The maths", reply)
+
+    def test_buy_when_free(self):
+        reply, _ = A.route(FakeCtx(), SENDER, json.dumps({"action": "buy", "plan": "all"}))
+        self.assertIn("free while we're in beta", reply)
+
+
+class V10Paid(PaidPacks):
+    def test_upgrade_to_all_reopens_checkout(self):
+        self.P.route(self.ctx, SENDER, "screen pack")
+        self.P.route(self.ctx, SENDER, "sound pack")
+        asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
+        reply, _ = self.P.route(self.ctx, SENDER, json.dumps({"action": "buy", "plan": "all"}))
+        self.assertIn("$5.00", reply)
+        pending = self.P.get(self.ctx, f"pending_pay:{SENDER}", None)
+        self.assertEqual((pending["cents"], pending["packs"], pending["session"]), (500, ["all"], None))
+        asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
+        self.assertEqual(self.ctx.sent[-1].accepted_funds[0].amount, "5.00")

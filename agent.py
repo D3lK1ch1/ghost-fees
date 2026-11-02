@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v10 (3 Nov 2026): explanation cards, tap-to-try prompts, Stripe paywall card ($2 or $5).
 # v7 (2 Nov 2026): clear maths on every reply, interactive cards, app links,
 # auto-replies to feedback, evidence command.
 #
@@ -441,8 +442,84 @@ def quick_start_card():
             "id": "qs-own", "title": "✍️ Use my own", "subtitle": "Add what you pay for",
             "secondary_text": "Name and price, weekly or monthly",
             "primary_cta": {"label": "Add mine", "selection": {"action": "form"}},
+        }, {
+            "id": "qs-how", "title": "❓ How does it work?", "subtitle": "30-second explainer",
+            "secondary_text": "What I do, what's free, what I keep about you",
+            "primary_cta": {"label": "Explain", "selection": {"action": "explain"}},
         }],
     })
+
+
+# v10: explanation cards. Each one answers a question people ask before they trust an
+# agent with their money: how it works, what a pack is, what it costs, how the maths
+# works, what I keep. A carousel menu, then one detail card per topic.
+EXPLAINERS = {
+    "how": ("❓ How Ghost It works", [
+        ("1. Tell me", "What you pay for, e.g. Netflix $19, gym $25 a week"),
+        ("2. The maths", "I work out the real yearly cost, line by line"),
+        ("3. Ghost Packs", "Each pack hunts one kind of leak and shows what you'd save"),
+        ("4. Cancel", "Official cancel links, the steps and a ready email"),
+        ("5. Check", "After 7 days I ask if the charge really stopped"),
+    ], ("Try an example", {"action": "check", "subs": "Netflix $19, Stan $16, Disney+ $16"}), "packs"),
+    "packs": ("👻 What's a Ghost Pack?", [
+        ("What it is", "A hunt for one kind of money leak"),
+    ] + [(f"{PACK_EMOJI[p]} {p}", PACK_HUNTS[p][:90]) for p in ["Screen", "Sound", "Tech Stack", "Food", "Gym and Fitness", "Play"]],
+        ("See all packs", {"action": "packs"}), "price"),
+    "price": ("💳 What does it cost?", [
+        ("Your first pack", "Free"),
+        ("Each pack after that", "$2 AUD, paid once"),
+        ("Every pack", "$5 AUD, paid once, forever"),
+        ("Subscription", "Never. Ghost It won't become another subscription"),
+        ("How you pay", "Card checkout by Stripe, right inside the chat"),
+        ("Always free", "Adding up your subscriptions, doubles and your ghost list"),
+    ], ("Try my free pack", {"action": "check", "subs": "Spotify $14, YouTube Premium $17"}), "maths"),
+    "maths": ("🧮 How I do the maths", [
+        ("Weekly", "price x 52"), ("Fortnightly", "price x 26"), ("Monthly", "price x 12"),
+        ("Yearly", "price x 1"),
+        ("Saving", "the pack total minus the cheapest one you keep"),
+        ("No guessing", "Plain maths, no AI guessing. Typical prices are labelled typical, with a source"),
+    ], ("Try the gym maths", {"action": "check", "subs": "gym $25 a week"}), "data"),
+    "data": ("🔒 What I keep about you", [
+        ("I keep", "The subscriptions you tell me and your ghost list"),
+        ("I never see", "Your bank, email or card details (Stripe handles payment)"),
+        ("Delete it", "Type `delete my data` and it's gone"),
+        ("Financial advice", "No: general information about subscriptions, not financial advice"),
+    ], ("Start with mine", {"action": "form"}), "how"),
+}
+EXPLAIN_WORDS = {"how": "how", "pack": "packs", "packs": "packs", "price": "price", "cost": "price",
+                 "maths": "maths", "math": "maths", "data": "data", "privacy": "data"}
+
+
+def explain_menu_reply():
+    lines = ["**Quick explainers.** Tap one, or just tell me what you pay for.", ""]
+    lines += [f"- {t}" for t, *_ in EXPLAINERS.values()]
+    card = ("carousel", {
+        "title": "How Ghost It works",
+        "subtitle": "Tap a question",
+        "items": [{
+            "id": f"ex-{k}", "title": t, "subtitle": rows[0][0], "secondary_text": rows[0][1][:120],
+            "primary_cta": {"label": "Tell me", "selection": {"action": "explain", "topic": k}},
+        } for k, (t, rows, _, _) in EXPLAINERS.items()],
+    })
+    return "\n".join(lines), card
+
+
+def explain_reply(topic):
+    if topic not in EXPLAINERS:
+        return explain_menu_reply()
+    title, rows, (try_label, try_sel), nxt = EXPLAINERS[topic]
+    lines = [f"**{title}**", ""] + [f"- **{a}:** {b}" for a, b in rows]
+    if topic == "price" and not paying():
+        lines.append("\n_Right now Ghost Packs are free while we're in beta._")
+    lines.append(try_next(try_label.lower() if try_sel.get("action") != "check" else try_sel["subs"],
+                          f"explain {nxt}"))
+    card = ("detail", {
+        "title": title,
+        "summary_rows": [{"label": a, "value": b} for a, b in rows],
+        "ctas": [{"label": try_label, "primary": True, "selection": try_sel},
+                 {"label": f"Next: {EXPLAINERS[nxt][0]}", "selection": {"action": "explain", "topic": nxt}}],
+    })
+    return "\n".join(lines), card
 
 
 def help_card():
@@ -896,11 +973,50 @@ def pack_access(ctx, sender, items, title, everything=False):
     cents = ALL_PRICE_CENTS if everything or len(packs) > 1 else PACK_PRICE_CENTS
     ctx.storage.set(f"pending_pay:{sender}", {"items": items, "title": title,
                                               "packs": ["all"] if cents == ALL_PRICE_CENTS else packs, "cents": cents})
-    what = "every Ghost Pack" if cents == ALL_PRICE_CENTS else f"the {packs[0]} pack"
-    return False, (f"**What I did:** found the cancel steps for {what}.\n\n"
-                   f"You've used your free pack, so this one is **${cents / 100:.2f} once** "
-                   f"({'every pack, forever' if cents == ALL_PRICE_CENTS else 'or $5.00 for every pack'}). "
-                   "Pay with the card below and your cancel steps and emails arrive straight away.\n\n" + DISCLAIMER)
+    return False, paywall_reply(packs, cents)
+
+
+def paywall_reply(packs, cents):
+    """v10: the price, explained on a card, with a choice of one pack or every pack.
+    Stripe's checkout arrives as its own message straight after this one."""
+    one = cents == PACK_PRICE_CENTS
+    what = f"the {packs[0]} pack" if one else "every Ghost Pack"
+    text = (f"🔓 **Unlock {what}: ${cents / 100:.2f} once.**\n\n"
+            "You've used your free pack. Here's what you get:\n"
+            "- The official cancel link and steps for each one\n"
+            "- A ready-to-send cancel email\n"
+            "- A check after 7 days that the charge really stopped\n\n"
+            "Paid once, never a subscription. Stripe's secure checkout opens below; I never see your card.\n"
+            + (f"Or get **every pack for $5.00**, forever.\n" if one else "")
+            + try_next("$5 for every pack" if one else None, "explain price") + "\n\n" + DISCLAIMER)
+    rows = [{"label": "Unlocks", "value": what[0].upper() + what[1:]},
+            {"label": "Price", "value": f"${cents / 100:.2f} AUD once"},
+            {"label": "You get", "value": "Cancel links, steps, a ready email, and a did-it-stop check"},
+            {"label": "Payment", "value": "Stripe card checkout in this chat"}]
+    ctas = [{"label": f"Pay ${cents / 100:.2f}", "primary": True,
+             "selection": {"action": "buy", "plan": "pack" if one else "all"}}]
+    if one:
+        ctas.append({"label": "$5 for every pack", "selection": {"action": "buy", "plan": "all"}})
+    ctas.append({"label": "Not now", "selection": {"action": "list"}})
+    return text, ("detail", {"title": f"🔓 Unlock {what}", "summary_rows": rows, "ctas": ctas})
+
+
+def buy_reply(ctx, sender, plan):
+    """Tapped Pay or '$5 for every pack': (re)open checkout for that plan."""
+    pending = get(ctx, f"pending_pay:{sender}", None)
+    if not paying():
+        return "Ghost Packs are free while we're in beta, so there's nothing to pay. Type `packs` to run one.", None
+    if not isinstance(pending, dict):
+        pending = {"items": last_subs(ctx, sender), "title": "Cancel steps for everything", "packs": [], "cents": 0}
+    if plan == "all":
+        pending.update(packs=["all"], cents=ALL_PRICE_CENTS)
+    elif not pending.get("packs"):
+        return "Pick a pack first, e.g. `sound pack`, or tap **$5 for every pack**.", None
+    pending["session"] = None   # handle_message sends a fresh Stripe checkout after this reply
+    ctx.storage.set(f"pending_pay:{sender}", pending)
+    label = "every Ghost Pack" if pending["packs"] == ["all"] else f"the {pending['packs'][0]} pack"
+    return (f"💳 Opening Stripe checkout for {label} (${pending['cents'] / 100:.2f} AUD, once). "
+            "Your cancel steps arrive the moment it's paid.", None)
 
 
 def stripe_call(method, path, data=None):
@@ -997,7 +1113,7 @@ async def on_reject(ctx, sender, msg):
 def gated_ghost(ctx, sender, items, title, everything=False, browse=False, steps_only=False):
     ok, note = pack_access(ctx, sender, items, title, everything)
     if not ok:
-        return note, None
+        return note
     text, card = ghost_reply(ctx, sender, items, title, browse=browse, steps_only=steps_only)
     return ((note + "\n\n" + text) if note else text), card
 
@@ -1064,6 +1180,12 @@ def route(ctx, sender, raw):
             return list_reply(ctx, sender)
         if a == "help":
             return help_reply()
+        if a == "buy":
+            return buy_reply(ctx, sender, sel.get("plan", "pack"))
+        if a == "explain":
+            return explain_reply(sel.get("topic")) if sel.get("topic") else explain_menu_reply()
+        if a == "packs":
+            return packs_reply()
         if a == "form":
             return "Add what you pay for, with prices. Weekly or yearly is fine too.", help_card()
 
@@ -1083,6 +1205,20 @@ def route(ctx, sender, raw):
         return ("Evidence is for the Ghost It team only.", None)
     if re.search(r"(created|made|built|designed) (you )?(to|for)|what (were|are) you (for|made|built|created)|who are you|what is this|what are you|about you|your purpose", low):
         return about_reply()
+    em = re.fullmatch(r"\s*explain\s*(\w+)?\s*", low)
+    if em:
+        return explain_reply(EXPLAIN_WORDS.get(em.group(1) or "", "")) if em.group(1) else explain_menu_reply()
+    if re.search(r"^\$?5 for every pack|^pay \$?5|^buy (?:all|every)", low):
+        return buy_reply(ctx, sender, "all")
+    plain_q = "$" not in low and not find_merchant(low)   # a question, not a list of subscriptions
+    if plain_q and re.search(r"how (?:does|do) (?:it|this|you|ghost ?it) work|how it works|^how\??$", low):
+        return explain_reply("how")
+    if plain_q and re.search(r"is it free|how much|cost(?:s)? (?:to use|anything)|pric(?:e|ing)\??$|what do (?:you|packs) cost|do i (?:have to )?pay", low):
+        return explain_reply("price")
+    if plain_q and re.search(r"is my data|privacy|safe to|what do you (?:keep|store|save)|do you (?:keep|store|see)", low):
+        return explain_reply("data")
+    if plain_q and re.search(r"how do you (?:calculate|work out|do the maths)|where do (?:the|your) numbers", low):
+        return explain_reply("maths")
     if re.fullmatch(r"\s*(packs?|ghost packs?|what packs\??|list packs|show packs)\s*", low):
         return packs_reply()
     if re.fullmatch(r"\s*(commands|menu|what can you do\??|all commands)\s*", low):
