@@ -29,8 +29,9 @@ export async function claimScan(files) {
   return response?.data || { allowed: false, reason: 'error' };
 }
 
-export async function startCheckout() {
-  const response = await base44.functions.invoke('createCheckout', { origin: window.location.origin });
+// plan: 'founding' ($5, first 50) or 'standard' ($10).
+export async function startCheckout(plan = 'founding') {
+  const response = await base44.functions.invoke('createCheckout', { origin: window.location.origin, plan });
   const data = response?.data || {};
   if (data.url) {
     window.location.href = data.url;
