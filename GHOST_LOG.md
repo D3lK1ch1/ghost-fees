@@ -474,3 +474,8 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/AskGhostIt.jsx, src/components/results/ResultsView.jsx
 - How to test: Sample > Reveal: the Ghost It card under the PDF button; scroll to a ghost card: "Message Ghost It about <name>".
 - User feedback that drove this: "need to have Ghost It look better and message people, need a way to charge Ghost It and have the purpose of Ghost It stand out"
+### Results sidebar from tablet width, in every theme
+- What: The results sections show as a sidebar from 768px wide (was 1024px), so tablets, small laptops and the Base44 preview get the same left sidebar as big screens, with the theme's name under each plain name. Only phones get the scrolling bar along the top. Same in all three themes.
+- Files: src/components/results/ResultsView.jsx
+- How to test: Sample > results at about 900px wide: sidebar on the left. On a phone: the bar along the top.
+- User feedback that drove this: "why does Christmas have this bar up top"

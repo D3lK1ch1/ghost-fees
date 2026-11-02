@@ -323,11 +323,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         )}
 
         {leaks.length ? (
-          <div id="ghosts" className="mt-6 scroll-mt-4 lg:grid lg:grid-cols-[220px_1fr] lg:gap-6">
+          <div id="ghosts" className="mt-6 scroll-mt-4 md:grid md:grid-cols-[200px_1fr] md:gap-5 lg:grid-cols-[220px_1fr] lg:gap-6">
             <nav
               data-tour="tabs"
               aria-label="Results sections"
-              className="sticky top-0 z-20 -mx-5 mb-4 flex gap-1.5 overflow-x-auto border-b border-border bg-background/90 px-5 py-2.5 backdrop-blur sm:-mx-8 sm:px-8 lg:top-4 lg:mx-0 lg:mb-0 lg:flex-col lg:self-start lg:overflow-visible lg:rounded-2xl lg:border lg:bg-card/80 lg:p-2"
+              className="sticky top-0 z-20 -mx-5 mb-4 flex gap-1.5 overflow-x-auto border-b border-border bg-background/90 px-5 py-2.5 backdrop-blur sm:-mx-8 sm:px-8 md:top-4 md:mx-0 md:mb-0 md:flex-col md:self-start md:overflow-visible md:rounded-2xl md:border md:bg-card/80 md:p-2"
             >
               {TABS.map((item) => (
                 <button
@@ -336,7 +336,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   onClick={() => setTab(item.key)}
                   aria-current={tab === item.key ? 'page' : undefined}
                   className={cn(
-                    'flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2 text-left text-[14px] font-bold transition-colors',
+                    'flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2 text-left text-[14px] font-bold transition-colors md:whitespace-normal',
                     tab === item.key ? 'bg-white/[0.07] text-foreground' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
                   )}
                 >
@@ -345,7 +345,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   <span className="flex flex-col">
                     <span>{item.label}</span>
                     {(exText[item.key]?.label || item.themed) && (exText[item.key]?.label || item.themed) !== item.label && (
-                      <span className="hidden text-[12.5px] font-semibold text-muted-foreground lg:block">{exText[item.key]?.label || item.themed}</span>
+                      <span className="hidden text-[12.5px] font-semibold text-muted-foreground md:block">{exText[item.key]?.label || item.themed}</span>
                     )}
                   </span>
                   {item.key === 'ghosts' && (
