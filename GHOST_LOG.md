@@ -496,3 +496,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/xmas/XmasKit.jsx (SpiritSays), src/components/xmas/XmasTabScreens.jsx, src/components/results/CancelSiteLink.jsx
 - How to test: 🎄 theme > sample > Ghosts: Dusty's two bubbles; tap Waive it on Monthly Account Fee.
 - User feedback that drove this: "use speech bubble assets more cleanly and have one coming out of the ghost's mouth and one under", "all need cancel on site button"
+
+### Tour card sits beside what it explains, with a pointer
+- What: The tour card used to sit in the middle of the bottom of the screen and cover what it was explaining (half of your total). Now it moves next to its target: just under it (or above it if there's no room) with a small arrow pointing at it, lined up with it. For big areas (your total, a whole tab) it sits in the bottom corner beside the content. It follows the target as the page scrolls. On phones it stays a slim card at the bottom.
+- Files: src/components/tour/Tour.jsx
+- How to test: Sample > Tour: step 1 in the corner with the whole total visible; step 2 under the share and PDF buttons with an arrow; steps 4 to 6 beside each tab.
+- User feedback that drove this: "is there a better way to tour this" (the tour card covering the total)
