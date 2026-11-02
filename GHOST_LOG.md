@@ -246,3 +246,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Landing.jsx, base44/functions/parseStatement/entry.ts, src/lib/ghostFees/cleanMerchant.js, src/lib/ghostFees/overlaps.js (tipFor), src/components/results/SubscriptionsSection.jsx
 - How to test: before publishing the new allowance function (or with it failing), upload a CSV: it scans. Upload a CSV with a "PAYPAL *name@example.com" monthly charge: the subscription reads Paypal.
 - User feedback that drove this: found while clicking through the pack; tester asked to "scrub small amounts of identifying information".
+
+### Filter and sort your ghosts by leak type
+- What: the Ghosts tab (every theme) has chips for each leak type found on this statement, with a count: All, Duplicate, Price creep, Trial converted, Bank fee and so on. Picking one shows just those ghosts and their total ("2 ghosts · $117.00"). Sort: Biggest first, By type, A to Z. The biggest ghost keeps its highlight whatever the filter. If a new scan doesn't have the picked type, it goes back to All.
+- Files: src/components/results/LeakFilter.jsx (new), src/components/results/ResultsView.jsx
+- How to test: Try a sample statement, Ghosts tab, tap Bank fee (2 ghosts, $117.00), then Sort A to Z.
+- User feedback that drove this: "sorting filtering by types of subscriptions such as duplicates".
