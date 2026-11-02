@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import BrandHeader from '@/components/site/BrandHeader';
 import Hero from '@/components/landing/Hero';
 import UseCases from '@/components/landing/UseCases';
+import StatsStrip from '@/components/stats/StatsStrip';
 import FoundersSection from '@/components/landing/FoundersSection';
 import UploadErrors from '@/components/landing/UploadErrors';
 import SeanceScreen from '@/components/scan/SeanceScreen';
@@ -121,6 +122,7 @@ export default function Landing() {
         <>
           {ghostIt.subs.length > 0 && <FromGhostIt subs={ghostIt.subs} onScan={() => inputRef.current?.click()} />}
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
+          <StatsStrip />
           <UseCases />
           <FoundersSection />
           <SiteFooter />

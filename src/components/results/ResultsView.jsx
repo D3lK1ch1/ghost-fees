@@ -9,6 +9,7 @@ import EmptyState from './EmptyState';
 import LeakCard from './LeakCard';
 import ExLeakCard from '@/components/ex/ExLeakCard';
 import CancelAssistant from './CancelAssistant';
+import PaybackNote from '@/components/stats/PaybackNote';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
 import XmasLeakCard from '@/components/xmas/XmasLeakCard';
@@ -239,6 +240,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         ) : (
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
+
+        {leaks.length > 0 && (guessDone || exStory) && <PaybackNote results={analysis} usedSample={usedSample} />}
 
         {leaks.length > 0 && guessDone && !exStory && (
           <ThemeStory
