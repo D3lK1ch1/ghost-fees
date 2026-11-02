@@ -7,8 +7,8 @@ export default function FoundersSection() {
   return (
     <section className="mx-auto w-full max-w-4xl px-5 pb-12 sm:px-8" aria-label="Meet the founders">
       <h2 className="text-center font-heading text-[22px] font-semibold text-foreground">Meet the founders</h2>
-      <div className="mx-auto mt-4 grid max-w-3xl gap-3 sm:grid-cols-2">
-        {FOUNDERS.map((founder) => <FounderCard key={founder.key} founder={founder} />)}
+      <div className="mx-auto mt-4 flex max-w-2xl flex-col gap-3">
+        {FOUNDERS.map((founder) => <FounderCard key={founder.key} founder={founder} full />)}
       </div>
       <p className="mx-auto mt-4 max-w-xl text-center text-[14px] leading-relaxed text-muted-foreground">{WHY_LINE}</p>
       <p className="mt-2 text-center">
