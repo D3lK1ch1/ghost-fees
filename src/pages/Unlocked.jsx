@@ -5,14 +5,15 @@ import { useTheme } from '@/lib/ThemeContext';
 import { lastRealTotal } from '@/lib/ghostFees/payback';
 import { money } from '@/lib/ghostFees/format';
 import './upgrade.css';
+import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 
 // /unlocked: where Stripe sends people after paying. The server confirms the
 // payment with Stripe; only then the confetti. Founders see their real number.
 const ART = { haunted: '/themes/haunted/lantern-ghost.webp', ex: '/themes/ex/tilly.webp', christmas: '/themes/christmas/xc-festive.webp' };
-const COLOURS = ['#ff6f7d', '#5ee6c8', '#ffd36e', '#b79cff', '#fbf8fa'];
 
 export default function Unlocked() {
   const { theme } = useTheme();
+  const P = useUpgradePalette();
   const { refresh, status } = useAllowance();
   const [state, setState] = useState('checking');
 
@@ -36,29 +37,31 @@ export default function Unlocked() {
   const paidCents = status?.paidCents;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-5 text-center">
+    <div className="flex min-h-screen flex-col items-center px-6 pb-8 pt-14 text-center" style={{ background: P.bg, color: '#FFFFFF' }}>
       {state === 'paid' && Array.from({ length: 28 }, (_, i) => (
-        <span key={i} aria-hidden="true" className="up-confetti" style={{ left: `${(i * 37) % 100}%`, width: i % 2 ? 8 : 10, height: i % 3 ? 12 : 8, borderRadius: i % 4 ? 2 : '50%', background: COLOURS[i % COLOURS.length], animationDuration: `${2.4 + (i % 5) * 0.4}s`, animationDelay: `${(i % 7) * 0.15}s` }} />
+        <span key={i} aria-hidden="true" className="up-confetti" style={{ left: `${(i * 37) % 100}%`, width: i % 2 ? 8 : 10, height: i % 3 ? 12 : 8, borderRadius: i % 4 ? 2 : '50%', background: [P.accent, '#FFB86B', '#FF9BC2', '#8FB8FF'][i % 4], animationDuration: `${2.4 + (i % 5) * 0.4}s`, animationDelay: `${(i % 7) * 0.15}s` }} />
       ))}
-      <img src={ART[theme.key] || ART.haunted} alt="" className={`h-36 w-auto object-contain ${state === 'paid' ? 'up-jump' : ''}`} />
+      <img src={ART[theme.key] || ART.haunted} alt="" className={`h-40 w-auto object-contain ${state === 'paid' ? 'up-jump' : ''}`} />
       {state === 'paid' ? (
-        <>
-          {status?.foundingNumber && <p className="mt-4 rounded-full bg-primary px-4 py-1.5 text-[13px] font-black uppercase tracking-wide text-primary-foreground">Founding member #{status.foundingNumber}</p>}
-          <h1 className="mt-3 font-heading text-[40px] font-bold leading-tight">You&apos;re in.</h1>
-          <p className="mt-2 text-[15px] text-muted-foreground">
-            {paidCents ? `Paid ${money(paidCents / 100)}` : 'Paid'}{found > 0 ? ` · Found so far ${money(found)}` : ''}
-          </p>
-          <p className="mt-1 text-[14px] text-muted-foreground">Unlimited scans, all four ghosts, Cassy for every subscription. Forever.</p>
-        </>
+        <div className="mt-5 flex w-full max-w-sm flex-col items-center gap-5">
+          {status?.foundingNumber && <p className="up-fade rounded-full px-3.5 py-1.5 text-[13px] font-semibold" style={{ background: P.accent, color: P.ink }}>Founding member #{status.foundingNumber}</p>}
+          <h1 className="font-heading text-[34px] font-bold leading-tight">You&apos;re in.</h1>
+          <p className="text-[17px] leading-snug" style={{ color: P.soft }}>Unlimited scans and all 4 ghosts are unlocked. Time to clear the house.</p>
+          <div className="up-fade grid w-full grid-cols-2 gap-3 rounded-[18px] p-4 text-left" style={{ background: P.sheet, animationDelay: '0.6s' }}>
+            <div className="flex flex-col gap-1"><span className="text-[13px]" style={{ color: P.muted }}>Paid</span><span className="font-heading text-[24px] font-bold">{paidCents ? money(paidCents / 100) : 'Paid'}</span></div>
+            <div className="flex flex-col gap-1"><span className="text-[13px]" style={{ color: P.muted }}>Found so far</span><span className="font-heading text-[24px] font-bold" style={{ color: P.accent }}>{found > 0 ? money(found) : 'Scan to see'}</span></div>
+          </div>
+        </div>
       ) : state === 'checking' ? (
-        <h1 className="mt-4 font-heading text-[26px] font-bold">Checking your payment with Stripe...</h1>
+        <h1 className="mt-6 font-heading text-[26px] font-bold">Checking your payment with Stripe...</h1>
       ) : (
         <>
-          <h1 className="mt-4 font-heading text-[26px] font-bold">Payment still processing</h1>
-          <p className="mt-2 max-w-sm text-[14px] text-muted-foreground">Refresh this page in a minute. If it doesn&apos;t unlock, email us and we&apos;ll sort it.</p>
+          <h1 className="mt-6 font-heading text-[26px] font-bold">Payment still processing</h1>
+          <p className="mt-2 max-w-sm text-[14px]" style={{ color: P.muted }}>Refresh this page in a minute. If it doesn&apos;t unlock, email us and we&apos;ll sort it.</p>
         </>
       )}
-      <Link to="/" className="mt-6 rounded-2xl bg-primary px-6 py-3 text-[16px] font-bold text-primary-foreground">Back to my ghosts</Link>
+      <div className="flex-1" />
+      <Link to="/" className="mt-8 flex min-h-[54px] w-full max-w-sm items-center justify-center rounded-2xl text-[17px] font-semibold" style={{ background: P.accent, color: P.ink }}>Back to my ghosts</Link>
     </div>
   );
 }
