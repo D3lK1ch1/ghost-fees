@@ -415,3 +415,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/SubscriptionTracker.jsx (new), src/components/results/ResultsView.jsx
 - How to test: Sample > Calendar & reminders: the tracker sits under the calendar. Keep Streammax: 2 of 7 sorted, and it moves to Keeping when grouped by Status. Group by Double-ups: the 3 streaming services together with $599.76/yr.
 - User feedback that drove this: "have a checklist here but also in calendar some tracker with checklist that keeps track of every subscription including double ups etc, maybe some grouping function"
+
+### 💔 "Who dis?" bubble no longer covers the heart sunglasses
+- What: In "If an ex charges you after you cancel" (Messages to exes, and Act 2 of the story), the sassy ghost's "New phone. Who dis?" bubble went up-left from her mouth, straight over her left heart lens and her phone, and the text wrapped. The ghost now sits left and the bubble comes from her right cheek, going right, clear of the glasses, eyes and phone, on one line. Art can now set a different tail point per side.
+- Files: src/components/ex/ExKit.jsx, src/components/ex/ExAct2.jsx
+- How to test: 💔 theme > sample > Messages to exes: the bubble is to the right of her face; sunglasses and phone fully visible. Check-ins & reminders: the Cassy nudge bubble also clears her glasses.
+- User feedback that drove this: "CHECK speech bubble overlap on who this ghost"

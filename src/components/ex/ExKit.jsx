@@ -35,6 +35,13 @@ const MOUTHS = {
   'men-block': [54, 34],
   'ghost-sassy': [51, 45],
 };
+// Some art needs the tail beside the face instead (the bubble would cover the
+// sunglasses): keyed by side. The sassy ghost's heart glasses and phone sit up-left
+// of her mouth, so her bubble goes right, from her right cheek past the glasses.
+const SIDE_MOUTHS = {
+  'ghost-sassy': { right: [92, 52] },
+};
+const mouthFor = (file, side) => SIDE_MOUTHS[file]?.[side] || MOUTHS[file];
 // Where each speech bubble's tail tip is, as % of the bubble (bottom edge).
 const TAIL_X = { l: 9.4, r: 86.4 };
 
@@ -55,10 +62,10 @@ export function GhostPal({ pickKey = 'heartbroken', mood = 'sad', width = 140, m
           <div className="relative" style={{ width, height: Math.round(width * 1.15), filter: 'drop-shadow(0 0 16px rgba(255,170,200,0.25))' }}>
             <div className="gp-shadow absolute rounded-[50%]" aria-hidden="true" style={{ left: '22%', right: '22%', bottom: '-4%', height: '7%', background: 'rgba(0,0,0,0.38)', filter: 'blur(2px)' }} />
             <img src={`${ART}/${file}.webp`} alt="" className="relative block h-full w-full object-contain object-bottom" />
-            {bubble && atMouth && MOUTHS[file] && (
+            {bubble && atMouth && mouthFor(file, side) && (
               <div
                 className="pointer-events-none absolute z-10"
-                style={{ left: `calc(${MOUTHS[file][0]}% ${side === 'right' ? '+ 4px' : '- 4px'})`, top: `calc(${MOUTHS[file][1]}% - 4px)`, transform: `translate(-${TAIL_X[side === 'right' ? 'l' : 'r']}%, -100%)` }}
+                style={{ left: `calc(${mouthFor(file, side)[0]}% ${side === 'right' ? '+ 4px' : '- 4px'})`, top: `calc(${mouthFor(file, side)[1]}% - 4px)`, transform: `translate(-${TAIL_X[side === 'right' ? 'l' : 'r']}%, -100%)` }}
               >
                 <div
                   className={`bub-${side === 'right' ? 'l' : 'r'} ex-in !min-w-0 font-extrabold leading-tight ${bubbleClass}`}
@@ -68,7 +75,7 @@ export function GhostPal({ pickKey = 'heartbroken', mood = 'sad', width = 140, m
                 </div>
               </div>
             )}
-            {bubble && !(atMouth && MOUTHS[file]) && (
+            {bubble && !(atMouth && mouthFor(file, side)) && (
               <div
                 className={`bub-${bubbleKind} ex-in absolute z-10 !min-w-0 font-extrabold leading-tight ${bubbleClass}`}
                 style={{ width: bubbleWidth, bottom: '50%', animationDelay: bubbleDelay, ...(side === 'right' ? { left: '58%' } : { right: '58%' }) }}
