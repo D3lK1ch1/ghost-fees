@@ -23,6 +23,41 @@ function buildEmail(leak) {
   const dates = wasted.map((row) => row.date).sort();
   const span = dates.length > 1 ? `between ${longDate(dates[0])} and ${longDate(dates[dates.length - 1])}` : dates.length ? `on ${longDate(dates[0])}` : '';
 
+  // One claim to your own bank for several ghost charges, ticked on the possessed
+  // receipt. Banks can look into card charges from several companies at once.
+  if (leak.claim) {
+    const why = (item) => ({
+      Duplicate: 'charged twice within a few days; the second charge is a duplicate.',
+      'Trial converted': 'a free trial I did not mean to turn into a paid subscription.',
+      'Price creep': 'the price went up from what I signed up for.',
+      'Bank fee': 'fees on this account that I am asking you to refund.',
+    }[item.badge] || 'a charge I am asking to have refunded.');
+    const total = leak.claim.reduce((sum, item) => sum + item.amount, 0);
+    const charges = (item) => (item.rows || []).filter((row) => row.wasted);
+    const count = leak.claim.reduce((sum, item) => sum + charges(item).length, 0);
+    return {
+      title: `Ask your bank about ${count} ${count === 1 ? 'charge' : 'charges'}`,
+      subject: `Request to review ${count} charges on my account (${money(total)})`,
+      body: `Hi,
+
+I'd like you to look into these charges on my account and refund what isn't owed:
+
+${leak.claim.map((item) => `${item.title || item.merchant} (${money(item.amount)}): ${why(item)}
+${charges(item).map((row) => `- ${longDate(row.date)}: ${money(row.wastedAmount || row.amount)}`).join('\n')}`).join('\n\n')}
+
+Total: ${money(total)}
+
+Please:
+1. Review each charge and refund what isn't owed, or tell me how to dispute it.
+2. Tell me if you need anything from me, such as cancellation emails or screenshots.
+3. Confirm by email.
+
+If we can't sort it out, I understand I can contact the Australian Financial Complaints Authority (AFCA).
+
+${SIGN_OFF}`,
+    };
+  }
+
   if (leak.targets) {
     const names = leak.targets.map((target) => target.merchant);
     const monthly = leak.targets.reduce((sum, target) => sum + (Number(target.monthly) || 0), 0);

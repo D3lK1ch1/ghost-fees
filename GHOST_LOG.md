@@ -252,3 +252,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/LeakFilter.jsx (new), src/components/results/ResultsView.jsx
 - How to test: Try a sample statement, Ghosts tab, tap Bank fee (2 ghosts, $117.00), then Sort A to Z.
 - User feedback that drove this: "sorting filtering by types of subscriptions such as duplicates".
+
+### Possessed receipt: tap, dispute, and one claim to your bank
+- What: on All ghosts, tap a ghost's name to see all its charges; Dispute this under each ghost opens the ready email to that company; tick ghosts and "Ask my bank about N ghosts · $X" drafts one email to your own bank listing every charge, its date and why it isn't right, with the total and the AFCA line. A note says banks usually ask whether you contacted the company first. The GHOSTED stamp now sits on the paper's header and scrolls with it, so it no longer covers the first amount.
+- Files: src/components/results/PossessedReceipt.jsx, src/components/results/LeakEmailDialog.jsx, src/components/results/ResultsView.jsx
+- How to test: Try a sample statement, Possessed receipt, Open the receipt, tick Streammax and Monthly Account Fee (2 ghosts · $218.94), Ask my bank; and press Dispute this on Adobe.
+- User feedback that drove this: "the possessed receipt can we do something more with it functionality wise"; the stamp covered "$15.00" in the user's screenshot.

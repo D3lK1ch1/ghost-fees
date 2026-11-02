@@ -406,7 +406,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   onOpenPath={() => setTab('path')}
                 />
               )}
-              {tab === 'receipt' && <PossessedReceipt leaks={leaks} />}
+              {tab === 'receipt' && <PossessedReceipt leaks={leaks} onDraft={openEmail} />}
               {tab === 'feedback' && (
                 <div id="feedback">
                   <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} mostUseful={mostUseful} />
