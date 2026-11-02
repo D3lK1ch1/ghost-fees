@@ -15,9 +15,11 @@ export default function BadgesExplainer({ className = '', compact = false }) {
       </p>
       <ul className="mt-3 grid gap-2 sm:grid-cols-2">
         {ALL.map((badge) => (
-          <li key={badge.key} className="flex gap-3 rounded-2xl border border-border bg-background/40 px-3.5 py-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-[20px]" aria-hidden="true">{badge.emoji}</span>
-            <span className="min-w-0">
+          <li key={badge.key} className="flex items-start gap-3 rounded-2xl border border-border bg-background/40 px-3.5 py-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary/15 leading-none" aria-hidden="true">
+              <span className="block text-[19px] leading-none">{badge.emoji}</span>
+            </span>
+            <span className="min-w-0 flex-1">
               <span className="block text-[15px] font-bold text-foreground">{badge.name}</span>
               <span className="block text-[14px] leading-snug text-muted-foreground"><b className="text-foreground">How:</b> {badge.how}.</span>
               {!compact && <span className="mt-0.5 block text-[13.5px] leading-snug text-muted-foreground">{badge.about}</span>}
