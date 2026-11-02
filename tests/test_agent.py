@@ -515,8 +515,14 @@ class V9Packs(unittest.TestCase):
     def test_sound_pack_finds_youtube_music_double(self):
         ctx = FakeCtx()
         A.route(ctx, SENDER, "Spotify $14, YouTube Premium $17")
-        reply, _ = A.route(ctx, SENDER, "sound pack")
+        reply, card = A.route(ctx, SENDER, "sound pack")
         self.assertIn("Leaks found", reply)
+        self.assertIn("Spotify: $14.00/mo x 12 = $168.00/yr", reply)
+        self.assertEqual(card[0], "review")
+        self.assertEqual(card[1]["approve_cta"]["label"], "Cancel steps")
+        steps, steps_card = A.route(ctx, SENDER, json.dumps({"action": "steps", "pack": "Sound"}))
+        self.assertIn("Cancel link", steps)
+        self.assertEqual(steps_card[0], "carousel")
         self.assertIn("YouTube Premium already includes YouTube Music", reply)
 
     def test_tech_pack_ai_tools_saving(self):
@@ -526,9 +532,11 @@ class V9Packs(unittest.TestCase):
         self.assertIn("Keep just Copilot and save $1,080.00/yr", reply)
 
     def test_packs_command_lists_every_pack(self):
-        reply, _ = A.route(FakeCtx(), SENDER, "packs")
+        reply, card = A.route(FakeCtx(), SENDER, "packs")
         for pack in A.PACKS:
             self.assertIn(pack, reply)
+        self.assertEqual(card[0], "carousel")
+        self.assertEqual(len(card[1]["items"]), len(A.PACKS))
 
     def test_results_name_their_packs(self):
         reply, _ = A.route(FakeCtx(), SENDER, "Netflix $19, Spotify $14")

@@ -504,16 +504,76 @@ def packs_reply():
     lines.append("\nList what you pay (e.g. `Netflix $19, Stan $16, Spotify $14, YouTube Premium $17`) "
                  "and I'll run every pack that fits. Then type a pack, e.g. `screen pack`, for its leaks and cancel steps.")
     lines.append(f"\nFor the ones you've forgotten, the Ghost Fees app reads your bank statement: {app_link()}")
-    return "\n".join(lines), help_card()
+    card = ("carousel", {
+        "title": "Ghost Packs",
+        "subtitle": "Each one hunts a different kind of money leak",
+        "items": [{
+            "id": pack.lower().replace(" ", "-"), "title": f"{PACK_EMOJI.get(pack, '')} {pack}",
+            "subtitle": "Hunts", "secondary_text": PACK_HUNTS[pack][:120],
+            "primary_cta": {"label": f"Run {pack} pack", "selection": {"action": "pack", "pack": pack}},
+        } for pack in PACKS],
+    })
+    return "\n".join(lines), card
 
 
-def ghost_reply(ctx, sender, items, title, browse=False):
+def pack_report(ctx, sender, items, pack):
+    """v9.1: a pack's leak hunt, shown like the original Ghost It: the maths line by line,
+    the leaks with the saving, and a review card with Cancel steps / Scan my statement."""
+    priced = [s for s in items if s.get("price")]
+    add_to_list(ctx, sender, items)
+    ctx.storage.set(f"lastpack:{sender}", pack)
+    found = pack_leaks(items, pack)
+    total = sum(yearly(x) for x in priced)
+    emoji = PACK_EMOJI.get(pack, "")
+    lines = [f"{emoji} **{pack} pack** hunts {PACK_HUNTS[pack]}.\n",
+             f"**What I did:** checked your {len(items)} subscription{'s' if len(items) != 1 else ''} in this pack "
+             "and added them to your ghost list as Requested.\n", "**The maths**"]
+    rows = []
+    for x in priced:
+        line = f"{money(x['price'])}/{x['per']} x {x['times']} = {money(yearly(x))}/yr"
+        lines.append(f"- {x['name']}: {line}")
+        rows.append({"label": x["name"], "value": line})
+    lines.append(f"\n**Pack total: {money(total)} a year**")
+    rows.append({"label": "Pack total", "value": f"{money(total)} a year"})
+    if found:
+        lines.append("\n**Leaks found**")
+        lines += [f"- {f}" for f in found]
+        rows += [{"label": "Leak" if i == 0 else "", "value": f} for i, f in enumerate(found)]
+        saving = sum(sum(yearly(x) for x in g) - yearly(min(g, key=yearly)) for g in overlaps(priced).values())
+        if saving > 0:
+            rows.append({"label": "You could save", "value": f"{money(saving)} a year"})
+    else:
+        lines.append("\nNo leaks of this kind in what you told me.")
+        rows.append({"label": "Leaks", "value": "None found"})
+    lines.append("\n**Cancel links**")
+    for x in items:
+        link = (C.get(x["key"]) or {}).get("link")
+        lines.append(f"- {x['name']}: {link or 'no checked link yet, search their official site'}")
+    lines.append("\n**Next:** tap **Cancel steps** for the steps and a ready email, or type `cancel steps`.")
+    lines.append("\n" + ("Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in the chat."
+                         if paying() else "Ghost Packs are free during beta."))
+    lines.append("\n" + DISCLAIMER)
+    card = ("review", {
+        "title": f"{emoji} {pack} pack: {money(total)} a year",
+        "summary_rows": [r for r in rows if r["label"] or r["value"]][:12],
+        "approve_cta": {"label": "Cancel steps", "primary": True, "selection": {"action": "steps", "pack": pack}},
+        "reject_cta": {"label": "Scan my statement", "selection": {"action": "scan"}},
+    })
+    return "\n".join(lines), card
+
+
+def ghost_reply(ctx, sender, items, title, browse=False, steps_only=False):
     """browse=True: the person hasn't told us they have these (e.g. `screen pack` before
-    listing anything), so show the steps but don't add them to their ghost list."""
+    listing anything), so show the steps but don't add them to their ghost list.
+    steps_only=True: just the cancel steps (after the pack report)."""
     if not items:
         return ("I don't have any subscriptions from you for that yet. List them first, "
                 "e.g. `Netflix $19, Stan $16`.", None)
     pack_name = title.replace(" pack", "") if title.endswith(" pack") else None
+    if pack_name in PACK_HUNTS and not browse and not steps_only and any(x.get("price") for x in items):
+        return pack_report(ctx, sender, items, pack_name)
+    if steps_only:
+        pack_name = None
     hunt = []
     if pack_name in PACK_HUNTS:
         found = [] if browse else pack_leaks(items, pack_name)
@@ -815,11 +875,11 @@ async def on_reject(ctx, sender, msg):
 
 
 # ---------------------------------------------------------------- router
-def gated_ghost(ctx, sender, items, title, everything=False, browse=False):
+def gated_ghost(ctx, sender, items, title, everything=False, browse=False, steps_only=False):
     ok, note = pack_access(ctx, sender, items, title, everything)
     if not ok:
         return note, None
-    text, card = ghost_reply(ctx, sender, items, title, browse=browse)
+    text, card = ghost_reply(ctx, sender, items, title, browse=browse, steps_only=steps_only)
     return ((note + "\n\n" + text) if note else text), card
 
 
@@ -838,7 +898,9 @@ def route(ctx, sender, raw):
         pass
     # ... or as planner prose. Map the key phrases.
     if sel is None:
-        if re.search(r"show cancel steps|ghost_all", low):
+        if re.fullmatch(r"\s*cancel steps\s*", low):
+            sel = {"action": "steps"}
+        elif re.search(r"show cancel steps|ghost_all", low):
             sel = {"action": "ghost_all"}
         elif re.search(r"\bget (?:the )?(screen|sound|gym and fitness|gym|food|tech stack|tech|play) pack\b", low):
             word = re.search(r"\bget (?:the )?(screen|sound|gym and fitness|gym|food|tech stack|tech|play) pack\b", low).group(1).split()[0]
@@ -866,6 +928,10 @@ def route(ctx, sender, raw):
                 browse = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
                 return gated_ghost(ctx, sender, browse, f"{pack} pack", browse=True)
             return gated_ghost(ctx, sender, last, f"{pack} pack")
+        if a == "steps":
+            pack = sel.get("pack") if sel.get("pack") in PACKS else get(ctx, f"lastpack:{sender}", "Screen")
+            items = [x for x in last_subs(ctx, sender) if x.get("known") and C[x["key"]]["pack"] == pack]
+            return gated_ghost(ctx, sender, items, f"Cancel steps: {pack} pack", steps_only=True)
         if a == "ghost_all":
             return gated_ghost(ctx, sender, last_subs(ctx, sender), "Cancel steps", everything=True)
         if a == "scan":
