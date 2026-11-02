@@ -554,3 +554,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostItOffer.jsx
 - How to test: Home page: the box under Upload my CSV or PDF.
 - User feedback that drove this: "mention the packs, why is this different to other AI agents"
+
+### Ghost It gets its own box under the house (off the porch)
+- What: Ghost It is the separate, paid-by-pack AI agent, not one of the free guides, so it's off the "Front porch · your guides" row (back to Penny, Spooksworth, Gus and Cassy). Under the house (and under Jacob's chain and Heartbreak House) it now has its own box: "Ghost It · specialised AI agent. Want a deeper fee analysis?", with what its Ghost Packs dig into, the six packs, a real example, Run my Ghost Packs in chat and the free try.
+- Files: src/components/results/HauntedHouse.jsx, src/components/results/ResultsView.jsx, src/components/results/GhostItPacks.jsx
+- How to test: Sample > Mark as sorted: four guides on the porch; the Ghost It box below the house.
+- User feedback that drove this: "keep Ghost It separate because that will be charged with API; it should sit under the house for fee analysis and offer deeper analysis of the fees; it should have its own box"
