@@ -246,3 +246,125 @@ class EdgeCases(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# ---------------------------------------------------------------- paid packs
+import asyncio
+
+
+def load_paid_agent():
+    """The agent with payments switched on, Fetch's payment module and Stripe faked."""
+    class _Model:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+
+    pay = types.ModuleType("uagents_core.contrib.protocols.payment")
+    for name in ("CancelPayment", "CommitPayment", "CompletePayment", "Funds", "RejectPayment", "RequestPayment"):
+        setattr(pay, name, type(name, (_Model,), {}))
+    pay.payment_protocol_spec = object()
+    sys.modules["uagents_core.contrib.protocols.payment"] = pay
+    os.environ.update(PAYMENTS_ENABLED="true", STRIPE_SECRET_KEY="sk_test_x", STRIPE_PUBLISHABLE_KEY="pk_test_x")
+    try:
+        module = load_agent()
+    finally:
+        for key in ("PAYMENTS_ENABLED", "STRIPE_SECRET_KEY", "STRIPE_PUBLISHABLE_KEY"):
+            os.environ.pop(key, None)
+        del sys.modules["uagents_core.contrib.protocols.payment"]
+    # load_agent ran before the env was cleared; keep the module's view of the keys.
+    module.os = types.SimpleNamespace(environ={"STRIPE_SECRET_KEY": "sk_test_x", "STRIPE_PUBLISHABLE_KEY": "pk_test_x"})
+    return module
+
+
+class PaidCtx(FakeCtx):
+    def __init__(self):
+        super().__init__()
+        self.sent = []
+        self.agent = types.SimpleNamespace(address="agent1qghostit")
+
+    async def send(self, to, msg):
+        self.sent.append(msg)
+
+
+class PaidPacks(unittest.TestCase):
+    def setUp(self):
+        self.P = load_paid_agent()
+        self.calls = []
+        self.status = "paid"
+
+        def fake_stripe(method, path, data=None):
+            self.calls.append((method, path, data))
+            if method == "POST":
+                return {"id": "cs_test_123", "client_secret": "cs_secret"}
+            return {"payment_status": self.status, "metadata": {"user_address": SENDER}}
+
+        self.P.stripe_call = fake_stripe
+        self.ctx = PaidCtx()
+        self.P.route(self.ctx, SENDER, "Netflix $19, Stan $16, Spotify $14")
+
+    def test_payments_on(self):
+        self.assertTrue(self.P.paying())
+
+    def test_first_pack_free_second_priced(self):
+        reply, _ = self.P.route(self.ctx, SENDER, "screen pack")
+        self.assertIn("your free one", reply)
+        self.assertIn("https://www.netflix.com/cancelplan", reply)
+        reply, card = self.P.route(self.ctx, SENDER, "sound pack")
+        self.assertIn("$2.00 once", reply)
+        self.assertIsNone(card)
+        self.assertNotIn("spotify.com", reply)  # steps only after paying
+        pending = self.P.get(self.ctx, f"pending_pay:{SENDER}", None)
+        self.assertEqual((pending["cents"], pending["packs"]), (200, ["Sound"]))
+
+    def test_ghost_everything_is_five(self):
+        self.P.route(self.ctx, SENDER, "screen pack")
+        reply, _ = self.P.route(self.ctx, SENDER, "ghost everything")
+        self.assertIn("$5.00 once", reply)
+
+    def test_request_then_verified_commit_delivers(self):
+        self.P.route(self.ctx, SENDER, "screen pack")
+        self.P.route(self.ctx, SENDER, "sound pack")
+        asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
+        req = self.ctx.sent[-1]
+        self.assertEqual(type(req).__name__, "RequestPayment")
+        self.assertEqual((req.accepted_funds[0].amount, req.accepted_funds[0].currency, req.accepted_funds[0].payment_method), ("2.00", "AUD", "stripe"))
+        self.assertEqual(req.metadata["stripe"]["checkout_session_id"], "cs_test_123")
+        self.assertNotIn("sk_test", json.dumps(req.metadata))  # secret key never leaves the agent
+        self.assertTrue(all(isinstance(v, str) for v in req.metadata["stripe"].values()))
+        commit = types.SimpleNamespace(funds=types.SimpleNamespace(payment_method="stripe"), transaction_id="cs_test_123")
+        asyncio.run(self.P.on_commit(self.ctx, SENDER, commit))
+        kinds = [type(m).__name__ for m in self.ctx.sent]
+        self.assertIn("CompletePayment", kinds)
+        delivered = self.ctx.sent[-1].content[0].text
+        self.assertIn("Paid, thank you", delivered)
+        self.assertIn("spotify", delivered.lower())
+        self.assertIn("Sound", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
+        reply, _ = self.P.route(self.ctx, SENDER, "sound pack")  # unlocked now: no price
+        self.assertNotIn("$2.00 once", reply)
+
+    def test_unpaid_commit_is_cancelled(self):
+        self.P.route(self.ctx, SENDER, "screen pack")
+        self.P.route(self.ctx, SENDER, "sound pack")
+        asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
+        self.status = "unpaid"
+        commit = types.SimpleNamespace(funds=types.SimpleNamespace(payment_method="stripe"), transaction_id="cs_test_123")
+        asyncio.run(self.P.on_commit(self.ctx, SENDER, commit))
+        self.assertEqual(type(self.ctx.sent[-1]).__name__, "CancelPayment")
+        self.assertNotIn("Sound", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
+
+    def test_wrong_session_is_cancelled(self):
+        self.P.route(self.ctx, SENDER, "screen pack")
+        self.P.route(self.ctx, SENDER, "sound pack")
+        asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
+        commit = types.SimpleNamespace(funds=types.SimpleNamespace(payment_method="stripe"), transaction_id="cs_test_OTHER")
+        asyncio.run(self.P.on_commit(self.ctx, SENDER, commit))
+        self.assertEqual(type(self.ctx.sent[-1]).__name__, "CancelPayment")
+
+
+class BetaStaysFree(unittest.TestCase):
+    def test_no_keys_means_free(self):
+        self.assertFalse(A.paying())
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19, Spotify $14")
+        A.route(ctx, SENDER, "screen pack")
+        reply, _ = A.route(ctx, SENDER, "sound pack")
+        self.assertIn("free during beta", reply)

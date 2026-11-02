@@ -8,6 +8,8 @@
 import json
 import os
 import re
+import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -20,10 +22,33 @@ from uagents_core.contrib.protocols.chat import (
     chat_protocol_spec,
 )
 
+# Fetch.ai Agent Payment Protocol (seller), as in Fetch's Stripe example. If the
+# hosted runtime doesn't have it, the agent keeps working and packs stay free.
+try:
+    from uagents_core.contrib.protocols.payment import (
+        CancelPayment,
+        CommitPayment,
+        CompletePayment,
+        Funds,
+        RejectPayment,
+        RequestPayment,
+        payment_protocol_spec,
+    )
+    HAVE_PAYMENTS = True
+except ImportError:  # pragma: no cover - depends on the hosted runtime
+    HAVE_PAYMENTS = False
+
 # ---------------------------------------------------------------- settings
 APP_URL = "https://hunt-ghost-fees.base44.app/"
 HOURLY_RATE = 30          # used for the "hours of work" nudge, stated in the reply
-PAYMENTS_ENABLED = False  # packs free during beta
+# Paid Ghost Packs: first pack free, then $2 a pack or $5 for every pack (AUD), paid
+# with Stripe inside ASI:One. Off until you set these Agentverse secrets:
+#   PAYMENTS_ENABLED=true, STRIPE_SECRET_KEY=sk_test_..., STRIPE_PUBLISHABLE_KEY=pk_test_...
+# Never put the secret key in the code, the chat or a card.
+PAYMENTS_ENABLED = os.environ.get("PAYMENTS_ENABLED", "").lower() == "true"
+PACK_PRICE_CENTS = 200
+ALL_PRICE_CENTS = 500
+STRIPE_SUCCESS_URL = os.environ.get("STRIPE_SUCCESS_URL", "https://agentverse.ai/payment-success")
 # Set the secret GHOSTIT_ADMIN_CODE in Agentverse (or change the word here), then type: evidence <your code>
 ADMIN_CODE = os.environ.get("GHOSTIT_ADMIN_CODE", "change-me")
 USE_CARDS = True          # set False to send text only
@@ -369,8 +394,8 @@ def ghost_reply(ctx, sender, items, title):
     parts.append("**Ready-to-send cancel email** (change the name for each):\n```\n" + cancel_email(first) + "\n```")
     parts.append("\n**Next:** once a charge stops, type `<name> stopped`. In 7 days I'll ask if it really stopped. "
                  "Type `my ghost list` any time.")
-    if PAYMENTS_ENABLED:
-        parts.append("\nGhost Packs are $2 per category or $5 for all.")
+    if paying():
+        parts.append("\nYour first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in the chat.")
     else:
         parts.append("\nGhost Packs are free during beta.")
     parts.append("\n" + DISCLAIMER)
@@ -512,7 +537,141 @@ def evidence_reply(ctx):
     return "\n".join(lines), None
 
 
+# ---------------------------------------------------------------- paid packs
+def paying():
+    """True only when payments are switched on AND Stripe keys AND the protocol exist."""
+    return bool(PAYMENTS_ENABLED and HAVE_PAYMENTS and os.environ.get("STRIPE_SECRET_KEY")
+                and os.environ.get("STRIPE_PUBLISHABLE_KEY"))
+
+
+def packs_for(items):
+    """Which Ghost Packs a set of subscriptions belongs to. Unknown services are free."""
+    return sorted({C[s["key"]]["pack"] for s in items if s.get("known") and s["key"] in C})
+
+
+def pack_access(ctx, sender, items, title, everything=False):
+    """One free try, then the price. Returns (ok, note). When not ok, the request is
+    saved so the paid card can deliver it after Stripe confirms the payment."""
+    if not paying():
+        return True, ""
+    packs = packs_for(items)
+    unlocked = get(ctx, f"unlocked:{sender}", [])
+    if not packs or "all" in unlocked or all(p in unlocked for p in packs):
+        return True, ""
+    if not everything and len(packs) == 1 and not get(ctx, f"free_used:{sender}", False):
+        ctx.storage.set(f"free_used:{sender}", True)
+        ctx.storage.set(f"unlocked:{sender}", unlocked + packs)
+        bump(ctx, "free_packs")
+        return True, f"🎁 **The {packs[0]} pack is your free one.** More packs are $2 each, or $5 for all."
+    cents = ALL_PRICE_CENTS if everything or len(packs) > 1 else PACK_PRICE_CENTS
+    ctx.storage.set(f"pending_pay:{sender}", {"items": items, "title": title,
+                                              "packs": ["all"] if cents == ALL_PRICE_CENTS else packs, "cents": cents})
+    what = "every Ghost Pack" if cents == ALL_PRICE_CENTS else f"the {packs[0]} pack"
+    return False, (f"**What I did:** found the cancel steps for {what}.\n\n"
+                   f"You've used your free pack, so this one is **${cents / 100:.2f} once** "
+                   f"({'every pack, forever' if cents == ALL_PRICE_CENTS else 'or $5.00 for every pack'}). "
+                   "Pay with the card below and your cancel steps and emails arrive straight away.\n\n" + DISCLAIMER)
+
+
+def stripe_call(method, path, data=None):
+    """Stripe's REST API with the standard library (no extra package on Agentverse)."""
+    body = urllib.parse.urlencode(data).encode() if data else None
+    req = urllib.request.Request(f"https://api.stripe.com/v1/{path}", data=body, method=method,
+                                 headers={"Authorization": f"Bearer {os.environ.get('STRIPE_SECRET_KEY', '')}"})
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read().decode())
+
+
+def create_checkout(sender, cents, label):
+    """An embedded Stripe Checkout session, as in Fetch's Stripe example."""
+    session = stripe_call("POST", "checkout/sessions", {
+        "ui_mode": "embedded",
+        "redirect_on_completion": "if_required",
+        "mode": "payment",
+        "payment_method_types[0]": "card",
+        "return_url": f"{STRIPE_SUCCESS_URL}?session_id={{CHECKOUT_SESSION_ID}}",
+        "line_items[0][quantity]": "1",
+        "line_items[0][price_data][currency]": "aud",
+        "line_items[0][price_data][unit_amount]": str(cents),
+        "line_items[0][price_data][product_data][name]": f"Ghost It: {label}",
+        "line_items[0][price_data][product_data][description]": "Official cancel steps, ready cancel emails and did-it-stop tracking. Paid once.",
+        "metadata[user_address]": sender,
+        "metadata[service]": "ghost_pack",
+    })
+    # Every value is a string: the payment protocol's metadata is dict[str, str].
+    return {"client_secret": session["client_secret"], "id": session["id"], "checkout_session_id": session["id"],
+            "publishable_key": os.environ.get("STRIPE_PUBLISHABLE_KEY", ""), "currency": "aud",
+            "amount_cents": str(cents), "ui_mode": "embedded"}
+
+
+def payment_paid(session_id, sender):
+    session = stripe_call("GET", f"checkout/sessions/{urllib.parse.quote(session_id)}")
+    return session.get("payment_status") == "paid" and (session.get("metadata") or {}).get("user_address") == sender
+
+
+async def send_payment_request(ctx, sender):
+    pending = get(ctx, f"pending_pay:{sender}", None)
+    if not pending:
+        return
+    label = "every Ghost Pack" if pending["packs"] == ["all"] else f"{pending['packs'][0]} pack"
+    try:
+        checkout = create_checkout(sender, pending["cents"], label)
+    except Exception as e:  # Stripe down or keys wrong: say so, never crash
+        ctx.logger.error(f"stripe checkout failed: {e}")
+        await ctx.send(sender, make_msg("Payments aren't working right now. Try again in a minute.", None))
+        return
+    pending["session"] = checkout["id"]
+    ctx.storage.set(f"pending_pay:{sender}", pending)
+    await ctx.send(sender, RequestPayment(
+        accepted_funds=[Funds(currency="AUD", amount=f"{pending['cents'] / 100:.2f}", payment_method="stripe")],
+        recipient=str(ctx.agent.address),
+        deadline_seconds=1800,
+        reference=checkout["id"],
+        description=f"Ghost It: {label}. Cancel steps, ready emails and did-it-stop tracking. Paid once.",
+        metadata={"stripe": checkout, "service": "ghost_pack"},
+    ))
+    ctx.logger.info(f"PAY_REQUEST ...{sender[-6:]} {label} {pending['cents']}c")
+
+
+async def on_commit(ctx, sender, msg):
+    """Buyer says they paid: check with Stripe, then complete and deliver the pack."""
+    pending = get(ctx, f"pending_pay:{sender}", None)
+    ok = (msg.funds.payment_method == "stripe" and msg.transaction_id and pending
+          and pending.get("session") == msg.transaction_id)
+    try:
+        ok = bool(ok and payment_paid(msg.transaction_id, sender))
+    except Exception as e:
+        ctx.logger.error(f"stripe verify failed: {e}")
+        ok = False
+    if not ok:
+        await ctx.send(sender, CancelPayment(transaction_id=msg.transaction_id,
+                                             reason="Payment not completed yet. Please finish checkout."))
+        return
+    await ctx.send(sender, CompletePayment(transaction_id=msg.transaction_id))
+    ctx.storage.set(f"unlocked:{sender}", get(ctx, f"unlocked:{sender}", []) + pending["packs"])
+    ctx.storage.set(f"pending_pay:{sender}", None)
+    bump(ctx, "paid_packs")
+    bump(ctx, "paid_cents", pending["cents"])
+    ctx.logger.info(f"PAID ...{sender[-6:]} {pending['packs']} {pending['cents']}c")
+    text, card = ghost_reply(ctx, sender, pending["items"], pending["title"])
+    await ctx.send(sender, make_msg("**Paid, thank you!** 👻 Here are your cancel steps.\n\n" + text, card))
+
+
+async def on_reject(ctx, sender, msg):
+    ctx.storage.set(f"pending_pay:{sender}", None)
+    await ctx.send(sender, make_msg("No worries, nothing was charged. Your free check and ghost list still work. "
+                                    "Type `my ghost list` any time.", None))
+
+
 # ---------------------------------------------------------------- router
+def gated_ghost(ctx, sender, items, title, everything=False):
+    ok, note = pack_access(ctx, sender, items, title, everything)
+    if not ok:
+        return note, None
+    text, card = ghost_reply(ctx, sender, items, title)
+    return ((note + "\n\n" + text) if note else text), card
+
+
 def route(ctx, sender, raw):
     text = raw.strip()
     text = re.sub(r"^@\S+\s*", "", text)   # strip @ghostit
@@ -547,7 +706,7 @@ def route(ctx, sender, raw):
                 return check_reply(ctx, sender, subs_text, subs, missing)
             return help_reply()
         if a == "ghost_all":
-            return ghost_reply(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps")
+            return gated_ghost(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps", everything=True)
         if a == "scan":
             last = get(ctx, f"last:{sender}", [])
             return (f"Scan your bank statement free (CSV or PDF, no bank login): "
@@ -586,21 +745,21 @@ def route(ctx, sender, raw):
         key = find_merchant(m.group(1)) or m.group(1).strip()
         return status_reply(ctx, sender, key, "Stopped" if m.group(2) == "stopped" else "Still charging")
     if re.search(r"ghost everything|all packs|ghost all|cancel all", low):
-        return ghost_reply(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps for everything")
+        return gated_ghost(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps for everything", everything=True)
     pm = re.search(r"\b(screen|sound|music|gym|fitness|food|tech|play|gaming)\s+pack\b", low)
     if pm:
         pack = PACK_WORDS[pm.group(1)]
         last = [s for s in get(ctx, f"last:{sender}", []) if s.get("known") and C[s["key"]]["pack"] == pack]
         if not last:
             last = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
-        return ghost_reply(ctx, sender, last, f"{pack} pack")
+        return gated_ghost(ctx, sender, last, f"{pack} pack")
     cm = re.search(r"\b(cancel|ghost|stop)\b\s+(.+)", low)
     if cm and "$" not in low:
         key = find_merchant(cm.group(2))
         last = {s["key"]: s for s in get(ctx, f"last:{sender}", [])}
         if key:
             s = last.get(key) or dict(key=key, known=True, name=C[key]["name"], price=None)
-            return ghost_reply(ctx, sender, [s], f"Cancel {C[key]['name']}")
+            return gated_ghost(ctx, sender, [s], f"Cancel {C[key]['name']}")
         name = cm.group(2).strip(" ?.!").title()
         return ghost_reply(ctx, sender, [dict(key=name.lower(), known=False, name=name, price=None)], f"Cancel {name}")
 
@@ -653,6 +812,9 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
         ctx.logger.error(f"route error: {e}")
         text, card = help_reply()
     await ctx.send(sender, make_msg(text, card))
+    pending = get(ctx, f"pending_pay:{sender}", None)
+    if paying() and pending and not pending.get("session"):
+        await send_payment_request(ctx, sender)
 
 
 @protocol.on_message(ChatAcknowledgement)
@@ -661,6 +823,20 @@ async def handle_ack(ctx: Context, sender: str, msg: ChatAcknowledgement):
 
 
 agent.include(protocol, publish_manifest=True)
+
+# Paid Ghost Packs: the seller side of Fetch's Agent Payment Protocol.
+if HAVE_PAYMENTS:
+    payment_proto = Protocol(spec=payment_protocol_spec, role="seller")
+
+    @payment_proto.on_message(CommitPayment)
+    async def handle_commit(ctx: Context, sender: str, msg: CommitPayment):
+        await on_commit(ctx, sender, msg)
+
+    @payment_proto.on_message(RejectPayment)
+    async def handle_reject(ctx: Context, sender: str, msg: RejectPayment):
+        await on_reject(ctx, sender, msg)
+
+    agent.include(payment_proto, publish_manifest=True)
 
 if __name__ == "__main__":
     agent.run()
