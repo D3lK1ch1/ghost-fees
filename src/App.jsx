@@ -11,6 +11,7 @@ import { AllowanceProvider } from '@/lib/AllowanceContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import Landing from '@/pages/Landing';
 import FeedbackAdmin from '@/pages/FeedbackAdmin';
+import Evidence from '@/pages/Evidence';
 import Progress from '@/pages/Progress';
 import About from '@/pages/About';
 import Privacy from '@/pages/Privacy';
@@ -70,6 +71,7 @@ const AuthenticatedApp = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
           <Route path="/feedback" element={<FeedbackAdmin />} />
+          <Route path="/evidence" element={<Evidence />} />
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>

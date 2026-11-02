@@ -16,9 +16,13 @@
         "guide_message",
         "paywall_shown",
         "try_completed",
-        "ask_ghostit_click"
+        "ask_ghostit_click",
+        "sample_finished",
+        "guess_revealed"
       ]
     },
+    "guess_amount": { "type": "number", "description": "guess_revealed only: what the person guessed (real statements, never the sample)" },
+    "real_amount": { "type": "number", "description": "guess_revealed only: the real total found. Used only as an average on /progress" },
     "created_at": {
       "type": "string",
       "format": "date-time"

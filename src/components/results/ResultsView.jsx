@@ -259,7 +259,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         {exStory && <h2 id="see-everything" className="mt-10 scroll-mt-4 font-heading text-[22px] font-bold text-foreground">See everything</h2>}
 
         {leaks.length > 0 && !guessDone && !exStory ? (
-          <GuessReveal total={total} months={analysis.monthSpan} onDone={() => setGuessDone(true)} />
+          <GuessReveal total={total} months={analysis.monthSpan} onDone={(guess) => { if (!usedSample) trackEvent('guess_revealed', { guess_amount: guess, real_amount: total }); setGuessDone(true); }} />
         ) : leaks.length ? (
           <LeakTotal
             total={total}

@@ -12,8 +12,9 @@ export function getSessionId() {
   return sessionId;
 }
 
-export function trackEvent(eventType) {
+// extra: only for guess_revealed ({ guess_amount, real_amount }).
+export function trackEvent(eventType, extra = {}) {
   base44.functions
-    .invoke('logEvent', { session_id: getSessionId(), event_type: eventType })
+    .invoke('logEvent', { session_id: getSessionId(), event_type: eventType, ...extra })
     .catch(() => {});
 }
