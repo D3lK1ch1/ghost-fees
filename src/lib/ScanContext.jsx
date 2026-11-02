@@ -6,6 +6,7 @@ import { SAMPLE_CSV } from '@/lib/ghostFees/sampleStatement';
 import { sourceLabel } from '@/lib/ghostFees/detectBank';
 import { loadGhostList, saveGhostList } from '@/lib/ghostFees/ghostList';
 import { checkGhosts } from '@/lib/ghostFees/ghostCheck';
+import { rememberRealTotal } from '@/lib/ghostFees/payback';
 import { toast } from '@/components/ui/use-toast';
 
 const shortDate = (iso) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
@@ -57,6 +58,7 @@ export function ScanProvider({ children }) {
   const [windowMonths, setWindowMonths] = useState(0);
   const [fileErrors, setFileErrors] = useState([]);
   const [fileNames, setFileNames] = useState([]);
+  const [usedSample, setUsedSample] = useState(false);
 
   const reset = useCallback(() => {
     setStatus('idle');
@@ -137,6 +139,8 @@ export function ScanProvider({ children }) {
     setFileErrors(errors);
     setFileNames(names);
     setTransactions(transactions);
+    setUsedSample(Boolean(useSample));
+    if (!useSample) rememberRealTotal(analysis.total);
     setStatus('done');
     runGhostCheck(transactions);
     return analysis;
@@ -158,9 +162,10 @@ export function ScanProvider({ children }) {
     setWindowMonths,
     fileErrors,
     fileNames,
+    usedSample,
     runScan,
     reset,
-  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, fileNames, runScan, reset]);
+  }), [status, steps, progress, transactionCount, fileCount, results, windowMonths, fileErrors, fileNames, usedSample, runScan, reset]);
 
   return <ScanContext.Provider value={value}>{children}</ScanContext.Provider>;
 }

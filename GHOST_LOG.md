@@ -313,6 +313,12 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Try.jsx (new), src/pages/Landing.jsx, src/App.jsx, base44/entities/Feedback.jsonc (kind, clarity_app, clarity_agent, quote_ok), base44/entities/Event.jsonc, base44/functions/submitFeedback, base44/functions/logEvent
 - How to test (published): open /try in a fresh browser, do all 3 steps; a Feedback row with kind "journey" appears.
 - User feedback that drove this: testers needed one simple link (FINAL_UPDATE_PACK 1.5); Kimberley's link trouble.
+
+### Limit-reached sheet that leads with your own total (B7)
+- What: at a free limit (4th upload, 2nd ghost try, Cassy, PDF) a sheet slides up (centred on bigger screens): drag handle, close, the theme's ghost floating (lantern, Tilly, festive), "You've used your 3 free scans" (or "your free ghost try"), "Your scans found $296.92 in ghosts" (the number pops in), "Ghost Fees is $10 once. That's already paid back 29x." (hidden under 1x), a softly pulsing "Unlock everything, $10" (sign in first if signed out, then /upgrade), "Maybe later" (results stay visible, the total is never hidden) and "See how we compare". The total is this scan if real, otherwise your last real scan (one number kept in this browser, cleared by Clear my data); with none, it shows the research instead. No motion with reduced motion. Development only: /?preview_paywall=scan opens it.
+- Files: src/components/scan/Paywall.jsx, src/lib/ghostFees/payback.js, src/lib/ScanContext.jsx, src/lib/AllowanceContext.jsx, src/index.css, ResultsView.jsx
+- How to test: in development, open /?preview_paywall=scan; live, it shows only once PAYMENTS_ENABLED=true and a limit is reached.
+- User feedback that drove this: design canvas screens 1, 2, 6, 7 (FINAL_UPDATE_PACK 1.3).
 ### Animated 36-second demo to screen-record at /demo
 - What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx

@@ -43,6 +43,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { trackEvent } from '@/lib/session';
 import { clearGhostList } from '@/lib/ghostFees/ghostList';
 import { clearPlans } from '@/lib/ghostFees/cancelPlans';
+import { forgetRealTotal } from '@/lib/ghostFees/payback';
 import { cn } from '@/lib/utils';
 
 // One tab per feature so each is easy to find.
@@ -146,6 +147,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     window.history.replaceState(null, '', window.location.pathname);
     clearGhostList();
     clearPlans();
+    forgetRealTotal();
     setSubAnswers({});
     try {
       window.sessionStorage.removeItem(ANSWERS_KEY);

@@ -14,3 +14,28 @@ export function paybackLine(results, priceCents, usedSample = false) {
     times: times >= 2 ? `That's paid back ${times} times.` : null,
   };
 }
+
+// The total from the last real (not sample) scan, kept as one number in this
+// browser so the limit sheet can show it after a fresh upload. Cleared with Clear my data.
+const LAST_KEY = 'ghostFees.lastRealTotal';
+export function lastRealTotal() {
+  try {
+    return Number(window.localStorage.getItem(LAST_KEY)) || 0;
+  } catch {
+    return 0;
+  }
+}
+export function rememberRealTotal(total) {
+  try {
+    if (Number(total) > 0) window.localStorage.setItem(LAST_KEY, String(Math.round(Number(total) * 100) / 100));
+  } catch {
+    // Storage off: the sheet falls back to the research.
+  }
+}
+export function forgetRealTotal() {
+  try {
+    window.localStorage.removeItem(LAST_KEY);
+  } catch {
+    // Nothing to clear.
+  }
+}
