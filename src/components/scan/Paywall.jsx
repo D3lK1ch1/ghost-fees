@@ -14,7 +14,7 @@ import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 
 // The theme's own ghost floats at the top of the sheet.
 const SHEET_ART = {
-  haunted: '/themes/haunted/lantern-ghost.webp',
+  haunted: '/themes/haunted/card-ghost.webp',
   ex: '/themes/ex/tilly.webp',
   christmas: '/themes/christmas/xc-festive.webp',
 };

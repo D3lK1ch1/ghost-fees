@@ -13,6 +13,7 @@ import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
 import ResultsTour from './ResultsTour';
+import { TourButton } from '@/components/landing/HomeTour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
@@ -228,7 +229,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     <div className="relative min-h-screen">
       {theme.key === 'haunted' && <NightSky />}
       <div className="relative z-10">
-      <BrandHeader right={<ResultsMenu onRestart={onRestart} onClear={() => setConfirmClear(true)} />} />
+      <BrandHeader right={<><TourButton name="results" label="Tour" className="h-9 max-sm:hidden" /><ResultsMenu onRestart={onRestart} onClear={() => setConfirmClear(true)} /></>} />
       </div>
 
       <main className="relative mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">

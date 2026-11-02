@@ -60,8 +60,8 @@ export default function Upgrade() {
 
   const plans = [
     { key: 'free', name: 'Free', line: '3 uploads · 1 ghost try', price: '$0', note: 'Current plan' },
-    { key: 'standard', name: 'Unlimited', line: 'Everything, forever', price: '$10', note: 'once', badge: 'Best value' },
-    ...(founding ? [{ key: 'founding', name: 'Founding member', line: 'Same as Unlimited · first 50 only', price: '$5', note: 'once', badge: `${foundingLeft} spots left` }] : []),
+    { key: 'standard', name: 'Pro', line: 'Everything, forever', price: '$10', note: 'once', badge: 'Best value' },
+    ...(founding ? [{ key: 'founding', name: 'Founding member', line: 'Same as Pro · first 50 only', price: '$5', note: 'once', badge: `${foundingLeft} spots left` }] : []),
   ];
   const chosen = plans.find((item) => item.key === plan) || plans[1];
 

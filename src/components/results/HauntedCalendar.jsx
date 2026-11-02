@@ -250,7 +250,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
 // Fills the space under the calendar (the reminders column is taller) and points
 // you down to Cassy, the cancellation assistant. One ghost per theme from the
 // asset bank: 💔 your own ghost (sassy for Heartbroken, blocking for I'm Fine),
-// 👻 the lantern ghost, 🎄 the festive ghost.
+// 👻 the mint card ghost, 🎄 the festive ghost.
 const NUDGE = {
   ex: 'Scroll down to f**k your exes more, with help from Cassy.',
   christmas: "Scroll down to break more of Jacob's chain, with help from Cassy.",
@@ -264,7 +264,7 @@ const NUDGE_ART = {
   heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [116, 26] },
   fine: { src: '/themes/ex/men-block.webp', mouth: [114, 24] },
   christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [116, 30] },
-  haunted: { src: '/themes/haunted/lantern-ghost.webp', mouth: [112, 30] },
+  haunted: { src: '/themes/haunted/card-ghost.webp', mouth: [104, 44] },
 };
 
 function CassyNudge() {
