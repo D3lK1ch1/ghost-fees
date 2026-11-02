@@ -331,6 +331,12 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/ValueLine.jsx (new), src/pages/Landing.jsx, src/lib/ghostFees/themes.js
 - How to test: open the home page in each theme: the value line is the first thing under the header.
 - User feedback that drove this: "I was quite overwhelmed at the beginning with the visuals and it took a lot of scrolling to digest the content... Make the value statement clear from the start and make it more concise" (tester, hackathon mailbox, 2 Nov, 3 of 5).
+
+### Ask Ghost It: the app hands your subscriptions to the agent (B5)
+- What: the two products stay separate but now point at each other both ways. On the results page, "Ask Ghost It about these" copies "@ghostit Fitlife Gym $45.00/mo, Adobe Creative Cloud $29.99/mo, ..." (up to 6), says "Copied. Paste it in ASI:One", opens asi1.ai and counts the click (ask_ghostit_click, count only). Every subscription-type ghost card has its own small Ask Ghost It. Arriving from Ghost It (?ref=asi1&subs=...) still shows the From Ghost.it banner, which can now be closed. Local development clicks don't count.
+- Files: src/components/results/AskGhostIt.jsx (new), src/components/results/ResultsView.jsx, src/components/landing/FromGhostIt.jsx
+- How to test: Try a sample statement, press Ask Ghost It about these, paste into ASI:One. Open /?ref=asi1&subs=netflix,stan: the banner shows; × closes it.
+- User feedback that drove this: "need to link the two projects while keeping separate, people are not trying my agent enough".
 ### Animated 36-second demo to screen-record at /demo
 - What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx

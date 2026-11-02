@@ -11,6 +11,7 @@ import ExLeakCard from '@/components/ex/ExLeakCard';
 import CancelAssistant from './CancelAssistant';
 import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
+import AskGhostIt from './AskGhostIt';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
 import LeakFilter, { filterLeaks } from './LeakFilter';
 import ExTabScreens from '@/components/ex/ExTabScreens';
@@ -266,6 +267,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <>
             <PaybackNote results={analysis} usedSample={usedSample} />
             <ReportButton analysis={analysis} usedSample={usedSample} />
+            <AskGhostIt items={subscriptions} label="Ask Ghost It about these" className="ml-2 mt-3" />
           </>
         )}
 
@@ -363,6 +365,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
+                        <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} small className="ml-4 mt-1.5" />
                       </div>
                     </CardItem>
                   ))}
