@@ -373,7 +373,7 @@ def help_reply(full=False):
     """v8: vague or first messages get one purpose line and the form card. The full
     command list is for `commands`, and for text-only mode (no cards)."""
     if not full and USE_CARDS:
-        return PURPOSE, help_card()
+        return PURPOSE.replace("Tell me what you pay for below.", "Tap one below to try it, or tell me what you pay for."), quick_start_card()
     text = (
         PURPOSE + "\n\n**I'm Ghost It.** I add up what your subscriptions really cost, find the doubles, "
         "give you the real cancel steps, and track that they actually stopped.\n\n"
@@ -406,12 +406,36 @@ def about_reply():
         "",
         "Every pack shows the maths, then the official cancel steps and a ready email, and I check after 7 days that it stopped.",
         "",
-        "**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or fill in the card below.",
+        "**Try it:** tap a card below, or send `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`.",
         "Something unclear? `feedback: ...` and I'll change it.",
         "",
         DISCLAIMER,
     ]
-    return "\n".join(lines), help_card()
+    return "\n".join(lines), quick_start_card()
+
+
+# v9.4: tap-to-try examples, so the first reply is something to press, not a blank form.
+QUICK_STARTS = [
+    ("🎧 Paying twice for music?", "Spotify $14, YouTube Premium $17", "Sound pack"),
+    ("💻 Too many AI tools?", "ChatGPT $30, Claude $30, Cursor $30, Copilot $15", "Tech Stack pack"),
+    ("📺 Three streaming apps?", "Netflix $19, Stan $16, Disney+ $16", "Screen pack"),
+    ("💪 What does my gym really cost?", "gym $25 a week", "Gym pack"),
+]
+
+
+def quick_start_card():
+    return ("carousel", {
+        "title": "Tap one to try a Ghost Pack",
+        "subtitle": "Or type what you pay for, e.g. Netflix $19, gym $25 a week",
+        "items": [{
+            "id": f"qs{i}", "title": title, "subtitle": pack, "secondary_text": example,
+            "primary_cta": {"label": "Try this", "selection": {"action": "check", "subs": example}},
+        } for i, (title, example, pack) in enumerate(QUICK_STARTS)] + [{
+            "id": "qs-own", "title": "✍️ Use my own", "subtitle": "Add what you pay for",
+            "secondary_text": "Name and price, weekly or monthly",
+            "primary_cta": {"label": "Add mine", "selection": {"action": "form"}},
+        }],
+    })
 
 
 def help_card():
@@ -805,9 +829,9 @@ def whats_new_reply():
     lines = [PURPOSE.replace(" Tell me what you pay for below.", ""), "", "**What's new (from your feedback)**"]
     for who, said, changed in CHANGES[-3:]:
         lines.append(f"- {who} said: \"{said}\" We changed: {changed}.")
-    lines.append("\n**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or add yours below.")
+    lines.append("\n**Try it:** tap a card below, or send `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`.")
     lines.append("Something unclear? `feedback: ...` and I'll change it.")
-    return "\n".join(lines), help_card()
+    return "\n".join(lines), quick_start_card()
 
 
 def evidence_reply(ctx):
@@ -1029,6 +1053,8 @@ def route(ctx, sender, raw):
             return list_reply(ctx, sender)
         if a == "help":
             return help_reply()
+        if a == "form":
+            return "Add what you pay for, with prices. Weekly or yearly is fine too.", help_card()
 
     # 2. Typed commands
     if re.search(r"\b(delete|erase|forget|wipe)\b.*\b(my data|my info\w*|my details|my list|everything|all my)\b", low):

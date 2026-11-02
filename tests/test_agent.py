@@ -381,8 +381,8 @@ class V8(unittest.TestCase):
     def test_purpose_first_for_vague_messages(self):
         for msg in ["hi", "help", "what do you do", "what's the weather"]:
             reply, card = A.route(FakeCtx(), SENDER, msg)
-            self.assertEqual(reply, A.PURPOSE, msg)
-            self.assertEqual(card[0], "form", msg)
+            self.assertTrue(reply.startswith(A.PURPOSE.split(" Tell me")[0]), msg)
+            self.assertEqual(card[0], "carousel", msg)
 
     def test_text_only_fallback_keeps_the_commands(self):
         A.USE_CARDS = False
@@ -454,12 +454,12 @@ class About(unittest.TestCase):
             reply, card = A.route(FakeCtx(), SENDER, msg)
             self.assertIn("can't show you", reply, msg)
             self.assertIn("Ghost Pack", reply, msg)
-            self.assertEqual(card[0], "form", msg)
+            self.assertEqual(card[0], "carousel", msg)
             self.assertNotIn("—", reply)
 
     def test_hi_is_still_one_line(self):
         reply, _ = A.route(FakeCtx(), SENDER, "hi")
-        self.assertEqual(reply, A.PURPOSE)
+        self.assertEqual(reply.count("\n"), 0)
 
 
 class AsiOneGreeting(unittest.TestCase):
@@ -470,7 +470,7 @@ class AsiOneGreeting(unittest.TestCase):
         self.assertTrue(reply.startswith("I hunt the money leaks"))
         self.assertIn("AI tools double up", reply)
         self.assertIn("Try it", reply)
-        self.assertEqual(card[0], "form")
+        self.assertEqual(card[0], "carousel")
 
 
 class OldStorage(unittest.TestCase):
@@ -576,3 +576,20 @@ class V93BetterAnswers(unittest.TestCase):
         reply, _ = A.route(FakeCtx(), SENDER, "Every morning, search my Gmail for bills and payment-due notices")
         self.assertIn("can't read your email", reply)
         self.assertIn("base44.app", reply)
+
+
+class QuickStarts(unittest.TestCase):
+    def test_first_reply_has_tap_to_try_examples(self):
+        _, card = A.route(FakeCtx(), SENDER, "hi")
+        self.assertEqual(card[0], "carousel")
+        self.assertGreaterEqual(len(card[1]["items"]), 4)
+
+    def test_tapping_an_example_runs_it(self):
+        _, card = A.route(FakeCtx(), SENDER, "hi")
+        sel = card[1]["items"][0]["primary_cta"]["selection"]
+        reply, _ = A.route(FakeCtx(), SENDER, json.dumps(sel))
+        self.assertIn("$372.00 a year", reply)
+
+    def test_use_my_own_opens_the_form(self):
+        _, card = A.route(FakeCtx(), SENDER, json.dumps({"action": "form"}))
+        self.assertEqual(card[0], "form")
