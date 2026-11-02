@@ -31,20 +31,29 @@ export default function GhostTeam() {
     <section aria-label="Meet your ghost team" className="mx-auto mt-8 w-full max-w-4xl px-4">
       <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Meet your ghost team</p>
       <p className="mt-1 text-center text-[15px] text-muted-foreground">Four ghost guides in the app, plus Ghost It in ASI:One.</p>
-      <ul className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
-        {TEAM.map((agent) => (
-          <li key={agent.key} className={`flex flex-col items-center rounded-3xl border-2 bg-card/70 px-3 pb-4 pt-5 text-center ${agent.key === 'ghostit' ? 'col-span-2 sm:col-span-1' : ''}`} style={{ borderColor: `${agent.color}55`, background: `linear-gradient(180deg, ${agent.color}1f, transparent 60%)` }}>
-            <span className="relative" aria-hidden="true">
-              <span className="flex h-[72px] w-[72px] items-center justify-center rounded-full" style={{ background: `${agent.color}2e`, boxShadow: `0 0 24px ${agent.color}40` }}>
-                <GhostMark className="h-12 w-12 motion-safe:animate-float" style={{ color: agent.color }} eyeColor="#1a1230" />
+      {/* One agent per row, cascading down the page (each fades in a beat after the last). */}
+      <ul className="mx-auto mt-4 flex max-w-2xl flex-col gap-3">
+        {TEAM.map((agent, index) => (
+          <li
+            key={agent.key}
+            className="team-cascade flex items-center gap-4 rounded-3xl border-2 bg-card/70 px-4 py-4 sm:px-5"
+            style={{ borderColor: `${agent.color}55`, background: `linear-gradient(90deg, ${agent.color}1f, transparent 55%)`, animationDelay: `${index * 120}ms` }}
+          >
+            <span className="relative shrink-0" aria-hidden="true">
+              <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full" style={{ background: `${agent.color}2e`, boxShadow: `0 0 24px ${agent.color}40` }}>
+                <GhostMark className="h-11 w-11 motion-safe:animate-float" style={{ color: agent.color }} eyeColor="#1a1230" />
               </span>
               <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-card" style={{ background: agent.color, color: '#1a1230' }}>
                 <agent.Icon className="h-4 w-4" strokeWidth={2.5} />
               </span>
             </span>
-            <span className="mt-3 font-heading text-[19px] font-bold leading-tight text-foreground">{agent.name}</span>
-            <span className="mt-1.5 rounded-full px-2.5 py-0.5 text-[13px] font-bold" style={{ background: `${agent.color}26`, color: agent.color }}>{agent.job}</span>
-            <span className="mt-2 text-[14px] leading-snug text-muted-foreground">{agent.does}</span>
+            <span className="min-w-0 flex-1">
+              <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
+                <span className="font-heading text-[20px] font-bold leading-tight text-foreground">{agent.name}</span>
+                <span className="rounded-full px-2.5 py-0.5 text-[13px] font-bold" style={{ background: `${agent.color}26`, color: agent.color }}>{agent.job}</span>
+              </span>
+              <span className="mt-1 block text-[15px] leading-snug text-muted-foreground">{agent.does}</span>
+            </span>
           </li>
         ))}
       </ul>

@@ -446,3 +446,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/BadgesExplainer.jsx (new), src/components/landing/PlansAtAGlance.jsx, src/components/results/SubscriptionsSection.jsx
 - How to test: Home > Free vs Pro: the card under the plans. Sample > Subscriptions with an empty Ghost List: the same card above the list.
 - User feedback that drove this: "explain badges better"
+
+### Ghost team cascades down the page
+- What: "Meet your ghost team" is now one agent per row, going down the page: their ghost and role icon on the left, then the name, a coloured job tag and one line on what they do. Rows fade in one after another (off for reduced motion).
+- Files: src/components/landing/GhostTeam.jsx, src/index.css
+- How to test: Home page, under the stats: five rows, Penny to Ghost It.
+- User feedback that drove this: "make them cascade down the page vertically"
