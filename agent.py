@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v10.1 (3 Nov 2026): answer first with the saving; spend, pay-per-use and bills replies.
 # v10 (3 Nov 2026): explanation cards, tap-to-try prompts, Stripe paywall card ($2 or $5).
 # v7 (2 Nov 2026): clear maths on every reply, interactive cards, app links,
 # auto-replies to feedback, evidence command.
@@ -167,7 +168,7 @@ add("switch", "Nintendo Switch Online", "Play", ["nintendo switch online", "swit
 add("nitro", "Discord Nitro", "Play", ["discord nitro", "nitro", "discord"], None, None, None)
 
 OVERLAP_NAMES = {
-    "video": "video streaming", "music": "music", "storage": "cloud storage",
+    "video": "video streaming apps", "music": "music apps", "storage": "cloud storage plans",
     "ai": "AI tools", "design": "design tools", "delivery": "food delivery passes",
     "mealkit": "meal kits", "gaming": "gaming passes",
 }
@@ -542,7 +543,14 @@ def check_reply(ctx, sender, text, subs, missing):
     ov = overlaps(subs)
     n = len(subs)
 
-    lines = [f"**What I did:** added up your {n} subscription{'s' if n != 1 else ''} "
+    saving = sum(sum(yearly(x) for x in g) - yearly(min(g, key=yearly)) for g in ov.values())
+    if ov and saving > 0:
+        g, items_ = max(ov.items(), key=lambda kv: len(kv[1]))
+        head = (f"👻 **{money(total_y)} a year, and {len(items_)} {OVERLAP_NAMES[g]} do the same job.** "
+                f"Keep {'one' if len(ov) == 1 else 'one of each'} and save up to **{money(saving)} a year**.")
+    else:
+        head = f"👻 **{money(total_y)} a year** across {n} regular payment{'s' if n != 1 else ''}. No doubles."
+    lines = [head, "", f"**What I did:** added up your {n} payment{'s' if n != 1 else ''} "
              "and checked for doubles.\n", "**The maths**"]
     rows = []
     for s in subs:
@@ -688,10 +696,33 @@ def typical_reply(ctx, sender, names):
     return "\n".join(lines), card
 
 
+def spend_reply():
+    """'How much am I spending?': the one thing I need, and a form to give it."""
+    return ("**Let's find out.** I can't see your bank, so tell me what you pay and I'll add up the year line by line.\n\n"
+            "Type it like this: `Netflix $19, Spotify $14, gym $25 a week, phone $45`. Bills work too: `electricity $540 a quarter`.\n\n"
+            f"Don't remember them all? The Ghost Fees app reads a bank statement (CSV or PDF, no bank login): {app_link()}"
+            + try_next("Netflix $19, Spotify $14, gym $25 a week"), help_card())
+
+
+def usage_reply():
+    """Pay-per-use or credit billing: how to work out what it costs, with the maths."""
+    return ("**Pay-per-use costs: here's how to work it out.**\n\n"
+            "**The maths:** units you use x price per unit = what you pay.\n"
+            "- Example: 40 applications a month x $0.50 each = **$20.00 a month**\n"
+            "- $20.00 x 12 = **$240.00 a year**\n\n"
+            "**Where to find your usage:** the provider's billing or usage page (often under Account, Billing or Usage). "
+            "Most let you set a spending limit or an alert. Turn one on so it can't surprise you.\n\n"
+            "**What I can do:** tell me what you spent last month, e.g. `ChatGPT API $23, Midjourney $15`, and I'll show the year "
+            "and whether any of your AI tools double up."
+            + try_next("ChatGPT $30, Claude $30, Cursor $30", "tech pack") + "\n\n" + DISCLAIMER, None)
+
+
 def cant_do_reply():
     """Honest answer for things Ghost It can't do (read email, connect a bank, etc.)."""
     return ("I can't read your email or connect to your bank, so I won't guess.\n\n"
-            "**What I can do:** tell me what you pay for (e.g. `Netflix $19, Spotify $14, gym $25 a week`) and I'll show "
+            "**Quickest way:** copy the amounts from those bills here, e.g. `electricity $540 a quarter, internet $85, phone $45`, "
+            "and I'll add up the year and spot any doubles.\n\n"
+            "**What else I can do:** tell me what you pay for (e.g. `Netflix $19, Spotify $14, gym $25 a week`) and I'll show "
             "the yearly cost line by line, find doubles with my Ghost Packs, and give the official cancel steps.\n\n"
             f"To find bills and subscriptions from your bank statement, the Ghost Fees app reads a CSV or PDF (no bank login): {app_link()}", help_card())
 
@@ -1217,7 +1248,11 @@ def route(ctx, sender, raw):
     plain_q = "$" not in low and not find_merchant(low)   # a question, not a list of subscriptions
     if plain_q and re.search(r"how (?:does|do) (?:it|this|you|ghost ?it) work|how it works|^how\??$", low):
         return explain_reply("how")
-    if plain_q and re.search(r"is it free|how much|cost(?:s)? (?:to use|anything)|pric(?:e|ing)\??$|what do (?:you|packs) cost|do i (?:have to )?pay", low):
+    if plain_q and re.search(r"pay[- ]per[- ]use|usage[- ]based|credits?\b.*\b(pay|use|bill)|metered|per token|api (?:bill|cost|usage)", low):
+        return usage_reply()
+    if plain_q and re.search(r"how much (?:am i|do i|i'?m) (?:spend|pay)|what am i (?:spending|paying)|(?:total|add up) (?:my )?(?:subscriptions|bills)", low):
+        return spend_reply()
+    if plain_q and re.search(r"is (?:it|ghost ?it|this) free|how much (?:does|do|is) (?:it|this|ghost ?it|you|a pack|packs|the packs?)\b.*cost|how much (?:is|are) (?:ghost ?it|a pack|packs|pro)|cost(?:s)? (?:to use|anything)|^pric(?:e|ing)\??$|what do (?:you|packs) cost|do i (?:have to )?pay (?:you|for (?:this|ghost ?it|packs))", low):
         return explain_reply("price")
     if plain_q and re.search(r"is my data|privacy|safe to|what do you (?:keep|store|save)|do you (?:keep|store|see)", low):
         return explain_reply("data")

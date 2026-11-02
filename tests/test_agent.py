@@ -648,3 +648,36 @@ class V10Prompts(unittest.TestCase):
     def test_paying_twice_for_music_says_yes(self):
         reply, _ = A.route(FakeCtx(), SENDER, "Spotify $14, YouTube Premium $17. Am I paying twice?")
         self.assertIn("YouTube Premium already includes YouTube Music", reply)
+
+
+class V10Useful(unittest.TestCase):
+    """Real queries ASI:One sent Ghost It (Agentverse Discovery, 3 Nov)."""
+
+    def test_answer_first_with_saving(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Netflix $19, Stan $16, Disney+ $16. Is that too much?")
+        first = reply.splitlines()[0]
+        self.assertIn("$612.00 a year", first)
+        self.assertIn("save up to **$420.00 a year**", first)  # $612 - the $16 one kept ($192)
+
+    def test_spending_question_is_not_our_price(self):
+        reply, card = A.route(FakeCtx(), SENDER, "how much am I spending on subscriptions")
+        self.assertIn("Let's find out", reply)
+        self.assertNotIn("$2 AUD", reply)
+        self.assertEqual(card[0], "form")
+
+    def test_pay_per_use_gets_the_maths(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "If there's a credit system where you pay per use, how do I know how much I'm using or what I have to pay?")
+        self.assertIn("units you use x price per unit", reply)
+
+    def test_gmail_bills_offers_paste(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Every morning, search my Gmail for bills, invoices, and payment-due notices")
+        self.assertIn("copy the amounts from those bills here", reply)
+
+    def test_bills_add_up(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Electricity $540 a quarter, internet $85, phone $45")
+        self.assertIn("$540.00/quarter x 4 = **$2,160.00/yr**", reply)
+
+    def test_our_price_still_answers(self):
+        for msg in ["is it free?", "how much does it cost?", "how much is a pack?"]:
+            reply, _ = A.route(FakeCtx(), SENDER, msg)
+            self.assertIn("$2 AUD", reply, msg)
