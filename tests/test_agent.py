@@ -459,3 +459,14 @@ class About(unittest.TestCase):
     def test_hi_is_still_one_line(self):
         reply, _ = A.route(FakeCtx(), SENDER, "hi")
         self.assertEqual(reply, A.PURPOSE)
+
+
+class AsiOneGreeting(unittest.TestCase):
+    """ASI:One pre-fills "What's new with you, Ghost.it?" on the profile."""
+
+    def test_whats_new_with_you_leads_with_the_purpose_and_a_card(self):
+        reply, card = A.route(FakeCtx(), SENDER, "What's new with you, Ghost.it?")
+        self.assertTrue(reply.startswith("I find subscriptions you're paying for twice"))
+        self.assertIn("AI tools double up", reply)
+        self.assertIn("Try it", reply)
+        self.assertEqual(card[0], "form")

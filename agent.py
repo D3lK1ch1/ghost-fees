@@ -564,10 +564,14 @@ def feedback_reply(ctx, sender, body):
 
 
 def whats_new_reply():
-    lines = ["**What's new in Ghost It (from your feedback)**"]
-    for who, said, changed in CHANGES:
-        lines.append(f"- You said: {said}\n  We changed: {changed}.")
-    return "\n".join(lines), None
+    """Also the answer to ASI:One's pre-filled "What's new with you, Ghost.it?", so it
+    starts with what Ghost It is for, then the latest changes, one thing to try and the card."""
+    lines = [PURPOSE.replace(" Add yours below.", ""), "", "**What's new (from your feedback)**"]
+    for who, said, changed in CHANGES[-2:]:
+        lines.append(f"- {who} said: \"{said}\" We changed: {changed}.")
+    lines.append("\n**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or add yours below.")
+    lines.append("Something unclear? `feedback: ...` and I'll change it.")
+    return "\n".join(lines), help_card()
 
 
 def evidence_reply(ctx):
