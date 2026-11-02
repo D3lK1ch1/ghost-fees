@@ -252,9 +252,9 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
 // asset bank: 💔 your own ghost (sassy for Heartbroken, blocking for I'm Fine),
 // 👻 the lantern ghost, 🎄 the festive ghost.
 const NUDGE = {
-  ex: 'Scroll down to f**k your exes more, with help from Cassy.',
-  christmas: "Scroll down to break more of Jacob's chain, with help from Cassy.",
-  haunted: 'Scroll down to bust more ghosts, with help from Cassy.',
+  ex: 'Scroll down to f**k your exes more with help from Cassy.',
+  christmas: "Scroll down to break more of Jacob's chain with help from Cassy.",
+  haunted: 'Scroll down to bust more ghosts with help from Cassy.',
 };
 
 // Mouth (or face) spot in each art, as px inside the 130 x 140 picture box
