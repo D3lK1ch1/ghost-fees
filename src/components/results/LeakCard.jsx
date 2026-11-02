@@ -3,6 +3,7 @@ import { ChevronDown, Landmark, Mail, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, shortDate } from '@/lib/ghostFees/format';
 import { BADGE_TONES, BADGE_MEANING } from '@/lib/ghostFees/leaks';
+import CancelSiteLink from './CancelSiteLink';
 import { CPI, versusCpi } from '@/lib/ghostFees/inflation';
 import { BadgePop } from '@/components/GhostAnimations';
 import { useTheme } from '@/lib/ThemeContext';
