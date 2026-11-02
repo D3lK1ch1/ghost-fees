@@ -286,8 +286,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             <PaybackNote results={analysis} usedSample={usedSample} />
             <div data-tour="actions">
               <ReportButton analysis={analysis} usedSample={usedSample} />
-              <AskGhostIt items={subscriptions} label="Ask Ghost It about these" className="ml-2 mt-3" />
               {!exStory && <TourButton name="results" label="New here? Take the tour" className="ml-2 mt-3" />}
+              <AskGhostIt items={subscriptions} variant="card" className="mt-4" />
             </div>
           </>
         )}
@@ -398,7 +398,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
-                        <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} small className="ml-4 mt-1.5" />
+                        <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} small className="ml-4 mt-2" />
                         {cardStats[leak.id] && <StatNote statKey={cardStats[leak.id]} className="mx-4 mt-1" />}
                       </div>
                     </CardItem>

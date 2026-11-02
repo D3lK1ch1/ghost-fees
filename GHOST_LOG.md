@@ -468,3 +468,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/GhostIt.jsx (new), src/lib/ghostFees/ghostItAgent.js (new), src/App.jsx, src/components/results/AskGhostIt.jsx, src/pages/Try.jsx
 - How to test: /ghostit: Copy, then Open Ghost It, then Chat with Agent, then paste; the reply shows 5 lines of maths and a streaming double-up ($2,091.64 a year). Sample > Ask Ghost It: opens the Agentverse page.
 - User feedback that drove this: "what's the link, how are we linking the projects, get more tests on my Fetch.ai project without confusing users"
+
+### Ghost It stands out: a card under your total, and "Message Ghost It about Spotify"
+- What: Under your total there's now a Ghost It card: its blue ghost with a chat badge, "AI agent on ASI:One", what it's for (keep going in chat any time; it does the yearly maths line by line, spots double-ups, gives the official cancel steps and a ready email, and keeps your Ghost List), its price (free during the beta, then first Ghost Pack free, $2 a pack or $5 for all), and a "Message Ghost It about these" button. Under each ghost card the small "Ask Ghost It" link is now a clear blue "Message Ghost It about Spotify" button. All of them copy the message and open Ghost It's Agentverse page (Chat with Agent).
+- Files: src/components/results/AskGhostIt.jsx, src/components/results/ResultsView.jsx
+- How to test: Sample > Reveal: the Ghost It card under the PDF button; scroll to a ghost card: "Message Ghost It about <name>".
+- User feedback that drove this: "need to have Ghost It look better and message people, need a way to charge Ghost It and have the purpose of Ghost It stand out"
