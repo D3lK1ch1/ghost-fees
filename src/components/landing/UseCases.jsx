@@ -1,5 +1,5 @@
-import { CircleSlash, Copy, Dumbbell, Landmark, Timer, TrendingUp } from 'lucide-react';
-import { NOT_DETECTED } from '@/components/results/DetectionInfo';
+import { Copy, Dumbbell, Landmark, Timer, TrendingUp } from 'lucide-react';
+import CatchTheRest from '@/components/landing/CatchTheRest';
 
 const USE_CASES = [
   {
@@ -29,7 +29,7 @@ const USE_CASES = [
   },
 ];
 
-export default function UseCases() {
+export default function UseCases({ onUpload }) {
   return (
     <section className="mx-auto w-full max-w-5xl px-5 pb-24 pt-4 sm:px-8">
       <h2 className="text-center text-[1.6rem] font-semibold leading-tight text-foreground sm:text-[2rem]">
@@ -58,23 +58,7 @@ export default function UseCases() {
         ))}
       </ol>
 
-      {/* Being upfront about what it misses (and what to do instead) builds trust. */}
-      <h3 className="mt-12 text-center text-[1.4rem] font-semibold leading-tight text-foreground sm:text-[1.7rem]">What it doesn&apos;t find, and what to do instead</h3>
-      <p className="mx-auto mt-2 max-w-lg text-center text-[14.5px] leading-relaxed text-muted-foreground">
-        Ghost Fees only flags real leaks it can prove from your statement. These are left out on purpose, or can&apos;t be read yet.
-      </p>
-      <ul className="mx-auto mt-6 grid max-w-3xl gap-2.5 sm:grid-cols-2">
-        {NOT_DETECTED.map((item) => (
-          <li key={item.title} className="flex gap-3 rounded-2xl border border-border bg-card/50 px-4 py-3.5">
-            <CircleSlash className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-            <div className="min-w-0">
-              <p className="text-[15px] font-semibold text-foreground">{item.title}</p>
-              <p className="mt-0.5 text-[14px] leading-snug text-muted-foreground">{item.why}</p>
-              {item.instead && <p className="mt-1 text-[14px] leading-snug text-foreground"><b className="text-primary">Instead:</b> {item.instead}</p>}
-            </div>
-          </li>
-        ))}
-      </ul>
+      <CatchTheRest onUpload={onUpload} />
     </section>
   );
 }

@@ -503,3 +503,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/xmas/XmasKit.jsx (SpiritSays), src/components/xmas/XmasTabScreens.jsx, src/components/results/CancelSiteLink.jsx
 - How to test: 🎄 theme > sample > Ghosts: Dusty's two bubbles; tap Waive it on Monthly Account Fee.
 - User feedback that drove this: "use speech bubble assets more cleanly and have one coming out of the ghost's mouth and one under", "all need cancel on site button"
+
+### What it can't see yet, and how to catch it anyway; clearer type counts
+- What: The "What it doesn't find" list is now "What it can't see yet, and how to catch it anyway", in two groups. "We can still help you catch these": short statements (Upload more months), subscriptions on another card or account (new; Tell Ghost It, or add that statement), what's inside Apple and Google charges (phone steps, then Check typical prices, which opens the Have any of these? tab), scanned PDFs (Upload a CSV). "Left out on purpose, and where to look instead": changing bills (Energy Made Easy), interest and BNPL fees (Moneysmart), everyday spending and surcharges. Each row says why we miss it and how to catch it, with a button that does it. On the Ghosts filter, the number on each chip ("Trial converted 1") is now a small count badge, so it reads as how many were found.
+- Files: src/components/landing/CatchTheRest.jsx (new), src/components/landing/UseCases.jsx, src/components/landing/HomeTabs.jsx, src/pages/Landing.jsx, src/components/results/LeakFilter.jsx
+- How to test: Home > What it finds: scroll to the two groups; tap Check typical prices (opens Have any of these?) and Upload more months (opens the file picker). Sample > Ghosts: the chips show count badges.
+- User feedback that drove this: "lay this out and make clear how we can compensate and find things the app cannot currently find", "what's trial converted one"
