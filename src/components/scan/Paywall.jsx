@@ -121,6 +121,11 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
           </>
         )}
 
+        {/* What the free trial includes, so "one try" is clear (app and Ghost It). */}
+        <div className="rounded-2xl px-4 py-3 text-left text-[14px] leading-snug" style={{ background: P.card, color: P.soft }}>
+          <p className="font-bold" style={{ color: '#FFFFFF' }}>Your free trial</p>
+          <p className="mt-0.5">Ghost Fees: 3 statement scans, 1 chat with a ghost guide and 1 Cassy lookup. Ghost It: your first Ghost Pack (1 try), then $2 a pack or $5 for all in ASI:One.</p>
+        </div>
         {/* The promise, in one line, right before the button. */}
         <p className="text-[15px] leading-snug" style={{ color: P.soft }}>
           <b style={{ color: '#FFFFFF' }}>Ghost them once. Pay once.</b> Pro finds every subscription and fee, helps you cancel each one and checks they stopped. Never a subscription.

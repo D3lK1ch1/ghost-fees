@@ -3,8 +3,9 @@ import { base44 } from '@/api/base44Client';
 import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
 import { cn } from '@/lib/utils';
-import GhostMark from '@/components/site/GhostMark';
-import { GHOST_IT_PROFILE } from '@/lib/ghostFees/ghostItAgent';
+import { useState } from 'react';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE } from '@/lib/ghostFees/ghostItAgent';
+import GhostItDialog from './GhostItDialog';
 
 // "Message Ghost It": hands subscriptions to our chat agent on ASI:One (a separate
 // product, judged inside ASI:One). Copies "@ghostit Netflix $16.99/mo, ...",
@@ -39,9 +40,7 @@ function useGo(text) {
 function Avatar({ size = 'h-12 w-12' }) {
   return (
     <span className="relative shrink-0" aria-hidden="true">
-      <span className={cn('flex items-center justify-center rounded-full', size)} style={{ background: `${BLUE}2e`, boxShadow: `0 0 20px ${BLUE}40` }}>
-        <GhostMark className="h-3/5 w-3/5 motion-safe:animate-float" style={{ color: BLUE }} eyeColor="#1a1230" />
-      </span>
+      <img src={GHOST_IT_MASCOT} alt="" className={cn('rounded-full object-cover motion-safe:animate-float', size)} style={{ boxShadow: `0 0 20px ${BLUE}55` }} />
       <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-card" style={{ background: BLUE, color: '#1a1230' }}>
         <MessageCircle className="h-3.5 w-3.5" strokeWidth={2.5} />
       </span>
@@ -70,7 +69,12 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
   const benefit = variant === 'strip' && name ? benefitFor(leak, name) : null;
   const text = benefit?.text || ghostItText(list);
   const go = useGo(text);
+  const [about, setAbout] = useState(false);
   if (!text) return null;
+  const whatIs = (
+    <button type="button" onClick={() => setAbout(true)} className="text-[13.5px] font-bold underline-offset-4 hover:underline" style={{ color: BLUE }}>What is Ghost It?</button>
+  );
+  const dialog = <GhostItDialog open={about} onClose={() => setAbout(false)} onMessage={go} />;
 
   // Attached under a ghost card: what Ghost It does for this one, and one button.
   if (variant === 'strip' && benefit) {
@@ -79,11 +83,12 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
         <Avatar size="h-11 w-11" />
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-bold text-foreground">Let Ghost It handle {name} in chat</p>
-          <p className="text-[14px] leading-snug text-muted-foreground">{benefit.line}</p>
+          <p className="text-[14px] leading-snug text-muted-foreground">{benefit.line} {whatIs}</p>
         </div>
         <button type="button" onClick={go} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-[14.5px] font-bold text-[#0f1730]" style={{ background: BLUE }}>
           <MessageCircle className="h-4 w-4" aria-hidden="true" /> Message Ghost It
         </button>
+        {dialog}
       </div>
     );
   }
@@ -99,11 +104,12 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
           <p className="mt-0.5 text-[14.5px] leading-snug text-muted-foreground">
             Keep going in chat, any time, without coming back here. Message it what you pay for: it does the yearly maths line by line, spots double-ups, gives the official cancel steps and a ready email, and keeps your Ghost List.
           </p>
-          <p className="mt-1 text-[13px] text-muted-foreground">Free during the beta. After that, your first Ghost Pack is free, then $2 a pack or $5 for all.</p>
+          <p className="mt-1 text-[13.5px] text-muted-foreground"><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE} {whatIs}</p>
         </div>
         <button type="button" onClick={go} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl px-4 py-3 text-[15px] font-bold text-[#0f1730]" style={{ background: BLUE }}>
           <MessageCircle className="h-4 w-4" /> {label || 'Message Ghost It about these'}
         </button>
+        {dialog}
       </section>
     );
   }

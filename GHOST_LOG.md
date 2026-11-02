@@ -490,3 +490,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/AskGhostIt.jsx, src/components/results/ResultsView.jsx
 - How to test: Sample > Ghosts > Spotify (price creep): the strip under the card; Message Ghost It copies "@ghostit Spotify went from $12.99 to $14.99".
 - User feedback that drove this: "needs to be designed better and the better benefits of Ghost It"
+
+### Ghost It's own mascot, a "Meet Ghost It" pop-up, and the free try made clear
+- What: Ghost It now uses its own mascot (a happy ghost cutting up a credit card, from the agent's art) on the Ghost It card, under each ghost card, on /ghostit and in the ghost team. "What is Ghost It?" opens a Meet Ghost It pop-up: what makes it special (lives in your chat, shows the maths, spots double-ups, official cancel steps, a ready email, checks it stopped), and the free trial in a highlighted box: "Free trial: 1 try. Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in ASI:One. Free while we're in beta." The limit sheet (paywall) now has a "Your free trial" box: Ghost Fees gives 3 scans, 1 ghost guide chat and 1 Cassy lookup; Ghost It gives your first Ghost Pack, then $2 a pack or $5 for all.
+- Files: public/themes/ghostit/ghost-it.webp (new), src/components/results/GhostItDialog.jsx (new), src/components/results/AskGhostIt.jsx, src/lib/ghostFees/ghostItAgent.js, src/pages/GhostIt.jsx, src/components/landing/GhostTeam.jsx, src/components/scan/Paywall.jsx
+- How to test: Sample > the Ghost It card > What is Ghost It?. /?preview_paywall=scan: the "Your free trial" box. Home > Meet your ghost team: Ghost It's mascot.
+- User feedback that drove this: "need Ghost It to have a unique mascot and a popup or some clear way to make sure Ghost It is special with features, and clear only one try on free trial, add to the paywall"
