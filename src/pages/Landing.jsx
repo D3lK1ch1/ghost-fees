@@ -156,9 +156,13 @@ export default function Landing() {
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
           <GhostTeam />
+          {/* Free vs Pro on show, above the tabs, so nobody has to find it (3 Nov). */}
+          <section id="plans" aria-label="Free vs Pro" className="mx-auto mt-8 w-full max-w-4xl">
+            <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Free vs Pro</p>
+            <PlansAtAGlance onSample={() => scan([], true)} />
+          </section>
           <HomeTabs tabs={[
             { key: 'you', label: 'Is this you?', content: <IsThisYou /> },
-            { key: 'plans', label: 'Free vs Pro', content: <PlansAtAGlance onSample={() => scan([], true)} /> },
             { key: 'have', label: 'Have any of these?', content: <CommonSubsChecker onUpload={() => inputRef.current?.click()} onSample={() => scan([], true)} /> },
             { key: 'finds', label: 'What it finds', content: <UseCases onUpload={() => inputRef.current?.click()} /> },
             { key: 'who', label: 'Who made it', content: <FoundersSection /> },
