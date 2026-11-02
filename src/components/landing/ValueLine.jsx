@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { statFor } from '@/data/stats';
 import { cn } from '@/lib/utils';
+import PlansAtAGlance from '@/components/landing/PlansAtAGlance';
 
 // The first thing on the home page in every theme, before any art: the promise
 // (UVP), the purpose and who it's for, in one compact block.
@@ -62,7 +63,7 @@ export default function ValueLine({ onSample }) {
           See it on a sample in 10 seconds
         </button>
       )}
-      <p className="mt-2 text-[11.5px] text-muted-foreground">$10 once, never a subscription. Free while we&apos;re in beta.</p>
+      <PlansAtAGlance />
     </section>
   );
 }

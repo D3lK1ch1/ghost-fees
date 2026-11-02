@@ -1,4 +1,4 @@
-import { Lock, Upload } from 'lucide-react';
+import { Ghost, Lock, Receipt, TrendingUp, Upload } from 'lucide-react';
 import { useAllowance } from '@/lib/AllowanceContext';
 import GhostMark from '@/components/site/GhostMark';
 import ExHero from '@/components/landing/ExHero';
@@ -7,7 +7,13 @@ import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
 
-const TAGS = ['Forgotten subscriptions', 'Sneaky fees', 'Price creep'];
+// The three kinds of ghost, as bright tappable chips (testers: "make the buttons pop").
+// Each has its own colour and icon, and opens the sample so you can see one.
+const TAGS = [
+  { label: 'Forgotten subscriptions', Icon: Ghost, colour: '#6EF0C2' },
+  { label: 'Sneaky fees', Icon: Receipt, colour: '#FFB86B' },
+  { label: 'Price creep', Icon: TrendingUp, colour: '#FF9BC2' },
+];
 
 export default function Hero({ onSample, onUpload }) {
   const { charging } = useAllowance();
@@ -47,7 +53,7 @@ export default function Hero({ onSample, onUpload }) {
         <button
           type="button"
           onClick={onUpload}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-card/60 px-6 py-3.5 text-[15px] font-bold text-foreground transition-colors hover:border-primary/50"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-primary/70 bg-primary/10 px-6 py-3.5 text-[15px] font-bold text-foreground shadow-[0_0_24px_hsl(var(--primary)/0.18)] transition-all hover:-translate-y-0.5 hover:border-primary hover:bg-primary/20"
         >
           <Upload className="h-4 w-4" strokeWidth={2.4} />
           Upload my CSV or PDF
@@ -60,10 +66,18 @@ export default function Hero({ onSample, onUpload }) {
       </p>
 
       <div className="mt-10 flex flex-wrap justify-center gap-2.5">
-        {TAGS.map((tag) => (
-          <span key={tag} className="rounded-full border border-border bg-card/60 px-3.5 py-1.5 text-[13px] font-bold text-muted-foreground">
-            {tag}
-          </span>
+        {TAGS.map(({ label, Icon, colour }) => (
+          <button
+            key={label}
+            type="button"
+            onClick={onSample}
+            title={`See ${label.toLowerCase()} on a sample`}
+            className="inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-[14px] font-bold text-white transition-transform hover:-translate-y-0.5 hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            style={{ borderColor: colour, background: `${colour}26`, boxShadow: `0 0 18px ${colour}55` }}
+          >
+            <Icon className="h-4 w-4" strokeWidth={2.4} style={{ color: colour }} aria-hidden="true" />
+            {label}
+          </button>
         ))}
       </div>
     </section>

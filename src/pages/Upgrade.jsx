@@ -151,7 +151,7 @@ export default function Upgrade() {
             {UPGRADE_STATS.slice(0, 8).map((item, index) => (
               <li key={item.id} className="up-fade flex items-center gap-3.5 py-3" style={{ borderBottom: `1px solid ${P.line}`, animationDelay: `${100 + index * 60}ms` }}>
                 <span className="w-[92px] shrink-0 font-heading text-[22px] font-bold leading-tight" style={{ color: P.accent }}>{item.big}</span>
-                <span className="flex flex-col gap-0.5"><span className="text-[14px] leading-snug">{item.text}</span><span className="text-[12px]" style={{ color: P.faint }}>{item.source}</span></span>
+                <span className="flex flex-col gap-0.5"><span className="text-[14px] leading-snug">{item.text}</span><span className="text-[12px]" style={{ color: P.faint }}>({item.source})</span></span>
               </li>
             ))}
           </ul>

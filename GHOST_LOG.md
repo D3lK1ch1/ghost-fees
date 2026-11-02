@@ -385,3 +385,15 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/upgradeTheme.js (new), src/components/scan/Paywall.jsx, src/pages/Upgrade.jsx, src/pages/Unlocked.jsx
 - How to test: development: /?preview_paywall=scan, =guide, =sign_in in each theme; /upgrade in each theme.
 - User feedback that drove this: the founders' design canvas for the subscription and upgrade flow.
+
+### Sources in brackets, and buttons that pop
+- What: Every research source now reads in brackets, e.g. "(Compare the Market, 2026)": the home stats strip, the "typical price" checker, the limit sheet, /upgrade research rows and the About page. The home chips (Forgotten subscriptions / Sneaky fees / Price creep) are now bright tappable buttons, each with its own colour (mint, orange, pink), icon and glow, and they open the sample. "Upload my CSV or PDF" has a stronger outline so it no longer looks disabled.
+- Files: src/components/landing/Hero.jsx, src/components/stats/StatsStrip.jsx, src/components/landing/CommonSubsChecker.jsx, src/components/scan/Paywall.jsx, src/pages/Upgrade.jsx, src/pages/About.jsx
+- How to test: Home page (👻 and 🎄): the three chips glow in different colours; tap one and the sample runs. Scroll to the stats: sources show in brackets. /upgrade > The research: sources in brackets.
+- User feedback that drove this: "bracket the sources please so it looks cleaner", "can we make some of the buttons pop more", "make the sources on the home page have the sources in brackets"
+
+### Free vs Premium, the ghost team and the savings, under the UVP
+- What: The home value block keeps "Ghost them once. Pay once." on top, then adds: Your ghost team (Penny: fees and totals, Sir Spooksworth: letters and emails, Gus: busting your ghosts, Cassy: cancelling for you, Ghost It: chat agent in ASI:One), a Free card (sample, 3 scans, full total, 1 ghost try, 3 themes) beside a highlighted Premium card ($10 once: unlimited scans, all 4 guides, Cassy's cancel info, emails, Ghost List stop-check, reminders, PDF and badges), and the savings maths: $1,600+ a year potentially wasted (Compare the Market, 2026); cancelling one $10-a-month subscription pays for Premium in a month. Same plan facts as /upgrade.
+- Files: src/components/landing/PlansAtAGlance.jsx (new), src/components/landing/ValueLine.jsx
+- How to test: Home page in each theme: the team row, Free and Premium side by side (stacked on a phone), the savings line, and "See plans" opens /upgrade.
+- User feedback that drove this: "need to have this done properly: free trial, what it offers, then what the premium gives you, lists the key agents and functions and how it can save you heaps of money, keep a clean UVP"
