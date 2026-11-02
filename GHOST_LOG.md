@@ -496,3 +496,8 @@ One entry per change. Newest at the bottom.
 - Files: public/themes/ghostit/ghost-it.webp (new), src/components/results/GhostItDialog.jsx (new), src/components/results/AskGhostIt.jsx, src/lib/ghostFees/ghostItAgent.js, src/pages/GhostIt.jsx, src/components/landing/GhostTeam.jsx, src/components/scan/Paywall.jsx
 - How to test: Sample > the Ghost It card > What is Ghost It?. /?preview_paywall=scan: the "Your free trial" box. Home > Meet your ghost team: Ghost It's mascot.
 - User feedback that drove this: "need Ghost It to have a unique mascot and a popup or some clear way to make sure Ghost It is special with features, and clear only one try on free trial, add to the paywall"
+### 🎄 Dusty speaks in real speech bubbles, and every mini card has a button
+- What: Dusty (Stave one) now talks with the speech-bubble art: the first bubble comes out of his mouth and goes up and right, the second sits just under it, both pointing back at him and never over his eyes. The three cards under him each have a button: "Cancel it" (the checked official cancel page) or "Find it" (a search, never a guessed link) for subscriptions, and "Waive it" for bank fees, which jumps to that fee's card with the waiver email.
+- Files: src/components/xmas/XmasKit.jsx (SpiritSays), src/components/xmas/XmasTabScreens.jsx, src/components/results/CancelSiteLink.jsx
+- How to test: 🎄 theme > sample > Ghosts: Dusty's two bubbles; tap Waive it on Monthly Account Fee.
+- User feedback that drove this: "use speech bubble assets more cleanly and have one coming out of the ghost's mouth and one under", "all need cancel on site button"
