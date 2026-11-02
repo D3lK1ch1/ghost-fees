@@ -15,7 +15,7 @@ export default function EmailsPanel({ leaks, onDraft }) {
 
   return (
     <section className="mt-4">
-      <p className="text-[13.5px] leading-relaxed text-muted-foreground">
+      <p className="text-[14.5px] leading-relaxed text-muted-foreground">
         One email ready for each ghost. Open it, edit anything, then copy it or send it from your own mail app.
       </p>
       <div className="mt-4 grid grid-cols-1 gap-3">
@@ -37,16 +37,16 @@ export default function EmailsPanel({ leaks, onDraft }) {
                   <span className="shrink-0 font-bold tabular-nums text-primary">{money(leak.amount)}</span>
                 </span>
                 <span className="mt-1 flex flex-wrap items-center gap-2">
-                  <span className={cn('rounded-full px-2 py-0.5 text-[10.5px] font-bold', BADGE_TONES[leak.badge])}>{leak.badge}</span>
-                  <span className="text-[12px] font-bold text-foreground/90">{action.label}</span>
+                  <span className={cn('rounded-full px-2 py-0.5 text-[12px] font-bold', BADGE_TONES[leak.badge])}>{leak.badge}</span>
+                  <span className="text-[13px] font-bold text-foreground/90">{action.label}</span>
                 </span>
-                <span className="mt-1 block text-[12px] leading-relaxed text-muted-foreground">{action.blurb}</span>
+                <span className="mt-1 block text-[13px] leading-relaxed text-muted-foreground">{action.blurb}</span>
               </span>
             </button>
           );
         })}
       </div>
-      {!ready.length && <p className="mt-4 text-[13.5px] text-muted-foreground">None of these ghosts need an email.</p>}
+      {!ready.length && <p className="mt-4 text-[14.5px] text-muted-foreground">None of these ghosts need an email.</p>}
     </section>
   );
 }

@@ -71,11 +71,11 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
     <section id="ex-story" className="mx-auto mt-2 w-full max-w-[460px] scroll-mt-4" aria-label="My Ex Ghosted Me story">
       <div className="mb-3 flex items-center justify-between">
         {history.length > 0 ? (
-          <button type="button" onClick={back} className="inline-flex items-center gap-1 text-[13px] font-bold text-white/70 hover:text-white">
+          <button type="button" onClick={back} className="inline-flex items-center gap-1 text-[14px] font-bold text-white/70 hover:text-white">
             <ChevronLeft className="h-4 w-4" /> Back
           </button>
         ) : <span />}
-        <button type="button" onClick={onSeeAll} className="text-[13px] font-bold text-white/60 underline underline-offset-4 hover:text-white">
+        <button type="button" onClick={onSeeAll} className="text-[14px] font-bold text-white/60 underline underline-offset-4 hover:text-white">
           See everything
         </button>
       </div>

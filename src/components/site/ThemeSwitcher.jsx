@@ -34,7 +34,7 @@ export default function ThemeSwitcher() {
               )}
             >
               <span aria-hidden="true" className="text-[15px] leading-none">{item.emoji}</span>
-              <span className="sr-only whitespace-nowrap text-[13px] font-semibold leading-none tracking-tight sm:not-sr-only sm:inline">
+              <span className="sr-only whitespace-nowrap text-[14px] font-semibold leading-none tracking-tight sm:not-sr-only sm:inline">
                 {item.label}
               </span>
             </button>

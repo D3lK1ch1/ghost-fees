@@ -23,7 +23,7 @@ export default function GhostTip({ label, detail, className, children, side = 't
       <span
         role="tooltip"
         className={cn(
-          'pointer-events-none absolute z-30 w-max max-w-[190px] rounded-xl bg-[#170f2a] px-2.5 py-1.5 text-center text-[11.5px] leading-snug text-white opacity-0 shadow-lg ring-1 ring-primary/60 transition-opacity duration-150 group-hover/ghost:opacity-100',
+          'pointer-events-none absolute z-30 w-max max-w-[190px] rounded-xl bg-[#170f2a] px-2.5 py-1.5 text-center text-[12.5px] leading-snug text-white opacity-0 shadow-lg ring-1 ring-primary/60 transition-opacity duration-150 group-hover/ghost:opacity-100',
           side === 'top' ? 'bottom-full mb-1.5' : 'top-full mt-1.5',
           { start: 'left-0 text-left', fill: 'inset-x-0 w-auto max-w-none', center: 'left-1/2 -translate-x-1/2' }[align],
         )}

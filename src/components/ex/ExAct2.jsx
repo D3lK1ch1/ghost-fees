@@ -42,19 +42,19 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
   return (
     <Screen background="radial-gradient(ellipse at 50% 20%, #2e2834 0%, #15131a 60%)" maxY={26} className="gap-3 px-4 py-[22px]">
       <div className="relative flex flex-col items-center">
-        <div className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{label}</div>
+        <div className="text-[14px] font-extrabold" style={{ color: C.coralSoft }}>{label}</div>
         <div className="ex-fredoka text-[56px] font-semibold leading-none">{time}</div>
         <div className="text-[14px] font-bold" style={{ color: C.soft }}>{date}</div>
       </div>
       <div className="ex-in relative flex items-start gap-3 rounded-[18px] px-3.5 py-3" style={{ animationDelay: '.2s', background: 'rgba(34,31,41,0.95)', border: `1.5px solid ${C.coral}`, boxShadow: '0 10px 30px -12px rgba(255,111,125,0.5)' }}>
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <div className="flex justify-between text-[13px]"><span className="font-extrabold">{ex.merchant}</span><span style={{ color: C.muted }}>now</span></div>
+          <div className="flex justify-between text-[14px]"><span className="font-extrabold">{ex.merchant}</span><span style={{ color: C.muted }}>now</span></div>
           <div className="text-[15px] leading-snug">u up? Just charged you {money(ex.monthly)}. For old times&apos; sake.</div>
         </div>
       </div>
       {/* Ghost sits left so her bubble has room on the right, clear of her sunglasses. */}
       <div className="relative flex h-[190px] items-end justify-start gap-1 pl-[12%]">
-        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="right" atMouth bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={175} bubbleDelay=".9s" bubbleClass="!px-5 !pt-4 !pb-7 text-[13px]" />
+        <GhostPal pickKey={pickKey} mood="sassy" motion="dance" width={140} speed={1.79} drift={6.4} side="right" atMouth bubble={pick?.backShout || 'New phone. Who dis?'} bubbleWidth={175} bubbleDelay=".9s" bubbleClass="!px-5 !pt-4 !pb-7 text-[14px]" />
       </div>
       <div className="ex-in relative flex flex-col gap-2.5 p-4" style={{ ...card, animationDelay: '1.45s' }}>
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>
@@ -63,13 +63,13 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
         {/* Straight to their page, or Cassy, who finds the contact details and helps. */}
         <div className="flex flex-wrap items-center gap-2 pt-0.5">
           {cancelInfo(ex.merchant).url ? (
-            <a href={cancelInfo(ex.merchant).url} target="_blank" rel="noreferrer" className="rounded-full px-3.5 py-2 text-[13.5px] font-extrabold" style={{ border: `1.5px solid ${C.coral}`, color: C.text }}>
+            <a href={cancelInfo(ex.merchant).url} target="_blank" rel="noreferrer" className="rounded-full px-3.5 py-2 text-[14.5px] font-extrabold" style={{ border: `1.5px solid ${C.coral}`, color: C.text }}>
               Go to {cancelInfo(ex.merchant).name}&apos;s page ↗
             </a>
           ) : (
-            <span className="text-[13px]" style={{ color: C.muted }}>No checked page for {ex.merchant} yet. Cassy can find it.</span>
+            <span className="text-[14px]" style={{ color: C.muted }}>No checked page for {ex.merchant} yet. Cassy can find it.</span>
           )}
-          <button type="button" onClick={() => askGuide('cass')} className="rounded-full px-3.5 py-2 text-[13.5px] font-extrabold" style={{ background: C.mint, color: C.bg }}>
+          <button type="button" onClick={() => askGuide('cass')} className="rounded-full px-3.5 py-2 text-[14.5px] font-extrabold" style={{ background: C.mint, color: C.bg }}>
             Talk to Cassy
           </button>
         </div>
@@ -105,7 +105,7 @@ export function ExGlowupPlan({ pick, pickKey, glow, blockedCount, onNext, monthl
     <Screen background="radial-gradient(ellipse at 80% 10%, #2a2530 0%, #15131a 55%)" className="gap-3.5 px-4 pb-[22px] pt-[18px]">
       <div className="relative flex items-end gap-1.5">
         <div className="flex min-w-0 flex-1 flex-col gap-1 pb-2">
-          <div className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{label}</div>
+          <div className="text-[14px] font-extrabold" style={{ color: C.coralSoft }}>{label}</div>
           <h2 className="ex-fredoka m-0 text-[26px] font-bold leading-tight">{pick?.planTitle || 'Your better-life plan'}</h2>
           <div className="text-[14px]" style={{ color: C.soft }}>
             {monthly > 0 ? `${money(monthly)} a month ${preview ? 'once you block them all' : "you're not giving your exes"}.` : 'Block an ex to start your plan.'}
@@ -123,8 +123,8 @@ export function ExGlowupPlan({ pick, pickKey, glow, blockedCount, onNext, monthl
               <div className="relative z-[1]"><MilestoneIcon icon={step.icon} on={lit(index)} /></div>
               <div className="flex min-w-0 flex-1 flex-col gap-1 px-3.5 py-3" style={{ ...card, borderRadius: 16, border: b.text === 'Unlocked' || (b.text === 'Next up' && nextIndex === 0) ? `1.5px solid ${C.coral}` : card.border }}>
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-[13px] font-extrabold" style={{ color: C.muted }}>Month {step.months}</span>
-                  <span className="rounded-full px-2.5 py-0.5 text-[12px] font-extrabold" style={b.style}>{b.text}</span>
+                  <span className="text-[14px] font-extrabold" style={{ color: C.muted }}>Month {step.months}</span>
+                  <span className="rounded-full px-2.5 py-0.5 text-[13px] font-extrabold" style={b.style}>{b.text}</span>
                 </div>
                 <div className="ex-fredoka text-[19px] font-semibold">{pick?.planLabels?.[index] || step.label}</div>
                 <div className="text-[14px]" style={{ color: C.soft }}><span className="font-extrabold" style={{ color: C.mint }}>{money(monthly * step.months)}</span> back from your exes</div>
@@ -134,7 +134,7 @@ export function ExGlowupPlan({ pick, pickKey, glow, blockedCount, onNext, monthl
         })}
       </div>
       <div className="flex-1" />
-      <div className="text-center text-[12px]" style={{ color: C.muted }}>
+      <div className="text-center text-[13px]" style={{ color: C.muted }}>
         {preview ? `Based on all your exes: ${money(monthly * 12)} a year. Block them to make it real.` : `Based on the ${blockedCount} ${blockedCount === 1 ? 'ex' : 'exes'} you blocked: ${money(glow.fund)} a year.`}
       </div>
       {onNext && <PrimaryButton onClick={onNext} delay="2.4s">Fast-forward to month 6</PrimaryButton>}
@@ -165,7 +165,7 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
 
   return (
     <Screen background="linear-gradient(180deg, #1d2a3a 0%, #2a2530 45%, #15131a 75%)" className="gap-3 px-4 pb-[22px] pt-[18px]">
-      <div className="relative text-[13px] font-extrabold" style={{ color: C.coralSoft }}>{pick?.weekendTag || 'Act 2 · Month 6'}</div>
+      <div className="relative text-[14px] font-extrabold" style={{ color: C.coralSoft }}>{pick?.weekendTag || 'Act 2 · Month 6'}</div>
       <div className="ex-in relative h-[330px] overflow-hidden rounded-[26px]" style={{ containerType: 'inline-size', animationDelay: '.2s', background: 'linear-gradient(180deg, #ffb48a 0%, #ff8a7d 38%, #6a4a7a 70%, #2b3a55 100%)', border: `1px solid ${C.line}` }}>
         {pick?.weekendArt ? (
           <img src={pick.weekendArt} alt="The I'm Fine ghost fishing off a boat with a cold drink" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: 'center 30%' }} />
@@ -182,7 +182,7 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         {/* Ghost and bubble dance together; the bubble's tail sits at the mouth. */}
         <div className="ex-dance absolute bottom-[46px] left-1/2 -ml-[70px]" style={{ '--gs': '2.2s' }}>
           <GhostPal pickKey={pickKey} mood="happy" motion="none" width={140} speed={2.2} drift={8.2} style={{ '--gdx': '0px' }} />
-          <Bubble kind="l" className="ex-in absolute bottom-[74px] left-[74px] w-[132px] !min-w-0 !px-4 !pb-6 !pt-3 text-[11.5px] leading-tight" style={{ animationDelay: '1s' }}>Paid for by {name}&apos;s tears.</Bubble>
+          <Bubble kind="l" className="ex-in absolute bottom-[74px] left-[74px] w-[132px] !min-w-0 !px-4 !pb-6 !pt-3 text-[12.5px] leading-tight" style={{ animationDelay: '1s' }}>Paid for by {name}&apos;s tears.</Bubble>
         </div>
         </>
         )}
@@ -195,7 +195,7 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
             className="pointer-events-none absolute z-10"
             style={{ left: 'calc(min(44cqw, 50cqw - 19.8px) + 8px)', top: 'calc(max(123.75px, 99px + 7.5cqw) - 10px)', transform: 'translate(-9%, -94%)' }}
           >
-            <Bubble kind="l" className="ex-in w-[176px] !min-w-0 !px-5 !pb-8 !pt-4 text-[13px] leading-tight" style={{ animationDelay: '1s', transformOrigin: '9% 94%' }}>
+            <Bubble kind="l" className="ex-in w-[176px] !min-w-0 !px-5 !pb-8 !pt-4 text-[14px] leading-tight" style={{ animationDelay: '1s', transformOrigin: '9% 94%' }}>
               Paid for by {name}.
             </Bubble>
           </div>
@@ -210,25 +210,25 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
           <div className="mt-1.5 h-2.5 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,0.12)' }}>
             <div className="ex-bar h-full rounded-full" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${C.coral}, ${C.mint})` }} />
           </div>
-          <div className="mt-1 text-[12.5px]" style={{ color: C.muted }}>{reached ? 'Paid for by the exes you blocked.' : 'Block more exes to fill it.'}</div>
+          <div className="mt-1 text-[13.5px]" style={{ color: C.muted }}>{reached ? 'Paid for by the exes you blocked.' : 'Block more exes to fill it.'}</div>
         </div>
       </div>
       <div className="flex-1" />
       <div className="ex-in relative flex items-center gap-3.5 rounded-[22px] px-[18px] py-4" style={{ animationDelay: '1.85s', background: C.text, color: C.bg, transform: 'rotate(-1.5deg)', boxShadow: '0 16px 40px -18px rgba(0,0,0,0.7)' }}>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <div className="text-[12px] font-extrabold tracking-wide" style={{ color: C.coralDeep }}>POSTCARD</div>
+          <div className="text-[13px] font-extrabold tracking-wide" style={{ color: C.coralDeep }}>POSTCARD</div>
           <div className="ex-fredoka text-[20px] font-semibold leading-snug">Wish you weren&apos;t here, {name}.</div>
           {/* Straight to the ex's own cancel page, or Cassy when there's no checked one. */}
           {biggest && cancelInfo(biggest.merchant).url ? (
-            <a href={cancelInfo(biggest.merchant).url} target="_blank" rel="noreferrer" className="text-[13.5px] font-extrabold underline underline-offset-4" style={{ color: C.coralDeep }}>
+            <a href={cancelInfo(biggest.merchant).url} target="_blank" rel="noreferrer" className="text-[14.5px] font-extrabold underline underline-offset-4" style={{ color: C.coralDeep }}>
               Cancel {biggest.merchant} on their site ↗
             </a>
           ) : biggest ? (
-            <button type="button" onClick={() => askGuide('cass')} className="self-start text-[13.5px] font-extrabold underline underline-offset-4" style={{ color: C.coralDeep }}>
+            <button type="button" onClick={() => askGuide('cass')} className="self-start text-[14.5px] font-extrabold underline underline-offset-4" style={{ color: C.coralDeep }}>
               Find their cancel page with Cassy
             </button>
           ) : (
-            <div className="text-[13px] font-bold" style={{ color: '#5c5668' }}>{SITE}</div>
+            <div className="text-[14px] font-bold" style={{ color: '#5c5668' }}>{SITE}</div>
           )}
         </div>
         <div aria-hidden="true" className="flex h-16 w-[54px] flex-none items-center justify-center rounded-md" style={{ border: `2px dashed ${C.coral}`, color: C.coral }}>♥</div>
@@ -250,11 +250,11 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
         <span className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-full" style={{ background: C.card, border: `1.5px solid ${C.mint}` }}><img src={EX_CONTACT.art} alt="" width={34} height={40} className="h-[36px] w-auto translate-y-[3px] object-contain" /></span>
         <div className="flex flex-col gap-0.5">
           <div className="ex-fredoka text-[18px] font-semibold">{EX_CONTACT.name}</div>
-          <div className="text-[13px] font-bold" style={{ color: C.mint }}>Monthly check-in</div>
+          <div className="text-[14px] font-bold" style={{ color: C.mint }}>Monthly check-in</div>
         </div>
       </div>
       <div className="relative flex flex-1 flex-col gap-2.5 p-4" style={{ background: 'radial-gradient(ellipse at 80% 85%, #24202c 0%, #15131a 55%)' }}>
-        <div className="self-center rounded-full px-3 py-1 text-[12px] font-bold" style={{ color: C.muted, background: C.card }}>Next month</div>
+        <div className="self-center rounded-full px-3 py-1 text-[13px] font-bold" style={{ color: C.muted, background: C.card }}>Next month</div>
         <div className="ex-in max-w-[82%] self-start px-4 py-3 text-[16px]" style={{ ...them, animationDelay: '.3s' }}>Monthly check-in. Send me your new statement and I&apos;ll read it.</div>
         <div className="ex-in max-w-[82%] self-start px-4 py-3 text-[16px]" style={{ ...them, animationDelay: '.9s' }}>
           I&apos;ll check your {blockedCount} {blockedCount === 1 ? 'ex is' : 'exes are'} still blocked, and catch anyone new sliding in.
@@ -263,7 +263,7 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
           <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>Deal.</div>
         </div>
         <div className="mt-auto flex items-end gap-1 pt-6">
-          <GhostPal pickKey={pickKey} mood="happy" width={112} speed={3.3} side="right" kind="t" bubble="I don't do trials anymore." bubbleWidth={160} bubbleDelay="2s" bubbleClass="text-[13px]" />
+          <GhostPal pickKey={pickKey} mood="happy" width={112} speed={3.3} side="right" kind="t" bubble="I don't do trials anymore." bubbleWidth={160} bubbleDelay="2s" bubbleClass="text-[14px]" />
         </div>
       </div>
       <div className="flex flex-col gap-2.5 px-4 pb-[22px] pt-3.5" style={{ background: C.bar, borderTop: `1px solid ${C.barLine}` }}>
@@ -329,7 +329,7 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
       <div className="relative flex flex-col gap-2 rounded-[20px] px-3 pb-2 pt-3" style={{ ...card }}>
         <div className="flex items-baseline justify-between gap-2">
           <span className="ex-fredoka text-[17px] font-semibold">F**k-ex jar</span>
-          <span className="text-[13px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
+          <span className="text-[14px] font-extrabold"><span style={{ color: C.mint }}>{money(fund)}</span> of {money(total)}</span>
         </div>
         <div className="flex items-end justify-between">
           <FkJar amount={fund} total={total} size={112} />
@@ -344,7 +344,7 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
             </div>
           </div>
         </div>
-        <span className="text-center text-[12px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</span>
+        <span className="text-center text-[13px]" style={{ color: C.muted }}>{full ? 'Jar full. Every treat is paid for.' : 'Block an ex to unlock their treat.'}</span>
       </div>
 
       <div className="relative grid grid-cols-2 gap-x-3 gap-y-5 pt-3">
@@ -360,7 +360,7 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
               </div>
               <div className="flex flex-col gap-0.5 px-3 pb-3 pt-2.5">
                 <span className="ex-fredoka text-[17px] font-semibold">{treat.label}</span>
-                <span className="text-[12px]" style={{ color: C.muted }}>{open ? `Paid for by ${item.merchant}` : `Block ${item.merchant} to unlock`}</span>
+                <span className="text-[13px]" style={{ color: C.muted }}>{open ? `Paid for by ${item.merchant}` : `Block ${item.merchant} to unlock`}</span>
                 <span className="ex-fredoka text-[16px] font-semibold" style={{ color: open ? C.mint : C.muted }}>{money(item.monthly * 12)}/yr</span>
               </div>
             </div>
@@ -370,7 +370,7 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
       {full ? (
         <PrimaryButton onClick={() => setParty(true)}>🎉 Party mode</PrimaryButton>
       ) : (
-        <div className="relative text-center text-[13px]" style={{ color: C.muted }}>Fill the jar to unlock Party mode.</div>
+        <div className="relative text-center text-[14px]" style={{ color: C.muted }}>Fill the jar to unlock Party mode.</div>
       )}
     </Screen>
   );

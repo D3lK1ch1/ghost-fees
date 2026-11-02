@@ -125,7 +125,7 @@ export default function HouseGhost({ room, index = 0, className }) {
         <Body mood={look.mood} prop={look.prop} />
       </svg>
       {look.mood === 'sleepy' && (
-        <span className="absolute -right-2 -top-3 animate-float font-heading text-[13px] font-bold text-[#c3b8db]">z</span>
+        <span className="absolute -right-2 -top-3 animate-float font-heading text-[14px] font-bold text-[#c3b8db]">z</span>
       )}
     </span>
   );

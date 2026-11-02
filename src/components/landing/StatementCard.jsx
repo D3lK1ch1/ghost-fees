@@ -25,14 +25,14 @@ export default function StatementCard() {
                   : 'flex items-center justify-between rounded-xl border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5'
               }
             >
-              <span className="text-[13px] font-medium text-white/90">{row.name}</span>
-              <span className={row.highlight ? 'text-[13px] font-semibold text-[#ffb37c]' : 'text-[13px] text-muted-foreground'}>
+              <span className="text-[14px] font-medium text-white/90">{row.name}</span>
+              <span className={row.highlight ? 'text-[14px] font-semibold text-[#ffb37c]' : 'text-[14px] text-muted-foreground'}>
                 {row.amount}
               </span>
             </div>
           ))}
         </div>
-        <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-3 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        <div className="mt-4 flex items-center justify-between border-t border-white/[0.06] pt-3 text-[12.5px] uppercase tracking-[0.14em] text-muted-foreground">
           <span>3 ghosts detected</span>
           <span className="text-primary">scan complete</span>
         </div>

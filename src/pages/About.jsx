@@ -19,7 +19,7 @@ export default function About() {
 
         <p className="mt-4 text-[16px] leading-relaxed text-foreground">
           Half of Australians pay for subscriptions they don't use, and most don't notice for months.
-          <span className="block text-[12px] text-muted-foreground">(Compare the Market, 2026)</span>
+          <span className="block text-[13px] text-muted-foreground">(Compare the Market, 2026)</span>
         </p>
 
         <p className="mt-4 text-[16px] leading-relaxed text-foreground">
@@ -34,7 +34,7 @@ export default function About() {
 
         <div className="mt-8 rounded-3xl border border-primary/40 bg-primary/10 p-4">
           <p className="font-heading text-[17px] font-semibold text-foreground">Talk to us: we read every message</p>
-          <p className="mt-1 text-[13.5px] text-muted-foreground">Tried it? Tell us what confused you or what would make you pay.</p>
+          <p className="mt-1 text-[14.5px] text-muted-foreground">Tried it? Tell us what confused you or what would make you pay.</p>
           <Link to="/#feedback" className="mt-2 inline-block text-[14px] font-bold text-primary underline-offset-4 hover:underline">Give feedback (opens the sample results)</Link>
         </div>
 

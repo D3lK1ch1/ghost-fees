@@ -24,12 +24,12 @@ export default function UploadPanel({ bankId, onBankChange, files, onFilesChange
     <section id="upload" className="mx-auto w-full max-w-3xl px-5 sm:px-8">
       <div className="rounded-[1.75rem] border border-white/[0.08] bg-card/70 p-5 shadow-[0_30px_80px_-50px_rgba(0,0,0,1)] sm:p-7">
         <h2 className="text-lg font-semibold tracking-tight text-white">Check your statement</h2>
-        <p className="mt-1 text-[13.5px] text-muted-foreground">
+        <p className="mt-1 text-[14.5px] text-muted-foreground">
           Upload at least 3 months to detect subscriptions and price creep.
         </p>
 
         <div className="mt-5">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Your bank</span>
+          <span className="text-[12.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Your bank</span>
           <div className="mt-2 flex flex-wrap gap-2">
             {BANKS.map((bank) => {
               const active = bankId === bank.id;
@@ -40,8 +40,8 @@ export default function UploadPanel({ bankId, onBankChange, files, onFilesChange
                   onClick={() => onBankChange(bank.id)}
                   className={
                     active
-                      ? 'rounded-xl border border-primary/60 bg-primary/12 px-4 py-2 text-[13.5px] font-semibold text-primary'
-                      : 'rounded-xl border border-white/[0.09] bg-white/[0.02] px-4 py-2 text-[13.5px] font-medium text-muted-foreground transition-colors hover:border-white/20 hover:text-white'
+                      ? 'rounded-xl border border-primary/60 bg-primary/12 px-4 py-2 text-[14.5px] font-semibold text-primary'
+                      : 'rounded-xl border border-white/[0.09] bg-white/[0.02] px-4 py-2 text-[14.5px] font-medium text-muted-foreground transition-colors hover:border-white/20 hover:text-white'
                   }
                 >
                   {bank.label}
@@ -75,8 +75,8 @@ export default function UploadPanel({ bankId, onBankChange, files, onFilesChange
           }
         >
           <Upload className="mx-auto h-5 w-5 text-primary" strokeWidth={2.2} />
-          <p className="mt-2.5 text-[13.5px] font-medium text-white">Drop PDFs or CSVs here</p>
-          <p className="mt-1 text-[12.5px] text-muted-foreground">Up to 6 files &bull; PDF or CSV</p>
+          <p className="mt-2.5 text-[14.5px] font-medium text-white">Drop PDFs or CSVs here</p>
+          <p className="mt-1 text-[13.5px] text-muted-foreground">Up to 6 files &bull; PDF or CSV</p>
           <input
             ref={inputRef}
             type="file"
@@ -99,7 +99,7 @@ export default function UploadPanel({ bankId, onBankChange, files, onFilesChange
               >
                 <span className="flex min-w-0 items-center gap-2.5">
                   <FileText className="h-4 w-4 shrink-0 text-primary/80" />
-                  <span className="truncate text-[13px] text-white/90">{file.name}</span>
+                  <span className="truncate text-[14px] text-white/90">{file.name}</span>
                 </span>
                 <button
                   type="button"
@@ -119,7 +119,7 @@ export default function UploadPanel({ bankId, onBankChange, files, onFilesChange
             {errors.map((error) => (
               <li key={`${error.name}-${error.message}`} className="flex items-start gap-2 rounded-xl border border-[#ff6b6b]/25 bg-[#ff6b6b]/[0.07] px-3.5 py-2.5">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#ff6b6b]" />
-                <span className="text-[12.5px] leading-relaxed text-[#ffb3b3]">
+                <span className="text-[13.5px] leading-relaxed text-[#ffb3b3]">
                   <span className="font-medium text-white/90">{error.name}: </span>
                   {error.message}
                 </span>
@@ -132,7 +132,7 @@ export default function UploadPanel({ bankId, onBankChange, files, onFilesChange
           <button
             type="button"
             onClick={onSample}
-            className="text-[13.5px] font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+            className="text-[14.5px] font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
           >
             Try with sample data
           </button>

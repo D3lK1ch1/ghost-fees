@@ -11,7 +11,7 @@ export default function HouseHint({ className }) {
         <path d="M11.2 14.8l4.6 3.2M9.8 17.4l3.6 2.6" stroke="#c98a1b" strokeWidth="1" strokeLinecap="round" />
         <path d="M12.6 11.4l3.6 2.7" stroke="#8a5a00" strokeWidth="1.6" strokeLinecap="round" />
       </svg>
-      <p className="min-w-0 text-[12px] font-semibold leading-snug text-[#f5e7d0] sm:text-[12.5px]">
+      <p className="min-w-0 text-[13px] font-semibold leading-snug text-[#f5e7d0] sm:text-[13.5px]">
         Hover over a ghost to see the fee ghosting you.
         <span className="ml-1 font-bold text-[#ffcf73]">Orange glow = your biggest fee.</span>
       </p>

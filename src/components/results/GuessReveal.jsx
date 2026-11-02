@@ -31,7 +31,7 @@ export default function GuessReveal({ total, months, onDone }) {
             aria-label="Your guess in dollars"
             className="mt-4 h-3 w-full cursor-pointer appearance-none rounded-full bg-white/15 accent-[hsl(var(--primary))] [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
           />
-          <div className="flex justify-between text-[11.5px] text-muted-foreground">
+          <div className="flex justify-between text-[12.5px] text-muted-foreground">
             <span>$0</span>
             <span>$3,000+</span>
           </div>
@@ -39,7 +39,7 @@ export default function GuessReveal({ total, months, onDone }) {
             <button type="button" onClick={() => setRevealed(true)} className="rounded-2xl bg-primary px-6 py-3 text-[16px] font-bold text-primary-foreground">
               Reveal
             </button>
-            <button type="button" onClick={() => onDone(null)} className="text-[13px] font-bold text-muted-foreground underline-offset-4 hover:underline">
+            <button type="button" onClick={() => onDone(null)} className="text-[14px] font-bold text-muted-foreground underline-offset-4 hover:underline">
               Skip
             </button>
           </div>
@@ -55,7 +55,7 @@ export default function GuessReveal({ total, months, onDone }) {
               ? <>You guessed {money(guess)}. It&apos;s actually {money(total)} in {period}, <span className="text-primary">{Math.round(((total - guess) / Math.max(guess, 1)) * 100)}% more than you thought</span>.</>
               : <>You guessed {money(guess)}. It&apos;s {money(total)} in {period}. Good guess, you were close.</>}
           </p>
-          <StatNote statKey="realise" className="mx-auto mt-1.5 max-w-md text-[12.5px]" />
+          <StatNote statKey="realise" className="mx-auto mt-1.5 max-w-md text-[13.5px]" />
           <button type="button" onClick={() => onDone(guess)} className="mt-5 rounded-2xl bg-primary px-6 py-3 text-[16px] font-bold text-primary-foreground">
             Show me the ghosts
           </button>

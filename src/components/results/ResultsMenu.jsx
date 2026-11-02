@@ -21,15 +21,15 @@ export default function ResultsMenu({ onRestart, onClear }) {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 rounded-xl border-border bg-popover">
-        <DropdownMenuItem onClick={onRestart} className="gap-2 text-[13px] font-semibold">
+        <DropdownMenuItem onClick={onRestart} className="gap-2 text-[14px] font-semibold">
           <RotateCcw className="h-4 w-4" />
           Scan another statement
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => replayTour('results')} className="gap-2 text-[13px] font-semibold">
+        <DropdownMenuItem onClick={() => replayTour('results')} className="gap-2 text-[14px] font-semibold">
           <Compass className="h-4 w-4" />
           Take the tour
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onClear} className="gap-2 text-[13px] font-semibold">
+        <DropdownMenuItem onClick={onClear} className="gap-2 text-[14px] font-semibold">
           <Trash2 className="h-4 w-4" />
           Clear my data
         </DropdownMenuItem>

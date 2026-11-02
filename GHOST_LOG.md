@@ -421,3 +421,22 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/ExKit.jsx, src/components/ex/ExAct2.jsx
 - How to test: 💔 theme > sample > Messages to exes: the bubble is to the right of her face; sunglasses and phone fully visible. Check-ins & reminders: the Cassy nudge bubble also clears her glasses.
 - User feedback that drove this: "CHECK speech bubble overlap on who this ghost"
+
+### Bigger text, cleaner home, sign-in with the promise, tour inside the results, plain tab names, cancel buttons
+- What:
+  - Text: every small size went up a step across the app (about 600 places), so captions are at least 12.5px and most text 13.5 to 14.5px. Home sections share one width, stats and "Is this you?" cards are bigger.
+  - Home: the 3 steps are a clean list going down (number, icon, one line). The ghost team cards each have a big coloured ghost with a role icon, the name, a coloured job tag and one line on what they do (including Ghost It).
+  - Sign in / sign up: the pages now show the promise ("Ghost them once. Pay once."), what Free and Pro give you and the privacy line beside the form, instead of a blank "Welcome back". The limit sheet says the promise above its button. /?preview_paywall=scan (or guide, cass, report, sign_in) now works on the live site, so the paywall can be shown while it's free.
+  - Tour: removed from the home page. Inside the results, "New here? Take the tour" (and the Tour button) runs a click-through tour that opens Ghosts, Subscriptions and Calendar for you.
+  - Tabs: every theme's tabs now say what they do (Ghosts, Mark as sorted, Goal path, Calendar & reminders, Email templates, Subscriptions, Receipt), with the theme's own name ("Jacob's chain", "Heartbreak House") as a small second line. "Break this link" now reads "It's sorted: break this link", with what it means.
+  - Ghost types: picking Trial converted, Bank fee, Duplicate or Price creep shows what it means and what to do; "All" lists every type found. Card badges show the meaning on hover.
+  - Cancel: every subscription ghost card has "Cancel on X's site ↗" (the checked official page) or "Find X's cancel page" (a web search, never a guessed link). Bank fees don't get one.
+- Files: 92 files for text sizes; src/components/AuthLayout.jsx, src/pages/Login.jsx, Register.jsx, src/components/landing/ValueLine.jsx, PlansAtAGlance.jsx, IsThisYou.jsx, src/pages/Landing.jsx, src/components/stats/StatsStrip.jsx, src/components/tour/Tour.jsx, src/components/results/ResultsTour.jsx, ResultsView.jsx, LeakFilter.jsx, LeakCard.jsx, CancelSiteLink.jsx (new), src/components/xmas/XmasLeakCard.jsx, JacobsChain.jsx, src/components/ex/ExLeakCard.jsx, src/components/results/HauntedHouse.jsx, src/components/scan/Paywall.jsx, src/lib/AllowanceContext.jsx, src/lib/ghostFees/leaks.js; removed src/components/landing/HomeTour.jsx
+- How to test: Home in each theme: steps list, Free vs Pro > ghost team. /login and /register. /?preview_paywall=scan. Sample > "New here? Take the tour". 🎄 sidebar: plain names with the story names under. Ghosts > Trial converted: the meaning and "Find Streammax's cancel page".
+- User feedback that drove this: "text size and proportions need to be better, some text too small", "give icons and description of each agent", "where's the paywall and the sign in with clean UVP description", "need to make step 1, 2 and 3 cleanly", "the tour doesn't work, needs to be inside not on the home page", "step 1, 2 and 3 down, clean list", "need these names and the icon to be more visual and clean", "what's trial converted and the other ones like bank fees", "add button direct to the web page to cancel the subscription", "what's Fees Past, Jacob's etc, redesign to the other themes", "what's break this link"
+
+### Ghost team gets its own home section; badges explained in the plans
+- What: "Meet your ghost team" (Penny, Sir Spooksworth, Gus, Cassy and Ghost It, each with their ghost, role icon, job and one line) is now its own section right under the stats, instead of being hidden in the Free vs Pro tab. In the Pro list, "badges" now says what they are: "Levels and badges as you cancel, like First Ghost and Price Rise Spotter, to share" (same on /upgrade).
+- Files: src/components/landing/GhostTeam.jsx (new), src/components/landing/PlansAtAGlance.jsx, src/pages/Landing.jsx, src/pages/Upgrade.jsx
+- How to test: Home page: the team row under the stats in every theme. Free vs Pro tab: the badges line.
+- User feedback that drove this: "where's the different ghost agents", "what's the badges"

@@ -1,5 +1,6 @@
 import { money } from '@/lib/ghostFees/format';
 import { cn } from '@/lib/utils';
+import { BADGE_MEANING } from '@/lib/ghostFees/leaks';
 
 // Filter and sort the ghosts by leak type (Duplicate, Price creep, Trial
 // converted, Bank fee...). Only types found on this statement get a chip.
@@ -29,7 +30,7 @@ export default function LeakFilter({ leaks, type, sort, onType, onSort }) {
       aria-checked={type === key}
       onClick={() => onType(key)}
       className={cn(
-        'rounded-full border px-3 py-1 text-[12.5px] font-bold transition-colors',
+        'rounded-full border px-3 py-1 text-[13.5px] font-bold transition-colors',
         type === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground',
       )}
     >
@@ -42,16 +43,23 @@ export default function LeakFilter({ leaks, type, sort, onType, onSort }) {
         {chip('all', `All ${leaks.length}`)}
         {[...counts.entries()].map(([badge, count]) => chip(badge, `${badge} ${count}`))}
       </div>
-      <label className="ml-auto flex items-center gap-1.5 text-[12px] font-bold text-muted-foreground">
+      <label className="ml-auto flex items-center gap-1.5 text-[13px] font-bold text-muted-foreground">
         Sort
-        <select value={sort} onChange={(event) => onSort(event.target.value)} className="rounded-lg border border-border bg-background px-2 py-1 text-[12.5px] font-semibold text-foreground">
+        <select value={sort} onChange={(event) => onSort(event.target.value)} className="rounded-lg border border-border bg-background px-2 py-1 text-[13.5px] font-semibold text-foreground">
           {LEAK_SORTS.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
         </select>
       </label>
-      {type !== 'all' && (
-        <p className="w-full text-[12.5px] text-muted-foreground" aria-live="polite">
-          {shown.length} {shown.length === 1 ? 'ghost' : 'ghosts'} · {money(shown.reduce((sum, leak) => sum + leak.amount, 0))}
-        </p>
+      {/* What each kind means, so the chips aren't jargon. */}
+      {type !== 'all' ? (
+        <div className="w-full rounded-2xl border border-border bg-card/60 px-4 py-3" aria-live="polite">
+          <p className="text-[15px] text-foreground"><b>{type}:</b> {BADGE_MEANING[type]?.what}</p>
+          {BADGE_MEANING[type]?.todo && <p className="mt-0.5 text-[14px] text-muted-foreground">What to do: {BADGE_MEANING[type].todo}</p>}
+          <p className="mt-1 text-[13.5px] font-bold text-muted-foreground">{shown.length} {shown.length === 1 ? 'ghost' : 'ghosts'} · {money(shown.reduce((sum, leak) => sum + leak.amount, 0))}</p>
+        </div>
+      ) : (
+        <ul className="grid w-full gap-x-4 gap-y-1 text-[13.5px] text-muted-foreground sm:grid-cols-2" aria-label="What each kind means">
+          {[...counts.keys()].map((badge) => <li key={badge}><b className="text-foreground">{badge}:</b> {BADGE_MEANING[badge]?.what}</li>)}
+        </ul>
       )}
     </div>
   );

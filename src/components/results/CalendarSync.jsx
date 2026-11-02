@@ -50,8 +50,8 @@ export default function CalendarSync({ subscriptions }) {
     return (
       <div className="mt-3 rounded-2xl border border-primary/40 bg-primary/[0.06] p-3">
         <p className="flex items-center gap-2 font-heading text-[14px] font-semibold text-foreground"><RefreshCw className="h-4 w-4 text-primary" /> Sync to my calendar</p>
-        <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">Subscribe once in Google, Outlook or Apple Calendar. Every reminder and task you add here then shows up there on its own.</p>
-        <button type="button" disabled={busy} onClick={start} className="mt-2 w-full rounded-xl bg-primary py-2 text-[13px] font-bold text-primary-foreground disabled:opacity-50">
+        <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">Subscribe once in Google, Outlook or Apple Calendar. Every reminder and task you add here then shows up there on its own.</p>
+        <button type="button" disabled={busy} onClick={start} className="mt-2 w-full rounded-xl bg-primary py-2 text-[14px] font-bold text-primary-foreground disabled:opacity-50">
           {busy ? 'Setting up...' : 'Set up calendar sync'}
         </button>
       </div>
@@ -61,7 +61,7 @@ export default function CalendarSync({ subscriptions }) {
   return (
     <div className="mt-3 rounded-2xl border border-[#5ee6c8]/50 bg-[#5ee6c8]/[0.06] p-3">
       <p className="flex items-center gap-2 font-heading text-[14px] font-semibold text-foreground"><CalendarCheck className="h-4 w-4 text-[#5ee6c8]" /> {sync.events.length} reminders syncing</p>
-      <p className="mt-1 text-[12px] text-muted-foreground">Subscribe once in your calendar:</p>
+      <p className="mt-1 text-[13px] text-muted-foreground">Subscribe once in your calendar:</p>
       <div className="mt-2 grid grid-cols-2 gap-1.5">
         {calendars.map(({ label, href, paste }) => (
           <a
@@ -70,22 +70,22 @@ export default function CalendarSync({ subscriptions }) {
             target="_blank"
             rel="noreferrer"
             onClick={paste ? () => copyLink(`Link copied. In ${label}, paste it into "Subscribe from web" and press Import.`) : undefined}
-            className="inline-flex items-center justify-center gap-1 rounded-xl border border-border bg-background/60 px-2 py-2 text-[12.5px] font-bold text-foreground hover:border-primary/60"
+            className="inline-flex items-center justify-center gap-1 rounded-xl border border-border bg-background/60 px-2 py-2 text-[13.5px] font-bold text-foreground hover:border-primary/60"
           >
             {label} <ExternalLink className="h-3 w-3" />
           </a>
         ))}
       </div>
-      <p className="mt-2 rounded-xl bg-background/50 px-2.5 py-2 text-[11.5px] leading-relaxed text-muted-foreground">
+      <p className="mt-2 rounded-xl bg-background/50 px-2.5 py-2 text-[12.5px] leading-relaxed text-muted-foreground">
         <b className="text-foreground">Outlook:</b> the button copies your link and opens &quot;Subscribe from web&quot;. Paste the link in the box (Cmd or Ctrl + V), name it Ghost Fees and press Import.
       </p>
       <div className="mt-2 flex items-center justify-between gap-2">
-        <button type="button" onClick={() => copyLink('Calendar link copied')} className="inline-flex items-center gap-1 text-[12px] font-bold text-primary hover:underline">
+        <button type="button" onClick={() => copyLink('Calendar link copied')} className="inline-flex items-center gap-1 text-[13px] font-bold text-primary hover:underline">
           <Copy className="h-3.5 w-3.5" /> Copy link
         </button>
-        <button type="button" onClick={stop} className="text-[12px] font-bold text-muted-foreground underline">Stop syncing</button>
+        <button type="button" onClick={stop} className="text-[13px] font-bold text-muted-foreground underline">Stop syncing</button>
       </div>
-      <p className="mt-2 text-[10.5px] leading-relaxed text-muted-foreground">Google and Outlook check for new reminders every few hours. The link is private: anyone with it can see these reminders (names, amounts and dates only).</p>
+      <p className="mt-2 text-[12px] leading-relaxed text-muted-foreground">Google and Outlook check for new reminders every few hours. The link is private: anyone with it can see these reminders (names, amounts and dates only).</p>
     </div>
   );
 }

@@ -23,18 +23,18 @@ export default function ExScanChat({ pick, pickKey, count, fileName, sample, onN
         <span className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-full" style={{ background: C.card, border: `1.5px solid ${C.mint}` }}><img src={EX_CONTACT.art} alt="" width={34} height={40} className="h-[36px] w-auto translate-y-[3px] object-contain" /></span>
         <div className="flex min-w-0 flex-col gap-0.5">
           <div className="ex-fredoka text-[18px] font-semibold">{EX_CONTACT.name}</div>
-          <div className="flex items-center gap-1.5 text-[13px] font-bold" style={{ color: C.mint }}>{EX_CONTACT.name} is typing <Dots color={C.mint} /></div>
+          <div className="flex items-center gap-1.5 text-[14px] font-bold" style={{ color: C.mint }}>{EX_CONTACT.name} is typing <Dots color={C.mint} /></div>
         </div>
       </div>
 
       <div className="relative flex flex-1 flex-col gap-2.5 p-4" style={{ background: 'radial-gradient(ellipse at 80% 85%, #24202c 0%, #15131a 55%)' }}>
-        <div className="relative self-center rounded-full px-3 py-1 text-[12px] font-bold" style={{ color: C.muted, background: C.card }}>Today</div>
+        <div className="relative self-center rounded-full px-3 py-1 text-[13px] font-bold" style={{ color: C.muted, background: C.card }}>Today</div>
         <div className="ex-in relative flex max-w-[78%] flex-col items-end gap-1 self-end" style={{ animationDelay: '.2s' }}>
           <div className="flex items-center gap-2.5 px-3.5 py-3" style={{ borderRadius: '20px 20px 6px 20px', background: C.coral, color: C.bg }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C.bg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h4" /></svg>
-            <div className="flex flex-col"><span className="break-all text-[15px] font-extrabold">{fileName}</span><span className="text-[12px] font-bold">Here&apos;s everything. Be honest.</span></div>
+            <div className="flex flex-col"><span className="break-all text-[15px] font-extrabold">{fileName}</span><span className="text-[13px] font-bold">Here&apos;s everything. Be honest.</span></div>
           </div>
-          <div className="text-[12px]" style={{ color: C.muted }}>Delivered</div>
+          <div className="text-[13px]" style={{ color: C.muted }}>Delivered</div>
         </div>
         <div className="ex-in relative max-w-[80%] self-start px-4 py-3 text-[16px]" style={{ ...them, animationDelay: '.85s' }}>Going through your messages...</div>
         <div className="ex-in relative max-w-[80%] self-start px-4 py-3 text-[16px]" style={{ ...them, animationDelay: '1.4s' }}>Found someone who never calls...</div>
@@ -44,7 +44,7 @@ export default function ExScanChat({ pick, pickKey, count, fileName, sample, onN
         </div>
         <div className="ex-in relative flex max-w-[78%] flex-col items-end gap-1 self-end" style={{ animationDelay: '2.5s' }}>
           <div className="ex-fredoka px-4 py-3 text-[17px] font-semibold" style={{ borderRadius: '20px 20px 6px 20px', background: C.coral, color: C.bg }}>{pick.scanBubble}</div>
-          <div className="text-[12px] font-bold" style={{ color: C.mint }}>✓✓ Read</div>
+          <div className="text-[13px] font-bold" style={{ color: C.mint }}>✓✓ Read</div>
         </div>
         <div className="ex-in relative flex gap-[5px] self-start px-4 py-3.5" aria-hidden="true" style={{ ...them, animationDelay: '3s' }}><Dots color={C.soft} /></div>
         <div className="mt-auto flex items-end justify-end gap-1 self-end pt-6">
@@ -69,7 +69,7 @@ export default function ExScanChat({ pick, pickKey, count, fileName, sample, onN
         ) : (
           <div aria-hidden="true" className="flex min-h-[44px] items-center rounded-[22px] px-4 text-[15px]" style={{ background: C.card, color: C.faint }}>Reading between the lines...</div>
         )}
-        <div className="text-center text-[11.5px]" style={{ color: C.faint }}>PDF or CSV bank statements · read in your browser</div>
+        <div className="text-center text-[12.5px]" style={{ color: C.faint }}>PDF or CSV bank statements · read in your browser</div>
       </div>
     </SilverPhone>
   );

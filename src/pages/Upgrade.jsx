@@ -21,7 +21,7 @@ const FEATURES = [
   { full: 'Ghost List tracker', body: 'Requested, confirmed, still charging' },
   { full: 'Did it actually stop?', body: 'Your next statement proves it' },
   { full: 'Cancel reminders', body: 'Pick a time, it lands in your calendar' },
-  { full: 'PDF report, levels and badges', body: 'Share what you ghosted' },
+  { full: 'PDF report, levels and badges', body: 'Badges like First Ghost and Price Rise Spotter as you cancel. Share what you ghosted' },
   { full: 'Your full total', body: 'Always shown, on every plan', free: 'Your full total', always: true },
 ];
 
@@ -98,8 +98,8 @@ export default function Upgrade() {
       <main className="mx-auto w-full max-w-lg px-4">
         <h1 className="up-fade mt-6 font-heading text-[32px] font-bold leading-tight">Choose your plan</h1>
         <p className="mt-1.5 text-[15px] leading-snug" style={{ color: P.muted }}>Pay once, keep it. No subscription, no renewals.</p>
-        {!charging && <p className="mt-3 rounded-2xl px-4 py-2.5 text-[13.5px] font-semibold" style={{ background: P.card, color: P.soft }}>Everything is free while we&apos;re in beta. This is how it will work after.</p>}
-        {paid && charging && <p className="mt-3 rounded-2xl px-4 py-2.5 text-[13.5px] font-semibold" style={{ background: P.card, color: P.accent }}>You&apos;re already unlocked{status?.foundingNumber ? `, founding member #${status.foundingNumber}` : ''}.</p>}
+        {!charging && <p className="mt-3 rounded-2xl px-4 py-2.5 text-[14.5px] font-semibold" style={{ background: P.card, color: P.soft }}>Everything is free while we&apos;re in beta. This is how it will work after.</p>}
+        {paid && charging && <p className="mt-3 rounded-2xl px-4 py-2.5 text-[14.5px] font-semibold" style={{ background: P.card, color: P.accent }}>You&apos;re already unlocked{status?.foundingNumber ? `, founding member #${status.foundingNumber}` : ''}.</p>}
 
         <div className="mt-5 flex flex-col gap-2.5" role="radiogroup" aria-label="Plan">
           {plans.map((item) => (
@@ -108,16 +108,16 @@ export default function Upgrade() {
                 <span className="h-2.5 w-2.5 rounded-full transition-transform duration-200" style={{ background: P.accent, transform: `scale(${plan === item.key ? 1 : 0})` }} />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="flex flex-wrap items-center gap-2"><span className="text-[16px] font-semibold">{item.name}</span>{item.badge && <span className="rounded-full px-2 py-0.5 text-[11px] font-bold" style={{ background: item.key === 'founding' ? P.founding : P.accent, color: P.ink }}>{item.badge}</span>}</span>
-                <span className="block text-[13px]" style={{ color: P.muted }}>{item.line}</span>
+                <span className="flex flex-wrap items-center gap-2"><span className="text-[16px] font-semibold">{item.name}</span>{item.badge && <span className="rounded-full px-2 py-0.5 text-[12.5px] font-bold" style={{ background: item.key === 'founding' ? P.founding : P.accent, color: P.ink }}>{item.badge}</span>}</span>
+                <span className="block text-[14px]" style={{ color: P.muted }}>{item.line}</span>
               </span>
-              <span className="text-right"><span className="block font-heading text-[22px] font-bold leading-none">{item.price}</span><span className="text-[12px]" style={{ color: P.muted }}>{item.note}</span></span>
+              <span className="text-right"><span className="block font-heading text-[22px] font-bold leading-none">{item.price}</span><span className="text-[13px]" style={{ color: P.muted }}>{item.note}</span></span>
             </button>
           ))}
         </div>
 
         <section className="mt-6 flex flex-col gap-3 rounded-[18px] p-[18px]" style={{ background: P.card }}>
-          <h2 className="text-[13px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>{plan === 'free' ? 'FREE PLAN' : 'WHAT\u2019S INCLUDED'}</h2>
+          <h2 className="text-[14px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>{plan === 'free' ? 'FREE PLAN' : 'WHAT\u2019S INCLUDED'}</h2>
           <ul key={plan} className="flex flex-col gap-3">
             {FEATURES.map((item, index) => {
               const has = plan !== 'free' || item.free;
@@ -129,7 +129,7 @@ export default function Upgrade() {
                   </span>
                   <span className="flex flex-col gap-0.5">
                     <span className={cn('text-[15px] font-semibold', !has && 'line-through')} style={{ color: has ? '#FFFFFF' : '#8A7FA3' }}>{label}</span>
-                    <span className="text-[13px] leading-snug" style={{ color: P.faint }}>{item.body}</span>
+                    <span className="text-[14px] leading-snug" style={{ color: P.faint }}>{item.body}</span>
                   </span>
                 </li>
               );
@@ -141,26 +141,26 @@ export default function Upgrade() {
           <section className="mt-6 flex flex-col gap-2.5 rounded-[18px] p-[18px]" style={{ background: P.card }}>
             <div className="flex items-baseline justify-between"><span className="text-[14px]" style={{ color: P.muted }}>Your scans found</span><span className="font-heading text-[24px] font-bold" style={{ color: P.accent }}>{money(total)}</span></div>
             <div className="h-2 overflow-hidden rounded" style={{ background: P.track }}><div className="up-fill h-2 rounded" style={{ background: P.accent, '--w': '100%' }} /></div>
-            {times >= 1 && <span className="text-[13px]" style={{ color: P.muted }}>That&apos;s {times}x the $10 price.</span>}
+            {times >= 1 && <span className="text-[14px]" style={{ color: P.muted }}>That&apos;s {times}x the $10 price.</span>}
           </section>
         )}
 
         <section className="mt-6">
-          <h2 className="pb-2 text-[13px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>THE RESEARCH</h2>
+          <h2 className="pb-2 text-[14px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>THE RESEARCH</h2>
           <ul>
             {UPGRADE_STATS.slice(0, 8).map((item, index) => (
               <li key={item.id} className="up-fade flex items-center gap-3.5 py-3" style={{ borderBottom: `1px solid ${P.line}`, animationDelay: `${100 + index * 60}ms` }}>
                 <span className="w-[92px] shrink-0 font-heading text-[22px] font-bold leading-tight" style={{ color: P.accent }}>{item.big}</span>
-                <span className="flex flex-col gap-0.5"><span className="text-[14px] leading-snug">{item.text}</span><span className="text-[12px]" style={{ color: P.faint }}>({item.source})</span></span>
+                <span className="flex flex-col gap-0.5"><span className="text-[14px] leading-snug">{item.text}</span><span className="text-[13px]" style={{ color: P.faint }}>({item.source})</span></span>
               </li>
             ))}
           </ul>
         </section>
 
         <section id="compare" className="mt-6 scroll-mt-20">
-          <h2 className="text-[13px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>HOW WE COMPARE</h2>
+          <h2 className="text-[14px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>HOW WE COMPARE</h2>
           <div className="mt-2.5 overflow-x-auto rounded-2xl" style={{ background: P.card }}>
-            <table className="w-full text-[13px]">
+            <table className="w-full text-[14px]">
               <tbody>
                 {COMPARE.map((row, index) => (
                   <tr key={row[0] || 'head'} className="font-normal" style={index === 0 ? { background: P.line, fontWeight: 600 } : { borderTop: `1px solid ${P.line}` }}>
@@ -172,11 +172,11 @@ export default function Upgrade() {
               </tbody>
             </table>
           </div>
-          <p className="mt-1.5 text-[11px]" style={{ color: P.faint }}>Prices checked Nov 2026.</p>
+          <p className="mt-1.5 text-[12.5px]" style={{ color: P.faint }}>Prices checked Nov 2026.</p>
         </section>
 
         <section className="mt-6">
-          <h2 className="pb-1.5 text-[13px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>QUESTIONS</h2>
+          <h2 className="pb-1.5 text-[14px] font-bold tracking-[0.06em]" style={{ color: P.muted }}>QUESTIONS</h2>
           <div className="flex flex-col">
             {QUESTIONS.map(([q, a], index) => (
               <div key={q} style={{ borderBottom: `1px solid ${P.line}` }}>
@@ -190,10 +190,10 @@ export default function Upgrade() {
         </section>
 
         <div className="mt-6 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5" style={{ background: P.card }}>
-          <span className="flex flex-col gap-0.5"><span className="text-[15px] font-semibold">Prefer chat?</span><span className="text-[13px]" style={{ color: P.muted }}>Ghost It on ASI:One, packs from $2</span></span>
+          <span className="flex flex-col gap-0.5"><span className="text-[15px] font-semibold">Prefer chat?</span><span className="text-[14px]" style={{ color: P.muted }}>Ghost It on ASI:One, packs from $2</span></span>
           <a href="https://asi1.ai" target="_blank" rel="noreferrer" className="flex min-h-[44px] items-center rounded-xl border px-3.5 text-[14px] font-semibold" style={{ borderColor: P.handle }}>Try it</a>
         </div>
-        <p className="mt-6 text-center text-[12px]" style={{ color: P.faint }}>General information, not financial advice. <Link to="/privacy" className="underline">How we handle your data</Link></p>
+        <p className="mt-6 text-center text-[13px]" style={{ color: P.faint }}>General information, not financial advice. <Link to="/privacy" className="underline">How we handle your data</Link></p>
       </main>
 
       <div className="fixed inset-x-0 bottom-0 z-30 px-5 pb-5 pt-3.5" style={{ background: P.bg, borderTop: `1px solid ${P.line}` }}>
@@ -203,8 +203,8 @@ export default function Upgrade() {
             {plan !== 'free' && <Lock className="h-4 w-4" strokeWidth={2.6} />}
             {plan === 'free' ? 'Stay on Free' : busy ? 'Opening Stripe...' : signedIn ? 'Continue to payment' : 'Sign in to continue'}
           </button>
-          {message && <p className="mt-2 text-center text-[12.5px] text-[#ffc27a]" role="status">{message}</p>}
-          <p className="mt-2 text-center text-[12px]" style={{ color: P.faint }}>Secure checkout by Stripe · No card surcharge · One payment</p>
+          {message && <p className="mt-2 text-center text-[13.5px] text-[#ffc27a]" role="status">{message}</p>}
+          <p className="mt-2 text-center text-[13px]" style={{ color: P.faint }}>Secure checkout by Stripe · No card surcharge · One payment</p>
         </div>
       </div>
     </div>

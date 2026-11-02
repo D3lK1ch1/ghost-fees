@@ -44,12 +44,12 @@ export default function Unlocked() {
       <img src={ART[theme.key] || ART.haunted} alt="" className={`h-40 w-auto object-contain ${state === 'paid' ? 'up-jump' : ''}`} />
       {state === 'paid' ? (
         <div className="mt-5 flex w-full max-w-sm flex-col items-center gap-5">
-          {status?.foundingNumber && <p className="up-fade rounded-full px-3.5 py-1.5 text-[13px] font-semibold" style={{ background: P.accent, color: P.ink }}>Founding member #{status.foundingNumber}</p>}
+          {status?.foundingNumber && <p className="up-fade rounded-full px-3.5 py-1.5 text-[14px] font-semibold" style={{ background: P.accent, color: P.ink }}>Founding member #{status.foundingNumber}</p>}
           <h1 className="font-heading text-[34px] font-bold leading-tight">You&apos;re in.</h1>
           <p className="text-[17px] leading-snug" style={{ color: P.soft }}>Unlimited scans and all 4 ghosts are unlocked. Time to clear the house.</p>
           <div className="up-fade grid w-full grid-cols-2 gap-3 rounded-[18px] p-4 text-left" style={{ background: P.sheet, animationDelay: '0.6s' }}>
-            <div className="flex flex-col gap-1"><span className="text-[13px]" style={{ color: P.muted }}>Paid</span><span className="font-heading text-[24px] font-bold">{paidCents ? money(paidCents / 100) : 'Paid'}</span></div>
-            <div className="flex flex-col gap-1"><span className="text-[13px]" style={{ color: P.muted }}>Found so far</span><span className="font-heading text-[24px] font-bold" style={{ color: P.accent }}>{found > 0 ? money(found) : 'Scan to see'}</span></div>
+            <div className="flex flex-col gap-1"><span className="text-[14px]" style={{ color: P.muted }}>Paid</span><span className="font-heading text-[24px] font-bold">{paidCents ? money(paidCents / 100) : 'Paid'}</span></div>
+            <div className="flex flex-col gap-1"><span className="text-[14px]" style={{ color: P.muted }}>Found so far</span><span className="font-heading text-[24px] font-bold" style={{ color: P.accent }}>{found > 0 ? money(found) : 'Scan to see'}</span></div>
           </div>
         </div>
       ) : state === 'checking' ? (

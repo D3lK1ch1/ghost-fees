@@ -5,7 +5,7 @@ import { getSessionId } from '@/lib/session';
 import ChoiceGroup from './ChoiceGroup';
 import { CapturedJar } from '@/components/GhostAnimations';
 
-const inputClass = 'mt-2 w-full rounded-xl border border-white/[0.1] bg-black/25 px-3.5 py-2.5 text-[13.5px] text-white placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none';
+const inputClass = 'mt-2 w-full rounded-xl border border-white/[0.1] bg-black/25 px-3.5 py-2.5 text-[14.5px] text-white placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none';
 
 export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mostUseful }) {
   const [foundReal, setFoundReal] = useState('');
@@ -48,22 +48,22 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mos
 
       {leaksFound > 0 && (
         <div className="mt-5">
-          <span className="text-[13px] font-medium text-white">Tap the most useful card above</span>
+          <span className="text-[14px] font-medium text-white">Tap the most useful card above</span>
           {mostUseful ? (
-            <p className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px] text-muted-foreground">
-              <span className="rounded-full bg-primary px-3 py-1 text-[12.5px] font-bold text-primary-foreground">
+            <p className="mt-2 flex flex-wrap items-center gap-2 text-[13.5px] text-muted-foreground">
+              <span className="rounded-full bg-primary px-3 py-1 text-[13.5px] font-bold text-primary-foreground">
                 {mostUseful.title || mostUseful.merchant}
               </span>
               Tap another to change
             </p>
           ) : (
-            <p className="mt-2 text-[12.5px] text-muted-foreground">Optional. It tells us which ghosts matter most.</p>
+            <p className="mt-2 text-[13.5px] text-muted-foreground">Optional. It tells us which ghosts matter most.</p>
           )}
         </div>
       )}
 
       <label className="mt-5 block">
-        <span className="text-[13px] font-medium text-white">What confused you or was missing?</span>
+        <span className="text-[14px] font-medium text-white">What confused you or was missing?</span>
         <input
           value={confusion}
           onChange={(event) => setConfusion(event.target.value)}
@@ -75,7 +75,7 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mos
       <ChoiceGroup label="Would you pay $5 for the full report?" options={['Yes', 'Maybe', 'No']} value={wouldPay} onChange={setWouldPay} />
 
       <label className="mt-5 block">
-        <span className="text-[13px] font-medium text-white">Your builder name</span>
+        <span className="text-[14px] font-medium text-white">Your builder name</span>
         <input
           value={builderName}
           onChange={(event) => setBuilderName(event.target.value)}
@@ -95,7 +95,7 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mos
       </button>
 
       {state === 'error' && (
-        <p className="mt-2 text-center text-[12.5px] text-[#ffb3b3]">That didn&apos;t send. Try once more.</p>
+        <p className="mt-2 text-center text-[13.5px] text-[#ffb3b3]">That didn&apos;t send. Try once more.</p>
       )}
     </section>
   );

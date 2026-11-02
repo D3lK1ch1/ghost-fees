@@ -125,14 +125,14 @@ export default function Evidence() {
         <section className="mt-8">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="mr-auto font-heading text-[20px] font-bold">Feedback ({list.length})</h2>
-            <label className="flex items-center gap-1.5 text-[13px] font-bold"><input type="checkbox" checked={quoteOnly} onChange={(event) => setQuoteOnly(event.target.checked)} /> Quote OK only</label>
-            <button type="button" onClick={copy} className="rounded-full border border-border px-3 py-1.5 text-[13px] font-bold">Copy as text</button>
-            <button type="button" onClick={csv} className="rounded-full bg-primary px-3 py-1.5 text-[13px] font-bold text-primary-foreground">Download CSV</button>
+            <label className="flex items-center gap-1.5 text-[14px] font-bold"><input type="checkbox" checked={quoteOnly} onChange={(event) => setQuoteOnly(event.target.checked)} /> Quote OK only</label>
+            <button type="button" onClick={copy} className="rounded-full border border-border px-3 py-1.5 text-[14px] font-bold">Copy as text</button>
+            <button type="button" onClick={csv} className="rounded-full bg-primary px-3 py-1.5 text-[14px] font-bold text-primary-foreground">Download CSV</button>
           </div>
           <ul className="mt-3 flex flex-col gap-2">
             {list.map((row) => (
               <li key={row.id} className="rounded-2xl border border-border px-4 py-3 text-[14px]">
-                <div className="flex flex-wrap gap-2 text-[12px] text-muted-foreground">
+                <div className="flex flex-wrap gap-2 text-[13px] text-muted-foreground">
                   <span>{(row.created_at || '').slice(0, 10)}</span>
                   <span className={cn('rounded-full px-2', row.kind === 'journey' ? 'bg-primary/20 text-foreground' : 'bg-white/10')}>{row.kind === 'journey' ? '/try' : 'results'}</span>
                   {row.quote_ok && <span className="rounded-full bg-[#5ee6c8]/20 px-2 text-foreground">quote OK{row.builder_name ? `: ${row.builder_name}` : ''}</span>}
@@ -149,7 +149,7 @@ export default function Evidence() {
         <section className="mt-8">
           <h2 className="font-heading text-[20px] font-bold">You said, we changed</h2>
           <div className="mt-2 overflow-x-auto rounded-2xl border border-border">
-            <table className="w-full text-[13.5px]">
+            <table className="w-full text-[14.5px]">
               <tbody>
                 {CHANGELOG.map((row) => (
                   <tr key={row.said} className="border-t border-white/[0.06] first:border-0 align-top">

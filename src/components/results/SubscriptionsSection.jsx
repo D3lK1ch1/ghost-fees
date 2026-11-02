@@ -76,14 +76,14 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   return (
     <section className="mt-8">
       <h2 className="text-[15px] font-semibold tracking-tight text-white">Still using these?</h2>
-      <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
+      <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">
         Your subscriptions and what each one costs a month. Not counted in the total above.
       </p>
 
       {gym && (
         <div className="mt-3 flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/[0.07] px-4 py-3">
           <span className="text-2xl" aria-hidden="true">🏋️</span>
-          <p className="text-[13.5px] leading-relaxed text-foreground">
+          <p className="text-[14.5px] leading-relaxed text-foreground">
             <span className="font-bold">{gym.merchant}: {money(gym.monthly)} a month.</span>{' '}
             <span className="text-muted-foreground">Been this month?</span>
           </p>
@@ -93,8 +93,8 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
       {overlaps.length > 0 && (
         <div className="mt-3 rounded-2xl border border-[#ffc27a]/40 bg-[#ffc27a]/[0.06] px-4 py-3">
-          <p className="text-[13px] font-bold text-foreground">Double-ups spotted</p>
-          <ul className="mt-1 space-y-0.5 text-[12.5px] text-muted-foreground">
+          <p className="text-[14px] font-bold text-foreground">Double-ups spotted</p>
+          <ul className="mt-1 space-y-0.5 text-[13.5px] text-muted-foreground">
             {overlaps.map((group) => (
               <li key={group.key}>
                 <span className="font-bold text-foreground">{group.items.length} {group.label}</span>: {group.items.map((item) => item.merchant).join(', ')} = {money(group.yearly)}/yr together.
@@ -102,7 +102,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
             ))}
           </ul>
           <div className="mt-2 flex flex-wrap items-center gap-1" role="radiogroup" aria-label="Who are these for?">
-            <span className="mr-1 text-[11.5px] text-muted-foreground">Who uses these? Pick one for the best fix:</span>
+            <span className="mr-1 text-[12.5px] text-muted-foreground">Who uses these? Pick one for the best fix:</span>
             {LIFE_STAGES.map((item) => (
               <button
                 key={item.key}
@@ -110,13 +110,13 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                 role="radio"
                 aria-checked={stage === item.key}
                 onClick={() => setStage(item.key)}
-                className={cn('rounded-full border px-2 py-0.5 text-[11.5px] font-semibold', stage === item.key ? 'border-[#ffc27a] bg-[#ffc27a] text-[#2a1a08]' : 'border-[#ffc27a]/40 text-muted-foreground')}
+                className={cn('rounded-full border px-2 py-0.5 text-[12.5px] font-semibold', stage === item.key ? 'border-[#ffc27a] bg-[#ffc27a] text-[#2a1a08]' : 'border-[#ffc27a]/40 text-muted-foreground')}
               >
                 {item.label}
               </button>
             ))}
           </div>
-          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{tipFor(stage, overlaps)}</p>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">{tipFor(stage, overlaps)}</p>
         </div>
       )}
 
@@ -124,7 +124,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
       {proof.dialog}
       <PickTimeDialog target={planFor} onClose={() => setPlanFor(null)} />
 
-      <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
+      <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
 
       {types.length > 1 || subscriptions.length > 3 ? (
         <div className="mt-3 flex flex-wrap items-center gap-1.5" aria-label="Filter and sort subscriptions">
@@ -134,14 +134,14 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
               type="button"
               aria-pressed={typeFilter === key}
               onClick={() => setTypeFilter(key)}
-              className={cn('rounded-full border px-2.5 py-1 text-[12px] font-semibold', typeFilter === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
+              className={cn('rounded-full border px-2.5 py-1 text-[13px] font-semibold', typeFilter === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
             >
               {key === 'all' ? 'All' : TYPE_LABELS[key]}
             </button>
           ))}
-          <label className="ml-auto flex items-center gap-1.5 text-[12px] text-muted-foreground">
+          <label className="ml-auto flex items-center gap-1.5 text-[13px] text-muted-foreground">
             Sort
-            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-full border border-border bg-card px-2 py-1 text-[12px] text-foreground">
+            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-full border border-border bg-card px-2 py-1 text-[13px] text-foreground">
               <option value="cost">Highest cost</option>
               <option value="type">By type</option>
               <option value="name">A to Z</option>
@@ -160,18 +160,18 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                 </span>
                 <span className="shrink-0 text-[14px] font-semibold tabular-nums text-white">
                   {money(subscription.monthly)}
-                  <span className="text-[12px] font-normal text-muted-foreground">/mo</span>
+                  <span className="text-[13px] font-normal text-muted-foreground">/mo</span>
                 </span>
               </div>
 
               {bundleHint(subscription.merchant) && (
-                <p className="mt-1 text-[11.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
+                <p className="mt-1 text-[12.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
               )}
 
               <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} onPlan={() => setPlanFor(subscription)} />
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-[11.5px] text-muted-foreground">Would you sign up for it today?</span>
+                <span className="text-[12.5px] text-muted-foreground">Would you sign up for it today?</span>
                 {ANSWERS.map((option) => (
                   <button
                     key={option.key}
@@ -179,7 +179,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                     aria-pressed={answers[subscription.id] === option.key}
                     onClick={() => answer(subscription, option.key)}
                     className={cn(
-                      'rounded-full border px-2.5 py-0.5 text-[11.5px] font-bold transition-colors',
+                      'rounded-full border px-2.5 py-0.5 text-[12.5px] font-bold transition-colors',
                       answers[subscription.id] === option.key
                         ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-border text-muted-foreground hover:text-foreground',
@@ -192,7 +192,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                   <button
                     type="button"
                     onClick={() => downloadReminder(subscription)}
-                    className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-bold text-primary underline-offset-4 hover:underline"
+                    className="ml-auto inline-flex items-center gap-1 text-[12.5px] font-bold text-primary underline-offset-4 hover:underline"
                   >
                     <CalendarPlus className="h-3.5 w-3.5" />
                     Remind me
@@ -204,7 +204,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
           ))}
         </CardList>
       ) : (
-        <p className="mt-2 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3 text-[13px] font-semibold text-foreground">
+        <p className="mt-2 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3 text-[14px] font-semibold text-foreground">
           {typeFilter === 'all' ? 'All decided. Your answers are below.' : 'Nothing of this type left to decide.'}
         </p>
       )}
@@ -220,19 +220,19 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                   <div className="flex items-center justify-between gap-3">
                     <span className="flex min-w-0 items-center gap-2">
                       <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
-                      <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[11px] font-bold', keep ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary/15 text-primary')}>
+                      <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[12.5px] font-bold', keep ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary/15 text-primary')}>
                         {keep ? 'Keeping it' : 'To cancel'}
                       </span>
                     </span>
                     <span className="flex shrink-0 items-center gap-3">
-                      <span className="text-[14px] font-semibold tabular-nums text-white">{money(subscription.monthly)}<span className="text-[12px] font-normal text-muted-foreground">/mo</span></span>
-                      <button type="button" onClick={() => undo(subscription.id)} className="text-[12px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">Undo</button>
+                      <span className="text-[14px] font-semibold tabular-nums text-white">{money(subscription.monthly)}<span className="text-[13px] font-normal text-muted-foreground">/mo</span></span>
+                      <button type="button" onClick={() => undo(subscription.id)} className="text-[13px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">Undo</button>
                     </span>
                   </div>
                   {!keep && (
                     <>
                       <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} onPlan={() => setPlanFor(subscription)} />
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px]">
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[13.5px]">
                         <span className="flex-1 text-foreground">Added &quot;Cancel {subscription.merchant}&quot; to your goal path.</span>
                         {onDraftCancel && (
                           <button type="button" onClick={() => onDraftCancel(subscription)} className="rounded-full bg-primary px-3 py-1 font-bold text-primary-foreground">
@@ -253,7 +253,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
       )}
 
       {(keeping > 0 || cancelling.length > 0) && (
-        <p className="mt-2.5 text-[12.5px] text-muted-foreground">
+        <p className="mt-2.5 text-[13.5px] text-muted-foreground">
           Keeping {keeping}. Cancelling {cancelling.length}
           {cancelling.length > 0 && `, which frees up ${money(cancelling.reduce((sum, item) => sum + item.monthly, 0))} a month`}.
         </p>
@@ -261,12 +261,12 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
       {/* Life goals live in the Goal path tab; here just one line that points there. */}
       {onOpenPath && (
-        <button type="button" onClick={onOpenPath} className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-bold text-[#5ee6c8] underline-offset-4 hover:underline">
+        <button type="button" onClick={onOpenPath} className="mt-4 inline-flex items-center gap-1.5 text-[14px] font-bold text-[#5ee6c8] underline-offset-4 hover:underline">
           {cancelling.length > 0 ? `Put the ${money(cancelling.reduce((sum, item) => sum + item.monthly, 0))} a month towards a goal` : 'Put what you save towards a goal'} in Goal path →
         </button>
       )}
 
-      <p className="mt-3 text-[12px] leading-relaxed text-muted-foreground/90">
+      <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground/90">
         <span className="font-bold text-foreground/90">Know your rights:</span> from 1 July 2027, cancelling a subscription
         must be as easy as signing up. You can report subscription traps to the{' '}
         <a href="https://www.accc.gov.au/" target="_blank" rel="noreferrer" className="font-bold text-primary underline underline-offset-4">ACCC</a>.
@@ -286,7 +286,7 @@ function CancelHelp({ subscription, ghosted, onGhost, onPlan }) {
             href={info.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[12px] font-bold text-primary underline-offset-4 hover:underline"
+            className="inline-flex items-center gap-1 text-[13px] font-bold text-primary underline-offset-4 hover:underline"
           >
             Cancel on {info.name}
             <ExternalLink className="h-3.5 w-3.5" />
@@ -297,19 +297,19 @@ function CancelHelp({ subscription, ghosted, onGhost, onPlan }) {
           onClick={onGhost}
           disabled={ghosted}
           className={cn(
-            'ml-auto rounded-full px-2.5 py-0.5 text-[11.5px] font-bold transition-colors',
+            'ml-auto rounded-full px-2.5 py-0.5 text-[12.5px] font-bold transition-colors',
             ghosted ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary text-primary-foreground',
           )}
         >
           {ghosted ? 'On your Ghost List' : '👻 I cancelled it'}
         </button>
         {!ghosted && onPlan && (
-          <button type="button" onClick={onPlan} className="rounded-full border border-primary/60 px-2.5 py-0.5 text-[11.5px] font-bold text-foreground hover:bg-primary/10">
+          <button type="button" onClick={onPlan} className="rounded-full border border-primary/60 px-2.5 py-0.5 text-[12.5px] font-bold text-foreground hover:bg-primary/10">
             ⏰ When will you cancel it?
           </button>
         )}
       </div>
-      <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">{info.steps}</p>
+      <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{info.steps}</p>
     </div>
   );
 }

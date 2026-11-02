@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ChevronDown, Landmark, Mail, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, shortDate } from '@/lib/ghostFees/format';
-import { BADGE_TONES } from '@/lib/ghostFees/leaks';
+import { BADGE_TONES, BADGE_MEANING } from '@/lib/ghostFees/leaks';
 import { CPI, versusCpi } from '@/lib/ghostFees/inflation';
 import { BadgePop } from '@/components/GhostAnimations';
 import { useTheme } from '@/lib/ThemeContext';
@@ -54,11 +54,11 @@ export default function LeakCard({ leak, onDraft, avatar }) {
             <h3 className={cn('truncate font-heading text-[17px] font-semibold', dark && 'text-[#fbf8fa]')}>
               {leak.title || leak.merchant}
             </h3>
-            <BadgePop className={cn('mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.badge])}>
-              {leak.badge}
+            <BadgePop className={cn('mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[12.5px] font-bold', BADGE_TONES[leak.badge])}>
+              <span title={BADGE_MEANING[leak.badge]?.what}>{leak.badge}</span>
             </BadgePop>
             {leak.extraBadge && (
-              <BadgePop delay={0.75} className={cn('ml-1.5 mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold', BADGE_TONES[leak.extraBadge])}>
+              <BadgePop delay={0.75} className={cn('ml-1.5 mt-1.5 inline-block rounded-full px-2.5 py-0.5 text-[12.5px] font-bold', BADGE_TONES[leak.extraBadge])}>
                 {leak.extraBadge}
               </BadgePop>
             )}
@@ -68,19 +68,19 @@ export default function LeakCard({ leak, onDraft, avatar }) {
           <div className={cn('font-heading text-[1.7rem] font-bold leading-none tabular-nums', dark && 'text-[#fbf8fa]')}>
             {money(leak.amount)}
           </div>
-          <div className={cn('mt-1.5 text-[12px] font-semibold', muted)}>{leak.caption}</div>
+          <div className={cn('mt-1.5 text-[13px] font-semibold', muted)}>{leak.caption}</div>
         </div>
       </div>
-      <p className={cn('mt-2 text-[13px] leading-relaxed', muted)}>{leak.reason}</p>
+      <p className={cn('mt-2 text-[14px] leading-relaxed', muted)}>{leak.reason}</p>
 
       <LeakSource dates={leak.dates} sources={leak.sources} dark={dark} />
 
       {rise && (
-        <p className={cn('mt-2 text-[12.5px] leading-relaxed', muted)}>
+        <p className={cn('mt-2 text-[13.5px] leading-relaxed', muted)}>
           Up <strong className={strong}>{rise.percent}%</strong> since {shortDate(leak.priceRise.since)}.
           {' '}Prices overall rose {CPI.rate}% in the year to {CPI.asOf} (ABS).
           {rise.above && (
-            <span className="ml-2 inline-block rounded-full bg-[#ffd9a8] px-2 py-0.5 text-[11px] font-bold text-[#8a3b00]">
+            <span className="ml-2 inline-block rounded-full bg-[#ffd9a8] px-2 py-0.5 text-[12.5px] font-bold text-[#8a3b00]">
               Above inflation
             </span>
           )}
@@ -91,7 +91,7 @@ export default function LeakCard({ leak, onDraft, avatar }) {
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className={cn('mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-bold underline underline-offset-4', muted, dark ? 'hover:text-[#fbf8fa]' : 'hover:text-[#1b1233]')}
+          className={cn('mt-3 inline-flex items-center gap-1.5 text-[13.5px] font-bold underline underline-offset-4', muted, dark ? 'hover:text-[#fbf8fa]' : 'hover:text-[#1b1233]')}
         >
           {open ? 'Hide transactions' : 'Show transactions'}
           <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open && 'rotate-180')} />
@@ -104,7 +104,7 @@ export default function LeakCard({ leak, onDraft, avatar }) {
             <li
               key={`${row.date}-${index}`}
               className={cn(
-                'flex items-center gap-3 px-3 py-2 text-[12.5px]',
+                'flex items-center gap-3 px-3 py-2 text-[13.5px]',
                 index > 0 && (dark ? 'border-t border-border' : 'border-t border-[#1b1233]/[0.07]'),
                 row.wasted && 'bg-[#ffd9a8]/70',
               )}
@@ -113,7 +113,7 @@ export default function LeakCard({ leak, onDraft, avatar }) {
               <span className="min-w-0 flex-1">
                 <span className={cn('block truncate', row.wasted && 'text-[#1b1233]')}>{row.description}</span>
                 {row.source && (
-                  <span className={cn('block truncate text-[11px]', row.wasted ? 'text-[#8a3b00]' : muted)}>{row.source}</span>
+                  <span className={cn('block truncate text-[12.5px]', row.wasted ? 'text-[#8a3b00]' : muted)}>{row.source}</span>
                 )}
               </span>
               <span className={cn('shrink-0 tabular-nums', row.wasted ? 'font-bold text-[#8a3b00]' : muted)}>
@@ -125,17 +125,18 @@ export default function LeakCard({ leak, onDraft, avatar }) {
       )}
 
       {leak.tip && (
-        <p className={cn('mt-3 rounded-2xl px-3 py-2 text-[12.5px] font-semibold leading-relaxed', muted, dark ? 'bg-white/[0.04]' : 'bg-[#1b1233]/[0.05]')}>
+        <p className={cn('mt-3 rounded-2xl px-3 py-2 text-[13.5px] font-semibold leading-relaxed', muted, dark ? 'bg-white/[0.04]' : 'bg-[#1b1233]/[0.05]')}>
           {leak.tip}
         </p>
       )}
 
+      <CancelSiteLink leak={leak} className={cn('mt-3.5', dark ? 'border-primary bg-primary text-primary-foreground hover:opacity-90' : 'border-[#1b1233] bg-[#1b1233] text-[#f5f0e8]')} />
       {action && (
         <button
           type="button"
           onClick={onDraft}
           className={cn(
-            'mt-3.5 flex w-full items-center justify-center gap-2 rounded-2xl border py-2.5 text-[13.5px] font-bold transition-colors',
+            'mt-3.5 flex w-full items-center justify-center gap-2 rounded-2xl border py-2.5 text-[14.5px] font-bold transition-colors',
             dark
               ? 'border-[#ff6f7d]/50 text-[#fbf8fa] hover:bg-[#ff6f7d] hover:text-[#15131a]'
               : 'border-[#1b1233]/70 hover:bg-[#1b1233] hover:text-[#f5f0e8]',

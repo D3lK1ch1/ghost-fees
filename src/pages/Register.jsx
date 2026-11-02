@@ -128,8 +128,8 @@ export default function Register() {
   return (
     <AuthLayout
       icon={UserPlus}
-      title="Create your account"
-      subtitle="Sign up to get started"
+      title="Create your free account"
+      subtitle="3 free scans. No card needed. Upgrade to Pro any time."
       footer={
         <>
           Already have an account?{" "}

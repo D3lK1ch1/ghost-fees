@@ -62,10 +62,10 @@ export default function CassLookup({ merchant, monthly, auto = false, plain = fa
     return (
       <div className={cn('flex items-center gap-3 rounded-2xl border border-dashed p-3', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
         <GhostMark className="h-8 w-8 shrink-0" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
-        <div className="min-w-0 flex-1 text-[13px] text-foreground">
+        <div className="min-w-0 flex-1 text-[14px] text-foreground">
           Cassy looked up your first subscription for free. Unlock once and she&apos;ll find the official cancel page and phone number for {merchant} and every other one.
         </div>
-        <button type="button" onClick={() => openPaywall('cass')} className="shrink-0 rounded-full px-3 py-1.5 text-[12.5px] font-bold text-[#1a1230]" style={{ background: CASS_COLOR }}>
+        <button type="button" onClick={() => openPaywall('cass')} className="shrink-0 rounded-full px-3 py-1.5 text-[13.5px] font-bold text-[#1a1230]" style={{ background: CASS_COLOR }}>
           Unlock
         </button>
       </div>
@@ -76,10 +76,10 @@ export default function CassLookup({ merchant, monthly, auto = false, plain = fa
     return (
       <div className={cn('flex items-center gap-3 rounded-2xl border border-dashed p-3', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
         <GhostMark className="h-8 w-8 shrink-0 animate-float" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
-        <div className="min-w-0 flex-1 text-[13px] text-foreground">
+        <div className="min-w-0 flex-1 text-[14px] text-foreground">
           {state === 'error' ? 'Cassy couldn’t reach the internet just now.' : <>Ask <b>Cassy</b>, the cancel ghost, to find the official link, steps and phone number for {merchant}.</>}
         </div>
-        <button type="button" onClick={look} className="shrink-0 rounded-full px-3 py-1.5 text-[12.5px] font-bold text-[#1a1230]" style={{ background: CASS_COLOR }}>
+        <button type="button" onClick={look} className="shrink-0 rounded-full px-3 py-1.5 text-[13.5px] font-bold text-[#1a1230]" style={{ background: CASS_COLOR }}>
           {state === 'error' ? 'Try again' : 'Ask Cassy'}
         </button>
       </div>
@@ -90,14 +90,14 @@ export default function CassLookup({ merchant, monthly, auto = false, plain = fa
     return (
       <div className={cn('flex items-center gap-3 rounded-2xl border p-3', className)} style={{ borderColor: `${CASS_COLOR}88` }} aria-live="polite">
         <span className="flex gap-1">{[0, 1, 2].map((i) => <GhostMark key={i} className="h-5 w-5 animate-bob" style={{ color: CASS_COLOR, animationDelay: `${i * 0.2}s` }} eyeColor="#1a1230" />)}</span>
-        <span className="text-[13px] text-muted-foreground">Cassy is searching {merchant}&apos;s official site...</span>
+        <span className="text-[14px] text-muted-foreground">Cassy is searching {merchant}&apos;s official site...</span>
       </div>
     );
   }
 
   if (!info?.found) {
     return (
-      <div className={cn('rounded-2xl border p-3 text-[13px] text-foreground', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
+      <div className={cn('rounded-2xl border p-3 text-[14px] text-foreground', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
         <b>Cassy couldn&apos;t confirm who &quot;{merchant}&quot; is.</b> Check your sign-up email for the company name, or search their official site for &quot;cancel subscription&quot;.
       </div>
     );
@@ -125,45 +125,45 @@ export default function CassLookup({ merchant, monthly, auto = false, plain = fa
       <div className="flex items-center gap-2.5">
         <GhostMark className="h-7 w-7 shrink-0 animate-float" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
         <p className="min-w-0 flex-1 font-heading text-[15px] font-bold text-foreground">How to cancel {info.company}</p>
-        <span className="rounded-full px-2 py-0.5 text-[10.5px] font-bold uppercase" style={{ background: info.confidence === 'high' ? '#5ee6c8' : `${CASS_COLOR}33`, color: info.confidence === 'high' ? '#12302a' : CASS_COLOR }}>
+        <span className="rounded-full px-2 py-0.5 text-[12px] font-bold uppercase" style={{ background: info.confidence === 'high' ? '#5ee6c8' : `${CASS_COLOR}33`, color: info.confidence === 'high' ? '#12302a' : CASS_COLOR }}>
           {info.confidence === 'high' ? 'Official' : 'Double-check'}
         </span>
       </div>
 
       {info.cancelUrl && (
-        <a href={info.cancelUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2.5 text-[13.5px] font-bold text-primary-foreground">
+        <a href={info.cancelUrl} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-xl bg-primary px-3.5 py-2.5 text-[14.5px] font-bold text-primary-foreground">
           Open the cancel page <ExternalLink className="h-4 w-4" />
         </a>
       )}
       {info.steps.length > 0 && (
-        <ol className="mt-3 list-decimal space-y-1 pl-5 text-[13.5px] text-foreground">
+        <ol className="mt-3 list-decimal space-y-1 pl-5 text-[14.5px] text-foreground">
           {info.steps.map((step) => <li key={step}>{step}</li>)}
         </ol>
       )}
-      {info.appStoreNote && <p className="mt-2 text-[12.5px] text-muted-foreground">{info.appStoreNote}</p>}
+      {info.appStoreNote && <p className="mt-2 text-[13.5px] text-muted-foreground">{info.appStoreNote}</p>}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {info.phone && (
-          <a href={`tel:${info.phone.replace(/[^\d+]/g, '')}`} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[13px] font-bold text-foreground hover:border-primary/60">
+          <a href={`tel:${info.phone.replace(/[^\d+]/g, '')}`} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[14px] font-bold text-foreground hover:border-primary/60">
             <Phone className="h-4 w-4" /> {info.phone}{info.phoneHours ? <span className="font-normal text-muted-foreground"> · {info.phoneHours}</span> : null}
           </a>
         )}
         {mailto && (
-          <a href={mailto} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[13px] font-bold text-foreground hover:border-primary/60">
+          <a href={mailto} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[14px] font-bold text-foreground hover:border-primary/60">
             <Mail className="h-4 w-4" /> Email {info.email}
           </a>
         )}
         {!info.email && info.supportUrl && (
-          <a href={info.supportUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[13px] font-bold text-foreground hover:border-primary/60">
+          <a href={info.supportUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[14px] font-bold text-foreground hover:border-primary/60">
             Contact page <ExternalLink className="h-4 w-4" />
           </a>
         )}
-        <button type="button" onClick={copy} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[13px] font-bold text-foreground hover:border-primary/60">
+        <button type="button" onClick={copy} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-[14px] font-bold text-foreground hover:border-primary/60">
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copied ? 'Email copied' : 'Copy cancel email'}
         </button>
       </div>
 
-      <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+      <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">
         Cassy checked online on {checkedOn}. {info.confidence === 'high' ? 'From the official site' : 'Not all from the official site, so double-check before you call or pay'}
         {sites.length > 0 && <> ({sites.map(([host, src], i) => <a key={host} href={src} target="_blank" rel="noreferrer" className="underline">{i ? ', ' : ''}{host}</a>)})</>}
       </p>

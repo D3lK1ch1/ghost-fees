@@ -18,7 +18,7 @@ export default function HomeTabs({ tabs }) {
             aria-selected={tab.key === current.key}
             aria-controls={`home-panel-${tab.key}`}
             onClick={() => setActive(tab.key)}
-            className={cn('whitespace-nowrap rounded-full px-4 py-2 text-[13.5px] font-bold transition-colors', tab.key === current.key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}
+            className={cn('whitespace-nowrap rounded-full px-4 py-2 text-[14.5px] font-bold transition-colors', tab.key === current.key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}
           >
             {tab.label}
           </button>

@@ -84,9 +84,9 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <p className="flex items-center gap-2 font-heading text-[18px] font-bold text-foreground"><ListChecks className="h-5 w-5 text-primary" aria-hidden="true" /> Subscription tracker</p>
-          <p className="mt-0.5 text-[13px] text-muted-foreground">Every subscription in one checklist. Tick Keep or Cancel until nothing is left to decide.</p>
+          <p className="mt-0.5 text-[14px] text-muted-foreground">Every subscription in one checklist. Tick Keep or Cancel until nothing is left to decide.</p>
         </div>
-        <p className="text-right text-[13px] text-muted-foreground">
+        <p className="text-right text-[14px] text-muted-foreground">
           <b className="text-foreground">{sorted.length} of {rows.length}</b> sorted
           {ghostedYearly > 0 && <><br /><b className="text-[#5ee6c8]">{money(ghostedYearly)}/yr</b> ghosted</>}
         </p>
@@ -96,13 +96,13 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
       </div>
 
       <div className="mt-3 flex flex-wrap items-center gap-1.5">
-        <span className="mr-1 text-[12px] font-bold text-muted-foreground">Group by</span>
+        <span className="mr-1 text-[13px] font-bold text-muted-foreground">Group by</span>
         {GROUPINGS.map((item) => (
-          <button key={item.key} type="button" aria-pressed={groupBy === item.key} onClick={() => setGroupBy(item.key)} className={cn('rounded-full border px-3 py-1 text-[12.5px] font-bold', groupBy === item.key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}>
+          <button key={item.key} type="button" aria-pressed={groupBy === item.key} onClick={() => setGroupBy(item.key)} className={cn('rounded-full border px-3 py-1 text-[13.5px] font-bold', groupBy === item.key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}>
             {item.label}
           </button>
         ))}
-        <label className="ml-auto flex items-center gap-1.5 text-[12.5px] font-bold text-muted-foreground">
+        <label className="ml-auto flex items-center gap-1.5 text-[13.5px] font-bold text-muted-foreground">
           <input type="checkbox" checked={hideDone} onChange={(event) => setHideDone(event.target.checked)} className="accent-[hsl(var(--primary))]" /> Hide sorted
         </label>
       </div>
@@ -111,8 +111,8 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
       <div className="mt-3 space-y-3">
         {groups.map((group) => (
           <div key={group.key}>
-            <p className="text-[12.5px] font-bold uppercase tracking-wide text-primary">{group.title} <span className="font-normal normal-case text-muted-foreground">· {money(group.rows.reduce((sum, row) => sum + row.monthly, 0))}/mo</span></p>
-            {group.note && <p className="text-[12px] text-muted-foreground">{group.note}</p>}
+            <p className="text-[13.5px] font-bold uppercase tracking-wide text-primary">{group.title} <span className="font-normal normal-case text-muted-foreground">· {money(group.rows.reduce((sum, row) => sum + row.monthly, 0))}/mo</span></p>
+            {group.note && <p className="text-[13px] text-muted-foreground">{group.note}</p>}
             <ul className="mt-1.5 divide-y divide-white/[0.06] rounded-2xl border border-border">
               {group.rows.map((row) => {
                 const done = sorted.includes(row);
@@ -125,18 +125,18 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[14px] font-semibold text-foreground">
                         {row.merchant}
-                        {row.overlap && groupBy !== 'double' && <span className="ml-1.5 rounded-full bg-[#ffc27a]/20 px-1.5 py-0.5 text-[10.5px] font-bold text-[#ffc27a]">Double-up</span>}
+                        {row.overlap && groupBy !== 'double' && <span className="ml-1.5 rounded-full bg-[#ffc27a]/20 px-1.5 py-0.5 text-[12px] font-bold text-[#ffc27a]">Double-up</span>}
                       </span>
-                      <span className={cn('block text-[12px]', row.status === 'charging' ? 'font-bold text-[#ff8a8a]' : 'text-muted-foreground')}>
+                      <span className={cn('block text-[13px]', row.status === 'charging' ? 'font-bold text-[#ff8a8a]' : 'text-muted-foreground')}>
                         {money(row.monthly)}/mo{row.next && !cancelled ? ` · next charge ${shortDate(row.next)}` : ''} · {STATUS_LABEL[row.status]}
                       </span>
                     </span>
                     {!cancelled && (
                       <span className="flex gap-1.5">
-                        <button type="button" aria-pressed={row.status === 'keeping'} onClick={() => keep(row)} className={cn('rounded-full border px-3 py-1 text-[12.5px] font-bold', row.status === 'keeping' ? 'border-[#5ee6c8] bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'border-border text-foreground hover:border-[#5ee6c8]/60')}>
+                        <button type="button" aria-pressed={row.status === 'keeping'} onClick={() => keep(row)} className={cn('rounded-full border px-3 py-1 text-[13.5px] font-bold', row.status === 'keeping' ? 'border-[#5ee6c8] bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'border-border text-foreground hover:border-[#5ee6c8]/60')}>
                           Keep
                         </button>
-                        <button type="button" onClick={() => proof.ask(row)} className="rounded-full border border-primary/70 px-3 py-1 text-[12.5px] font-bold text-foreground hover:bg-primary/15">
+                        <button type="button" onClick={() => proof.ask(row)} className="rounded-full border border-primary/70 px-3 py-1 text-[13.5px] font-bold text-foreground hover:bg-primary/15">
                           Cancel
                         </button>
                       </span>
@@ -148,7 +148,7 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
           </div>
         ))}
       </div>
-      <p className="mt-3 text-[11.5px] text-muted-foreground">Saved in this browser only. Cancel asks for proof (a screenshot, their email or a reference), then your next statement checks it stopped.</p>
+      <p className="mt-3 text-[12.5px] text-muted-foreground">Saved in this browser only. Cancel asks for proof (a screenshot, their email or a reference), then your next statement checks it stopped.</p>
       {proof.dialog}
     </section>
   );

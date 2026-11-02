@@ -24,11 +24,11 @@ function Stat({ label, value }) {
   return (
     <div className="rounded-2xl border border-border bg-card/70 px-4 py-3">
       {value == null ? (
-        <div className="text-[13px] font-bold text-muted-foreground">coming soon</div>
+        <div className="text-[14px] font-bold text-muted-foreground">coming soon</div>
       ) : (
         <div className="font-heading text-[1.6rem] font-bold leading-none tabular-nums text-foreground">{value}</div>
       )}
-      <div className="mt-1.5 text-[12px] text-muted-foreground">{label}</div>
+      <div className="mt-1.5 text-[13px] text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -66,7 +66,7 @@ export default function Progress() {
     <div className="min-h-screen">
       <BrandHeader />
       <main className="mx-auto w-full max-w-3xl px-5 pb-6 sm:px-8">
-        <p className="text-[12px] font-bold uppercase tracking-wide text-primary">Ghost Log · Day {dayNumber()}</p>
+        <p className="text-[13px] font-bold uppercase tracking-wide text-primary">Ghost Log · Day {dayNumber()}</p>
         <h1 className="mt-1 font-heading text-[2rem] font-bold leading-tight text-foreground">Our progress, in public</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us, and what we changed because of it.</p>
 
@@ -88,10 +88,10 @@ export default function Progress() {
                 On average our users guessed <b>{money(stats.avgGuess)}</b>. Their statements showed <b>{money(stats.avgFound)}</b>
                 {stats.moreThanThought != null && stats.moreThanThought > 0 ? <>: <b className="text-primary">{stats.moreThanThought}% more than they thought</b></> : null}.
               </p>
-              <p className="mt-1 text-[12.5px] text-muted-foreground">Across {stats.revealCount} real statements. Westpac found Australians spend about 20% more on subscriptions than they realise (Westpac, 2025).</p>
+              <p className="mt-1 text-[13.5px] text-muted-foreground">Across {stats.revealCount} real statements. Westpac found Australians spend about 20% more on subscriptions than they realise (Westpac, 2025).</p>
             </>
           ) : (
-            <p className="mt-1 text-[13.5px] text-muted-foreground">Shows once 3 people have guessed and then scanned a real statement ({stats?.revealCount || 0} so far). Westpac found Australians spend about 20% more on subscriptions than they realise (Westpac, 2025).</p>
+            <p className="mt-1 text-[14.5px] text-muted-foreground">Shows once 3 people have guessed and then scanned a real statement ({stats?.revealCount || 0} so far). Westpac found Australians spend about 20% more on subscriptions than they realise (Westpac, 2025).</p>
           )}
         </section>
 
@@ -109,9 +109,9 @@ export default function Progress() {
           <ul className="mt-3 space-y-3">
             {changelog.map((item, index) => (
               <li key={`${item.date}-${index}`} className={`rounded-2xl border px-4 py-3 ${item.example ? 'border-dashed border-[#ffc27a]/60 bg-[#ffc27a]/[0.06]' : 'border-border bg-card/70'}`}>
-                <div className="text-[11.5px] font-bold text-muted-foreground">{niceDate(item.date)}{item.who ? ` · ${item.who}` : ''}</div>
+                <div className="text-[12.5px] font-bold text-muted-foreground">{niceDate(item.date)}{item.who ? ` · ${item.who}` : ''}</div>
                 <p className="mt-1 text-[14px] italic text-foreground">&ldquo;{item.quote}&rdquo;</p>
-                <p className="mt-1 text-[13px] text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.change}</p>
+                <p className="mt-1 text-[14px] text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.change}</p>
                 {(item.beforeImg || item.afterImg) && (
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     {item.beforeImg && <img src={item.beforeImg} alt="Before" className="rounded-xl border border-border" />}
@@ -128,10 +128,10 @@ export default function Progress() {
           <div className="mt-3 space-y-4">
             {Object.entries(byDay).map(([date, items]) => (
               <div key={date}>
-                <div className="text-[12px] font-bold text-primary">{niceDate(date)} · {items.length} shipped</div>
+                <div className="text-[13px] font-bold text-primary">{niceDate(date)} · {items.length} shipped</div>
                 <ul className="mt-1.5 space-y-1">
                   {items.map((item) => (
-                    <li key={item.title} className="flex items-start gap-2 text-[13.5px] text-foreground">
+                    <li key={item.title} className="flex items-start gap-2 text-[14.5px] text-foreground">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
                       {item.title}
                     </li>

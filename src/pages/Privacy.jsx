@@ -30,7 +30,7 @@ export default function Privacy() {
         </p>
 
         <div className="mt-6 overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-left text-[13px]">
+          <table className="w-full text-left text-[14px]">
             <thead className="bg-secondary/60 text-muted-foreground">
               <tr>
                 <th className="px-3 py-2 font-bold">What</th>
@@ -59,7 +59,7 @@ export default function Privacy() {
           <li>Your account: ask us and we will delete it.</li>
         </ul>
         <DeleteServerData />
-        <p className="mt-3 rounded-xl border border-dashed border-[#ffc27a] bg-[#ffc27a]/10 px-3 py-2 text-[13.5px] font-bold text-[#ffc27a]">
+        <p className="mt-3 rounded-xl border border-dashed border-[#ffc27a] bg-[#ffc27a]/10 px-3 py-2 text-[14.5px] font-bold text-[#ffc27a]">
           [FOUNDERS: add a contact email for deletion requests]
         </p>
       </main>

@@ -47,9 +47,9 @@ export default function ChangedMyWays({ subscriptions }) {
           <TinySavings X={X} hop={hop} />
         </div>
         <div className="flex flex-wrap gap-1.5">
-          <span className="rounded-full px-2.5 py-1 text-[12px] font-extrabold" style={pill.requested.style}>Requested {req.length}</span>
-          <span className="rounded-full px-2.5 py-1 text-[12px] font-extrabold" style={pill.confirmed.style}>Confirmed {conf.length}</span>
-          <span className="rounded-full px-2.5 py-1 text-[12px] font-extrabold" style={pill.charging.style}>Still charging {live.length}</span>
+          <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.requested.style}>Requested {req.length}</span>
+          <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.confirmed.style}>Confirmed {conf.length}</span>
+          <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.charging.style}>Still charging {live.length}</span>
         </div>
         <div className="flex items-center gap-2 pt-2" style={{ borderTop: `1px solid ${X.line}` }}>
           <div className="flex flex-none gap-0.5" role="img" aria-label={`Jacob's chain: ${live.length} of ${subscriptions.length} links left`}>
@@ -58,9 +58,9 @@ export default function ChangedMyWays({ subscriptions }) {
               return <span key={item.id} className="h-3.5 w-2.5 rounded-full" style={{ border: `2.5px ${gone ? 'dashed' : 'solid'} ${gone ? X.line : X.gold}` }} />;
             })}
           </div>
-          <div className="text-[12px]" style={{ color: X.muted }}>Jacob&apos;s chain</div>
+          <div className="text-[13px]" style={{ color: X.muted }}>Jacob&apos;s chain</div>
           <div className="ml-auto text-right">
-            <div className="text-[11px]" style={{ color: X.muted }}>Frost on the glass</div>
+            <div className="text-[12.5px]" style={{ color: X.muted }}>Frost on the glass</div>
             <div className="x-fredoka text-[16px] font-semibold" style={{ color: X.frost }}>{money(yearlyOf(live))}/yr</div>
           </div>
         </div>
@@ -68,9 +68,9 @@ export default function ChangedMyWays({ subscriptions }) {
 
       {overlaps.map((group) => (
         <div key={group.key} className="relative flex flex-col gap-1.5 rounded-[20px] p-3.5" style={{ background: X.card, border: `1.5px solid ${X.orange}` }}>
-          <div className="text-[13px] font-extrabold" style={{ color: X.orange }}>Double-ups spotted</div>
+          <div className="text-[14px] font-extrabold" style={{ color: X.orange }}>Double-ups spotted</div>
           <div className="x-fredoka text-[18px] font-semibold">{group.items.length} {group.label} = {money(group.yearly)}/yr together</div>
-          <div className="text-[13px]" style={{ color: X.muted }}>{group.items.map((item) => `${item.merchant} ${money(item.monthly)}`).join(', ')}. Keep the one you use.</div>
+          <div className="text-[14px]" style={{ color: X.muted }}>{group.items.map((item) => `${item.merchant} ${money(item.monthly)}`).join(', ')}. Keep the one you use.</div>
         </div>
       ))}
 
@@ -88,10 +88,10 @@ export default function ChangedMyWays({ subscriptions }) {
             <div className="flex items-center justify-between gap-2">
               {info.url ? (
                 <a href={info.url} target="_blank" rel="noreferrer" className="text-[14px] font-extrabold" style={{ color: X.gold }}>Cancel on {info.name} ↗</a>
-              ) : <span className="text-[13px]" style={{ color: X.muted }}>Search &quot;cancel {item.merchant}&quot;</span>}
-              <span className="rounded-full px-2.5 py-1 text-[12px] font-extrabold" style={p.style}>{p.text}</span>
+              ) : <span className="text-[14px]" style={{ color: X.muted }}>Search &quot;cancel {item.merchant}&quot;</span>}
+              <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={p.style}>{p.text}</span>
             </div>
-            <div className="text-[12px]" style={{ color: X.muted }}>{info.steps}</div>
+            <div className="text-[13px]" style={{ color: X.muted }}>{info.steps}</div>
             {!status || status === 'charging' ? (
               <GoldButton X={X} className="!min-h-[46px] !text-[16px]" onClick={() => proof.ask(item)}>🎄 I cancelled it</GoldButton>
             ) : status === 'requested' ? (

@@ -188,7 +188,7 @@ export default function LeakEmailDialog({ leak, onClose }) {
             {title}
           </DialogTitle>
           {leak && (
-          <p className="mt-1.5 text-[13px] text-muted-foreground">
+          <p className="mt-1.5 text-[14px] text-muted-foreground">
             {leak.badge === 'Subscription' ? (
               <>Cancelling this frees up <span className="font-bold text-primary">{money(leak.monthly)}</span> a month. Edit anything before you send.</>
             ) : (
@@ -200,7 +200,7 @@ export default function LeakEmailDialog({ leak, onClose }) {
           </p>
           )}
 
-          <p className="mt-4 whitespace-pre-wrap rounded-xl border border-border bg-background/60 p-4 text-[13px] leading-relaxed text-foreground/85">
+          <p className="mt-4 whitespace-pre-wrap rounded-xl border border-border bg-background/60 p-4 text-[14px] leading-relaxed text-foreground/85">
             {body}
           </p>
 

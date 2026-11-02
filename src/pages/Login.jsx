@@ -39,8 +39,8 @@ export default function Login() {
   return (
     <AuthLayout
       icon={LogIn}
-      title="Welcome back"
-      subtitle="Log in to your account"
+      title="Log in to Ghost Fees"
+      subtitle="Your Ghost List, scans and Pro unlock, on any device."
       footer={
         <>
           Don't have an account?{" "}
