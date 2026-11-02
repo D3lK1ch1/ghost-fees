@@ -160,7 +160,7 @@ export default function Landing() {
             { key: 'you', label: 'Is this you?', content: <IsThisYou /> },
             { key: 'plans', label: 'Free vs Pro', content: <PlansAtAGlance onSample={() => scan([], true)} /> },
             { key: 'have', label: 'Have any of these?', content: <CommonSubsChecker onUpload={() => inputRef.current?.click()} onSample={() => scan([], true)} /> },
-            { key: 'finds', label: 'What it finds', content: <UseCases /> },
+            { key: 'finds', label: 'What it finds', content: <UseCases onUpload={() => inputRef.current?.click()} /> },
             { key: 'who', label: 'Who made it', content: <FoundersSection /> },
           ]} />
           <SiteFooter />

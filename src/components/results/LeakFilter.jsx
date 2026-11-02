@@ -22,7 +22,8 @@ export default function LeakFilter({ leaks, type, sort, onType, onSort }) {
   const counts = leaks.reduce((map, leak) => map.set(leak.badge, (map.get(leak.badge) || 0) + 1), new Map());
   if (counts.size < 2 && type === 'all') return null;
   const shown = filterLeaks(leaks, type, sort);
-  const chip = (key, label) => (
+  // The number is how many ghosts of that kind were found, shown as a count badge.
+  const chip = (key, label, count) => (
     <button
       key={key}
       type="button"
@@ -31,18 +32,19 @@ export default function LeakFilter({ leaks, type, sort, onType, onSort }) {
       title={BADGE_MEANING[key]?.what}
       onClick={() => onType(key)}
       className={cn(
-        'rounded-full border px-3 py-1 text-[13.5px] font-bold transition-colors',
+        'inline-flex items-center rounded-full border px-3 py-1 text-[13.5px] font-bold transition-colors',
         type === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground',
       )}
     >
       {label}
+      <span className={cn('ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[12px] font-bold', type === key ? 'bg-black/20' : 'bg-white/10')} aria-label={`${count} found`}>{count}</span>
     </button>
   );
   return (
     <div className="mt-4 flex flex-wrap items-center gap-1.5">
       <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Show ghosts of this type">
-        {chip('all', `All ${leaks.length}`)}
-        {[...counts.entries()].map(([badge, count]) => chip(badge, `${badge} ${count}`))}
+        {chip('all', 'All', leaks.length)}
+        {[...counts.entries()].map(([badge, count]) => chip(badge, badge, count))}
       </div>
       <label className="ml-auto flex items-center gap-1.5 text-[13px] font-bold text-muted-foreground">
         Sort
