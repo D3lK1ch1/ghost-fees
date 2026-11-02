@@ -11,7 +11,7 @@ import GhostTip from './GhostTip';
 import TaskDialog from './TaskDialog';
 import CalendarSync from './CalendarSync';
 import { useGhostList } from '@/hooks/use-ghost-list';
-import { CASS_COLOR } from './CassLookup';
+import '@/components/ex/exKit.css';
 import { EX_GHOST_KEY, EX_GHOSTS } from '@/lib/ghostFees/exArt';
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -247,36 +247,43 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
   );
 }
 
-// Fills the space under the calendar on wide screens (the reminders column is
-// taller): a ghost pointing you to Cassy, the cancellation assistant just below.
-// 💔 uses your own ghost (sassy for Heartbroken, blocking for I'm Fine); the other
-// themes use Cassy herself.
+// Fills the space under the calendar (the reminders column is taller) and points
+// you down to Cassy, the cancellation assistant. One ghost per theme from the
+// asset bank: 💔 your own ghost (sassy for Heartbroken, blocking for I'm Fine),
+// 👻 the lantern ghost, 🎄 the festive ghost.
 const NUDGE = {
-  ex: 'Continue to f**k your exes, with help from Cassy.',
-  christmas: "Keep breaking Jacob's chain, with help from Cassy.",
-  haunted: 'Keep busting your ghosts, with help from Cassy.',
+  ex: 'Scroll down to f**k your exes more, with help from Cassy.',
+  christmas: "Scroll down to break more of Jacob's chain, with help from Cassy.",
+  haunted: 'Scroll down to bust more ghosts, with help from Cassy.',
+};
+
+// Mouth (or face) spot in each art, as px inside the 130 x 140 picture box
+// (object-contain). The asset speech bubble's tail tip (9.4% across its bottom)
+// goes there, nudged a few px right so the mouth stays visible.
+const NUDGE_ART = {
+  heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [66, 63] },
+  fine: { src: '/themes/ex/men-block.webp', mouth: [70, 48] },
+  christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [60, 53] },
+  haunted: { src: '/themes/haunted/lantern-ghost.webp', mouth: [88, 37] },
 };
 
 function CassyNudge() {
   const { theme } = useTheme();
   const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
-  const art = theme.key === 'ex' ? `/themes/ex/${exPick === 'fine' ? 'men-block' : 'ghost-sassy'}.webp` : null;
+  const art = NUDGE_ART[theme.key === 'ex' ? (exPick === 'fine' ? 'fine' : 'heartbroken') : theme.key === 'christmas' ? 'christmas' : 'haunted'];
   const toCassy = () => document.querySelector('[aria-label="Cancellation assistant"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   return (
-    <div className="hidden flex-1 items-center justify-center gap-3 rounded-3xl border border-dashed border-border/70 px-6 py-6 lg:flex">
-      <div className="animate-float flex-none">
-        {art ? (
-          <img src={art} alt="" width={120} height={138} className="h-[138px] w-[120px] object-contain" />
-        ) : (
-          <GhostMark className="h-24 w-24" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
-        )}
-      </div>
-      <div className="relative max-w-[260px] self-start mt-6 rounded-[22px] bg-white px-5 py-4 text-[#15131a] shadow-[0_8px_20px_rgba(0,0,0,0.35)]">
-        <span aria-hidden="true" className="absolute -left-2 top-6 h-5 w-5 rotate-45 rounded-[3px] bg-white" />
-        <p className="relative font-heading text-[17px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
-        <button type="button" onClick={toCassy} className="relative mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
-          Cancel the next one ↓
-        </button>
+    <div className="flex flex-1 items-center justify-center rounded-3xl border border-dashed border-border/70 px-4 py-5">
+      <div className="animate-float relative h-[260px] w-[420px] max-w-full">
+        <img src={art.src} alt="" width={130} height={140} className="absolute bottom-0 left-0 h-[140px] w-[130px] object-contain" />
+        <div className="absolute z-10" style={{ left: art.mouth[0] + 6, top: 120 + art.mouth[1] - 4, transform: 'translate(-9.4%, -100%)' }}>
+          <div className="bub-l w-[300px] !min-w-0 !px-11 !pb-14 !pt-8 text-center">
+            <p className="font-heading text-[16px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
+            <button type="button" onClick={toCassy} className="mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
+              Take me to Cassy ↓
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
