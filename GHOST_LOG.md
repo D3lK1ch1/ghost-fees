@@ -288,3 +288,9 @@ One entry per change. Newest at the bottom.
 - Files: index.html (Open Graph and Twitter tags), public/og-image.png (new, 1200 x 630, 248 KB)
 - How to test: after publishing, paste https://hunt-ghost-fees.base44.app into a new Slack message, or check it at opengraph.xyz. Old posts keep their old preview until re-posted.
 - User feedback that drove this: the Slack preview had a grey placeholder image.
+
+### Animated 36-second demo to screen-record at /demo
+- What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
+- Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx
+- How to test: open /demo, start a screen recording, click Start; or /demo?ratio=9x16 for stories.
+- User feedback that drove this: "how did people make cool videos like this", "I should do animated video".
