@@ -307,6 +307,12 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/PickTimeDialog.jsx (new), src/components/site/DoneLink.jsx (new), src/lib/ghostFees/cancelPlans.js (new), src/lib/ghostFees/reminder.js (timed events), SubscriptionsSection.jsx, ResultsView.jsx, App.jsx
 - How to test: Try a sample statement, Subscriptions, Netflix: When will you cancel it? > Tonight > Add to my calendar. Open the event's link: the proof dialog opens.
 - User feedback that drove this: retention research (FINAL_UPDATE_PACK 1.6); ING: people take 9 months to cancel.
+
+### /try: one tester link for the app and Ghost It (B6)
+- What: a public page, /try, "Try Ghost Fees in 3 minutes", with 3 step cards and a progress bar (kept in this browser): 1 Find the ghosts (runs the sample; a "Back to the test" button on the results ticks it off), 2 Ask Ghost It (copies "@ghostit Netflix $19, Stan $16, Disney+ $16, Spotify $14", opens ASI:One, logs ask_ghostit_click), 3 Tell us one thing (how clear the app and Ghost It were, 1 to 5; what was confusing; would you pay $10 once; can we quote you, with a first name). Saved as Feedback with kind "journey" (and a try_completed event). All done: "Thank you! You just helped a hackathon team" and a share button. Visits log ref "try". Local development visits don't count.
+- Files: src/pages/Try.jsx (new), src/pages/Landing.jsx, src/App.jsx, base44/entities/Feedback.jsonc (kind, clarity_app, clarity_agent, quote_ok), base44/entities/Event.jsonc, base44/functions/submitFeedback, base44/functions/logEvent
+- How to test (published): open /try in a fresh browser, do all 3 steps; a Feedback row with kind "journey" appears.
+- User feedback that drove this: testers needed one simple link (FINAL_UPDATE_PACK 1.5); Kimberley's link trouble.
 ### Animated 36-second demo to screen-record at /demo
 - What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx

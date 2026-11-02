@@ -9,6 +9,8 @@ import UploadErrors from '@/components/landing/UploadErrors';
 import SeanceScreen from '@/components/scan/SeanceScreen';
 import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
+import { Link } from 'react-router-dom';
+import { TRY_RETURN, markTry } from '@/pages/Try';
 import SiteFooter from '@/components/site/SiteFooter';
 import { useScan } from '@/lib/ScanContext';
 import { trackEvent } from '@/lib/session';
@@ -109,6 +111,17 @@ export default function Landing() {
   };
 
   const analysisReady = Boolean(status === 'done' && results);
+  // Came from /try (step 1): tick it off once results show, and offer the way back.
+  const [fromTry] = useState(() => {
+    try {
+      return window.sessionStorage.getItem(TRY_RETURN) === '1';
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    if (fromTry && analysisReady) markTry('app');
+  }, [fromTry, analysisReady]);
   const scanning = status === 'scanning' || (analysisReady && !scanDone);
 
   let content;
@@ -156,6 +169,11 @@ export default function Landing() {
   return (
     <>
       {content}
+      {fromTry && analysisReady && (
+        <Link to="/try" className="fixed bottom-5 left-1/2 z-50 -translate-x-1/2 rounded-full bg-[#5ee6c8] px-5 py-3 text-[15px] font-extrabold text-[#0f2a24] shadow-[0_10px_30px_-8px_rgba(0,0,0,0.6)]">
+          ← Back to the test (step 1 done)
+        </Link>
+      )}
       <CrtOverlay />
     </>
   );
