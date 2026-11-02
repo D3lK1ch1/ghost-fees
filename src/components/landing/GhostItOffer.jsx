@@ -1,22 +1,29 @@
 import { Link } from 'react-router-dom';
-import { MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
-// Next to the upload button: an offer to understand your fees more with Ghost It,
-// our chat agent, whose Ghost Packs analyse each kind of leak. Opens /ghostit.
+// Next to the upload button: Ghost It, our specialised AI agent, and what it's for,
+// short and to the point. Opens /ghostit.
+const POINTS = ['Subscriptions you pay for twice', 'Apps hidden in Apple or Google bundles', 'What weekly costs add up to a year'];
+
 export default function GhostItOffer({ className = '' }) {
   return (
     <Link
       to="/ghostit"
-      className={`group flex w-full max-w-md items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left transition-colors hover:bg-[#8FB8FF]/10 ${className}`}
-      style={{ borderColor: '#8FB8FF66', background: 'linear-gradient(90deg, #8FB8FF1f, transparent 70%)' }}
+      className={`group flex w-full max-w-xl items-center gap-4 rounded-3xl border-2 px-5 py-4 text-left transition-colors hover:bg-[#8FB8FF]/10 ${className}`}
+      style={{ borderColor: '#8FB8FF88', background: 'linear-gradient(90deg, #8FB8FF26, transparent 75%)' }}
     >
-      <img src={GHOST_IT_MASCOT} alt="" width={48} height={48} className="h-12 w-12 shrink-0 object-contain motion-safe:animate-float" />
+      <img src={GHOST_IT_MASCOT} alt="" width={72} height={72} className="h-[72px] w-[72px] shrink-0 object-contain motion-safe:animate-float" />
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-bold text-foreground">Want to understand your fees more?</span>
-        <span className="block text-[13.5px] leading-snug text-muted-foreground">Ghost It, our AI agent, runs Ghost Packs that analyse each kind of leak: doubles, bundles and what weekly costs add up to.</span>
+        <span className="inline-block rounded-full bg-[#8FB8FF] px-2.5 py-0.5 text-[12.5px] font-bold uppercase tracking-wide text-[#0f1730]">Specialised AI agent</span>
+        <span className="mt-1.5 block font-heading text-[21px] font-bold leading-tight text-foreground">Ghost It finds what your statement can&apos;t show</span>
+        <span className="mt-1.5 flex flex-col gap-0.5 text-[15px] leading-snug text-foreground/80">
+          {POINTS.map((point) => <span key={point}>• {point}</span>)}
+        </span>
       </span>
-      <MessageCircle className="h-5 w-5 shrink-0 text-[#8FB8FF] transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      <span className="hidden shrink-0 items-center gap-1 rounded-full bg-[#8FB8FF] px-4 py-2 text-[14.5px] font-bold text-[#0f1730] sm:inline-flex">
+        Try it <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+      </span>
     </Link>
   );
 }

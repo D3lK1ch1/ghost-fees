@@ -70,7 +70,7 @@ export default function GhostIt() {
         >
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
-        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on Agentverse. Press <b className="text-foreground">Chat with Agent</b> there.</p>
+        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on Agentverse. Press <b className="text-foreground">Chat with Agent</b> there. Sign in to ASI:One first (free): agents only reply to signed-in people.</p>
         <div className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground">
           <img src={GHOST_IT_THUMBS} alt="" className="h-14 w-14 shrink-0 object-contain" />
           <p><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE}</p>
