@@ -1,10 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { HOME_TAB_EVENT } from '@/components/landing/CatchTheRest';
 import { cn } from '@/lib/utils';
 
 // The home page below the stats, as tabs instead of one long scroll. A tester said
 // "it took a lot of scrolling to digest the content on each page" (2 Nov).
 export default function HomeTabs({ tabs }) {
   const [active, setActive] = useState(tabs[0]?.key);
+  // Other parts of the page can open a tab (e.g. "Check typical prices").
+  useEffect(() => {
+    const open = (event) => {
+      if (!tabs.some((tab) => tab.key === event.detail)) return;
+      setActive(event.detail);
+      document.querySelector('[data-tour="hometabs"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    window.addEventListener(HOME_TAB_EVENT, open);
+    return () => window.removeEventListener(HOME_TAB_EVENT, open);
+  }, [tabs]);
   const current = tabs.find((tab) => tab.key === active) || tabs[0];
   return (
     <section data-tour="hometabs" className="mx-auto mt-6 w-full max-w-4xl" aria-label="More about Ghost Fees">
