@@ -14,6 +14,7 @@ import FeedbackAdmin from '@/pages/FeedbackAdmin';
 import Progress from '@/pages/Progress';
 import About from '@/pages/About';
 import Privacy from '@/pages/Privacy';
+import DoneLink from '@/components/site/DoneLink';
 import Demo from './pages/Demo';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
@@ -50,6 +51,7 @@ const AuthenticatedApp = () => {
     <ThemeProvider>
     <ScanProvider>
     <AllowanceProvider>
+      <DoneLink />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/progress" element={<Progress />} />

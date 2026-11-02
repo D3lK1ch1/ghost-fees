@@ -301,6 +301,12 @@ One entry per change. Newest at the bottom.
 - Files: src/data/upgradeStats.json (new), src/data/stats.js (now reads the file), src/components/scan/Paywall.jsx, src/components/xmas/XmasTabScreens.jsx
 - How to test: the home page strip shows 1 in 2, $1,600+, 8.4M with sources; 🎄 Gift to yourself shows $1,600+ and 9 months with sources.
 - User feedback that drove this: fact-check on 2 Nov (FINAL_UPDATE_PACK 1.1).
+
+### Pick a time to cancel, with a calendar link that ticks it off (B3)
+- What: on each subscription, "When will you cancel it?" offers Tonight 8 pm (tomorrow if it's past 8), This weekend (Sat 10 am) or a date and time. It adds a 15-minute event with a reminder 15 minutes before, as a calendar file (Apple, Outlook, any app), Google or Outlook: "Cancel Netflix ($203.88 a year)", with Cassy's steps, the official cancel page, a copy-paste cancel email and a link back. The link (/?done=<id>) opens "How did you cancel Netflix?" straight away, even in a fresh tab with no scan; if this browser doesn't know it, a friendly message shows the Ghost List. Only the chosen time (with the name and price) is kept, in this browser; Clear my data removes it. Research: a set time and place makes people more likely to follow through (implementation intentions, Gollwitzer and Sheeran, 2006).
+- Files: src/components/results/PickTimeDialog.jsx (new), src/components/site/DoneLink.jsx (new), src/lib/ghostFees/cancelPlans.js (new), src/lib/ghostFees/reminder.js (timed events), SubscriptionsSection.jsx, ResultsView.jsx, App.jsx
+- How to test: Try a sample statement, Subscriptions, Netflix: When will you cancel it? > Tonight > Add to my calendar. Open the event's link: the proof dialog opens.
+- User feedback that drove this: retention research (FINAL_UPDATE_PACK 1.6); ING: people take 9 months to cancel.
 ### Animated 36-second demo to screen-record at /demo
 - What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx
