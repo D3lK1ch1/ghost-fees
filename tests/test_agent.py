@@ -196,7 +196,8 @@ class EdgeCases(unittest.TestCase):
 
     def test_names_without_prices(self):
         reply, _ = A.route(FakeCtx(), SENDER, "Netflix and Stan")
-        self.assertIn("no prices yet", reply)
+        self.assertIn("typical Australian prices", reply)
+        self.assertIn("Send yours for exact maths", reply)
 
     def test_card_tap_json(self):
         ctx = FakeCtx()
@@ -541,3 +542,37 @@ class V9Packs(unittest.TestCase):
     def test_results_name_their_packs(self):
         reply, _ = A.route(FakeCtx(), SENDER, "Netflix $19, Spotify $14")
         self.assertIn("Your Ghost Packs", reply)
+
+
+class V93BetterAnswers(unittest.TestCase):
+    """Messages ASI:One actually sends that used to get weak replies (rating 2.2)."""
+
+    def test_names_only_get_typical_yearly_cost_and_doubles(self):
+        reply, card = A.route(FakeCtx(), SENDER, "I pay for Netflix, Stan and Disney+. Is that too much?")
+        self.assertIn("$119.88 to $347.88/yr", reply)
+        self.assertIn("3 video streaming", reply)
+        self.assertIn("Typical prices, not yours", reply)
+        self.assertEqual(card[0], "review")
+
+    def test_storage_names_only(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "I'm paying for iCloud and Google One. Do I need both?")
+        self.assertIn("2 cloud storage", reply)
+        self.assertIn("Google One", reply)
+
+    def test_which_to_cancel_is_advice_not_a_company(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "What subscriptions should I cancel to save money?")
+        self.assertNotIn("To Save Money", reply)
+        self.assertIn("Which to cancel", reply)
+
+    def test_monthly_price_not_read_as_yearly(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Compare Netflix ($18.99/month) and Spotify ($13.99/month) per year.")
+        self.assertIn("Spotify: $13.99/mo x 12 = **$167.88/yr**", reply)
+
+    def test_yearly_still_works(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Amazon Prime $139 a year")
+        self.assertIn("$139.00/yr x 1", reply)
+
+    def test_cant_read_email(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Every morning, search my Gmail for bills and payment-due notices")
+        self.assertIn("can't read your email", reply)
+        self.assertIn("base44.app", reply)

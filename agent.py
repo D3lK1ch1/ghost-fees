@@ -71,6 +71,20 @@ CHANGES = [
 PURPOSE = ("I hunt the money leaks your bank statement can't show you, with a Ghost Pack for each kind: "
            "streaming, music, AI tools, food, gym and gaming. Tell me what you pay for below.")
 
+# v9.3: typical Australian prices, the same checked list the Ghost Fees app shows
+# (src/data/commonSubs.js, checked 2 Nov 2026). Only used when someone names a service
+# without a price, and always labelled as typical, never as theirs.
+TYPICAL = {
+    "netflix": (9.99, 28.99, "Tom's Guide, Oct 2026"), "stan": (9.99, 23.99, "WhistleOut, Jul 2026"),
+    "disney": (9.99, 24.99, "Tom's Guide, Apr 2026"), "binge": (10.00, 22.00, "Tom's Guide, Oct 2026"),
+    "kayo": (29.99, 45.99, "EFTM, Jan 2026"), "paramount": (7.99, 17.99, "CompareTV, Oct 2026"),
+    "prime": (12.99, 12.99, "Finder, Oct 2026"), "appletv": (15.99, 15.99, "Tom's Guide, Oct 2026"),
+    "spotify": (15.99, 27.99, "Selectra, Jun 2026"), "icloud": (1.49, 89.99, "Apple"),
+    "m365": (16.00, 33.00, "Microsoft"), "gamepass": (12.95, 25.95, "Press Start, Apr 2026"),
+    "uberone": (9.99, 9.99, "Uber"),
+}
+TYPICAL_CHECKED = "2 Nov 2026"
+
 # v9: what each Ghost Pack hunts. Ghost Fees (the app) reads a statement; Ghost It fills
 # the gap: doubles and overlaps across services, things hidden in Apple or Google bundles
 # or on another card, and the cost of habits you only see weekly. Facts here are general
@@ -221,8 +235,13 @@ def parse_subs(text):
             continue
         price = float(amt.group(1) or amt.group(2))
         per, times = "mo", 12
+        # The period must come right after the price ("$25 a week", "$120/yr"), so
+        # "... and Spotify ($13.99/month) per year" isn't read as yearly.
+        after = ch[ch.find(amt.group(0)) + len(amt.group(0)):][:16] if amt.group(0) in ch else ch
+        if re.match(r"\s*(?:/|a|per|each|every)?\s*(?:month|mo|monthly)\b", after, re.I):
+            after = ""
         for pat, label, n in PERIODS:
-            if re.search(pat, ch, re.I):
+            if re.search(pat, after, re.I):
                 per, times = label, n
                 break
         subs.append(dict(key=key or name.lower().replace(" ", ""), known=bool(key), name=name,
@@ -495,6 +514,71 @@ def pack_leaks(items, pack):
         if s["per"] == "wk":
             out.append(f"{s['name']} at {money(s['price'])} a week is {money(yearly(s))} a year. Would you pay that up front?")
     return out
+
+
+def typical_reply(ctx, sender, names):
+    """Services named without prices: typical yearly ranges, doubles, and what to send next."""
+    keys = []
+    for n in names:
+        k = find_merchant(n)
+        if k and k not in keys:
+            keys.append(k)
+    items = [dict(key=k, known=True, name=C[k]["name"], price=None) for k in keys]
+    lines = ["**What I did:** you didn't give prices, so I used typical Australian prices "
+             f"(checked {TYPICAL_CHECKED}). Send yours for exact maths, e.g. `{items[0]['name'] if items else 'Netflix'} $19`.\n",
+             "**Typical cost a year**"]
+    rows, low_total, high_total, unknown = [], 0.0, 0.0, []
+    for x in items:
+        t = TYPICAL.get(x["key"])
+        if not t:
+            unknown.append(x["name"])
+            continue
+        lo, hi, src = t
+        low_total += lo * 12
+        high_total += hi * 12
+        rng = money(lo * 12) if lo == hi else f"{money(lo * 12)} to {money(hi * 12)}"
+        per = money(lo) if lo == hi else f"{money(lo)} to {money(hi)}"
+        lines.append(f"- {x['name']}: {per}/mo x 12 = **{rng}/yr** ({src})")
+        rows.append({"label": x["name"], "value": f"{rng}/yr (typical)"})
+    if low_total:
+        both = money(low_total) if low_total == high_total else f"{money(low_total)} to {money(high_total)}"
+        lines.append(f"\n**Typically {both} a year together.**")
+        rows.append({"label": "Typical total", "value": f"{both} a year"})
+    if unknown:
+        lines.append(f"\nI don't have a checked typical price for {', '.join(unknown)}. Send what you pay, e.g. `{unknown[0]} $5`.")
+    ov = overlaps(items)
+    if ov:
+        lines.append("\n**Doubles found**")
+        for g, group in ov.items():
+            lines.append(f"- {len(group)} {OVERLAP_NAMES[g]}: {', '.join(x['name'] for x in group)}. "
+                         "Options: keep one, rotate month to month, or pause the rest.")
+            rows.append({"label": f"Double-up: {OVERLAP_NAMES[g]}", "value": ", ".join(x["name"] for x in group)})
+        extra = [x for x in ov.get("music", [])]
+        if {"spotify", "youtube"} <= set(keys):
+            lines.append("- YouTube Premium already includes YouTube Music, so Spotify may be a double.")
+    else:
+        lines.append("\nNo doubles between these.")
+    ctx.storage.set(f"last:{sender}", list({x["key"]: x for x in last_subs(ctx, sender) + items}.values())[-40:])
+    packs = sorted({C[k]["pack"] for k in keys})
+    if packs:
+        lines.append(f"\n**Next:** send your real prices, or type `{packs[0].split()[0].lower()} pack` for the cancel steps.")
+    lines.append("\n_Typical prices, not yours. General information, not financial advice._")
+    card = ("review", {
+        "title": "Typical cost of what you named",
+        "summary_rows": rows[:12],
+        "approve_cta": ({"label": f"Get {packs[0]} pack", "primary": True, "selection": {"action": "pack", "pack": packs[0]}}
+                        if packs else {"label": "Add my prices", "primary": True, "selection": {"action": "help"}}),
+        "reject_cta": {"label": "Scan my statement", "selection": {"action": "scan"}},
+    })
+    return "\n".join(lines), card
+
+
+def cant_do_reply():
+    """Honest answer for things Ghost It can't do (read email, connect a bank, etc.)."""
+    return ("I can't read your email or connect to your bank, so I won't guess.\n\n"
+            "**What I can do:** tell me what you pay for (e.g. `Netflix $19, Spotify $14, gym $25 a week`) and I'll show "
+            "the yearly cost line by line, find doubles with my Ghost Packs, and give the official cancel steps.\n\n"
+            f"To find bills and subscriptions from your bank statement, the Ghost Fees app reads a CSV or PDF (no bank login): {app_link()}", help_card())
 
 
 def packs_reply():
@@ -994,6 +1078,10 @@ def route(ctx, sender, raw):
         if key:
             s = last.get(key) or dict(key=key, known=True, name=C[key]["name"], price=None)
             return gated_ghost(ctx, sender, [s], f"Cancel {C[key]['name']}")
+        if re.search(r"\b(what|which|should|save|money|subscriptions|everything|stuff|things)\b", cm.group(2)):
+            return ("**Which to cancel?** Tell me what you pay for and I'll show which ones double up and what you'd save "
+                    "if you kept just one, e.g. `Netflix $19, Stan $16, Disney+ $16, Spotify $14`.\n\n"
+                    "Or type `packs` to see what each Ghost Pack hunts.", help_card())
         name = cm.group(2).strip(" ?.!").title()
         return ghost_reply(ctx, sender, [dict(key=name.lower(), known=False, name=name, price=None)], f"Cancel {name}")
 
@@ -1001,12 +1089,16 @@ def route(ctx, sender, raw):
     subs, missing = parse_subs(text)
     if subs:
         return check_reply(ctx, sender, text, subs, missing)
+    if missing and any(find_merchant(n) for n in missing):
+        return typical_reply(ctx, sender, missing)
     if missing:
         names = ", ".join(missing)
         return (f"**What I did:** found {names}, but no prices yet, so I can't add them up.\n\n"
                 f"Add prices like `{missing[0]} $19, ...` and I'll show the yearly cost and any doubles.\n"
                 f"Want to cancel now? Type `cancel {missing[0]}`.\n\n"
                 f"Scan your statement free to see the exact amounts: {app_link()}", None)
+    if re.search(r"\b(gmail|email|e-mail|inbox|bank account|connect my bank|log ?in to my bank|read my|scan my email)\b", low):
+        return cant_do_reply()
     return help_reply()
 
 
