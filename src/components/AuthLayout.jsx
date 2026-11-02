@@ -5,6 +5,8 @@ import ReceiptGhost from "@/components/site/ReceiptGhost";
 import GhostMark from "@/components/site/GhostMark";
 import { TEAM } from "@/components/landing/GhostTeam";
 import { GHOST_IT_MASCOT } from "@/lib/ghostFees/ghostItAgent";
+import { THEME_LIST } from "@/lib/ghostFees/themes";
+import { useTheme } from "@/lib/ThemeContext";
 
 // Sign in, sign up and password pages. Beside the form (below it on phones, so the
 // form is first): the purpose, the ghost team and what each does, and what's on offer
@@ -12,6 +14,36 @@ import { GHOST_IT_MASCOT } from "@/lib/ghostFees/ghostItAgent";
 // with the agents and what's on offer and the purpose" (3 Nov).
 const FREE = ["3 statement scans, your full total", "Cancel steps, emails and the Ghost List", "1 ghost guide chat and 1 Cassy lookup"];
 const PRO = ["Unlimited scans", "All 4 ghost guides, as much as you like", "Cassy for every subscription, and the PDF report"];
+
+// Pick a theme right here: same switch as the home page, bigger, with each theme's line.
+// Changes words and colours only, never features or numbers. Remembered across the app.
+function ThemePicker() {
+  const { theme, setThemeKey } = useTheme();
+  return (
+    <div role="radiogroup" aria-label="Theme" className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-3">
+      {THEME_LIST.map((item) => {
+        const active = theme.key === item.key;
+        return (
+          <button
+            key={item.key}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            onClick={() => setThemeKey(item.key)}
+            className={`rounded-2xl border-2 px-3 py-3 text-left transition-colors ${active ? "border-primary bg-primary/15" : "border-border bg-card/60 hover:border-primary/60"}`}
+          >
+            <span className="flex items-center gap-2">
+              <span aria-hidden="true" className="text-[22px] leading-none">{item.emoji}</span>
+              <span className="text-[14.5px] font-bold leading-tight text-foreground">{item.label}</span>
+            </span>
+            <span className="mt-1.5 block text-[13px] leading-snug text-muted-foreground">{item.headline}</span>
+            {active && <span className="mt-1.5 inline-flex items-center gap-1 text-[12.5px] font-bold text-primary"><Check className="h-3.5 w-3.5" aria-hidden="true" /> Your theme</span>}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 function TeamGrid() {
   return (
@@ -90,6 +122,9 @@ function BrandPanel() {
         <span className="font-semibold text-foreground">Our purpose:</span> find the subscriptions and bank fees you forgot
         you&apos;re paying, and help you cancel them. Upload a statement. No bank login.
       </p>
+
+      <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Pick your theme</p>
+      <ThemePicker />
 
       <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Your ghost team</p>
       <TeamGrid />
