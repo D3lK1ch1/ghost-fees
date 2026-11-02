@@ -1,14 +1,14 @@
-"""Tests for Ghost It's plain-Python logic (no network, no LLM, no Agentverse).
+"""Tests for Ghost It v7 (no network, no LLM, no Agentverse).
 
 Run from the ghost-it folder:   python3 -m unittest discover -s tests -v
 
-The uagents / openai packages are replaced with small stand-ins, so these run on
-any Mac with Python 3. They test the parts that must never be wrong: name
-matching, money maths, the free check, cancel packs, status updates, feedback
-capture and the checked cancel-link table.
+uagents / uagents_core are replaced with small stand-ins, so these run on any Mac
+with Python 3. The first 9 tests are the 9 prompts from FINAL_UPDATE_PACK.md,
+Step A4, sent through the agent's own router as one user would.
 """
 import importlib.util
 import json
+import os
 import re
 import sys
 import types
@@ -19,7 +19,6 @@ HERE = Path(__file__).resolve().parent.parent
 
 
 def _install_stubs():
-    """Minimal stand-ins for uagents, uagents_core and openai."""
     class _Protocol:
         def __init__(self, *args, **kwargs):
             pass
@@ -41,16 +40,13 @@ def _install_stubs():
     uagents = types.ModuleType("uagents")
     uagents.Agent, uagents.Context, uagents.Protocol = _Agent, object, _Protocol
     chat = types.ModuleType("uagents_core.contrib.protocols.chat")
-    for name in ("ChatAcknowledgement", "ChatMessage", "EndSessionContent", "TextContent"):
+    for name in ("ChatAcknowledgement", "ChatMessage", "EndSessionContent", "MetadataContent", "TextContent"):
         setattr(chat, name, type(name, (_Model,), {}))
     chat.chat_protocol_spec = object()
-    openai = types.ModuleType("openai")
-    openai.OpenAI = lambda **kwargs: object()
     for mod_name in ("uagents_core", "uagents_core.contrib", "uagents_core.contrib.protocols"):
         sys.modules.setdefault(mod_name, types.ModuleType(mod_name))
     sys.modules["uagents"] = uagents
     sys.modules["uagents_core.contrib.protocols.chat"] = chat
-    sys.modules["openai"] = openai
 
 
 def load_agent():
@@ -65,14 +61,17 @@ A = load_agent()
 
 
 class FakeStorage:
+    """Agentverse storage: get/set of JSON-able values."""
+
     def __init__(self):
         self.data = {}
 
     def get(self, key):
-        return self.data.get(key)
+        value = self.data.get(key)
+        return json.loads(value) if isinstance(value, str) and value[:1] in "[{" else value
 
     def set(self, key, value):
-        self.data[key] = value
+        self.data[key] = json.dumps(value) if isinstance(value, (list, dict)) else value
 
 
 class FakeLogger:
@@ -91,217 +90,123 @@ class FakeCtx:
         self.logger = FakeLogger()
 
 
-def user_with(items):
-    data = A.new_data()
-    A.merge_items(data, items)
-    return data
+SENDER = "agent1qtester000000"
 
 
-class MatchTests(unittest.TestCase):
-    def test_known_names(self):
-        self.assertEqual(A.match("Netflix"), "netflix")
-        self.assertEqual(A.match("stan"), "stan")
-        self.assertEqual(A.match("Spotify Premium"), "spotify")
+class PackPrompts(unittest.TestCase):
+    """The 9 prompts from Step A4, in order, as one person's chat."""
 
-    def test_word_boundaries(self):
-        # "stan" must not match inside another word.
-        self.assertIsNone(A.match("standard chartered"))
+    @classmethod
+    def setUpClass(cls):
+        cls.ctx = FakeCtx()
 
-    def test_unknown(self):
-        self.assertIsNone(A.match("Bob's Kombucha Club"))
+    def say(self, text):
+        reply, card = A.route(self.ctx, SENDER, text)
+        self.assertIsInstance(reply, str)
+        return reply, card
 
+    def test_1_check_six_subs_couple(self):
+        reply, card = self.say("Netflix $19, Stan $16, Disney+ $16, Spotify $14, iCloud $4.49, Google One $3.49. We're a couple.")
+        maths = re.findall(r"= \*\*\$[\d,]+\.\d\d/yr\*\*", reply)
+        self.assertEqual(len(maths), 6, reply)
+        self.assertIn("$875.76", reply)
+        self.assertRegex(reply.lower(), r"3 .*(video|streaming)")
+        self.assertRegex(reply.lower(), r"2 .*storage")
+        self.assertRegex(reply.lower(), r"couple")
+        self.assertIn("ref=asi1", reply)
+        self.assertIsNotNone(card)
 
-class MoneyTests(unittest.TestCase):
-    def test_yearly(self):
-        self.assertEqual(A.yearly(10, "month"), 120)
-        self.assertEqual(A.yearly(10, None), 120)
-        self.assertEqual(A.yearly(25, "week"), 1300)
-        self.assertEqual(A.yearly(99, "year"), 99)
-        self.assertIsNone(A.yearly(None, "month"))
+    def test_2_screen_pack(self):
+        reply, card = self.say("screen pack")
+        self.assertIn("https://www.netflix.com/cancelplan", reply)
+        self.assertGreaterEqual(reply.lower().count("cancel"), 3)
+        self.assertIsNotNone(card)
 
-    def test_money_format(self):
-        self.assertEqual(A.money(1234.4), "$1,234")
+    def test_3_ghost_list(self):
+        reply, _ = self.say("my ghost list")
+        self.assertGreaterEqual(reply.count("Requested"), 3, reply)
 
+    def test_4_stan_stopped(self):
+        reply, _ = self.say("Stan stopped")
+        self.assertIn("$192.00", reply)
 
-class MergeTests(unittest.TestCase):
-    def test_merge_known_and_unknown(self):
-        data = user_with([{"name": "Netflix", "price": 19}, {"name": "Bob's Kombucha", "price": 8}])
-        self.assertEqual(data["subs"]["netflix"]["yearly"], 228)
-        self.assertEqual(data["subs"]["netflix"]["pack"], "screen")
-        other = data["subs"]["other:bob's kombucha"]
-        self.assertEqual(other["pack"], "other")
-        self.assertEqual(other["yearly"], 96)
+    def test_5_weekly_gym(self):
+        reply, _ = self.say("gym $25 a week")
+        self.assertIn("$1,300.00", reply)
+        self.assertRegex(reply, r"\$25\.00/wk x 52")
 
-    def test_merge_keeps_price_when_missing(self):
-        data = user_with([{"name": "Stan", "price": 16}])
-        A.merge_items(data, [{"name": "Stan", "renews_day": 12}])
-        self.assertEqual(data["subs"]["stan"]["yearly"], 192)
-        self.assertEqual(data["subs"]["stan"]["renews_day"], 12)
+    def test_6_price_rise(self):
+        reply, _ = self.say("Netflix went from $16.99 to $18.99")
+        self.assertIn("$24.00", reply)
+        self.assertIn("12%", reply)
 
-    def test_bad_renewal_day_ignored(self):
-        data = user_with([{"name": "Stan", "price": 16, "renews_day": 40}])
-        self.assertIsNone(data["subs"]["stan"]["renews_day"])
+    def test_7_feedback(self):
+        reply, _ = self.say("feedback: add Foxtel")
+        self.assertIn("#1", reply)
+        self.assertRegex(reply.lower(), r"you said|we changed|thank")
 
+    def test_8_off_topic_no_crash(self):
+        reply, card = self.say("what's the weather")
+        self.assertTrue(reply)
+        self.assertIsNotNone(card)  # help comes with the add-subscriptions form
 
-class FreeCheckTests(unittest.TestCase):
-    def test_totals_and_streaming_double_up(self):
-        data = user_with([{"name": "Netflix", "price": 19}, {"name": "Stan", "price": 16}, {"name": "Disney+", "price": 16}])
-        text = A.free_check(data, {})
-        self.assertIn("$612", text)  # (19 + 16 + 16) x 12
-        self.assertIn("Screen", text)
-
-    def test_empty_gets_help(self):
-        self.assertEqual(A.free_check(A.new_data(), {}), A.HELP)
-
-
-class PackTests(unittest.TestCase):
-    def test_pack_has_checked_link_and_ghosts_it(self):
-        ctx, sender = FakeCtx(), "agent1test"
-        data = user_with([{"name": "Netflix", "price": 19}, {"name": "Stan", "price": 16}])
-        text = A.deliver_pack(ctx, sender, data, ["screen"])
-        self.assertIn(A.CATALOGUE["netflix"][3], text)
-        self.assertEqual(data["ghosts"]["netflix"]["status"], "requested")
-        self.assertIn("screen", data["paid_packs"])
-        saved = json.loads(ctx.storage.get(f"user:{sender}"))
-        self.assertIn("stan", saved["ghosts"])
-
-    def test_empty_pack(self):
-        text = A.deliver_pack(FakeCtx(), "agent1test", user_with([{"name": "Netflix", "price": 19}]), ["fitness"])
-        self.assertIn("don't have any subscriptions in that pack", text)
-
-
-class StatusTests(unittest.TestCase):
-    def setUp(self):
-        self.data = user_with([{"name": "Netflix", "price": 19}, {"name": "Stan", "price": 16}])
-        A.deliver_pack(FakeCtx(), "agent1test", self.data, ["screen"])
-
-    def test_mixed_update(self):
-        changed = A.apply_status_updates(self.data, "Stan stopped, Netflix still charging", [])
-        self.assertEqual(set(changed), {"stan", "netflix"})
-        self.assertEqual(self.data["ghosts"]["stan"]["status"], "confirmed")
-        self.assertEqual(self.data["ghosts"]["netflix"]["status"], "still_charging")
-
-    def test_ghost_list_totals(self):
-        A.apply_status_updates(self.data, "Stan stopped", [])
-        text = A.ghost_list(self.data)
-        self.assertIn("$192", text)  # Stan confirmed
-        self.assertIn("$228", text)  # Netflix still waiting
-
-
-class FeedbackTests(unittest.TestCase):
-    def test_feedback_prefix(self):
-        self.assertTrue(A.FEEDBACK_RE.match("feedback: add Foxtel"))
-        self.assertTrue(A.FEEDBACK_RE.match("Suggestion - add Binge"))
-        self.assertFalse(A.FEEDBACK_RE.match("Netflix $19"))
-
-    def test_feedback_saved_and_logged(self):
-        ctx = FakeCtx()
-        A.save_feedback(ctx, "agent1abcdef", "add Foxtel")
-        stored = json.loads(ctx.storage.get("feedback"))
-        self.assertEqual(stored[-1]["text"], "add Foxtel")
-        self.assertEqual(stored[-1]["user"], "abcdef")  # only the last 6 characters of the address
-        self.assertTrue(any("FEEDBACK #1" in line for line in ctx.logger.lines))
-
-
-class CatalogueTests(unittest.TestCase):
-    def test_links_are_https_and_steps_present(self):
-        for key, row in A.CATALOGUE.items():
-            link, steps = row[3], row[4]
-            if link:
-                self.assertTrue(link.startswith("https://"), f"{key}: {link}")
-            self.assertTrue(steps, f"{key} has no cancel steps")
-
-    def test_aliases_unique(self):
-        seen = {}
-        for key, row in A.CATALOGUE.items():
-            for alias in row[2]:
-                self.assertNotIn(alias, seen, f"alias {alias!r} used by {seen.get(alias)} and {key}")
-                seen[alias] = key
-
-
-class PackGateTests(unittest.TestCase):
-    """One free Ghost Pack, then the price. Beta delivers everything but explains it."""
-
-    def setUp(self):
-        self.saved = A.PAYMENTS_ENABLED
-        self.data = user_with([{"name": "Netflix", "price": 19}, {"name": "Spotify", "price": 14}, {"name": "Gym", "price": 25, "period": "week"}])
-
-    def tearDown(self):
-        A.PAYMENTS_ENABLED = self.saved
-
-    def test_beta_first_pack_free_then_explains(self):
-        A.PAYMENTS_ENABLED = False
-        packs, note = A.pack_gate(self.data, ["screen"])
-        self.assertEqual(packs, ["screen"])
-        self.assertIn("first Ghost Pack is free", note)
-        self.assertTrue(self.data["free_pack_used"])
-        packs, note = A.pack_gate(self.data, ["sound"])
-        self.assertEqual(packs, ["sound"])  # still free in beta
-        self.assertIn("Free while we're in beta", note)
-        self.assertIn(f"${A.PACK_PRICE} a pack", note)
-
-    def test_paid_one_free_try_then_price(self):
-        A.PAYMENTS_ENABLED = True
-        packs, note = A.pack_gate(self.data, ["screen"])
-        self.assertEqual(packs, ["screen"])
-        self.assertIn("free", note)
-        A.deliver_pack(FakeCtx(), "agent1test", self.data, packs)
-        packs, note = A.pack_gate(self.data, ["sound"])
-        self.assertEqual(packs, [])
-        self.assertIn("used your free Ghost Pack", note)
-        self.assertIn("Sound Pack", note)
-        packs, _ = A.pack_gate(self.data, ["screen"])
-        self.assertEqual(packs, ["screen"])  # already unlocked stays unlocked
-
-    def test_paid_ghost_everything_gives_one_free(self):
-        A.PAYMENTS_ENABLED = True
-        packs, note = A.pack_gate(self.data, ["screen", "sound", "fitness", "food"])
-        self.assertEqual(len(packs), 1)
-        self.assertIn("One pack is on us", note)
-        self.assertNotIn("Food", note)  # empty packs are never priced
-
-    def test_empty_pack_does_not_use_free_try(self):
-        A.PAYMENTS_ENABLED = True
-        packs, note = A.pack_gate(self.data, ["food"])
-        self.assertEqual((packs, note), ([], ""))
-        self.assertFalse(self.data["free_pack_used"])
-
-    def test_free_check_mentions_first_pack_free(self):
-        A.PAYMENTS_ENABLED = False
-        self.assertIn("first one is free", A.free_check(self.data, {}))
-
-
-class StatsTests(unittest.TestCase):
-    def setUp(self):
-        self.ctx = FakeCtx()
-        A.track_usage(self.ctx, "agent1aaaaaa", "check")
-        A.track_usage(self.ctx, "agent1bbbbbb", "check")
-        A.save_feedback(self.ctx, "agent1bbbbbb", "add Foxtel please")
-        A.bump_stat(self.ctx, "packs", 2)
-
-    def test_counts_for_anyone_without_feedback_text(self):
-        text = A.stats_reply(self.ctx)
-        self.assertIn("**2**", text)  # two people
-        self.assertIn("Feedback messages: **1**", text)
-        self.assertIn("Ghost Packs given out: **2**", text)
-        self.assertNotIn("Foxtel", text)
-
-    def test_owner_code_shows_feedback(self):
-        import os
-        os.environ["GHOSTIT_OWNER_KEY"] = "s3cret"
+    def test_9_evidence_needs_code(self):
+        reply, _ = self.say("evidence guess")
+        self.assertIn("team only", reply)
+        saved = A.ADMIN_CODE
+        A.ADMIN_CODE = "s3cret"
         try:
-            self.assertIn("add Foxtel please", A.stats_reply(self.ctx, "s3cret"))
-            wrong = A.stats_reply(self.ctx, "guess")
-            self.assertNotIn("Foxtel", wrong)
-            self.assertIn("didn't match", wrong)
+            reply, _ = self.say("evidence s3cret")
         finally:
-            del os.environ["GHOSTIT_OWNER_KEY"]
+            A.ADMIN_CODE = saved
+        self.assertIn("Feedback received: 1", reply)
+        self.assertIn("add Foxtel", reply)
 
-    def test_no_owner_key_set_never_shows_feedback(self):
-        self.assertNotIn("Foxtel", A.stats_reply(self.ctx, ""))
-        self.assertTrue(A.STATS_RE.match("stats"))
-        self.assertTrue(A.STATS_RE.match("STATS abc123"))
-        self.assertFalse(A.STATS_RE.match("stats for netflix please"))
+
+class EdgeCases(unittest.TestCase):
+    def test_disney_plus_keeps_price(self):
+        subs, missing = A.parse_subs("Disney+ $16")
+        self.assertEqual([(s["name"], s["price"]) for s in subs], [("Disney+", 16.0)])
+        self.assertEqual(missing, [])
+
+    def test_unknown_service_is_not_given_a_link(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "cancel Bob's Kombucha Club")
+        self.assertNotIn("http", reply.split("Scan")[0].split("ref=asi1")[0].replace("https://hunt-ghost-fees", ""))
+
+    def test_names_without_prices(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Netflix and Stan")
+        self.assertIn("no prices yet", reply)
+
+    def test_card_tap_json(self):
+        ctx = FakeCtx()
+        reply, _ = A.route(ctx, SENDER, json.dumps({"action": "check", "subs": "Netflix $19, Stan $16"}))
+        self.assertIn("$420.00", reply)
+
+    def test_evidence_disabled_with_default_code(self):
+        saved = A.ADMIN_CODE
+        A.ADMIN_CODE = "change-me"
+        try:
+            reply, _ = A.route(FakeCtx(), SENDER, "evidence change-me")
+        finally:
+            A.ADMIN_CODE = saved
+        self.assertIn("team only", reply)
+
+    def test_admin_code_from_secret(self):
+        os.environ["GHOSTIT_ADMIN_CODE"] = "from-secret"
+        try:
+            self.assertEqual(load_agent().ADMIN_CODE, "from-secret")
+        finally:
+            del os.environ["GHOSTIT_ADMIN_CODE"]
+
+    def test_cancel_links_are_https(self):
+        for key, row in A.C.items():
+            if row["link"]:
+                self.assertTrue(row["link"].startswith("https://"), key)
+
+    def test_message_with_card(self):
+        msg = A.make_msg("hi", ("form", {"a": 1}))
+        kinds = [type(c).__name__ for c in msg.content]
+        self.assertEqual(kinds, ["TextContent", "MetadataContent"])
 
 
 if __name__ == "__main__":

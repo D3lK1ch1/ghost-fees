@@ -1,6 +1,8 @@
 # Ghost.it 👻
 **Stop paying for subscriptions you forgot about.**
 
+Shows its working: every cost is broken down line by line, with tap-to-act cards in ASI:One.
+
 Tell me what you pay for. I add up the real cost, find the doubles, give you the official cancel steps, and check back that the charges actually stopped.
 
 ## What I do
