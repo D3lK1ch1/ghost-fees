@@ -35,10 +35,11 @@ Tell me what you pay for. I add up the real cost, find the doubles, give you the
 6. **See what changed:** `what's new`
 
 ## Try asking
+- "packs" (see all six Ghost Packs and what each one hunts)
+- "Spotify $14, YouTube Premium $17. Am I paying twice?"
 - "ChatGPT $30, Claude $30, Cursor $30, Copilot $15" (builders: $1,260 a year, and which AI tools double up)
 - "I pay for Netflix, Stan and Disney+. Is that too much?"
 - "How much does my $25 a week gym cost per year?"
-- "I'm paying for iCloud and Google One. Do I need both?"
 - "Netflix went up from $16.99 to $18.99. Is it still worth it?"
 - "How do I cancel Uber One?"
 - "We're a sharehouse of 4 with Netflix and Spotify. How can we save?"
