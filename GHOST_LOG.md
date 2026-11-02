@@ -193,3 +193,32 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/CancelAssistant.jsx, src/components/results/HauntedCalendar.jsx
 - How to test: Calendar tab on a wide screen; then in the assistant press 4. Mark it cancelled, I cancelled it, and save.
 - User feedback that drove this: "after you cancel the first one will Cassy automatically assist you in the next one", "here on all versions should be filled by a ghost saying continue to f**k your exes with assistance from Cassy".
+
+## Mon 2 Nov 2026 (paywall pack, branches feat/01 to feat/07)
+
+### Free limits counted on the server, and Stripe unlock
+- What: the free tier is now checked on the server, so clearing the browser doesn't reset it. Sign in, then 1 free scan (one upload of up to 6 files; re-scanning the same files stays free). 1 free AI answer per ghost (the quick answers stay free). Cassy's web lookup is free for the first subscription only. Unlock is a one-off Stripe Checkout: $5 for the first 50 founding members, then $10. Beta: everything stays free, with no sign-in, until the secret PAYMENTS_ENABLED is set to true; usage is still counted for the evidence. Visitors who aren't signed in keep the sample, with a daily ceiling on AI calls.
+- Data kept: counts and salted one-way hashes only (Allowance entity, readable by our server and admins only). No statement, transactions, merchant names or results. User.paid can no longer be changed by users.
+- Files: base44/entities/Allowance.jsonc, UsageDay.jsonc, User.jsonc; base44/functions/allowance, createCheckout (new), parseStatement, askGhostGuide, findCancelInfo; src/lib/AllowanceContext.jsx, src/lib/ghostFees/allowance.js (new, replaces scanQuota.js); Paywall.jsx, Landing.jsx, GhostGuide.jsx, CassLookup.jsx, Privacy.jsx
+- Secrets: QUOTA_SECRET (long random string). Later, to start charging: STRIPE_SECRET_KEY (sk_test_ first) and PAYMENTS_ENABLED=true. Optional APP_URL.
+- How to test: signed out, upload: asks you to sign in. Signed in: first upload works, a different file shows the paywall. Ask Penny two AI questions: the second is locked. Ask Cassy about two subscriptions: the second is locked. Unlock with test card 4242 4242 4242 4242.
+
+### Sourced stats, and your own number next to the price
+- What: home page strip (about half of Australians, up to $1,667 a year, 9 months to cancel) with links to the sources, plus the live scan count. Results show "This scan found $X in N months. Ghost Fees is $5 once. That's paid back N times." Gym stat beside a gym, 9-months stat in the cancellation assistant. Fixed: Compare the Market's headline is $1,667, not $1,739; ING is 2023.
+- Files: src/data/stats.js, src/components/stats/ (new), src/lib/ghostFees/payback.js
+
+### Do you have any of these? (no upload)
+- What: 14 common subscriptions with typical AU prices, each with its source and date. Typical only, never in a real total, ends with "Upload your statement to see what you actually pay".
+- Files: src/data/commonSubs.js, src/components/landing/CommonSubsChecker.jsx
+
+### Filter and sort subscriptions
+- What: type chips (Streaming, Music, Cloud, AI, Design, Fitness, Other) and sort by cost, type or A to Z.
+
+### PDF report (paid)
+- What: Download PDF report: what cost you money, every subscription with its cancel link or steps, double-ups, Ghost List. Built in the browser. Free on the sample as a demo.
+
+### Saved so far, House Cleared
+- What: "Saved so far" on the Ghost List grows each day from each ghosted price. New badge House Cleared. (The Ghost It on ASI:One hand-off waits until the agent is live.)
+
+### Slack feedback, Delete my server data, life-stage tips
+- What: feedback posts to Slack when SLACK_WEBHOOK_URL is set. Privacy page button deletes your free-tier counters. Double-ups ask "Who are these for?" (Just me, Student, Couple, Sharehouse, Family) and tailor the tip.
