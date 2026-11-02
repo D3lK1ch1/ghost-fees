@@ -15,9 +15,22 @@ const DAY = 24 * 60 * 60 * 1000;
 const BORROWING_RE = /INTEREST CHARGED|PURCHASE INTEREST|AFTERPAY LATE|ZIP FEE|ZIP MONTHLY|HUMM FEE/;
 const SURCHARGE_RE = /\bSURCHARGE\b|CONVENIENCE FEE/;
 
-// Long digit runs (card, account or reference numbers) are masked to the last 4.
+// What a description shows on screen and in the report, with identifying bits
+// hidden (tester: "can we scrub small amounts of identifying information from
+// the csvs?"). Grouping still uses the original text, so detection is unchanged.
+//   long digit runs (card, account, reference, phone numbers) -> last 4 only
+//   BSBs (062-000)                                           -> •••-•••
+//   email addresses                                          -> [email hidden]
+//   the person's name after TRANSFER/TFR/OSKO/PAYID TO|FROM   -> [name hidden]
+const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+const BSB_RE = /\b\d{3}-\d{3}\b/g;
+const TRANSFER_NAME_RE = /\b((?:FAST |INTERNET |ONLINE )?(?:TRANSFER|TFR|OSKO|PAYID)(?: PAYMENT)?\s+(?:TO|FROM))\s+[A-Z][A-Z'.-]*(?:\s+[A-Z][A-Z'.-]*){0,3}/gi;
 function scrub(text) {
-  return String(text).replace(/\b(?:\d[ -]?){6,}\d\b/g, (digits) => `••••${digits.replace(/\D/g, '').slice(-4)}`);
+  return String(text)
+    .replace(EMAIL_RE, '[email hidden]')
+    .replace(/\b(?:\d[ -]?){6,}\d\b/g, (digits) => `••••${digits.replace(/\D/g, '').slice(-4)}`)
+    .replace(BSB_RE, '•••-•••')
+    .replace(TRANSFER_NAME_RE, '$1 [name hidden]');
 }
 
 // Money arriving as pay, used only to show a total as hours of work.
