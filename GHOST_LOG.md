@@ -337,3 +337,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/AskGhostIt.jsx (new), src/components/results/ResultsView.jsx, src/components/landing/FromGhostIt.jsx
 - How to test: Try a sample statement, press Ask Ghost It about these, paste into ASI:One. Open /?ref=asi1&subs=netflix,stan: the banner shows; × closes it.
 - User feedback that drove this: "need to link the two projects while keeping separate, people are not trying my agent enough".
+
+### Did it stop? And a celebration when it really did (B4)
+- What: any Ghost List item Requested for 7+ days asks "It's been 8 days. Did Netflix stop charging?" with Yes, it stopped / Still charging buttons. The big moment (confetti, the ghost floating away, "Netflix is gone for good! $203.88 a year back in your pocket.") plays only on Confirmed, never on the first "I cancelled it" (which keeps its small toast). No motion with reduced motion.
+- Files: src/components/results/GhostList.jsx, src/index.css
+- How to test: put something on the Ghost List, set its date 8 days back (or wait), open Subscriptions and press Yes, it stopped.
+- User feedback that drove this: retention research: celebrate the confirm, not the click (FINAL_UPDATE_PACK 1.6).

@@ -14,6 +14,15 @@ import { ProofSummary } from './ProofDialog';
 export default function GhostList({ items, onStatus, onRemove, onAddProof, overlapIds, priceRiseIds }) {
   const [shared, setShared] = useState(false);
   const [ghostName] = useGhostName();
+  // Celebrate the confirm, not the click: the big moment only when it really stopped.
+  const [cheer, setCheer] = useState(null);
+  const setStatus = (item, status) => {
+    if (status === 'confirmed' && item.status !== 'confirmed') {
+      setCheer({ merchant: item.merchant, yearly: (Number(item.monthly) || 0) * 12 });
+      setTimeout(() => setCheer(null), 3200);
+    }
+    onStatus(item.id, status);
+  };
   if (!items.length) return null;
   const { ghosted, confirmed } = ghostTotals(items);
   const { current, next, progress } = levelFor(ghosted);
@@ -33,7 +42,17 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
   };
 
   return (
-    <section className="mt-3 rounded-2xl border border-primary/30 bg-primary/[0.05] p-4 sm:p-5" aria-label="Ghost List">
+    <section className="relative mt-3 rounded-2xl border border-primary/30 bg-primary/[0.05] p-4 sm:p-5" aria-label="Ghost List">
+      {cheer && (
+        <div role="status" className="gl-cheer pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center overflow-hidden rounded-2xl bg-background/80 text-center">
+          {Array.from({ length: 22 }, (_, i) => (
+            <span key={i} aria-hidden="true" className="gl-confetti absolute top-0" style={{ left: `${(i * 41) % 100}%`, width: i % 2 ? 7 : 9, height: i % 3 ? 11 : 7, borderRadius: i % 4 ? 2 : '50%', background: ['#ff6f7d', '#5ee6c8', '#ffd36e', '#b79cff'][i % 4], animationDelay: `${(i % 6) * 0.12}s` }} />
+          ))}
+          <span aria-hidden="true" className="gl-leave text-[54px]">👻</span>
+          <p className="font-heading text-[22px] font-bold text-foreground">{cheer.merchant} is gone for good!</p>
+          <p className="text-[14px] font-semibold text-[#5ee6c8]">{money(cheer.yearly)} a year back in your pocket.</p>
+        </div>
+      )}
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-[15px] font-semibold tracking-tight text-white">👻 {ghostName}&apos;s Ghost List</h3>
         <p className="text-[12.5px] text-muted-foreground">
@@ -100,7 +119,13 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
                 <p className={cn('mt-1 text-[12px] font-semibold', item.status === 'charging' ? 'text-[#ffc27a]' : 'text-[#5ee6c8]')}>{item.checkNote}</p>
               )}
               {askCheck && (
-                <p className="mt-1 text-[12px] font-semibold text-[#ffc27a]">Did {item.merchant} stop charging?</p>
+                <div className="mt-1.5 rounded-xl border border-[#ffc27a]/50 bg-[#ffc27a]/10 px-3 py-2">
+                  <p className="text-[13px] font-bold text-foreground">It&apos;s been {days} days. Did {item.merchant} stop charging?</p>
+                  <div className="mt-1.5 flex gap-2">
+                    <button type="button" onClick={() => setStatus(item, 'confirmed')} className="rounded-full bg-[#5ee6c8] px-3 py-1 text-[12.5px] font-bold text-[#0f2a24]">Yes, it stopped</button>
+                    <button type="button" onClick={() => setStatus(item, 'charging')} className="rounded-full border border-[#ffc27a] px-3 py-1 text-[12.5px] font-bold text-foreground">Still charging</button>
+                  </div>
+                </div>
               )}
               <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
                 {Object.entries(STATUSES).map(([key, label]) => (
@@ -108,7 +133,7 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
                     key={key}
                     type="button"
                     aria-pressed={item.status === key}
-                    onClick={() => onStatus(item.id, key)}
+                    onClick={() => setStatus(item, key)}
                     className={cn(
                       'rounded-full border px-2.5 py-0.5 text-[11.5px] font-bold transition-colors',
                       item.status === key

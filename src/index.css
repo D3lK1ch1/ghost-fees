@@ -84,3 +84,12 @@
 .limit-pop { animation: limitPop 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) 0.2s both; }
 .animate-pulse-soft { animation: pulseSoft 2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .limit-sheet[data-state='open'], .limit-pop, .animate-pulse-soft { animation: none; } }
+
+/* B4: celebrate the confirm. The ghost floats away, confetti falls. */
+@keyframes glLeave { 0% { transform: translateY(0) scale(1); opacity: 1; } 100% { transform: translateY(-90px) scale(0.6); opacity: 0; } }
+@keyframes glConfetti { 0% { transform: translateY(-10px) rotate(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(260px) rotate(540deg); opacity: 0; } }
+@keyframes glFade { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
+.gl-cheer { animation: glFade 3.2s ease forwards; }
+.gl-leave { animation: glLeave 2.4s ease-in 0.4s forwards; }
+.gl-confetti { animation: glConfetti 2.2s linear forwards; }
+@media (prefers-reduced-motion: reduce) { .gl-cheer, .gl-leave { animation: none; } .gl-confetti { display: none; } }
