@@ -373,3 +373,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/HomeTabs.jsx (new), src/components/results/ResultsTour.jsx (new), src/pages/Landing.jsx, src/components/results/ResultsView.jsx, src/components/guide/GhostGuide.jsx, src/index.css
 - How to test: home page: switch the three tabs. Try a sample statement (👻 or 🎄), Reveal, Show me the ghosts: the tour starts; Next through 3 steps.
 - User feedback that drove this: "it took a lot of scrolling to digest the content on each page which made it hard to understand what I was seeing" (tester, 2 Nov, 3 of 5).
+
+### The promise, the purpose and who it's for, first on the home page
+- What: the block that opens every theme now says three things, in order. The promise (UVP) as a tagline: "Ghost them once. Pay once." (pay once, never a subscription). The purpose in one sentence: "Ghost Fees finds the subscriptions and bank fees you forgot you're paying, then helps you cancel them. No bank login." Who it's for, as "Is this you?": three cards with ghost art (Still paying for the gym you stopped going to / Forgot to cancel a "free" trial / Three streaming apps, watching one); tapping one shows the real stat behind it ("You're not alone: 38% of overspenders forgot to cancel a free trial (Westpac, 2025)"), otherwise "For Australians juggling subscriptions: students, sharehouses, couples and families." Then the 3 steps, the sample button and "$10 once, never a subscription. Free while we're in beta."
+- Files: src/components/landing/ValueLine.jsx
+- How to test: open the home page in each theme; tap each "Is this you?" card.
+- User feedback that drove this: founders: "need to make the UVP, purpose and target market clearer in a more creative way"; tester: "make the value statement clear from the start and more concise".
