@@ -14,7 +14,7 @@ import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
 import ResultsTour from './ResultsTour';
 import FirstSteps from './FirstSteps';
-import { TourButton } from '@/components/tour/Tour';
+import { TourButton, TOUR_EVENT } from '@/components/tour/Tour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
@@ -180,6 +180,12 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     if (leaks.length) window.history.replaceState(null, '', `#${tab}`);
   }, [tab, leaks.length]);
   const [guideKey, setGuideKey] = useState('penny');
+  // Pressing Tour before the reveal skips the guess, so the tour can start straight away.
+  useEffect(() => {
+    const onTour = (event) => event.detail === 'results' && setGuessDone(true);
+    window.addEventListener(TOUR_EVENT, onTour);
+    return () => window.removeEventListener(TOUR_EVENT, onTour);
+  }, []);
   // "Talk to Cassy" (and similar) buttons on any screen open the chat with that guide.
   useEffect(() => {
     const open = (event) => {
@@ -513,7 +519,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       </Dialog>
 
       <GhostGuide analysis={analysis} guideKey={guideKey} onGuide={setGuideKey} onAction={onGuideAction} openRequest={guideOpen} />
-      <ResultsTour ready={leaks.length > 0 && guessDone && !exStory} setTab={setTab} />
+      <ResultsTour ready={leaks.length > 0 && (guessDone || exStory)} setTab={setTab} guideKey={guideKey} />
     </div>
   );
 }

@@ -480,6 +480,11 @@ One entry per change. Newest at the bottom.
 - How to test: Sample > results at about 900px wide: sidebar on the left. On a phone: the bar along the top.
 - User feedback that drove this: "why does Christmas have this bar up top"
 
+### Tour opens from anywhere, led by a ghost guide
+- What: Pressing Tour before the "Before we show you..." guess did nothing (the tour waited for the reveal). Now pressing Tour skips the guess and starts straight away, in every theme (💔 included). The tour is led by your ghost guide: their ghost, name and role ("Penny, the tidy accountant, shows you round"), and it follows whichever guide you've picked. It also checks for its steps after the page has drawn, so it starts on your total (all 7 steps).
+- Files: src/components/tour/Tour.jsx, src/components/results/ResultsTour.jsx, src/components/results/ResultsView.jsx
+- How to test: Sample > on the guess screen press Tour (header): the total appears and Penny's tour starts at step 1 of 7.
+- User feedback that drove this: "the tour doesn't open and should be a ghost guide"
 ### Ghost It strip under each ghost card, with what it does for that one
 - What: The loose "Message Ghost It about Spotify" button is now a strip attached under each subscription's card: Ghost It's blue avatar, "Let Ghost It handle Spotify in chat", what it does for that ghost, and a "Message Ghost It" button. For price creep it says it works out what the rise costs a year (e.g. $24.00 more a year), asks if you'd still sign up and gives the cancel steps, and sends Ghost It "Spotify went from $12.99 to $14.99" (checked: Ghost It replies with that maths). For other subscriptions: yearly cost, double-ups, cancel steps and a ready email, then tracks that it stopped. Bank fees don't get one (Ghost It doesn't handle those).
 - Files: src/components/results/AskGhostIt.jsx, src/components/results/ResultsView.jsx
