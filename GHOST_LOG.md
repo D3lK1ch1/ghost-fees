@@ -294,3 +294,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx
 - How to test: open /demo, start a screen recording, click Start; or /demo?ratio=9x16 for stories.
 - User feedback that drove this: "how did people make cool videos like this", "I should do animated video".
+
+### 💔 Postcard links to the ex's cancel page; Cassy bubble clears the sunglasses
+- What: the Weekend away postcard ("Wish you weren't here, Adobe Creative Cloud.") now links to that ex's official cancel page ("Cancel Adobe Creative Cloud on their site"), or, with no checked page, a Find their cancel page with Cassy button that opens the chat on Cassy. The ghost under the calendar: the comma is back ("Scroll down to f**k your exes more, with help from Cassy."), and the speech bubble's tail now sits just beside each ghost's face, so it no longer covers the sunglasses or eyes.
+- Files: src/components/ex/ExAct2.jsx, src/components/results/HauntedCalendar.jsx
+- How to test: pick 💔, Try a sample statement, See everything: Glow-up plan (postcard) and Check-ins & reminders (the bubble), for I'm Fine and Heartbroken.
+- User feedback that drove this: "can this link here to the actual cancel link on the website"; "comma before Cassy and do not cut off the sunnies".
