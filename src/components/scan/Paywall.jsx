@@ -1,5 +1,5 @@
-
 import { Link } from 'react-router-dom';
+import { Lock, Mail, X } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { statsFor } from '@/data/stats';
 import { useScan } from '@/lib/ScanContext';
@@ -7,6 +7,10 @@ import { useAllowance } from '@/lib/AllowanceContext';
 import { money } from '@/lib/ghostFees/format';
 import { useTheme } from '@/lib/ThemeContext';
 import { lastRealTotal } from '@/lib/ghostFees/payback';
+import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
+
+// The limit-reached sheet (B7) and the sign-in screen (B8), styled to the Claude
+// Design canvas "Ghost Fees upgrade flow" (screens 1A, 1B, 2, and the 💔 / 🎄 variants).
 
 // The theme's own ghost floats at the top of the sheet.
 const SHEET_ART = {
@@ -22,6 +26,9 @@ const LIMIT_TITLES = {
   report: 'The PDF report comes with the unlock',
 };
 
+// The four ghost guides' colours, as dots on the "ghost try used" sheet.
+const GUIDE_DOTS = ['#FFB86B', '#8FB8FF', '#FF9BC2'];
+
 // The person's own total: this scan if it's real, otherwise their last real scan
 // (kept as one number in this browser). Never the sample.
 function foundTotal(results, usedSample) {
@@ -29,85 +36,101 @@ function foundTotal(results, usedSample) {
   return lastRealTotal();
 }
 
-const TITLES = {
-  sign_in: 'Sign in for your 3 free scans',
-  scan: "You've used your 3 free scans. Keep hunting ghosts.",
-  guide: "That's your free ghost try.",
-  cass: 'Cassy looked up your first one for free.',
-  report: 'The PDF report comes with the unlock.',
-};
-
-// Shown at every free limit. Leads with the person's own number when there is one.
 export default function Paywall({ open, reason = 'scan', onClose }) {
   const { theme } = useTheme();
+  const P = useUpgradePalette();
   const { results, usedSample } = useScan();
   const { signedIn, foundingLeft } = useAllowance();
   const returnTo = encodeURIComponent(reason === 'sign_in' && window.location.pathname !== '/upgrade' ? window.location.pathname + window.location.hash : '/upgrade');
+  const art = SHEET_ART[theme.key] || SHEET_ART.haunted;
 
-
-  // B8: sign in before unlocking (or before a counted scan once charging is on).
+  // Screen 2: sign in before unlocking (or before a counted scan once charging is on).
   if (reason === 'sign_in') {
     return (
       <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
-        <DialogContent className="max-w-md rounded-3xl border-border bg-card p-5 text-center sm:p-6">
-          <div className="relative mx-auto h-20 w-20">
-            <img src={SHEET_ART[theme.key] || SHEET_ART.haunted} alt="" className="h-20 w-auto object-contain" />
-            <span aria-hidden="true" className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-[16px]">🔒</span>
+        <DialogContent className="max-w-md rounded-3xl border-0 p-6 text-center" style={{ background: P.bg, color: '#FFFFFF' }}>
+          <div className="relative mx-auto h-28 w-28">
+            <img src={art} alt="" className="motion-safe:animate-float h-28 w-auto object-contain" />
+            <span aria-hidden="true" className="absolute -bottom-1 right-0 flex h-9 w-9 items-center justify-center rounded-xl" style={{ background: P.accent, color: P.ink }}><Lock className="h-4 w-4" /></span>
           </div>
-          <DialogTitle className="font-heading text-[22px] leading-tight">Save your ghosts and unlock</DialogTitle>
-          <p className="text-[14px] text-muted-foreground">Sign in so your Ghost List and payment stay with you on any device.</p>
-          <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="block rounded-2xl bg-primary py-3 text-[15px] font-bold text-primary-foreground">Continue with Google</Link>
-          <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="block rounded-2xl border border-border py-3 text-[15px] font-bold">Continue with email</Link>
-          <p className="rounded-2xl border border-border bg-background/50 px-3 py-2 text-[12.5px] text-muted-foreground">
-            We store your email and your scan count. Never your statement. <Link to="/privacy" onClick={onClose} className="underline">Privacy</Link>
+          <DialogTitle className="font-heading text-[28px] font-bold leading-tight">Save your ghosts and unlock</DialogTitle>
+          <p className="text-[16px] leading-snug" style={{ color: P.soft }}>Sign in so your Ghost List and payment stay with you on any device.</p>
+          <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="flex min-h-[54px] items-center justify-center gap-2.5 rounded-2xl bg-white text-[16px] font-semibold" style={{ color: P.bg }}>Continue with Google</Link>
+          <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="flex min-h-[54px] items-center justify-center gap-2.5 rounded-2xl text-[16px] font-semibold" style={{ background: P.sheet, border: `1px solid ${P.handle}` }}><Mail className="h-5 w-5" /> Continue with email</Link>
+          <p className="rounded-2xl px-4 py-3 text-left text-[13.5px] leading-snug" style={{ background: P.sheet, color: P.muted }}>
+            We store your email and your scan count. Never your statement. <Link to="/privacy" onClick={onClose} className="underline" style={{ color: P.accent }}>Privacy</Link>
           </p>
         </DialogContent>
       </Dialog>
     );
   }
 
-  // B7: the limit-reached sheet. Slides up on phones, centred on bigger screens.
-  // Leads with the person's own total (never hidden on the results page).
+  // Screens 1A / 1B: the limit sheet. Slides up on phones, centred on bigger screens.
+  // Leads with the person's own total; their results stay visible behind it.
   const total = foundTotal(results, usedSample);
   const times = Math.floor(total / 10);
-  const art = SHEET_ART[theme.key] || SHEET_ART.haunted;
+  const ghostCount = results?.leaks?.length || 0;
   const unlockTo = signedIn ? '/upgrade' : `/login?returnTo=${encodeURIComponent('/upgrade')}`;
   return (
     <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
-      <DialogContent className="limit-sheet max-h-[92vh] max-w-md overflow-y-auto rounded-3xl border-border bg-card p-5 pt-3 sm:p-6 max-sm:bottom-0 max-sm:top-auto max-sm:translate-y-0 max-sm:rounded-b-none">
-        <div aria-hidden="true" className="mx-auto mb-1 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
-        <img src={art} alt="" className="motion-safe:animate-float mx-auto h-20 w-auto object-contain" />
-        <DialogTitle className="text-center font-heading text-[21px] leading-tight">{LIMIT_TITLES[reason] || LIMIT_TITLES.scan}</DialogTitle>
+      <DialogContent className="limit-sheet max-h-[92vh] max-w-md overflow-y-auto rounded-[28px] border-0 p-6 pt-3.5 text-center max-sm:bottom-0 max-sm:top-auto max-sm:translate-y-0 max-sm:rounded-b-none [&>button]:hidden" style={{ background: P.sheet, color: '#FFFFFF', boxShadow: '0 -12px 40px rgba(0,0,0,0.4)' }}>
+        <div aria-hidden="true" className="mx-auto h-[5px] w-10 rounded-full" style={{ background: P.handle }} />
+        <div className="-mt-1 flex justify-end">
+          <button type="button" onClick={onClose} aria-label="Close" className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: P.chip }}><X className="h-[18px] w-[18px]" /></button>
+        </div>
 
-        {total > 0 ? (
-          <div className="rounded-2xl border border-primary/40 bg-primary/10 px-4 py-3 text-center">
-            <p className="text-[14px] font-semibold text-foreground">Your scans found</p>
-            <p className="limit-pop font-heading text-[40px] font-bold leading-none text-primary">{money(total)}</p>
-            <p className="text-[14px] font-semibold text-foreground">in ghosts</p>
-            <p className="mt-2 text-[14px] text-foreground">
-              Ghost Fees is <b>$10 once</b>.{times >= 1 ? <> That&apos;s already paid back <b>{times}x</b>.</> : null}
-            </p>
+        {reason === 'guide' ? (
+          <div className="flex justify-center gap-2.5" aria-hidden="true">
+            {[...GUIDE_DOTS, P.accent].map((colour, i) => (
+              <span key={colour} className="h-[52px] w-[52px] rounded-full" style={{ background: colour, boxShadow: i === 3 ? '0 0 0 3px #FFFFFF' : 'none' }} />
+            ))}
           </div>
         ) : (
-          <ul className="space-y-2">
-            {statsFor('paywall').map((fact) => (
-              <li key={fact.key} className="flex gap-2.5 rounded-2xl bg-secondary/60 px-3 py-2">
-                <span className="text-[18px]" aria-hidden="true">{fact.emoji}</span>
-                <span className="text-[13px] leading-snug text-muted-foreground">
-                  <span className="font-bold text-foreground">{fact.stat}</span> {fact.text}
-                  <span className="block text-[10.5px] opacity-75">{fact.source}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
+          <img src={art} alt="" className="motion-safe:animate-float mx-auto h-24 w-auto object-contain" />
+        )}
+        <p className="text-[14px] font-semibold" style={{ color: P.muted }}>{LIMIT_TITLES[reason] || LIMIT_TITLES.scan}</p>
+
+        {reason === 'guide' ? (
+          <>
+            <DialogTitle className="font-heading text-[28px] font-bold leading-tight">
+              Cassy can help with all {ghostCount > 0 ? <span style={{ color: P.accent }}>{ghostCount} ghosts</span> : 'the ghosts'} you found
+            </DialogTitle>
+            <p className="text-[16px] leading-snug" style={{ color: P.soft }}>
+              Unlock all 4 guides, Penny, Spooksworth, Gus and Cassy, for $10 once.{total > 0 ? ` Your scans found ${money(total)}.` : ''}
+            </p>
+          </>
+        ) : total > 0 ? (
+          <>
+            <DialogTitle className="font-heading text-[30px] font-bold leading-tight">
+              Your scans found <span className="limit-pop inline-block" style={{ color: P.accent }}>{money(total)}</span> in ghosts
+            </DialogTitle>
+            <p className="text-[16px] leading-snug" style={{ color: P.soft }}>
+              Ghost Fees is $10 once.{times >= 1 ? ` That's already paid back ${times}x.` : ''}
+            </p>
+          </>
+        ) : (
+          <>
+            <DialogTitle className="font-heading text-[26px] font-bold leading-tight">Unlock everything for $10 once</DialogTitle>
+            <ul className="space-y-1.5 text-left">
+              {statsFor('paywall').map((fact) => (
+                <li key={fact.key} className="rounded-2xl px-3 py-2 text-[13.5px]" style={{ background: P.card, color: P.soft }}>
+                  <b style={{ color: P.accent }}>{fact.stat}</b> {fact.text} <span className="block text-[11px]" style={{ color: P.faint }}>{fact.source}</span>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
 
-        <Link to={unlockTo} onClick={onClose} className="motion-safe:animate-pulse-soft mt-1 block rounded-2xl bg-primary py-3.5 text-center text-[16px] font-bold text-primary-foreground">
+        <Link to={unlockTo} onClick={onClose} className="motion-safe:animate-pulse-soft flex min-h-[54px] items-center justify-center rounded-2xl text-[17px] font-semibold" style={{ background: P.accent, color: P.ink }}>
           Unlock everything, $10
         </Link>
-        <button type="button" onClick={onClose} className="text-center text-[14px] font-bold text-muted-foreground underline underline-offset-4">Maybe later</button>
-        <Link to="/upgrade#compare" onClick={onClose} className="text-center text-[12.5px] font-semibold text-muted-foreground hover:text-foreground">See how we compare</Link>
-        {foundingLeft > 0 && <p className="text-center text-[11.5px] text-muted-foreground">Founding members: $5 for the first 50 ({foundingLeft} left).</p>}
+        <div>
+          <button type="button" onClick={onClose} className="min-h-[44px] w-full text-[15px]" style={{ color: P.soft }}>Maybe later</button>
+        </div>
+        <p className="text-[13px]" style={{ color: P.muted }}>
+          Your results stay visible. <Link to="/upgrade#compare" onClick={onClose} className="underline" style={{ color: P.accent }}>See how we compare</Link>
+        </p>
+        {foundingLeft > 0 && <p className="text-[11.5px]" style={{ color: P.faint }}>Founding members: $5 for the first 50 ({foundingLeft} left).</p>}
       </DialogContent>
     </Dialog>
   );
