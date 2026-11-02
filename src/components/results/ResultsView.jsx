@@ -11,7 +11,7 @@ import ExLeakCard from '@/components/ex/ExLeakCard';
 import CancelAssistant from './CancelAssistant';
 import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
-import AskGhostIt from './AskGhostIt';
+import GhostItPacks from './GhostItPacks';
 import ResultsTour from './ResultsTour';
 import FirstSteps from './FirstSteps';
 import { TourButton, TOUR_EVENT } from '@/components/tour/Tour';
@@ -293,7 +293,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             <div data-tour="actions">
               <ReportButton analysis={analysis} usedSample={usedSample} />
               {!exStory && <TourButton name="results" label="New here? Take the tour" className="ml-2 mt-3" />}
-              <AskGhostIt items={subscriptions} variant="card" className="mt-4" />
+              <GhostItPacks items={subscriptions} className="mt-4" />
             </div>
           </>
         )}
@@ -404,7 +404,6 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
-                        <AskGhostIt items={[subscriptions.find((item) => item.merchant === leak.merchant)]} leak={leak} variant="strip" className="mx-3 -mt-4" />
                         {cardStats[leak.id] && <StatNote statKey={cardStats[leak.id]} className="mx-4 mt-1" />}
                       </div>
                     </CardItem>

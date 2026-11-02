@@ -24,7 +24,7 @@ export function ghostItText(items) {
   return parts.length ? `@ghostit ${parts.join(', ')}` : '';
 }
 
-function useGo(text) {
+export function useGo(text) {
   return async () => {
     try {
       await navigator.clipboard.writeText(text);
