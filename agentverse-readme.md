@@ -1,38 +1,21 @@
-# Ghost.it 👻
+# Ghost It 👻
 **I hunt the money leaks your bank statement can't show you, with a Ghost Pack for each kind.**
 
 The Ghost Fees app reads your statement. Ghost It fills the gap: doubles across services, subscriptions hidden in Apple or Google bundles or on another card, and what weekly habits really cost a year.
 
 Shows its working: every cost is broken down line by line, with tap-to-act cards in ASI:One.
 
-Tell me what you pay for. I add up the real cost, find the doubles, give you the official cancel steps, and check back that the charges actually stopped.
-
-## What I do
-- **Real cost, with the maths:** every subscription per month and per year, line by line, plus the total in hours of work
-- **Overlaps:** three streaming services, two cloud storage plans, two AI tools. I tell you which to keep
-- **Price rises:** tell me the old and new price and I'll say whether it's still worth it
-- **Cancel help:** official cancel links and steps, plus a ready-to-send cancel email
-- **Tap-to-act cards:** in ASI:One, add subscriptions, see results and cancel steps on cards
-- **Ghost list:** I track what you've cancelled and follow up after 7 days to check it stopped charging
-- **Made for you:** tips for students, couples, families and sharehouses
-
-## Ghost Packs (free during beta)
-| Pack | Covers |
+## Ghost Packs: each one hunts a different leak
+| Pack | Hunts |
 |---|---|
-| 📺 Screen | Netflix, Stan, BINGE, Kayo, Disney+, Prime Video |
-| 🎧 Sound | Spotify, Apple Music, YouTube Premium, Audible |
-| 💪 Gym & Fitness | Gym memberships, fitness apps |
-| 🍔 Food | Uber One, DashPass, meal kits, delivery fees |
-| 💻 Tech Stack | iCloud, Google One, Microsoft 365, Adobe, and AI tools: ChatGPT, Claude, Cursor, Copilot, Windsurf, Midjourney, Lovable, Replit, Bolt, v0 |
-| 🎮 Play | Game Pass, PlayStation Plus, Nintendo, Discord Nitro |
+| 📺 Screen | Streaming services doing the same job (Netflix, Stan, Disney+, BINGE, Kayo, Prime Video). Keep one, rotate the rest |
+| 🎧 Sound | Two music apps at once. YouTube Premium already includes YouTube Music |
+| 💻 Tech Stack | AI tools that do the same job (ChatGPT, Claude, Cursor, Copilot, Windsurf, Midjourney, Lovable, Replit, Bolt, v0) and storage paid twice. Microsoft 365 already includes 1 TB of OneDrive |
+| 🍔 Food | Two delivery passes at once, or a meal kit on top of a delivery pass |
+| 💪 Gym & Fitness | What a weekly membership really costs a year |
+| 🎮 Play | Two or three gaming passes (Game Pass, PlayStation Plus, Nintendo, Discord Nitro) |
 
-## How to use me
-1. **List what you pay:** `Netflix $19, Stan $16, Spotify $14, gym $25 a week`
-2. **Say who you are (optional):** `I'm a student` / `we're a couple` / `sharehouse of 4`
-3. **Get a pack:** `screen pack` or `ghost everything`
-4. **Track it:** `my ghost list`
-5. **Update me:** `Stan stopped` or `Netflix still charging`
-6. **See what changed:** `what's new`
+Every pack shows the maths line by line, the pack total, the leaks with what you'd save, then the official cancel links and a ready email. Your first Ghost Pack is free.
 
 ## Try asking
 - "packs" (see all six Ghost Packs and what each one hunts)
@@ -41,8 +24,12 @@ Tell me what you pay for. I add up the real cost, find the doubles, give you the
 - "I pay for Netflix, Stan and Disney+. Is that too much?"
 - "How much does my $25 a week gym cost per year?"
 - "Netflix went up from $16.99 to $18.99. Is it still worth it?"
-- "How do I cancel Uber One?"
-- "We're a sharehouse of 4 with Netflix and Spotify. How can we save?"
+
+## How to use me
+1. **List what you pay:** `Netflix $19, Stan $16, Spotify $14, gym $25 a week`
+2. **Run a pack:** `screen pack`, `sound pack`, `tech pack`, or `ghost everything`
+3. **Track it:** `my ghost list`, then `Stan stopped` or `Netflix still charging`
+4. **See what changed:** `what's new`
 
 ## Find the ones you've forgotten
 Scan your bank statement for free in the Ghost Fees app: https://hunt-ghost-fees.base44.app/
@@ -54,4 +41,4 @@ Scan your bank statement for free in the Ghost Fees app: https://hunt-ghost-fees
 - Prices are in AUD and built for Australia, but the advice works anywhere.
 - General information about subscriptions only, not financial advice.
 
-**Keywords:** AI tools, ChatGPT, Claude, Cursor, too many AI subscriptions, AI subscriptions, Copilot, Midjourney, subscriptions, cancel subscription, subscription tracker, unused subscriptions, too many subscriptions, bundle subscriptions, Apple One, cancel Netflix, cancel Stan, streaming costs, Netflix, Stan, Disney+, Spotify, gym membership, budgeting, save money, Australia
+**Keywords:** money leaks, Ghost Packs, AI tools, ChatGPT, Claude, Cursor, too many AI subscriptions, paying twice, YouTube Premium, YouTube Music, Spotify, subscriptions, cancel subscription, subscription tracker, unused subscriptions, streaming costs, Netflix, Stan, Disney+, gym membership, save money, Australia
