@@ -1,0 +1,19 @@
+/* /demo animated walkthrough. */
+.dm-stage { transform-origin: center; }
+@keyframes dmIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes dmPop { 0% { opacity: 0; transform: scale(0.6); } 70% { opacity: 1; transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes dmWord { 0% { opacity: 0; transform: translateY(30px) scale(0.92); } 60% { opacity: 1; transform: translateY(-4px) scale(1.02); } 100% { opacity: 1; transform: none; } }
+@keyframes dmDevice { from { opacity: 0; transform: translateY(40px) rotate(-1.5deg); } to { opacity: 1; transform: none; } }
+@keyframes dmProgress { from { width: 0; } to { width: 100%; } }
+/* The pointer glides to the Block button and taps it at about 2.2 s. */
+@keyframes dmCursor { 0% { left: 80%; top: 85%; opacity: 0; } 15% { opacity: 1; } 55% { left: 48%; top: 41%; transform: scale(1); } 62% { transform: scale(0.82); } 70% { transform: scale(1); } 100% { left: 52%; top: 46%; opacity: 0; } }
+.dm-in { opacity: 0; animation: dmIn 0.5s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+.dm-pop { opacity: 0; animation: dmPop 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) forwards; }
+.dm-word { animation: dmWord 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) both; }
+.dm-device { animation: dmDevice 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) both 0.15s; }
+.dm-progress { animation: dmProgress linear forwards; }
+.dm-cursor { animation: dmCursor 3.6s ease-in-out forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .dm-in, .dm-pop, .dm-word, .dm-device { animation-duration: 0.01s; animation-delay: 0s !important; }
+  .dm-cursor { display: none; }
+}
