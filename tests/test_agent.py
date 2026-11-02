@@ -203,6 +203,20 @@ class EdgeCases(unittest.TestCase):
             if row["link"]:
                 self.assertTrue(row["link"].startswith("https://"), key)
 
+    def test_delete_my_data(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19, Stan $16")
+        A.route(ctx, SENDER, "screen pack")
+        reply, _ = A.route(ctx, SENDER, "please delete my data")
+        self.assertIn("deleted", reply)
+        self.assertEqual(A.ghost_list(ctx, SENDER), {})
+        reply, _ = A.route(ctx, SENDER, "my ghost list")
+        self.assertNotIn("Requested", reply)
+        # "ghost everything" must not wipe anything
+        A.route(ctx, SENDER, "Netflix $19")
+        A.route(ctx, SENDER, "ghost everything")
+        self.assertTrue(A.ghost_list(ctx, SENDER))
+
     def test_message_with_card(self):
         msg = A.make_msg("hi", ("form", {"a": 1}))
         kinds = [type(c).__name__ for c in msg.content]

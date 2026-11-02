@@ -6,12 +6,11 @@ Shows its working: every cost is broken down line by line, with tap-to-act cards
 Tell me what you pay for. I add up the real cost, find the doubles, give you the official cancel steps, and check back that the charges actually stopped.
 
 ## What I do
-- **Real cost:** your subscriptions per month and per year, plus what each one costs in hours of work
+- **Real cost, with the maths:** every subscription per month and per year, line by line, plus the total in hours of work
 - **Overlaps:** three streaming services, two cloud storage plans, two AI tools. I tell you which to keep
-- **Swap and save:** spot bundles that replace what you pay for, like Apple One, YouTube Premium (includes YouTube Music), Microsoft 365 storage, Spotify Duo
 - **Price rises:** tell me the old and new price and I'll say whether it's still worth it
 - **Cancel help:** official cancel links and steps, plus a ready-to-send cancel email
-- **Free trial alarm:** tell me you started a free trial and I'll give you the end date, a calendar reminder 2 days before it charges, and the cancel steps
+- **Tap-to-act cards:** in ASI:One, add subscriptions, see results and cancel steps on cards
 - **Ghost list:** I track what you've cancelled and follow up after 7 days to check it stopped charging
 - **Made for you:** tips for students, couples, families and sharehouses
 
@@ -30,15 +29,14 @@ Tell me what you pay for. I add up the real cost, find the doubles, give you the
 2. **Say who you are (optional):** `I'm a student` / `we're a couple` / `sharehouse of 4`
 3. **Get a pack:** `screen pack` or `ghost everything`
 4. **Track it:** `my ghost list`
-5. **On a free trial?** `started Paramount+ trial today`
-6. **Update me:** `Stan stopped` or `Netflix still charging`
+5. **Update me:** `Stan stopped` or `Netflix still charging`
+6. **See what changed:** `what's new`
 
 ## Try asking
 - "I pay for Netflix, Stan and Disney+. Is that too much?"
 - "How much does my $25 a week gym cost per year?"
 - "I'm paying for iCloud and Google One. Do I need both?"
 - "Netflix went up from $16.99 to $18.99. Is it still worth it?"
-- "I have Apple Music, iCloud and Apple TV+. Should I bundle?"
 - "How do I cancel Uber One?"
 - "We're a sharehouse of 4 with Netflix and Spotify. How can we save?"
 

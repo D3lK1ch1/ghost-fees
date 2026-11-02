@@ -535,6 +535,12 @@ def route(ctx, sender, raw):
             return help_reply()
 
     # 2. Typed commands
+    if re.search(r"\b(delete|erase|forget|wipe)\b.*\b(my data|my info\w*|my details|my list|everything|all my)\b", low):
+        # Privacy promise in the README: forget this person's list and last check.
+        ctx.storage.set(f"gl:{sender}", {})
+        ctx.storage.set(f"last:{sender}", [])
+        return ("**What I did:** deleted your subscriptions and ghost list. I no longer hold anything about you. 👻\n\n"
+                "Start again any time by listing what you pay, e.g. `Netflix $19, Stan $16`.", None)
     if low.startswith("feedback"):
         return feedback_reply(ctx, sender, text.split(":", 1)[-1].strip() if ":" in text else text[8:].strip())
     if low.startswith("evidence"):
