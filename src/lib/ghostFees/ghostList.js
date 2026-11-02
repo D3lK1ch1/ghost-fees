@@ -65,3 +65,11 @@ export function ghostTotals(items) {
     confirmed: items.filter((item) => item.status === 'confirmed').reduce((sum, item) => sum + yearly(item), 0),
   };
 }
+
+// Saved so far: each ghosted item's own monthly price, per day since it was ghosted.
+export function savedSoFar(items) {
+  return items
+    .filter((item) => item.status !== 'charging')
+    .reduce((sum, item) => sum + ((Number(item.monthly) || 0) * 12 / 365) * daysSince(item.date), 0);
+}
+
