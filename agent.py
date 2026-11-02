@@ -59,7 +59,14 @@ CHANGES = [
      "every reply now says what it did, shows the maths line by line, and uses cards"),
     ("A Fetch.ai mentor", "netflix $8.99 espn plus 11.99 paramount 13.99 (typed without commas)",
      "lists without commas are read item by item, prices without $ are understood, and Paramount+ is no longer read as yearly"),
+    ("Raj (Fetch.ai)", "not clear what it does; why $276?",
+     "every reply says what it did, shows the maths line by line, and uses cards"),
+    ("Builders", "AI tools double up",
+     "Cursor, Windsurf, Midjourney, Lovable, Replit, Bolt and v0 now recognised"),
 ]
+
+# v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
+PURPOSE = "I find subscriptions you're paying for twice and help you cancel them. Add yours below."
 
 DISCLAIMER = "_General information about subscriptions, not financial advice._"
 
@@ -100,6 +107,14 @@ add("claude", "Claude", "Tech Stack", ["claude"], None, None, "ai")
 add("gemini", "Gemini", "Tech Stack", ["gemini"], None, None, "ai")
 add("perplexity", "Perplexity", "Tech Stack", ["perplexity"], None, None, "ai")
 add("copilot", "Copilot", "Tech Stack", ["copilot"], None, None, "ai")
+# v8: builders' AI tools. No checked cancel links yet, so none are guessed.
+add("cursor", "Cursor", "Tech Stack", ["cursor"], None, None, "ai")
+add("windsurf", "Windsurf", "Tech Stack", ["windsurf", "codeium"], None, None, "ai")
+add("midjourney", "Midjourney", "Tech Stack", ["midjourney"], None, None, "ai")
+add("lovable", "Lovable", "Tech Stack", ["lovable"], None, None, "ai")
+add("replit", "Replit", "Tech Stack", ["replit"], None, None, "ai")
+add("bolt", "Bolt", "Tech Stack", ["bolt.new", "bolt"], None, None, "ai")
+add("v0", "v0", "Tech Stack", ["v0.dev", "v0"], None, None, "ai")
 add("gym", "Gym", "Gym and Fitness", ["anytime fitness", "fitness first", "goodlife", "jetts", "f45", "snap fitness", "plus fitness", "virgin active", "gym"], None, None, None)
 add("uberone", "Uber One", "Food", ["uber one", "uber eats"], None, None, "delivery")
 add("dashpass", "DashPass", "Food", ["dashpass", "doordash"], None, None, "delivery")
@@ -114,7 +129,7 @@ add("nitro", "Discord Nitro", "Play", ["discord nitro", "nitro", "discord"], Non
 
 OVERLAP_NAMES = {
     "video": "video streaming", "music": "music", "storage": "cloud storage",
-    "ai": "AI assistants", "design": "design tools", "delivery": "food delivery passes",
+    "ai": "AI tools", "design": "design tools", "delivery": "food delivery passes",
     "mealkit": "meal kits", "gaming": "gaming passes",
 }
 PACKS = ["Screen", "Sound", "Gym and Fitness", "Food", "Tech Stack", "Play"]
@@ -295,9 +310,13 @@ def add_to_list(ctx, sender, items):
 # ---------------------------------------------------------------- replies
 # Each reply returns (text, card) where card is None or (kind, payload).
 
-def help_reply():
+def help_reply(full=False):
+    """v8: vague or first messages get one purpose line and the form card. The full
+    command list is for `commands`, and for text-only mode (no cards)."""
+    if not full and USE_CARDS:
+        return PURPOSE, help_card()
     text = (
-        "**I'm Ghost It.** I add up what your subscriptions really cost, find the doubles, "
+        PURPOSE + "\n\n**I'm Ghost It.** I add up what your subscriptions really cost, find the doubles, "
         "give you the real cancel steps, and track that they actually stopped.\n\n"
         "**Try one of these:**\n"
         "1. List what you pay: `Netflix $19, Stan $16, Spotify $14, gym $25 a week`\n"
@@ -309,7 +328,11 @@ def help_reply():
         f"Want the ones you forgot? Scan your bank statement free in the Ghost Fees app: {app_link()}\n\n"
         + DISCLAIMER
     )
-    card = ("form", {
+    return text, help_card()
+
+
+def help_card():
+    return ("form", {
         "title": "What do you pay for?",
         "fields": [
             {"name": "subs", "kind": "text", "label": "Name and price, e.g. Netflix $19, gym $25 a week", "required": True},
@@ -320,7 +343,6 @@ def help_reply():
         ],
         "submit_cta": {"label": "Check my subscriptions", "selection": {"action": "check"}},
     })
-    return text, card
 
 
 def check_reply(ctx, sender, text, subs, missing):
@@ -363,30 +385,44 @@ def check_reply(ctx, sender, text, subs, missing):
     if packs:
         lines.append("\n**Next:** type `" + packs[0].split()[0].lower() + " pack` for cancel steps, "
                      "or `ghost everything` for all of them.")
+        first = next((s["name"] for s in subs if s["known"]), subs[0]["name"])
+        lines.append(f"Cancel one: type `cancel {first}`.")
     lines.append(f"\nMost people have more than they remember. Scan your statement free: {app_link([s['key'] for s in subs if s['known']])}")
     lines.append("\n" + DISCLAIMER)
 
-    ctx.storage.set(f"last:{sender}", subs)
+    # Remember everything they've told us, not just this message (newest price wins),
+    # so `screen pack` after an AI-tools check still finds their streaming services.
+    known = {s["key"]: s for s in get(ctx, f"last:{sender}", [])}
+    known.update({s["key"]: s for s in subs})
+    ctx.storage.set(f"last:{sender}", list(known.values())[-40:])
     bump(ctx, "checks")
     bump(ctx, "found_yearly_cents", int(round(total_y * 100)))
 
     card = ("review", {
         "title": f"Your subscriptions: {money(total_y)} a year",
         "summary_rows": rows[:12],
-        "approve_cta": {"label": "Show cancel steps", "primary": True, "selection": {"action": "ghost_all"}},
+        # Review cards take two buttons: the pack for the first group, and the app.
+        "approve_cta": ({"label": f"Get {packs[0]} pack", "primary": True, "selection": {"action": "pack", "pack": packs[0]}}
+                        if packs else {"label": "Show cancel steps", "primary": True, "selection": {"action": "ghost_all"}}),
         "reject_cta": {"label": "Scan my statement", "selection": {"action": "scan"}},
     })
     return "\n".join(lines), card
 
 
-def ghost_reply(ctx, sender, items, title):
+def ghost_reply(ctx, sender, items, title, browse=False):
+    """browse=True: the person hasn't told us they have these (e.g. `screen pack` before
+    listing anything), so show the steps but don't add them to their ghost list."""
     if not items:
         return ("I don't have any subscriptions from you for that yet. List them first, "
                 "e.g. `Netflix $19, Stan $16`.", None)
-    add_to_list(ctx, sender, items)
-    parts = [f"**What I did:** got the cancel steps for {len(items)} subscription"
-             f"{'s' if len(items) != 1 else ''} and added {'them' if len(items) != 1 else 'it'} "
-             "to your ghost list as Requested.\n"]
+    if browse:
+        parts = [f"**What I did:** got the cancel steps for the {title}. You haven't told me which of these you have, "
+                 "so I haven't added any to your ghost list. Type `cancel Netflix` (or any name) to add one.\n"]
+    else:
+        add_to_list(ctx, sender, items)
+        parts = [f"**What I did:** got the cancel steps for {len(items)} subscription"
+                 f"{'s' if len(items) != 1 else ''} and added {'them' if len(items) != 1 else 'it'} "
+                 "to your ghost list as Requested.\n"]
     for s in items:
         parts.append(cancel_block(s["key"] if s.get("known") else s["name"]))
         parts.append("")
@@ -666,11 +702,11 @@ async def on_reject(ctx, sender, msg):
 
 
 # ---------------------------------------------------------------- router
-def gated_ghost(ctx, sender, items, title, everything=False):
+def gated_ghost(ctx, sender, items, title, everything=False, browse=False):
     ok, note = pack_access(ctx, sender, items, title, everything)
     if not ok:
         return note, None
-    text, card = ghost_reply(ctx, sender, items, title)
+    text, card = ghost_reply(ctx, sender, items, title, browse=browse)
     return ((note + "\n\n" + text) if note else text), card
 
 
@@ -691,6 +727,9 @@ def route(ctx, sender, raw):
     if sel is None:
         if re.search(r"show cancel steps|ghost_all", low):
             sel = {"action": "ghost_all"}
+        elif re.search(r"\bget (?:the )?(screen|sound|gym and fitness|gym|food|tech stack|tech|play) pack\b", low):
+            word = re.search(r"\bget (?:the )?(screen|sound|gym and fitness|gym|food|tech stack|tech|play) pack\b", low).group(1).split()[0]
+            sel = {"action": "pack", "pack": PACK_WORDS.get(word, "Screen")}
         elif re.search(r"scan my statement|check a new statement|\bscan\b", low) and "$" not in low:
             sel = {"action": "scan"}
         elif re.search(r"(i've|i have) cancelled", low):
@@ -707,6 +746,13 @@ def route(ctx, sender, raw):
             if subs:
                 return check_reply(ctx, sender, subs_text, subs, missing)
             return help_reply()
+        if a == "pack":
+            pack = sel.get("pack") if sel.get("pack") in PACKS else "Screen"
+            last = [s for s in get(ctx, f"last:{sender}", []) if s.get("known") and C[s["key"]]["pack"] == pack]
+            if not last:
+                browse = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
+                return gated_ghost(ctx, sender, browse, f"{pack} pack", browse=True)
+            return gated_ghost(ctx, sender, last, f"{pack} pack")
         if a == "ghost_all":
             return gated_ghost(ctx, sender, get(ctx, f"last:{sender}", []), "Cancel steps", everything=True)
         if a == "scan":
@@ -735,6 +781,8 @@ def route(ctx, sender, raw):
         if ADMIN_CODE != "change-me" and code == ADMIN_CODE:
             return evidence_reply(ctx)
         return ("Evidence is for the Ghost It team only.", None)
+    if re.fullmatch(r"\s*(commands|menu|what can you do\??|all commands)\s*", low):
+        return help_reply(full=True)
     if re.search(r"what'?s new|changelog", low):
         return whats_new_reply()
     if re.search(r"ghost ?list|my list", low):
@@ -753,7 +801,8 @@ def route(ctx, sender, raw):
         pack = PACK_WORDS[pm.group(1)]
         last = [s for s in get(ctx, f"last:{sender}", []) if s.get("known") and C[s["key"]]["pack"] == pack]
         if not last:
-            last = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
+            browse = [dict(key=k, known=True, name=v["name"], price=None) for k, v in C.items() if v["pack"] == pack][:8]
+            return gated_ghost(ctx, sender, browse, f"{pack} pack", browse=True)
         return gated_ghost(ctx, sender, last, f"{pack} pack")
     cm = re.search(r"\b(cancel|ghost|stop)\b\s+(.+)", low)
     if cm and "$" not in low:

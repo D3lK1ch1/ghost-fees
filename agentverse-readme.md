@@ -1,5 +1,5 @@
 # Ghost.it 👻
-**Stop paying for subscriptions you forgot about.**
+**I find subscriptions you're paying for twice and help you cancel them.**
 
 Shows its working: every cost is broken down line by line, with tap-to-act cards in ASI:One.
 
@@ -21,7 +21,7 @@ Tell me what you pay for. I add up the real cost, find the doubles, give you the
 | 🎧 Sound | Spotify, Apple Music, YouTube Premium, Audible |
 | 💪 Gym & Fitness | Gym memberships, fitness apps |
 | 🍔 Food | Uber One, DashPass, meal kits, delivery fees |
-| 💻 Tech Stack | iCloud, Google One, Microsoft 365, Adobe, ChatGPT, Claude |
+| 💻 Tech Stack | iCloud, Google One, Microsoft 365, Adobe, and AI tools: ChatGPT, Claude, Cursor, Copilot, Windsurf, Midjourney, Lovable, Replit, Bolt, v0 |
 | 🎮 Play | Game Pass, PlayStation Plus, Nintendo, Discord Nitro |
 
 ## How to use me
@@ -33,6 +33,7 @@ Tell me what you pay for. I add up the real cost, find the doubles, give you the
 6. **See what changed:** `what's new`
 
 ## Try asking
+- "ChatGPT $30, Claude $30, Cursor $30, Copilot $15" (builders: $1,260 a year, and which AI tools double up)
 - "I pay for Netflix, Stan and Disney+. Is that too much?"
 - "How much does my $25 a week gym cost per year?"
 - "I'm paying for iCloud and Google One. Do I need both?"
@@ -50,4 +51,4 @@ Scan your bank statement for free in the Ghost Fees app: https://hunt-ghost-fees
 - Prices are in AUD and built for Australia, but the advice works anywhere.
 - General information about subscriptions only, not financial advice.
 
-**Keywords:** subscriptions, cancel subscription, subscription tracker, unused subscriptions, too many subscriptions, bundle subscriptions, Apple One, cancel Netflix, cancel Stan, streaming costs, Netflix, Stan, Disney+, Spotify, gym membership, budgeting, save money, Australia
+**Keywords:** AI tools, ChatGPT, Claude, Cursor, too many AI subscriptions, AI subscriptions, Copilot, Midjourney, subscriptions, cancel subscription, subscription tracker, unused subscriptions, too many subscriptions, bundle subscriptions, Apple One, cancel Netflix, cancel Stan, streaming costs, Netflix, Stan, Disney+, Spotify, gym membership, budgeting, save money, Australia

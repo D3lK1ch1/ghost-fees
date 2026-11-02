@@ -372,3 +372,74 @@ class BetaStaysFree(unittest.TestCase):
         A.route(ctx, SENDER, "screen pack")
         reply, _ = A.route(ctx, SENDER, "sound pack")
         self.assertIn("free during beta", reply)
+
+
+class V8(unittest.TestCase):
+    """agent-update-pack.md (v8, 2 Nov): purpose first, AI tools, card buttons, CHANGES."""
+
+    def test_purpose_first_for_vague_messages(self):
+        for msg in ["hi", "help", "what do you do", "what's the weather"]:
+            reply, card = A.route(FakeCtx(), SENDER, msg)
+            self.assertEqual(reply, A.PURPOSE, msg)
+            self.assertEqual(card[0], "form", msg)
+
+    def test_text_only_fallback_keeps_the_commands(self):
+        A.USE_CARDS = False
+        try:
+            reply, _ = A.route(FakeCtx(), SENDER, "hi")
+            self.assertTrue(reply.startswith(A.PURPOSE))
+            self.assertIn("screen pack", reply)
+        finally:
+            A.USE_CARDS = True
+
+    def test_ai_tools_double_up(self):
+        reply, card = A.route(FakeCtx(), SENDER, "ChatGPT $30, Claude $30, Cursor $30, Copilot $15")
+        self.assertIn("$1,260.00 a year", reply)
+        self.assertIn("4 AI tools", reply)
+        self.assertEqual(reply.count("/mo x 12"), 4)
+
+    def test_new_ai_tools_recognised_without_guessed_links(self):
+        for key in ["cursor", "windsurf", "midjourney", "lovable", "replit", "bolt", "v0"]:
+            self.assertIn(key, A.C)
+            self.assertIsNone(A.C[key]["link"])
+            self.assertEqual(A.C[key]["overlap"], "ai")
+
+    def test_results_card_buttons(self):
+        _, card = A.route(FakeCtx(), SENDER, "Netflix $19, Stan $16")
+        kind, payload = card
+        self.assertEqual(kind, "review")
+        self.assertEqual(payload["approve_cta"]["label"], "Get Screen pack")
+        self.assertEqual(payload["approve_cta"]["selection"], {"action": "pack", "pack": "Screen"})
+        self.assertEqual(payload["reject_cta"]["label"], "Scan my statement")
+
+    def test_get_pack_button_gives_their_pack(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19, Stan $16, Disney+ $16")
+        reply, _ = A.route(ctx, SENDER, json.dumps({"action": "pack", "pack": "Screen"}))
+        self.assertIn("3 subscriptions", reply)
+
+    def test_screen_pack_after_another_list_still_finds_them(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19, Stan $16, Disney+ $16")
+        A.route(ctx, SENDER, "ChatGPT $30, Claude $30")
+        reply, _ = A.route(ctx, SENDER, "screen pack")
+        self.assertIn("3 subscriptions", reply)
+        reply, _ = A.route(ctx, SENDER, "Stan stopped")
+        self.assertIn("$192.00", reply)
+
+    def test_pack_with_nothing_listed_adds_nothing_to_the_ghost_list(self):
+        ctx = FakeCtx()
+        reply, _ = A.route(ctx, SENDER, "screen pack")
+        self.assertIn("haven't added any", reply)
+        self.assertEqual(A.ghost_list(ctx, SENDER), {})
+
+    def test_changes_has_raj_and_builders(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "what's new")
+        self.assertIn("not clear what it does; why $276?", reply)
+        self.assertIn("AI tools double up", reply)
+
+    def test_no_em_dashes_in_replies(self):
+        ctx = FakeCtx()
+        for msg in ["hi", "Netflix $19, Stan $16", "screen pack", "my ghost list", "what's new", "ChatGPT $30, Cursor $30"]:
+            reply, _ = A.route(ctx, SENDER, msg)
+            self.assertNotIn("—", reply, msg)
