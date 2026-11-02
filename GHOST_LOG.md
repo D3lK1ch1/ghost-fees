@@ -548,3 +548,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostItOffer.jsx, src/pages/GhostIt.jsx
 - How to test: Home page in each theme: the box under the upload button.
 - User feedback that drove this: "writing needs to be bigger and needs to say something like specialised agent, make the purpose of the agent more clear and to the point"
+
+### Ghost It offer names its packs and why it's different
+- What: The Ghost It box by the upload button now lists its six Ghost Packs as chips (Screen, Sound, Tech Stack, Food, Gym, Play: one per kind of leak) and says why it's different from other AI agents: "Not a general chatbot: every number is real maths you can check, and every cancel link is checked, never guessed." (True: Ghost It uses no LLM for numbers or links.)
+- Files: src/components/landing/GhostItOffer.jsx
+- How to test: Home page: the box under Upload my CSV or PDF.
+- User feedback that drove this: "mention the packs, why is this different to other AI agents"
