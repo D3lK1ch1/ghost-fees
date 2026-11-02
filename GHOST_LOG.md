@@ -468,3 +468,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/GhostIt.jsx (new), src/lib/ghostFees/ghostItAgent.js (new), src/App.jsx, src/components/results/AskGhostIt.jsx, src/pages/Try.jsx
 - How to test: /ghostit: Copy, then Open Ghost It, then Chat with Agent, then paste; the reply shows 5 lines of maths and a streaming double-up ($2,091.64 a year). Sample > Ask Ghost It: opens the Agentverse page.
 - User feedback that drove this: "what's the link, how are we linking the projects, get more tests on my Fetch.ai project without confusing users"
+
+### Results sidebar from tablet width, in every theme
+- What: The results sections show as a sidebar from 768px wide (was 1024px), so tablets, small laptops and the Base44 preview get the same left sidebar as big screens, with the theme's name under each plain name. Only phones get the scrolling bar along the top. Same in all three themes.
+- Files: src/components/results/ResultsView.jsx
+- How to test: Sample > results at about 900px wide: sidebar on the left. On a phone: the bar along the top.
+- User feedback that drove this: "why does Christmas have this bar up top"
