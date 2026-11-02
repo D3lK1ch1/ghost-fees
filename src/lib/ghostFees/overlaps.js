@@ -20,3 +20,10 @@ export function findOverlaps(subscriptions = []) {
     })
     .filter((group) => group.items.length >= 2);
 }
+
+// Short type names for filter and sort on the Subscriptions tab.
+export const TYPE_LABELS = { video: 'Streaming', music: 'Music', storage: 'Cloud', ai: 'AI', design: 'Design', fitness: 'Fitness', other: 'Other' };
+
+export function typeOf(merchant = '') {
+  return GROUPS.find((group) => group.match.test(merchant))?.key || 'other';
+}
