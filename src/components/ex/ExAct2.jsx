@@ -217,7 +217,18 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <div className="text-[12px] font-extrabold tracking-wide" style={{ color: C.coralDeep }}>POSTCARD</div>
           <div className="ex-fredoka text-[20px] font-semibold leading-snug">Wish you weren&apos;t here, {name}.</div>
-          <div className="text-[13px] font-bold" style={{ color: '#5c5668' }}>{SITE}</div>
+          {/* Straight to the ex's own cancel page, or Cassy when there's no checked one. */}
+          {biggest && cancelInfo(biggest.merchant).url ? (
+            <a href={cancelInfo(biggest.merchant).url} target="_blank" rel="noreferrer" className="text-[13.5px] font-extrabold underline underline-offset-4" style={{ color: C.coralDeep }}>
+              Cancel {biggest.merchant} on their site ↗
+            </a>
+          ) : biggest ? (
+            <button type="button" onClick={() => askGuide('cass')} className="self-start text-[13.5px] font-extrabold underline underline-offset-4" style={{ color: C.coralDeep }}>
+              Find their cancel page with Cassy
+            </button>
+          ) : (
+            <div className="text-[13px] font-bold" style={{ color: '#5c5668' }}>{SITE}</div>
+          )}
         </div>
         <div aria-hidden="true" className="flex h-16 w-[54px] flex-none items-center justify-center rounded-md" style={{ border: `2px dashed ${C.coral}`, color: C.coral }}>♥</div>
       </div>
