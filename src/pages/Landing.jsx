@@ -10,6 +10,7 @@ import SeanceScreen from '@/components/scan/SeanceScreen';
 import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import ValueLine from '@/components/landing/ValueLine';
+import HomeTabs from '@/components/landing/HomeTabs';
 import { Link } from 'react-router-dom';
 import { TRY_RETURN, markTry } from '@/pages/Try';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -151,9 +152,11 @@ export default function Landing() {
           <ValueLine onSample={() => scan([], true)} />
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
-          <CommonSubsChecker onUpload={() => inputRef.current?.click()} onSample={() => scan([], true)} />
-          <UseCases />
-          <FoundersSection />
+          <HomeTabs tabs={[
+            { key: 'have', label: 'Have any of these?', content: <CommonSubsChecker onUpload={() => inputRef.current?.click()} onSample={() => scan([], true)} /> },
+            { key: 'finds', label: 'What it finds', content: <UseCases /> },
+            { key: 'who', label: 'Who made it', content: <FoundersSection /> },
+          ]} />
           <SiteFooter />
         </>
       )}

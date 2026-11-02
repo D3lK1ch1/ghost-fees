@@ -367,3 +367,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Evidence.jsx (new), src/data/changelog.json (new), src/App.jsx, src/pages/Progress.jsx, src/pages/Privacy.jsx, src/lib/session.js, src/pages/Landing.jsx, src/components/results/ResultsView.jsx, base44/entities/Event.jsonc, base44/functions/logEvent, base44/functions/progressStats
 - How to test (published, as admin): open /evidence. Scan a real statement and reveal; after 3 of those, /progress shows the comparison.
 - User feedback that drove this: evidence for the Fetch.ai and Base44 submissions (FINAL_UPDATE_PACK 1.8).
+
+### Home page tabs and a 3-step results tour
+- What: less scrolling and a guided start. On the home page, the three sections below the stats are now tabs (Have any of these? / What it finds / Who made it), one at a time instead of one long scroll. The first time results show (after the reveal), a 3-step tour scrolls to and rings the real thing: 1 "This is your total" (real charges, share or PDF), 2 "Each tab is one job" (the results tabs), 3 "Stuck? Ask a ghost" (the guide button, or Ask Ghost It). Skip any time; shown once per browser; no smooth scrolling with reduced motion. Not shown in the 💔 phone story, which already walks you through.
+- Files: src/components/landing/HomeTabs.jsx (new), src/components/results/ResultsTour.jsx (new), src/pages/Landing.jsx, src/components/results/ResultsView.jsx, src/components/guide/GhostGuide.jsx, src/index.css
+- How to test: home page: switch the three tabs. Try a sample statement (👻 or 🎄), Reveal, Show me the ghosts: the tour starts; Next through 3 steps.
+- User feedback that drove this: "it took a lot of scrolling to digest the content on each page which made it hard to understand what I was seeing" (tester, 2 Nov, 3 of 5).

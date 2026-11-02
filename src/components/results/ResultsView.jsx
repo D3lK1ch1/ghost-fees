@@ -12,6 +12,7 @@ import CancelAssistant from './CancelAssistant';
 import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
+import ResultsTour from './ResultsTour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
@@ -261,7 +262,8 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         {leaks.length > 0 && !guessDone && !exStory ? (
           <GuessReveal total={total} months={analysis.monthSpan} onDone={(guess) => { if (!usedSample) trackEvent('guess_revealed', { guess_amount: guess, real_amount: total }); setGuessDone(true); }} />
         ) : leaks.length ? (
-          <LeakTotal
+<div data-tour="total">
+                    <LeakTotal
             total={total}
             months={analysis.monthSpan}
             from={analysis.firstDate}
@@ -271,6 +273,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             fileNames={fileNames}
             onClearData={() => setConfirmClear(true)}
           />
+          </div>
         ) : (
           <EmptyState fileNames={fileNames} onRestart={onRestart} onSample={onSample} transactionCount={analysis.transactionCount} months={analysis.monthSpan} />
         )}
@@ -312,6 +315,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         {leaks.length ? (
           <div id="ghosts" className="mt-6 scroll-mt-4 lg:grid lg:grid-cols-[220px_1fr] lg:gap-6">
             <nav
+              data-tour="tabs"
               aria-label="Results sections"
               className="sticky top-0 z-20 -mx-5 mb-4 flex gap-1.5 overflow-x-auto border-b border-border bg-background/90 px-5 py-2.5 backdrop-blur sm:-mx-8 sm:px-8 lg:top-4 lg:mx-0 lg:mb-0 lg:flex-col lg:self-start lg:overflow-visible lg:rounded-2xl lg:border lg:bg-card/80 lg:p-2"
             >
@@ -491,6 +495,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       </Dialog>
 
       <GhostGuide analysis={analysis} guideKey={guideKey} onGuide={setGuideKey} onAction={onGuideAction} openRequest={guideOpen} />
+      <ResultsTour ready={leaks.length > 0 && guessDone && !exStory} />
     </div>
   );
 }
