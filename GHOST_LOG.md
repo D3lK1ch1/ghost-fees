@@ -282,3 +282,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/HeartbreakHouse.jsx
 - How to test: pick 💔, Try a sample statement, See everything, Heartbreak House, block one ex: "Out of bed. One down." has room.
 - User feedback that drove this: "spread this out a bit".
+
+### Link preview card for Slack, iMessage and WhatsApp
+- What: sharing the app link now shows a proper card: "Ghost Fees: Find the money haunting your account", the leak types, "Free, no sign-in, private", and three theme ghosts (the lantern ghost, Tilly and the festive ghost). Before, Slack showed a blank grey box.
+- Files: index.html (Open Graph and Twitter tags), public/og-image.png (new, 1200 x 630, 248 KB)
+- How to test: after publishing, paste https://hunt-ghost-fees.base44.app into a new Slack message, or check it at opengraph.xyz. Old posts keep their old preview until re-posted.
+- User feedback that drove this: the Slack preview had a grey placeholder image.
