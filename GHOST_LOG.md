@@ -325,6 +325,12 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Upgrade.jsx, src/pages/Unlocked.jsx, src/pages/upgrade.css (new), src/components/scan/Paywall.jsx, src/App.jsx, src/lib/ghostFees/allowance.js, base44/functions/createCheckout (plan, return URLs), base44/functions/allowance (paidCents, tier, foundingNumber)
 - How to test: open /upgrade, switch plans (list, price and button change). With PAYMENTS_ENABLED=true and Stripe test keys, pay with 4242 4242 4242 4242 and land on /unlocked.
 - User feedback that drove this: design canvas screens 3 to 5 (FINAL_UPDATE_PACK 1.3).
+
+### Plain value statement first on the home page
+- What: every theme now opens with one plain sentence before any art: "Find the subscriptions and bank fees you forgot you're paying, then cancel them." with three steps (Upload a bank statement > See every leak in dollars > Cancel with ready-made steps and emails), "Free, no bank login" and "See it on a sample in 10 seconds". The 👻 subheading no longer says "8 kinds" (the section below says five); it names them instead.
+- Files: src/components/landing/ValueLine.jsx (new), src/pages/Landing.jsx, src/lib/ghostFees/themes.js
+- How to test: open the home page in each theme: the value line is the first thing under the header.
+- User feedback that drove this: "I was quite overwhelmed at the beginning with the visuals and it took a lot of scrolling to digest the content... Make the value statement clear from the start and make it more concise" (tester, hackathon mailbox, 2 Nov, 3 of 5).
 ### Animated 36-second demo to screen-record at /demo
 - What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx

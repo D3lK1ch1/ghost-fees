@@ -9,6 +9,7 @@ import UploadErrors from '@/components/landing/UploadErrors';
 import SeanceScreen from '@/components/scan/SeanceScreen';
 import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
+import ValueLine from '@/components/landing/ValueLine';
 import { Link } from 'react-router-dom';
 import { TRY_RETURN, markTry } from '@/pages/Try';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -146,6 +147,7 @@ export default function Landing() {
       ) : (
         <>
           {ghostIt.subs.length > 0 && <FromGhostIt subs={ghostIt.subs} onScan={() => inputRef.current?.click()} />}
+          <ValueLine onSample={() => scan([], true)} />
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
           <CommonSubsChecker onUpload={() => inputRef.current?.click()} onSample={() => scan([], true)} />
