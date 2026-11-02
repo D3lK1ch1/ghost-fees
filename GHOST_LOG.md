@@ -189,9 +189,9 @@ One entry per change. Newest at the bottom.
 - User feedback that drove this: "upload proof of cancellation then removing it from your calendar".
 
 ### Cassy moves on to the next one, and a ghost points you to her
-- What: in the cancellation assistant, saving proof (or Add proof later) jumps straight to the next biggest subscription still charging, back at step 1, so Cassy starts on it ("Next up: ..."). Also fixed: the proof dialog didn't open from the assistant. Under the calendar on wide screens, the empty space now has a ghost saying "Continue to f**k your exes, with help from Cassy." (💔, your own ghost), "Keep breaking Jacob's chain, with help from Cassy." (🎄) or "Keep busting your ghosts, with help from Cassy." (👻), with a Cancel the next one button that scrolls to her.
-- Files: src/components/results/CancelAssistant.jsx, src/components/results/HauntedCalendar.jsx
-- How to test: Calendar tab on a wide screen; then in the assistant press 4. Mark it cancelled, I cancelled it, and save.
+- What: in the cancellation assistant, saving proof (or Add proof later) jumps straight to the next biggest subscription still charging, back at step 1, so Cassy starts on it ("Next up: ..."). Also fixed: the proof dialog didn't open from the assistant. Under the calendar, the empty space now has a ghost from the asset bank pointing you down to her: 💔 your own ghost, "Scroll down to f**k your exes more, with help from Cassy."; 🎄 the festive ghost, "Scroll down to break more of Jacob's chain, with help from Cassy."; 👻 the lantern ghost, "Scroll down to bust more ghosts, with help from Cassy." Take me to Cassy scrolls to her.
+- Files: src/components/results/CancelAssistant.jsx, src/components/results/HauntedCalendar.jsx, public/themes/haunted/lantern-ghost.webp (new), public/themes/christmas/xc-festive.webp (new)
+- How to test: Calendar tab in each theme (🎄: Yet to come); then in the assistant press 4. Mark it cancelled, I cancelled it, and save.
 - User feedback that drove this: "after you cancel the first one will Cassy automatically assist you in the next one", "here on all versions should be filled by a ghost saying continue to f**k your exes with assistance from Cassy".
 
 ## Mon 2 Nov 2026 (paywall pack, branches feat/01 to feat/07)
