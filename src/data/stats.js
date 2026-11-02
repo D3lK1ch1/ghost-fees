@@ -1,17 +1,16 @@
-// Every number shown to people keeps its source and year next to it.
-// Checked 2 Nov 2026. Re-check before quoting anywhere new.
-// - Compare the Market, "Wasted subscriptions 2026" (Pureprofile, 1,015 Australians, Mar 2026, published 9 Jun 2026).
-//   Headline is "up to $1,667" (the article's own table adds to $1,739 because of a Disney+ error).
-// - ING Australia media release, 30 Jan 2023 (YouGov, 1,075 adults, Dec 2022).
-// - Westpac, Aug 2025.
-export const STATS = [
-  { key: 'half', emoji: '👻', stat: 'About half', text: "of Australians pay for subscriptions they don't use", source: 'Compare the Market, 2026', url: 'https://www.comparethemarket.com.au/news/wasted-subscriptions-2026' },
-  { key: 'waste', emoji: '💸', stat: 'Up to $1,667 a year', text: "wasted on subscriptions people don't use", source: 'Compare the Market, 2026', url: 'https://www.comparethemarket.com.au/news/wasted-subscriptions-2026' },
-  { key: 'gym', emoji: '🏋️', stat: '$1,116 a year', text: 'the average unused gym membership', source: 'Compare the Market, 2026', url: 'https://www.comparethemarket.com.au/news/wasted-subscriptions-2026' },
-  { key: 'cancel', emoji: '⏳', stat: '9 months', text: 'on average to cancel a payment for something unused', source: 'ING, 2023', url: 'https://newsroom.ing.com.au/unused-subscriptions-and-forgotten-outgoings-could-cost-each-aussie-up-to-1261-a-year/' },
-  { key: 'realise', emoji: '🧾', stat: 'Almost 20% more', text: 'spent on subscriptions than people realise', source: 'Westpac, 2025' },
-];
+// Every number shown to people comes from upgradeStats.json, with its source and
+// year next to it. Checked 2 Nov 2026 (FINAL_UPDATE_PACK 1.1). Re-check before
+// quoting anywhere new.
+import UPGRADE_STATS from './upgradeStats.json';
 
+const EMOJI = { half: '👻', waste: '💸', aussies: '🇦🇺', realise: '🧾', trial: '⏰', gym: '🏋️', cancel: '⏳', traps: '⚖️', netflix: '📺', double: '👯', hard: '🧱' };
+
+// The older shape some screens use: { key, emoji, stat, text, source, url }.
+export const STATS = UPGRADE_STATS.map((item) => ({ key: item.id, emoji: EMOJI[item.id] || '👻', stat: item.big, text: item.text, source: item.source, url: item.url, matches: item.matches }));
+
+export { UPGRADE_STATS };
 export const statFor = (key) => STATS.find((item) => item.key === key);
-// Shown on the home strip and the paywall.
-export const HEADLINE_STATS = ['half', 'waste', 'cancel'].map(statFor);
+// Stats tagged for a place in the app: home, paywall, reveal, trial, gym, cancel, streaming, double.
+export const statsFor = (place) => STATS.filter((item) => item.matches.includes(place));
+// Shown on the home strip: stats 1 to 3.
+export const HEADLINE_STATS = statsFor('home');

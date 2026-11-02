@@ -295,6 +295,12 @@ One entry per change. Newest at the bottom.
 - Files: base44/functions/{allowance,askGhostGuide,createCheckout,findCancelInfo,parseStatement}/entry.ts, base44/entities/Allowance.jsonc, src/lib/AllowanceContext.jsx, Hero.jsx, ExHero.jsx, Paywall.jsx, Landing.jsx
 - How to test (published): sign in, ask Penny one question, then Cassy: in Base44 Data, Allowance shows guides_used ["penny","cass"]. Upload a CSV: scans_used goes up by 1.
 - User feedback that drove this: pricing decided 2 Nov (FINAL_UPDATE_PACK 1.2).
+
+### All stats from one checked file (B2)
+- What: every number shown to people now comes from src/data/upgradeStats.json: 11 stats, each with its big number, text, source and year, and where it belongs (home, paywall, reveal, trial, gym, cancel, streaming, double). New: 8.4M Aussies (ING 2025), 3 in 10 lose up to $600 on duplicates (Westpac 2025), 57% name Netflix, 31% find cancelling hard, 38% forgot a trial, the 1 July 2027 subscription-trap ban. "$1,739" and "$1,667" are replaced with "$1,600+" (sources disagree). Home strip shows stats 1 to 3; the paywall shows its two.
+- Files: src/data/upgradeStats.json (new), src/data/stats.js (now reads the file), src/components/scan/Paywall.jsx, src/components/xmas/XmasTabScreens.jsx
+- How to test: the home page strip shows 1 in 2, $1,600+, 8.4M with sources; 🎄 Gift to yourself shows $1,600+ and 9 months with sources.
+- User feedback that drove this: fact-check on 2 Nov (FINAL_UPDATE_PACK 1.1).
 ### Animated 36-second demo to screen-record at /demo
 - What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
 - Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx
