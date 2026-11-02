@@ -1,16 +1,16 @@
-import { Calculator, Copy, ListChecks, MailCheck, MessageCircle, Scissors, Sparkles } from 'lucide-react';
+import { Calculator, Copy, ListChecks, MessageCircle, Scissors, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 
 // "Meet Ghost It": what makes our chat agent special, what it does, and the free
 // try, in one pop-up. Opened from "What is Ghost It?" on the Ghost It card and strips.
 const FEATURES = [
-  { Icon: MessageCircle, title: 'Lives in your chat', line: 'Message it any time in ASI:One. No app to open, nothing to upload.' },
-  { Icon: Calculator, title: 'Shows the maths', line: 'Every line worked out: $8.99/mo x 12 = $107.88/yr, then the total.' },
-  { Icon: Copy, title: 'Spots double-ups', line: '3 streaming apps or 2 cloud plans? It says which, and what to do.' },
-  { Icon: Scissors, title: 'Official cancel steps', line: 'The real cancel page and steps. It never guesses a link.' },
-  { Icon: MailCheck, title: 'A ready cancel email', line: 'Copy, paste, send.' },
-  { Icon: ListChecks, title: 'Checks it stopped', line: 'Keeps your Ghost List and asks after 7 days if the charge really stopped.' },
+  { Icon: Sparkles, title: 'Ghost Packs hunt one kind of leak each', line: 'Screen, Sound, Tech Stack, Food, Gym and Play: doubles and overlaps a statement can’t show.' },
+  { Icon: Calculator, title: 'Shows the maths', line: 'Every line worked out ($8.99/mo x 12 = $107.88/yr), the pack total and what you’d save.' },
+  { Icon: Copy, title: 'Finds the hidden ones', line: 'YouTube Premium includes YouTube Music; Microsoft 365 includes OneDrive; 4 AI tools doing one job.' },
+  { Icon: MessageCircle, title: 'Lives in your chat', line: 'Message it any time in ASI:One, with tap-to-act cards. Nothing to upload.' },
+  { Icon: Scissors, title: 'Then the cancel links', line: 'Official links and steps for each pack. It never guesses a link.' },
+  { Icon: ListChecks, title: 'Checks it stopped', line: 'Keeps your ghost list and asks after 7 days.' },
 ];
 
 export default function GhostItDialog({ open, onClose, onMessage }) {
@@ -20,7 +20,7 @@ export default function GhostItDialog({ open, onClose, onMessage }) {
         <div className="text-center">
           <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={150} height={150} className="motion-safe:animate-float mx-auto h-[150px] w-[150px] object-contain drop-shadow-[0_0_24px_rgba(143,184,255,0.35)]" />
           <DialogTitle className="mt-3 font-heading text-[26px] font-bold text-foreground">Meet Ghost It</DialogTitle>
-          <p className="mt-1 text-[15px] leading-snug text-muted-foreground">Our AI agent on Fetch.ai&apos;s ASI:One. Ghost Fees reads your statement; Ghost It keeps going with you in chat.</p>
+          <p className="mt-1 text-[15px] leading-snug text-muted-foreground">Our AI agent on Fetch.ai&apos;s ASI:One. Ghost Fees reads your statement and Cassy cancels each subscription; Ghost It hunts the leaks a statement can&apos;t show.</p>
         </div>
         <ul className="mt-4 grid gap-2">
           {FEATURES.map(({ Icon, title, line }) => (
