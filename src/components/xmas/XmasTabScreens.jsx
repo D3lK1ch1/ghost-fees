@@ -1,7 +1,7 @@
 import { SpeechBubble } from '@/components/site/Bubbles';
 import { statFor } from '@/data/stats';
 import { money } from '@/lib/ghostFees/format';
-import { XMAS } from '@/lib/ghostFees/christmasArt';
+import { XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
 import ChangedMyWays from './ChangedMyWays';
 import { Disclaimer, Kicker, Spirit, SpiritSays, Stocking, Title, XScreen, useSeason } from './XmasKit';
 import CancelSiteLink from '@/components/results/CancelSiteLink';
@@ -23,6 +23,7 @@ function FeesPast({ leaks, total, X, season }) {
       <div className="relative grid grid-cols-3 gap-2">
         {leaks.slice(0, 3).map((leak, index) => (
           <div key={leak.id} className="x-flip rounded-xl px-2 py-2" style={{ background: X.cream, color: '#14301f', animationDelay: `${0.4 + index * 0.5}s` }}>
+            <img src={xmasAvatar(leak.merchant, season)} alt="" width={56} height={56} className="x-bob mx-auto -mt-1 mb-1 block h-14 w-14 object-contain" style={{ animationDelay: `${index * 0.4}s` }} />
             <div className="rounded-md px-1.5 py-1 text-center text-[12px] font-bold text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
             <div className="mt-1.5 line-clamp-2 text-[12.5px] font-bold">{leak.title || leak.merchant}</div>
             <div className="text-[12.5px] font-bold" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>
