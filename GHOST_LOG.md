@@ -270,3 +270,9 @@ One entry per change. Newest at the bottom.
 - Files: public/themes/ex/tilly.webp (new, 15 KB), src/lib/ghostFees/exArt.js (EX_CONTACT), src/components/ex/ExScanChat.jsx, src/components/ex/ExAct2.jsx
 - How to test: pick 💔, Try a sample statement: the phone chat header says Tilly. Monthly check-in tab: Tilly too.
 - User feedback that drove this: "this should be new agent from the image folder, we cannot have the agent be called Ghost Fees as that's very lame".
+
+### 💔 If an ex charges you again: their page and Talk to Cassy
+- What: the "If <ex> charges you after you cancelled" card now has "Go to <company>'s page" (the checked cancel page, when we have one; otherwise "Cassy can find it") and a Talk to Cassy button that opens Ask a ghost with Cassy picked. Any screen can open the chat with a chosen guide the same way (askGuide).
+- Files: src/components/ex/ExAct2.jsx, src/lib/ghostFees/askGuide.js (new), src/components/results/ResultsView.jsx
+- How to test: pick 💔, Try a sample statement, See everything, Messages to exes: press Talk to Cassy and the chat opens on Cassy.
+- User feedback that drove this: "this should link to the web page to cancel directly and maybe have a talk to Cassy button that will link to the chat".
