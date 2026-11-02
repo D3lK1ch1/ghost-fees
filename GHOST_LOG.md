@@ -514,3 +514,4 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/CatchTheRest.jsx (new), src/components/landing/UseCases.jsx, src/components/landing/HomeTabs.jsx, src/pages/Landing.jsx, src/components/results/LeakFilter.jsx
 - How to test: Home > What it finds: scroll to the two groups; tap Check typical prices (opens Have any of these?) and Upload more months (opens the file picker). Sample > Ghosts: the chips show count badges.
 - User feedback that drove this: "lay this out and make clear how we can compensate and find things the app cannot currently find", "what's trial converted one"
+- Also: the Ghosts type chips no longer list every meaning at once (it looked messy): "Tap a type to see what it means and what to do", with the meaning on hover too. For big areas the tour card uses the empty space beside the content when there's room, otherwise a narrower card in the corner.
