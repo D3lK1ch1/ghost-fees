@@ -8,7 +8,7 @@ export const THEMES = {
     label: 'Haunted House',
     emoji: '👻',
     headline: 'Find the ghosts haunting your bank account.',
-    subhead: 'Ghost Fees finds 8 kinds of money leak and shows the exact dollars, with the transactions behind every one.',
+    subhead: 'Forgotten subscriptions, free trials that turned paid, double charges, price rises and bank fees: the exact dollars, with the transactions behind every one.',
     vars: null, // the default look in index.css
   },
   ex: {
