@@ -9,7 +9,9 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
 import { useCancelProof } from './ProofDialog';
-import { OVERLAP_TIPS, TYPE_LABELS, findOverlaps, typeOf } from '@/lib/ghostFees/overlaps';
+import { LIFE_STAGES, TYPE_LABELS, findOverlaps, typeOf } from '@/lib/ghostFees/overlaps';
+import { useSavedChoice } from '@/hooks/use-saved-choice';
+import StatNote from '@/components/stats/StatNote';
 
 const GYM_RE = /\b(GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|SNAP|F45|CROSSFIT|PILATES|YOGA)\b/i;
 
@@ -33,6 +35,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   const proof = useCancelProof();
   const [typeFilter, setTypeFilter] = useState('all');
   const [sortBy, setSortBy] = useState('cost');
+  const [stage, setStage] = useSavedChoice('ghostFees.lifeStage', LIFE_STAGES.map((item) => item.key), 'solo');
 
   if (!subscriptions.length) return null;
 
@@ -81,6 +84,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
             <span className="font-bold">{gym.merchant}: {money(gym.monthly)} a month.</span>{' '}
             <span className="text-muted-foreground">Been this month?</span>
           </p>
+          <StatNote statKey="gym" className="mt-0.5" />
         </div>
       )}
 
@@ -94,7 +98,22 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
               </li>
             ))}
           </ul>
-          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{OVERLAP_TIPS}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-1" role="radiogroup" aria-label="Who are these for?">
+            <span className="mr-1 text-[11.5px] text-muted-foreground">Who are these for?</span>
+            {LIFE_STAGES.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                role="radio"
+                aria-checked={stage === item.key}
+                onClick={() => setStage(item.key)}
+                className={cn('rounded-full border px-2 py-0.5 text-[11.5px] font-semibold', stage === item.key ? 'border-[#ffc27a] bg-[#ffc27a] text-[#2a1a08]' : 'border-[#ffc27a]/40 text-muted-foreground')}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-[11.5px] leading-relaxed text-muted-foreground">{LIFE_STAGES.find((item) => item.key === stage)?.tip}</p>
         </div>
       )}
 
