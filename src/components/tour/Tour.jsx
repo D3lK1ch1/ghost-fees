@@ -34,6 +34,7 @@ export default function Tour({ name, steps, ready = true, auto = false, onFinish
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [starting]);
   const active = ready && step >= 0 && step < live.length;
+  const [spot, setSpot] = useState(null); // the target's place on screen
 
   useEffect(() => {
     const onReplay = (event) => event.detail === name && setStep(0);
@@ -50,10 +51,35 @@ export default function Tour({ name, steps, ready = true, auto = false, onFinish
       el = document.querySelector(`[data-tour="${live[step].target}"]`);
       if (!el) return;
       el.classList.add('tour-ring');
-      el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: live[step].block || 'center' });
+      // Bring the target near the top so the card has room under it.
+      const top = el.getBoundingClientRect().top + window.scrollY - 90;
+      window.scrollTo({ top: Math.max(0, top), behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      measureLater();
     }, live[step].onEnter ? 250 : 0);
+    // Keep the card next to its target while the page scrolls or resizes.
+    let frame = 0;
+    const measure = () => {
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setSpot({ top: r.top, bottom: r.bottom, left: r.left, width: r.width, height: r.height });
+    };
+    const onMove = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(measure);
+    };
+    let later = 0;
+    function measureLater() {
+      measure();
+      later = setTimeout(measure, 450);
+    }
+    window.addEventListener('scroll', onMove, { passive: true });
+    window.addEventListener('resize', onMove);
     return () => {
       clearTimeout(timer);
+      clearTimeout(later);
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onMove);
+      window.removeEventListener('resize', onMove);
       el?.classList.remove('tour-ring');
     };
   }, [active, step, live]);
@@ -76,10 +102,37 @@ export default function Tour({ name, steps, ready = true, auto = false, onFinish
   }
 
   if (!active) return null;
+  // Where the card goes: just under the target (or above it if there's no room),
+  // lined up with it, never on top of it. Big targets: the card sits in the bottom
+  // corner beside the content. Phones: a slim card at the bottom.
+  const vw = typeof window === 'undefined' ? 1024 : window.innerWidth;
+  const vh = typeof window === 'undefined' ? 800 : window.innerHeight;
+  const cardW = Math.min(416, vw - 24);
+  const cardH = 270;
+  let place = { left: 12, right: 12, bottom: 16, margin: '0 auto' };
+  let arrow = null;
+  if (spot && vw >= 640) {
+    const left = Math.min(Math.max(12, spot.left), vw - cardW - 12);
+    const arrowX = Math.min(Math.max(24, spot.left + Math.min(spot.width / 2, 120) - left), cardW - 32);
+    if (spot.bottom + cardH + 16 < vh) {
+      place = { top: spot.bottom + 14, left };
+      arrow = { top: -9, left: arrowX, borderLeftWidth: 2, borderTopWidth: 2 };
+    } else if (spot.top - cardH - 16 > 0) {
+      place = { top: spot.top - cardH - 14, left };
+      arrow = { bottom: -9, left: arrowX, borderRightWidth: 2, borderBottomWidth: 2 };
+    } else {
+      // Big target: use the empty space to its right if there's room, otherwise a
+      // narrower card in the bottom corner.
+      const gutter = vw - (spot.left + spot.width) - 24;
+      if (gutter >= 280) place = { top: Math.max(16, Math.min(spot.top, vh - cardH - 16)), left: spot.left + spot.width + 12, width: Math.min(cardW, gutter) };
+      else place = { right: 16, bottom: 16, width: Math.min(340, vw - 32) };
+    }
+  }
   const current = live[step];
   const last = step === live.length - 1;
   return (
-    <div role="dialog" aria-label="Quick tour" className="fixed inset-x-3 bottom-4 z-[60] mx-auto max-w-md rounded-3xl border-2 border-primary bg-card p-4 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.8)] sm:inset-x-auto sm:left-1/2 sm:w-[28rem] sm:-translate-x-1/2">
+    <div role="dialog" aria-label="Quick tour" className="fixed z-[60] w-[min(26rem,calc(100vw-24px))] rounded-3xl border-2 border-primary bg-card p-4 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.8)] transition-[top,left] duration-200" style={place}>
+      {arrow && <span aria-hidden="true" className="absolute h-4 w-4 rotate-45 border-primary bg-card" style={arrow} />}
       {guide && (
         <div className="mb-2 flex items-center gap-2.5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full" style={{ background: `${guide.color}2e` }} aria-hidden="true">

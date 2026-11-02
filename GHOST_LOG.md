@@ -504,8 +504,14 @@ One entry per change. Newest at the bottom.
 - How to test: 🎄 theme > sample > Ghosts: Dusty's two bubbles; tap Waive it on Monthly Account Fee.
 - User feedback that drove this: "use speech bubble assets more cleanly and have one coming out of the ghost's mouth and one under", "all need cancel on site button"
 
+### Tour card sits beside what it explains, with a pointer
+- What: The tour card used to sit in the middle of the bottom of the screen and cover what it was explaining (half of your total). Now it moves next to its target: just under it (or above it if there's no room) with a small arrow pointing at it, lined up with it. For big areas (your total, a whole tab) it sits in the bottom corner beside the content. It follows the target as the page scrolls. On phones it stays a slim card at the bottom.
+- Files: src/components/tour/Tour.jsx
+- How to test: Sample > Tour: step 1 in the corner with the whole total visible; step 2 under the share and PDF buttons with an arrow; steps 4 to 6 beside each tab.
+- User feedback that drove this: "is there a better way to tour this" (the tour card covering the total)
 ### What it can't see yet, and how to catch it anyway; clearer type counts
 - What: The "What it doesn't find" list is now "What it can't see yet, and how to catch it anyway", in two groups. "We can still help you catch these": short statements (Upload more months), subscriptions on another card or account (new; Tell Ghost It, or add that statement), what's inside Apple and Google charges (phone steps, then Check typical prices, which opens the Have any of these? tab), scanned PDFs (Upload a CSV). "Left out on purpose, and where to look instead": changing bills (Energy Made Easy), interest and BNPL fees (Moneysmart), everyday spending and surcharges. Each row says why we miss it and how to catch it, with a button that does it. On the Ghosts filter, the number on each chip ("Trial converted 1") is now a small count badge, so it reads as how many were found.
 - Files: src/components/landing/CatchTheRest.jsx (new), src/components/landing/UseCases.jsx, src/components/landing/HomeTabs.jsx, src/pages/Landing.jsx, src/components/results/LeakFilter.jsx
 - How to test: Home > What it finds: scroll to the two groups; tap Check typical prices (opens Have any of these?) and Upload more months (opens the file picker). Sample > Ghosts: the chips show count badges.
 - User feedback that drove this: "lay this out and make clear how we can compensate and find things the app cannot currently find", "what's trial converted one"
+- Also: the Ghosts type chips no longer list every meaning at once (it looked messy): "Tap a type to see what it means and what to do", with the meaning on hover too. For big areas the tour card uses the empty space beside the content when there's room, otherwise a narrower card in the corner.

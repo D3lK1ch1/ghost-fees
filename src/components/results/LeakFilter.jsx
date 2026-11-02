@@ -29,6 +29,7 @@ export default function LeakFilter({ leaks, type, sort, onType, onSort }) {
       type="button"
       role="radio"
       aria-checked={type === key}
+      title={BADGE_MEANING[key]?.what}
       onClick={() => onType(key)}
       className={cn(
         'inline-flex items-center rounded-full border px-3 py-1 text-[13.5px] font-bold transition-colors',
@@ -59,9 +60,7 @@ export default function LeakFilter({ leaks, type, sort, onType, onSort }) {
           <p className="mt-1 text-[13.5px] font-bold text-muted-foreground">{shown.length} {shown.length === 1 ? 'ghost' : 'ghosts'} · {money(shown.reduce((sum, leak) => sum + leak.amount, 0))}</p>
         </div>
       ) : (
-        <ul className="grid w-full gap-x-4 gap-y-1 text-[13.5px] text-muted-foreground sm:grid-cols-2" aria-label="What each kind means">
-          {[...counts.keys()].map((badge) => <li key={badge}><b className="text-foreground">{badge}:</b> {BADGE_MEANING[badge]?.what}</li>)}
-        </ul>
+        <p className="w-full text-[13.5px] text-muted-foreground">Tap a type to see what it means and what to do.</p>
       )}
     </div>
   );
