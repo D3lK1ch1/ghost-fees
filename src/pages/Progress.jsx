@@ -79,6 +79,22 @@ export default function Progress() {
           <Stat label="visits from the Ghost It agent" value={stats?.agentVisits} />
         </section>
 
+        {/* Our users vs the research (aggregate, 3+ real scans). */}
+        <section className="mt-6 rounded-3xl border border-border bg-card p-4" aria-label="Our users vs the research">
+          <h2 className="font-heading text-[18px] font-semibold text-foreground">Our users vs the research</h2>
+          {stats?.avgGuess != null ? (
+            <>
+              <p className="mt-1 text-[15px] text-foreground">
+                On average our users guessed <b>{money(stats.avgGuess)}</b>. Their statements showed <b>{money(stats.avgFound)}</b>
+                {stats.moreThanThought != null && stats.moreThanThought > 0 ? <>: <b className="text-primary">{stats.moreThanThought}% more than they thought</b></> : null}.
+              </p>
+              <p className="mt-1 text-[12.5px] text-muted-foreground">Across {stats.revealCount} real statements. Westpac found Australians spend about 20% more on subscriptions than they realise (Westpac, 2025).</p>
+            </>
+          ) : (
+            <p className="mt-1 text-[13.5px] text-muted-foreground">Shows once 3 people have guessed and then scanned a real statement ({stats?.revealCount || 0} so far). Westpac found Australians spend about 20% more on subscriptions than they realise (Westpac, 2025).</p>
+          )}
+        </section>
+
         <button
           type="button"
           onClick={copyUpdate}

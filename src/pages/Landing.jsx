@@ -74,6 +74,7 @@ export default function Landing() {
     trackEvent('scan_started');
     const outcome = await runScan({ files, useSample, ticket });
     if (outcome) trackEvent('scan_finished');
+    if (outcome && useSample) trackEvent('sample_finished');
     if (!useSample) refresh();
   };
 

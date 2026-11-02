@@ -8,7 +8,7 @@ const STORED = [
   { what: 'Proof of cancelling (how and when, references, screenshots you add)', where: 'Your browser only, with your Ghost List. Never uploaded', how: 'Until you press Clear my data, remove it, or clear your browser' },
   { what: 'CSV statements', where: 'Never leave your browser', how: 'Not stored' },
   { what: 'PDF statements', where: 'Base44 private storage, so they can be read', how: 'Kept for now: we are working on deleting them right after reading' },
-  { what: 'Anonymous usage events (e.g. "scan finished")', where: 'Ghost Fees database', how: 'A random session id and the event type only' },
+  { what: 'Anonymous usage events (e.g. "scan finished")', where: 'Ghost Fees database', how: 'A random session id and the event type only. For a real statement, also your guess and the total found (two numbers, shown only as an average across 3+ people)' },
   { what: 'Feedback you choose to send', where: 'Ghost Fees database', how: 'Only what you type, plus how many ghosts were found and their total. If our team alert is on, a copy also goes to the team\'s private Slack channel' },
   { what: 'Feedback older than 30 days', where: 'Ghost Fees database', how: 'Anonymised: your name, your written comments and the leak you picked are cleared. Only the counts and Yes / Kinda / No answers stay' },
   { what: 'Calendar sync, only if you turn it on', where: 'Ghost Fees database, behind a private link', how: 'Reminder titles, amounts and dates you chose to sync, until you press Stop syncing' },

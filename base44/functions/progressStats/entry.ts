@@ -26,13 +26,23 @@ async function anonymiseOldFeedback(db, rows) {
   return old.length;
 }
 
+function usersVsResearch(rows) {
+  const real = rows.filter((row) => Number(row.real_amount) > 0 && Number(row.guess_amount) >= 0);
+  if (real.length < 3) return { revealCount: real.length };
+  const avg = (key) => real.reduce((sum, row) => sum + Number(row[key]), 0) / real.length;
+  const guess = avg('guess_amount');
+  const found = avg('real_amount');
+  return { revealCount: real.length, avgGuess: Math.round(guess), avgFound: Math.round(found), moreThanThought: guess > 0 ? Math.round(((found - guess) / guess) * 100) : null };
+}
+
 export default async function (req) {
   try {
     const base44 = createClientFromRequest(req);
     const db = base44.asServiceRole.entities;
 
-    const [events, feedback, refs] = await Promise.all([
+    const [events, reveals, feedback, refs] = await Promise.all([
       db.Event.aggregate({ groupBy: 'event_type' }).catch(() => null),
+      db.Event.filter({ event_type: 'guess_revealed' }).catch(() => null),
       db.Feedback.list({ limit: 1000 }).catch(() => null),
       db.Analytics.list({ limit: 1000 }).catch(() => null),
     ]);
@@ -50,6 +60,9 @@ export default async function (req) {
       wouldPay: rows.filter((row) => row.would_pay === 'Yes').length,
       foundOnRealStatements: Math.round(real.reduce((sum, row) => sum + (Number(row.yearly_total) || 0), 0)),
       agentVisits: (refs?.items || refs || []).filter((row) => row.ref === 'asi1').length,
+      // Our users vs the research: average guess vs average real total, only once
+      // there are 3+ real scans so no single person's numbers show.
+      ...usersVsResearch(asList(reveals)),
       updatedAt: new Date().toISOString(),
     });
   } catch (error) {

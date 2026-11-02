@@ -361,3 +361,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/GuessReveal.jsx, src/data/stats.js (statKeyForLeak), src/components/results/ResultsView.jsx
 - How to test: Try a sample statement, Reveal with $100: "197% more than you thought". Ghosts tab: Streammax shows the trial stat, Adobe the duplicate stat.
 - User feedback that drove this: research shown next to users' own numbers (FINAL_UPDATE_PACK 1.7).
+
+### /evidence for the judges, and our users vs the research (B10)
+- What: an admin-only page, /evidence, with all time and last 7 days side by side: visits by ref (asi1, try, slack...), scans, sample scans, real scans, $ found on real statements, Ask Ghost It clicks, /try completions, feedback count, average clarity score (1 to 5) and % who would pay $10 once. Below: every feedback with a "Quote OK only" filter, Copy as text and Download CSV, and the "You said, we changed" table from src/data/changelog.json (6 pairs, written with roles not names). It says plainly that $ ghosted and confirmed stopped live in each person's browser and aren't collected. /progress gets "Our users vs the research": the average guess vs the average real total across real statements (shown only from 3), next to Westpac's 20%. To count these, two new events: sample_finished, and guess_revealed carrying only the guess and the total (real statements only). Privacy page updated.
+- Files: src/pages/Evidence.jsx (new), src/data/changelog.json (new), src/App.jsx, src/pages/Progress.jsx, src/pages/Privacy.jsx, src/lib/session.js, src/pages/Landing.jsx, src/components/results/ResultsView.jsx, base44/entities/Event.jsonc, base44/functions/logEvent, base44/functions/progressStats
+- How to test (published, as admin): open /evidence. Scan a real statement and reveal; after 3 of those, /progress shows the comparison.
+- User feedback that drove this: evidence for the Fetch.ai and Base44 submissions (FINAL_UPDATE_PACK 1.8).
