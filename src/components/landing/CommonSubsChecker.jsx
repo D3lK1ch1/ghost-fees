@@ -59,7 +59,7 @@ export default function CommonSubsChecker({ onUpload, onSample }) {
                 <li key={item.key} className="flex flex-wrap items-baseline justify-between gap-x-3 text-[13px]">
                   <span className="font-semibold text-foreground">{item.name}{item.note ? <span className="font-normal text-muted-foreground"> · {item.note}</span> : null}</span>
                   <span className="text-muted-foreground">
-                    typically {priceText(item)} · <a href={item.url} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">{item.source}</a>
+                    typically {priceText(item)} (<a href={item.url} target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline">{item.source}</a>)
                   </span>
                 </li>
               ))}

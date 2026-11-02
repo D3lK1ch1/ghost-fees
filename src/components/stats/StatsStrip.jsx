@@ -27,9 +27,9 @@ export default function StatsStrip() {
             </p>
             <p className="text-[13px] leading-snug text-muted-foreground">{fact.text}</p>
             {fact.url ? (
-              <a href={fact.url} target="_blank" rel="noopener noreferrer" className="mt-1 block text-[11px] text-muted-foreground/80 underline-offset-2 hover:underline">{fact.source}</a>
+              <a href={fact.url} target="_blank" rel="noopener noreferrer" className="mt-1 block text-[11px] text-muted-foreground/80 underline-offset-2 hover:underline">({fact.source})</a>
             ) : (
-              <span className="mt-1 block text-[11px] text-muted-foreground/80">{fact.source}</span>
+              <span className="mt-1 block text-[11px] text-muted-foreground/80">({fact.source})</span>
             )}
           </li>
         ))}

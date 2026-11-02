@@ -19,7 +19,7 @@ export default function About() {
 
         <p className="mt-4 text-[16px] leading-relaxed text-foreground">
           Half of Australians pay for subscriptions they don't use, and most don't notice for months.
-          <span className="block text-[12px] text-muted-foreground">Compare the Market, 2026</span>
+          <span className="block text-[12px] text-muted-foreground">(Compare the Market, 2026)</span>
         </p>
 
         <p className="mt-4 text-[16px] leading-relaxed text-foreground">
