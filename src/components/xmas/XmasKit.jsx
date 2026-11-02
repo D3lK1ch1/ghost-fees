@@ -60,7 +60,7 @@ export function XScreen({ X, season, children, className = '', snow = true, back
 }
 
 export const Kicker = ({ X, children }) => (
-  <div className="x-fredoka relative text-[13px] font-semibold tracking-[.1em]" style={{ color: X.gold }}>{children}</div>
+  <div className="x-fredoka relative text-[14px] font-semibold tracking-[.1em]" style={{ color: X.gold }}>{children}</div>
 );
 
 export const Title = ({ children, size = 26 }) => (
@@ -87,7 +87,7 @@ export function Spirit({ src, name, alt = '', width = 140, X, className = '' }) 
   return (
     <div className={`relative flex flex-none flex-col items-center ${className}`}>
       <img src={src} alt={alt} width={width} className="x-breathe block h-auto" style={{ width }} />
-      <div className="x-fredoka mt-1 rounded-full px-2.5 py-1 text-center text-[12px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
+      <div className="x-fredoka mt-1 rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
     </div>
   );
 }
@@ -126,11 +126,11 @@ export function TinySavings({ X, size = 84, hop = 0 }) {
         <ellipse cx="44" cy="124" rx="11" ry="13" fill="#fbf8fa" stroke="#1a1a22" strokeWidth="2.5" />
         <ellipse cx="116" cy="124" rx="11" ry="13" fill="#fbf8fa" stroke="#1a1a22" strokeWidth="2.5" />
       </svg>
-      <div className="x-fredoka mt-1 rounded-full px-2.5 py-1 text-[12px] font-semibold" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>Tiny Savings</div>
+      <div className="x-fredoka mt-1 rounded-full px-2.5 py-1 text-[13px] font-semibold" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>Tiny Savings</div>
     </div>
   );
 }
 
 export const Disclaimer = ({ X }) => (
-  <div className="relative text-center text-[11px]" style={{ color: X.muted }}>General information about subscriptions, not financial advice.</div>
+  <div className="relative text-center text-[12.5px]" style={{ color: X.muted }}>General information about subscriptions, not financial advice.</div>
 );

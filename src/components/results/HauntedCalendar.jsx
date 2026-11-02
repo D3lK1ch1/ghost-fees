@@ -59,7 +59,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
   const [day, setDay] = useState(null);
 
   if (!months.length) {
-    return <p className="mt-4 text-[13.5px] text-muted-foreground">No dated charges to show yet.</p>;
+    return <p className="mt-4 text-[14.5px] text-muted-foreground">No dated charges to show yet.</p>;
   }
 
   const index = months.indexOf(month);
@@ -94,7 +94,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
           </button>
           <div className="text-center">
             <h3 className="font-heading text-xl font-semibold text-foreground">{monthName(month)}</h3>
-            <p className="text-[12px] text-muted-foreground">
+            <p className="text-[13px] text-muted-foreground">
               {monthTotal > 0 ? <>Ghost charges this month: <span className="font-bold text-primary">{money(monthTotal)}</span></> : 'No ghost charges this month'}
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
 
         <div className="relative mt-4 grid grid-cols-7 gap-1.5 text-center">
           {WEEKDAYS.map((name) => (
-            <span key={name} className="pb-1 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{name}</span>
+            <span key={name} className="pb-1 text-[12.5px] font-bold uppercase tracking-wide text-muted-foreground">{name}</span>
           ))}
           {cells.map((date, i) => {
             if (!date) return <span key={`blank-${i}`} />;
@@ -125,7 +125,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
                 onClick={() => setDay(date)}
                 aria-label={`${longDay(date)}${ghosts.length ? `, ${ghosts.length} ghost charges` : ''}${due.length ? `, ${due.length} upcoming` : ''}`}
                 className={cn(
-                  'relative flex aspect-square flex-col items-center justify-start rounded-xl border p-1 text-[11.5px] font-bold transition-colors',
+                  'relative flex aspect-square flex-col items-center justify-start rounded-xl border p-1 text-[12.5px] font-bold transition-colors',
                   ghosts.length ? 'border-primary/40 bg-[#2c1f47]' : due.length ? 'border-dashed border-[#5ee6c8]/50 bg-[#1b1630]' : 'border-white/[0.06] bg-white/[0.02]',
                   selected === date && 'ring-2 ring-primary',
                   'hover:border-primary/60',
@@ -159,7 +159,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
             );
           })}
         </div>
-        <p className="relative mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[11.5px] text-muted-foreground">
+        <p className="relative mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-muted-foreground">
           <span className="flex items-center gap-1.5"><GhostMark className="h-3.5 w-3.5 text-[#f4efe8]" eyeColor="#1a1230" /> Ghost charge</span>
           <span className="flex items-center gap-1.5"><BellRing className="h-3.5 w-3.5 text-[#5ee6c8]" /> Subscription due</span>
           <span className="flex items-center gap-1.5"><span className="rounded-full bg-[#ff6b8a] px-1.5 text-[9px] font-bold text-white">DOUBLE!</span> Charged twice</span>
@@ -175,32 +175,32 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
           {selected ? (
             <ul className="mt-2 space-y-2">
               {onDay(selected).map((item, i) => (
-                <li key={`${item.leakId}-${i}`} className="flex items-center justify-between gap-3 rounded-xl bg-background/60 px-3 py-2 text-[13px]">
+                <li key={`${item.leakId}-${i}`} className="flex items-center justify-between gap-3 rounded-xl bg-background/60 px-3 py-2 text-[14px]">
                   <span className="min-w-0">
                     <span className={cn('block truncate font-bold', item.leakId === biggestId ? 'text-[hsl(30_100%_62%)]' : 'text-foreground')}>{item.leakId === biggestId && '★ '}{item.name}</span>
-                    <span className="text-[11.5px] text-muted-foreground">{item.badge}</span>
+                    <span className="text-[12.5px] text-muted-foreground">{item.badge}</span>
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-0.5">
                     <span className="font-bold tabular-nums text-primary">{money(item.amount)}</span>
-                    <button type="button" onClick={() => scheduleLeak(item)} className="text-[12px] font-bold text-primary hover:underline">Schedule a task</button>
+                    <button type="button" onClick={() => scheduleLeak(item)} className="text-[13px] font-bold text-primary hover:underline">Schedule a task</button>
                   </span>
                 </li>
               ))}
               {dueOn(selected).map((item) => (
-                <li key={item.id} className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-[#5ee6c8]/40 px-3 py-2 text-[13px]">
+                <li key={item.id} className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-[#5ee6c8]/40 px-3 py-2 text-[14px]">
                   <span className="min-w-0">
                     <span className="block truncate font-bold text-foreground">{item.merchant}</span>
-                    <span className="text-[11.5px] text-[#5ee6c8]">Due {money(item.monthly)}</span>
+                    <span className="text-[12.5px] text-[#5ee6c8]">Due {money(item.monthly)}</span>
                   </span>
-                  <button type="button" onClick={() => scheduleSub(item)} className="shrink-0 text-[12px] font-bold text-primary hover:underline">Schedule a task</button>
+                  <button type="button" onClick={() => scheduleSub(item)} className="shrink-0 text-[13px] font-bold text-primary hover:underline">Schedule a task</button>
                 </li>
               ))}
               {!onDay(selected).length && !dueOn(selected).length && (
-                <li className="text-[13px] text-muted-foreground">Nothing haunting this day.</li>
+                <li className="text-[14px] text-muted-foreground">Nothing haunting this day.</li>
               )}
             </ul>
           ) : (
-            <p className="mt-1 text-[13px] text-muted-foreground">Ghosts mark the days a leak charged you. Bells mark upcoming subscription charges.</p>
+            <p className="mt-1 text-[14px] text-muted-foreground">Ghosts mark the days a leak charged you. Bells mark upcoming subscription charges.</p>
           )}
         </div>
 
@@ -211,7 +211,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
               <button
                 type="button"
                 onClick={() => downloadAllReminders(upcoming)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[12px] font-bold text-primary-foreground"
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-[13px] font-bold text-primary-foreground"
               >
                 <CalendarPlus className="h-3.5 w-3.5" /> Add all
               </button>
@@ -219,27 +219,27 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
           </div>
           <ul className="mt-2 divide-y divide-white/[0.06]">
             {upcoming.map((item) => (
-              <li key={item.id} className="flex items-center justify-between gap-3 py-2.5 text-[13px]">
+              <li key={item.id} className="flex items-center justify-between gap-3 py-2.5 text-[14px]">
                 <button type="button" onClick={() => { setMonth(monthKey(item.next)); setDay(item.next); }} className="min-w-0 text-left">
                   <span className="block truncate font-bold text-foreground">{item.merchant}</span>
-                  <span className="text-[11.5px] text-muted-foreground">
+                  <span className="text-[12.5px] text-muted-foreground">
                     {new Date(`${item.next}T00:00:00Z`).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', timeZone: 'UTC' })} · {money(item.monthly)}
                   </span>
                 </button>
-                <button type="button" onClick={() => scheduleSub(item)} className="inline-flex shrink-0 items-center gap-1 text-[12px] font-bold text-primary hover:underline">
+                <button type="button" onClick={() => scheduleSub(item)} className="inline-flex shrink-0 items-center gap-1 text-[13px] font-bold text-primary hover:underline">
                   <CalendarPlus className="h-3.5 w-3.5" /> Schedule
                 </button>
               </li>
             ))}
-            {!upcoming.length && <li className="py-2 text-[13px] text-muted-foreground">No subscriptions to remind you about.</li>}
+            {!upcoming.length && <li className="py-2 text-[14px] text-muted-foreground">No subscriptions to remind you about.</li>}
           </ul>
           {cancelled.length > 0 && (
-            <p className="mt-2 text-[12px] leading-relaxed text-[#5ee6c8]">
+            <p className="mt-2 text-[13px] leading-relaxed text-[#5ee6c8]">
               Cancelled, so off your reminders: {cancelled.map((item) => item.merchant).join(', ')}.
             </p>
           )}
           <CalendarSync subscriptions={subscriptions} />
-          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">Schedule picks a task and a day, then adds it to Google, Outlook or Apple Calendar. Add all puts a reminder 2 days before every charge.</p>
+          <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">Schedule picks a task and a day, then adds it to Google, Outlook or Apple Calendar. Add all puts a reminder 2 days before every charge.</p>
         </div>
       </div>
       <TaskDialog target={task} onClose={() => setTask(null)} />
@@ -279,7 +279,7 @@ function CassyNudge() {
         <div className="absolute z-10" style={{ left: art.mouth[0], top: 120 + art.mouth[1], transform: 'translate(-9.4%, -100%)' }}>
           <div className="bub-l w-[300px] !min-w-0 !px-11 !pb-14 !pt-8 text-center">
             <p className="font-heading text-[16px] font-bold leading-snug">{NUDGE[theme.key] || NUDGE.haunted}</p>
-            <button type="button" onClick={toCassy} className="mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
+            <button type="button" onClick={toCassy} className="mt-2 rounded-full bg-primary px-3.5 py-1.5 text-[14px] font-bold text-primary-foreground">
               Take me to Cassy ↓
             </button>
           </div>

@@ -16,7 +16,7 @@ export default function RoomClock() {
   return (
     <div className="absolute bottom-3 left-3 rounded-2xl border border-primary/40 bg-background/85 px-3 py-1.5 text-left">
       <div className="font-heading text-[22px] font-bold leading-none tabular-nums text-primary">{time}</div>
-      <div className="text-[10.5px] font-semibold text-muted-foreground">{date}</div>
+      <div className="text-[12px] font-semibold text-muted-foreground">{date}</div>
     </div>
   );
 }

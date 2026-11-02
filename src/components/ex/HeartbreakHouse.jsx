@@ -41,8 +41,8 @@ function Tile({ label, price, avatar, onClick, active, lit, index = 0 }) {
           <span className="absolute -right-6 -top-1 rounded-full bg-white/85 px-1.5 text-[10px] font-black leading-4 text-[#141218]">{lit ? '✓' : '•••'}</span>
         </span>
       </span>
-      <span className="relative mt-2 text-[13px] font-bold text-white">{label}</span>
-      <span className={cn('relative text-[12px] font-semibold', lit ? 'text-[#5ee6c8]' : 'text-primary')}>{lit ? 'Blocked' : price}</span>
+      <span className="relative mt-2 text-[14px] font-bold text-white">{label}</span>
+      <span className={cn('relative text-[13px] font-semibold', lit ? 'text-[#5ee6c8]' : 'text-primary')}>{lit ? 'Blocked' : price}</span>
     </button>
   );
 }
@@ -115,15 +115,15 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
     <div className="mx-auto max-w-[460px]">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.14em] text-primary"><Heart className="h-3.5 w-3.5" /> Heartbreak House</p>
+          <p className="flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-[0.14em] text-primary"><Heart className="h-3.5 w-3.5" /> Heartbreak House</p>
           <h3 className="mt-1 font-heading text-[26px] font-bold leading-tight text-white">Block every ex. Then go out.</h3>
         </div>
         <div className="text-right">
           <p className="font-heading text-[28px] font-bold leading-none text-[#5ee6c8]">{money(glow.fund)}</p>
-          <p className="text-[12px] text-white/60">a year back</p>
+          <p className="text-[13px] text-white/60">a year back</p>
         </div>
       </div>
-      <div className="mt-3 flex justify-between text-[12.5px] text-white/70">
+      <div className="mt-3 flex justify-between text-[13.5px] text-white/70">
         <span>{glow.blockedCount} of {subscriptions.length} exes blocked</span>
         <span>{money(stillMonthly * 12)}/yr still texting</span>
       </div>
@@ -186,7 +186,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
               />
             ))}
             {expanded && (
-              <button type="button" onClick={() => setExpanded(false)} className="col-span-2 rounded-2xl border-2 border-dashed border-white/15 py-2 text-[13px] font-bold text-white/70 hover:border-primary/50">
+              <button type="button" onClick={() => setExpanded(false)} className="col-span-2 rounded-2xl border-2 border-dashed border-white/15 py-2 text-[14px] font-bold text-white/70 hover:border-primary/50">
                 Show fewer rooms
               </button>
             )}
@@ -202,7 +202,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
           <div className="absolute bottom-3 left-3"><FkJar amount={glow.fund} total={glow.goal} size={104} /></div>
           <div aria-hidden="true" className="absolute bottom-4 right-4 flex w-24 flex-col items-center gap-[3px] transition-opacity duration-500" style={{ opacity: allClear ? 1 : 0.35 }}>
             <div className="h-[18px] w-24 rounded-t-md" style={{ background: 'repeating-linear-gradient(90deg, #ff6f7d 0 12px, #fbf8fa 12px 24px)' }} />
-            <div className="ex-fredoka w-[84px] rounded-b-lg py-1.5 text-center text-[13px] font-semibold" style={{ background: '#221f29', border: '1px solid #3a3644', color: '#ffd36e' }}>{fine ? 'BBQ' : 'Dinner'}</div>
+            <div className="ex-fredoka w-[84px] rounded-b-lg py-1.5 text-center text-[14px] font-semibold" style={{ background: '#221f29', border: '1px solid #3a3644', color: '#ffd36e' }}>{fine ? 'BBQ' : 'Dinner'}</div>
             <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
           <div className="absolute bottom-2 left-[44%] -ml-[46px] flex flex-col items-center">
@@ -221,7 +221,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
               <div className={wakeUp ? 'hh-rise' : ''}>
                 <div className={`relative ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }}>
                   <img src={mood.art} alt={mood.alt} width={92} className="block h-auto w-[92px]" />
-                  <div className="bub-l ex-in absolute bottom-[calc(100%-14px)] left-[60px] z-10 w-[138px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
+                  <div className="bub-l ex-in absolute bottom-[calc(100%-14px)] left-[60px] z-10 w-[138px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[12.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
                 </div>
               </div>
             </div>
@@ -251,11 +251,11 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                 <img src={avatarFor(item.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="font-heading text-[17px] font-bold text-white">{item.merchant}</p>
-                  <p className="text-[12.5px] text-white/60">{kindOf(item.merchant)}</p>
+                  <p className="text-[13.5px] text-white/60">{kindOf(item.merchant)}</p>
                 </div>
                 <div className="text-right">
                   <p className="font-heading text-[18px] font-bold text-white">{money(item.monthly)}/mo</p>
-                  <p className="text-[12px] text-white/60">{yearly(item.monthly)}/yr</p>
+                  <p className="text-[13px] text-white/60">{yearly(item.monthly)}/yr</p>
                 </div>
               </div>
               <p className="mt-3 rounded-2xl bg-white/[0.07] px-3.5 py-2 text-[14px] text-white">{line}</p>
@@ -264,18 +264,18 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                   Cancel on {info.name} <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               ) : (
-                <p className="mt-3 text-[13px] text-white/70">{info.steps}</p>
+                <p className="mt-3 text-[14px] text-white/70">{info.steps}</p>
               )}
               {isBlocked ? (
                 <div className="mt-3 rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
                   <div className="flex items-center justify-between gap-2">
                     <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(item.monthly)}/yr in your jar</span>
-                    <button type="button" onClick={() => unblock(item)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+                    <button type="button" onClick={() => unblock(item)} className="text-[13.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
                   </div>
                   {proofOf(item) ? (
-                    <ProofSummary proof={proofOf(item)} className="mt-1.5 text-[12.5px] text-white/75" />
+                    <ProofSummary proof={proofOf(item)} className="mt-1.5 text-[13.5px] text-white/75" />
                   ) : (
-                    <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === item.id))} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
+                    <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === item.id))} className="mt-1.5 text-[13.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
                   )}
                 </div>
               ) : (
@@ -286,7 +286,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
             </div>
           );
         })}
-        <p className="text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
+        <p className="text-[13.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
         {proof.dialog}
       </div>
     </div>

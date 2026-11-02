@@ -13,7 +13,7 @@ export default function SeasonToggle({ season, setSeason }) {
           aria-checked={season === key}
           onClick={() => setSeason(key)}
           className={cn(
-            'rounded-full px-3 py-1 text-[12.5px] font-bold transition-colors',
+            'rounded-full px-3 py-1 text-[13.5px] font-bold transition-colors',
             season === key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground',
           )}
         >

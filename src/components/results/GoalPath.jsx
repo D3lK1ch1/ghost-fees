@@ -148,7 +148,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
     <section className="mt-4" style={gpVars}>
       <div className="mb-3 flex justify-end">
         <div className="w-full max-w-[280px]">
-          <div className="flex items-baseline justify-between text-[12.5px] font-bold">
+          <div className="flex items-baseline justify-between text-[13.5px] font-bold">
             <span className="text-foreground">{doneCount} of {goals.length} done</span>
             <span className="tabular-nums text-[var(--gp-gold)]">{money(saved)} of {money(total)}</span>
           </div>
@@ -181,7 +181,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             </svg>
 
             <span
-              className={cn('absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-[12px] font-bold', allDone ? 'border-[var(--gp-gold)] bg-[var(--gp-gold)] text-[var(--gp-ink)]' : 'border-white/10 bg-[var(--gp-card)]/90 text-[var(--gp-gold)]')}
+              className={cn('absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-[13px] font-bold', allDone ? 'border-[var(--gp-gold)] bg-[var(--gp-gold)] text-[var(--gp-ink)]' : 'border-white/10 bg-[var(--gp-card)]/90 text-[var(--gp-gold)]')}
               style={{ top: pct(238, height) }}
             >
               {allDone ? 'Ghost-free house!' : `Ghost-free house · ${money(total)}`}
@@ -216,13 +216,13 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                     </span>
                     <span
                       className={cn(
-                        'absolute top-1/2 w-[150px] -translate-y-1/2 rounded-xl border px-3 py-2 text-[11.5px] font-bold leading-snug shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition-colors sm:w-[190px] sm:text-[12.5px]',
+                        'absolute top-1/2 w-[150px] -translate-y-1/2 rounded-xl border px-3 py-2 text-[12.5px] font-bold leading-snug shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition-colors sm:w-[190px] sm:text-[13.5px]',
                         left ? 'left-full ml-2.5 text-left' : 'right-full mr-2.5 text-right',
                         isCurrent || isSelected ? 'border-primary/80 bg-[var(--gp-current)]' : 'border-white/10 bg-[var(--gp-card)]/95 group-hover:border-white/25',
                       )}
                     >
                       <span className="block text-foreground">{goal.label}</span>
-                      <span className={cn('block text-[11px]', goal.done ? 'text-[var(--gp-gold)]' : 'text-primary')}>{goal.done ? 'Done' : goal.monthly ? `${money(goal.monthly)} a month` : `saves ${money(goal.save)}`}</span>
+                      <span className={cn('block text-[12.5px]', goal.done ? 'text-[var(--gp-gold)]' : 'text-primary')}>{goal.done ? 'Done' : goal.monthly ? `${money(goal.monthly)} a month` : `saves ${money(goal.save)}`}</span>
                     </span>
                   </button>
 
@@ -248,7 +248,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                         <GhostMark className="h-8 w-8 text-[var(--gp-ghost)]" eyeColor={P.ink} />
                         <span className="absolute -right-2 top-4 h-2.5 w-2.5 animate-flicker rounded-full bg-[var(--gp-gold)] shadow-[0_0_12px_4px_rgba(255,190,90,0.6)]" />
                       </span>
-                      <span className="mt-1 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[10.5px] font-bold text-primary-foreground">You are here</span>
+                      <span className="mt-1 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[12px] font-bold text-primary-foreground">You are here</span>
                     </span>
                   )}
                 </div>
@@ -267,7 +267,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
         {onLifeGoal && (
           <div className="rounded-3xl border border-border bg-card p-4">
             <p className="font-heading text-[15px] font-semibold text-foreground">What matters to you?</p>
-            <p className="mt-0.5 text-[12px] text-muted-foreground">Pick a life goal. Every ghost you sort moves money towards it.</p>
+            <p className="mt-0.5 text-[13px] text-muted-foreground">Pick a life goal. Every ghost you sort moves money towards it.</p>
             <div className="mt-2.5 flex flex-wrap gap-1.5">
               {LIFE_GOALS.map((name) => (
                 <button
@@ -275,7 +275,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                   type="button"
                   onClick={() => onLifeGoal((current) => ({ ...current, name: current.name === name ? '' : name }))}
                   aria-pressed={lifeGoal.name === name}
-                  className={cn('rounded-full border px-2.5 py-1 text-[12px] font-bold transition-colors', lifeGoal.name === name ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
+                  className={cn('rounded-full border px-2.5 py-1 text-[13px] font-bold transition-colors', lifeGoal.name === name ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
                 >
                   {name}
                 </button>
@@ -289,10 +289,10 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                 maxLength={40}
                 onChange={(event) => onLifeGoal((current) => ({ ...current, name: event.target.value }))}
                 placeholder="Or type your own"
-                className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2 text-[13px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+                className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2 text-[14px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
               />
               <label className="sr-only" htmlFor="life-goal-amount">Amount</label>
-              <span className="flex items-center rounded-xl border border-border bg-background px-2 text-[13px] text-muted-foreground focus-within:border-primary">
+              <span className="flex items-center rounded-xl border border-border bg-background px-2 text-[14px] text-muted-foreground focus-within:border-primary">
                 $
                 <input
                   id="life-goal-amount"
@@ -308,26 +308,26 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             </div>
             {lifeGoal.name && lifeGoal.amount > 0 && (
               <div className="mt-3">
-                <div className="flex items-baseline justify-between text-[12.5px]">
+                <div className="flex items-baseline justify-between text-[13.5px]">
                   <span className="font-bold text-foreground">{lifeGoal.name}</span>
                   <span className="tabular-nums text-muted-foreground">{money(Math.min(saved, lifeGoal.amount))} / {money(lifeGoal.amount)}</span>
                 </div>
                 <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/10">
                   <div className="h-full rounded-full bg-[#5ee6c8] transition-[width] duration-700" style={{ width: pct(Math.min(saved, lifeGoal.amount), lifeGoal.amount) }} />
                 </div>
-                <p className="mt-1.5 text-[11.5px] text-muted-foreground">
+                <p className="mt-1.5 text-[12.5px] text-muted-foreground">
                   {saved >= lifeGoal.amount ? `You've covered ${lifeGoal.name.toLowerCase()} with the ghosts you sorted!` : `${money(lifeGoal.amount - saved)} to go. Sorting the next ghost gets you closer.`}
                 </p>
               </div>
             )}
-            <p className="mt-2 text-[10.5px] text-muted-foreground/80">Your goal, your call. Not saved anywhere.</p>
+            <p className="mt-2 text-[12px] text-muted-foreground/80">Your goal, your call. Not saved anywhere.</p>
           </div>
         )}
         {selected && Kind && (
           <div key={selected.id} className="animate-rise rounded-3xl bg-[#f5f0e8] p-5 text-[#1b1233] shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-            <p className="font-retro text-[13px] uppercase tracking-[0.2em] text-[#a24a00]">Goal {selectedIndex + 1} of {goals.length}{selected.done ? ' · done' : ''}</p>
+            <p className="font-retro text-[14px] uppercase tracking-[0.2em] text-[#a24a00]">Goal {selectedIndex + 1} of {goals.length}{selected.done ? ' · done' : ''}</p>
             <h3 className="mt-1.5 font-heading text-[1.45rem] font-bold leading-tight">{selected.label}</h3>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-[#5b5275]">{selected.why}</p>
+            <p className="mt-1.5 text-[14px] leading-relaxed text-[#5b5275]">{selected.why}</p>
             <ul className="mt-4 space-y-2.5">
               {Kind.steps.map((step, i) => {
                 const on = selected.done || ticked[selected.id]?.[i];
@@ -345,7 +345,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             </ul>
             {selected.save > 0 && (
               <div className="mt-4 flex items-baseline justify-between border-t border-[#1b1233]/10 pt-3">
-                <span className="text-[13px] text-[#5b5275]">Saves{months ? ` (found in ${monthsLabel(months)} months)` : ''}</span>
+                <span className="text-[14px] text-[#5b5275]">Saves{months ? ` (found in ${monthsLabel(months)} months)` : ''}</span>
                 <span className="font-heading text-[1.6rem] font-bold">{money(selected.save)}</span>
               </div>
             )}
@@ -378,10 +378,10 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             </div>
             <div className="mt-4 flex items-center justify-between">
               {selected.kind !== 'reminders' ? (
-                <button type="button" onClick={onOpenHouse} className="text-[13px] font-bold underline underline-offset-4">See this ghost in the house</button>
+                <button type="button" onClick={onOpenHouse} className="text-[14px] font-bold underline underline-offset-4">See this ghost in the house</button>
               ) : <span />}
               {!allDone && (
-                <button type="button" onClick={nextGoal} className="inline-flex items-center gap-1 text-[13px] font-bold text-[#a24a00]">
+                <button type="button" onClick={nextGoal} className="inline-flex items-center gap-1 text-[14px] font-bold text-[#a24a00]">
                   Next goal <ArrowRight className="h-4 w-4" />
                 </button>
               )}

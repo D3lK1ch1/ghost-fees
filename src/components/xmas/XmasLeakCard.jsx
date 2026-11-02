@@ -1,3 +1,5 @@
+import CancelSiteLink from '@/components/results/CancelSiteLink';
+import { BADGE_MEANING } from '@/lib/ghostFees/leaks';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
@@ -28,11 +30,11 @@ export default function XmasLeakCard({ leak, onDraft, primary = false }) {
         <img src={xmasAvatar(leak.merchant, season)} alt="" width={46} height={46} className="object-contain x-bob h-[46px] w-[46px] flex-none" />
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-[16px] font-extrabold">{leak.title || leak.merchant}</span>
-          <span className="mt-0.5 self-start rounded-md px-2 py-0.5 text-[11px] font-extrabold" style={{ background: X.cream, color: '#14301f' }}>{leak.badge}</span>
+          <span title={BADGE_MEANING[leak.badge]?.what} className="mt-0.5 self-start rounded-md px-2 py-0.5 text-[12.5px] font-extrabold" style={{ background: X.cream, color: '#14301f' }}>{leak.badge}</span>
         </div>
         <div className="flex flex-none flex-col items-end">
           <span className="x-fredoka text-[20px] font-semibold" style={{ color: X.gold }}>{money(leak.amount)}</span>
-          <span className="text-[12px]" style={{ color: X.muted }}>{leak.caption}</span>
+          <span className="text-[13px]" style={{ color: X.muted }}>{leak.caption}</span>
         </div>
       </div>
       <p className="m-0 text-[14px] leading-snug">{leak.reason}</p>
@@ -45,7 +47,7 @@ export default function XmasLeakCard({ leak, onDraft, primary = false }) {
       {open && (
         <ul className="m-0 overflow-hidden rounded-2xl p-0" style={{ background: X.cream, color: '#14301f' }}>
           {rows.map((row, index) => (
-            <li key={`${row.date}-${index}`} className="flex items-center gap-3 px-3 py-2 text-[13px]" style={{ borderTop: index ? '1px dashed #c9b28a' : undefined, background: row.wasted ? 'rgba(229,72,77,0.12)' : undefined }}>
+            <li key={`${row.date}-${index}`} className="flex items-center gap-3 px-3 py-2 text-[14px]" style={{ borderTop: index ? '1px dashed #c9b28a' : undefined, background: row.wasted ? 'rgba(229,72,77,0.12)' : undefined }}>
               <span className="w-[62px] shrink-0 tabular-nums">{rowDate(row.date)}</span>
               <span className="min-w-0 flex-1 truncate">{row.description}</span>
               <span className="shrink-0 font-bold tabular-nums" style={{ color: row.wasted ? '#c0392b' : undefined }}>{money(row.amount)}</span>
@@ -53,7 +55,8 @@ export default function XmasLeakCard({ leak, onDraft, primary = false }) {
           ))}
         </ul>
       )}
-      {leak.tip && <p className="m-0 rounded-2xl px-3 py-2 text-[13px] font-semibold" style={{ background: 'rgba(0,0,0,.25)', color: X.muted }}>{leak.tip}</p>}
+      {leak.tip && <p className="m-0 rounded-2xl px-3 py-2 text-[14px] font-semibold" style={{ background: 'rgba(0,0,0,.25)', color: X.muted }}>{leak.tip}</p>}
+      <CancelSiteLink leak={leak} style={{ borderColor: X.gold || '#F2CB6B', color: '#FFFFFF' }} />
       {label && <Button X={X} onClick={onDraft}>{label}</Button>}
     </div>
   );

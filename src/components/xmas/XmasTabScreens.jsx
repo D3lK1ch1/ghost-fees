@@ -28,16 +28,16 @@ function FeesPast({ leaks, total, X, season }) {
       <div className="relative grid grid-cols-3 gap-2">
         {leaks.slice(0, 3).map((leak, index) => (
           <div key={leak.id} className="x-flip rounded-xl px-2 py-2" style={{ background: X.cream, color: '#14301f', animationDelay: `${0.4 + index * 0.5}s` }}>
-            <div className="rounded-md px-1.5 py-1 text-center text-[10.5px] font-bold text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
-            <div className="mt-1.5 line-clamp-2 text-[11.5px] font-bold">{leak.title || leak.merchant}</div>
-            <div className="text-[11px] font-bold" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>
+            <div className="rounded-md px-1.5 py-1 text-center text-[12px] font-bold text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
+            <div className="mt-1.5 line-clamp-2 text-[12.5px] font-bold">{leak.title || leak.merchant}</div>
+            <div className="text-[12.5px] font-bold" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>
           </div>
         ))}
       </div>
       <div className="x-rise relative rounded-2xl px-4 py-3" style={{ border: `1.5px solid ${X.gold}`, background: 'rgba(0,0,0,.25)', animationDelay: '2s' }}>
         <div className="x-fredoka text-[28px] font-bold" style={{ color: X.gold }}>{money(total)}</div>
-        <div className="text-[13px]">already lost to the leaks in your statement</div>
-        <div className="text-[12px]" style={{ color: X.muted }}>These can&apos;t be undone, but some can be refunded. Every card below has the email.</div>
+        <div className="text-[14px]">already lost to the leaks in your statement</div>
+        <div className="text-[13px]" style={{ color: X.muted }}>These can&apos;t be undone, but some can be refunded. Every card below has the email.</div>
       </div>
     </XScreen>
   );
@@ -60,13 +60,13 @@ function Morning({ leaks, cleared, subscriptions, X, season }) {
       </div>
       <Title size={24}>{pct >= 1 ? 'You changed the ending.' : 'It is not too late to change the ending.'}</Title>
       <div className="relative">
-        <div className="mb-1.5 flex justify-between text-[13px] font-bold"><span>{done.length} of {leaks.length} links broken</span><span style={{ color: X.gold }}>{money(saved)} saved</span></div>
+        <div className="mb-1.5 flex justify-between text-[14px] font-bold"><span>{done.length} of {leaks.length} links broken</span><span style={{ color: X.gold }}>{money(saved)} saved</span></div>
         <div className="h-3 overflow-hidden rounded-full" style={{ background: 'rgba(255,255,255,.1)' }}>
           <div className="h-full rounded-full transition-[width] duration-700" style={{ width: `${pct * 100}%`, background: `linear-gradient(90deg, ${X.gold}, ${X.mint})` }} />
         </div>
       </div>
       {yearly > 0 && <div className="relative text-[14px] font-bold" style={{ color: X.mint }}>Cancel what you don&apos;t use and keep up to {money(yearly)} a year.</div>}
-      <div className="relative text-[12.5px]" style={{ color: X.muted }}>Break links in Jacob&apos;s chain, or tick off each step below. Both count.</div>
+      <div className="relative text-[13.5px]" style={{ color: X.muted }}>Break links in Jacob&apos;s chain, or tick off each step below. Both count.</div>
       <Disclaimer X={X} />
     </XScreen>
   );
@@ -90,7 +90,7 @@ function Present({ subscriptions, X, season }) {
             <span className="relative h-5 w-14 rounded-[50%] shadow-inner" style={{ background: '#efe6d8' }} aria-hidden="true">
               <span className="x-steam absolute -top-3 left-1/2 h-3 w-1.5 -translate-x-1/2 rounded-full bg-white/60" style={{ animationDelay: `${index * 0.3}s` }} />
             </span>
-            <span className="mt-1 rounded px-1.5 py-0.5 text-[10.5px] font-bold" style={{ background: X.cream, color: '#14301f' }}>
+            <span className="mt-1 rounded px-1.5 py-0.5 text-[12px] font-bold" style={{ background: X.cream, color: '#14301f' }}>
               {item.merchant} <span style={{ color: '#c0392b' }}>{money(item.monthly)}</span>
             </span>
           </li>
@@ -98,7 +98,7 @@ function Present({ subscriptions, X, season }) {
       </ul>
       <div className="relative text-center">
         <div className="x-fredoka text-[26px] font-bold" style={{ color: X.gold }}>{money(monthly)} a month</div>
-        <div className="text-[13px]" style={{ color: X.muted }}>on the table right now. The letters below clear it, one dish at a time.</div>
+        <div className="text-[14px]" style={{ color: X.muted }}>on the table right now. The letters below clear it, one dish at a time.</div>
       </div>
     </XScreen>
   );
@@ -120,16 +120,16 @@ function GiftTag({ leaks, subscriptions, total, X, season }) {
       </div>
       <div className="relative flex flex-col gap-2 py-4 pl-[34px] pr-4" style={{ borderRadius: '8px 22px 22px 8px', background: X.cream, color: '#1a1a22', clipPath: 'polygon(22px 0, 100% 0, 100% 100%, 22px 100%, 0 50%)' }}>
         <span aria-hidden="true" className="absolute left-2.5 top-1/2 -mt-[5px] h-2.5 w-2.5 rounded-full" style={{ background: X.bg }} />
-        <div className="text-[12px] font-extrabold tracking-wide" style={{ color: '#2d6b4f' }}>FROM YOUR STATEMENT</div>
+        <div className="text-[13px] font-extrabold tracking-wide" style={{ color: '#2d6b4f' }}>FROM YOUR STATEMENT</div>
         {lines.map(([big, small]) => (
-          <div key={small} className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{big}</b>: {small}</div></div>
+          <div key={small} className="flex items-start gap-2 text-[14px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{big}</b>: {small}</div></div>
         ))}
-        <div className="pt-2 text-[12px] font-extrabold tracking-wide" style={{ borderTop: '1px dashed #c9b28a', color: '#6b5a40' }}>AND FOR EVERYONE</div>
+        <div className="pt-2 text-[13px] font-extrabold tracking-wide" style={{ borderTop: '1px dashed #c9b28a', color: '#6b5a40' }}>AND FOR EVERYONE</div>
         {['waste', 'cancel'].map(statFor).map((fact) => (
-          <div key={fact.key} className="flex items-start gap-2 text-[13px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{fact.stat}</b>: {fact.text} <span style={{ color: '#6b5a40' }}>({fact.source})</span></div></div>
+          <div key={fact.key} className="flex items-start gap-2 text-[14px] leading-snug"><span aria-hidden="true" className="font-black" style={{ color: '#2d6b4f' }}>✓</span><div><b>{fact.stat}</b>: {fact.text} <span style={{ color: '#6b5a40' }}>({fact.source})</span></div></div>
         ))}
       </div>
-      <div className="relative text-center text-[13px] font-extrabold" style={{ color: X.mint }}>Every charge is on the receipt below. Print it, or keep it for the bank.</div>
+      <div className="relative text-center text-[14px] font-extrabold" style={{ color: X.mint }}>Every charge is on the receipt below. Print it, or keep it for the bank.</div>
       <Disclaimer X={X} />
     </XScreen>
   );
@@ -148,21 +148,21 @@ function YetToCome({ subscriptions, X, season }) {
       <div className="relative flex items-end gap-1.5">
         <Spirit src={XMAS.hooded} name="The Hooded One" alt="The Hooded One, a silent cloaked ghost holding a lantern" width={130} X={X} />
         <div className="flex flex-1 flex-col gap-2 pb-1.5">
-          <div className="text-[12px] font-extrabold" style={{ color: X.frostSoft }}>NEXT 12 MONTHS</div>
+          <div className="text-[13px] font-extrabold" style={{ color: X.frostSoft }}>NEXT 12 MONTHS</div>
           <div className="grid grid-cols-4 gap-1">
             {months.map((month, i) => (
               <div key={`${month}${i}`} className="x-tear rounded py-1.5 text-center text-[10px] font-extrabold" style={{ background: '#e9eef6', color: '#1a2033', animationDelay: `${0.8 + i * 0.25}s` }}>{month}</div>
             ))}
           </div>
-          <div className="flex items-end gap-1.5"><Stocking coins={12} X={X} /><span className="pb-1.5 text-[12px] font-extrabold" style={{ color: X.frost }}>Future you</span></div>
+          <div className="flex items-end gap-1.5"><Stocking coins={12} X={X} /><span className="pb-1.5 text-[13px] font-extrabold" style={{ color: X.frost }}>Future you</span></div>
         </div>
       </div>
-      <div className="x-rise bub-r relative text-[13px] font-extrabold" style={{ animationDelay: '2.4s' }}>Spirit, is this my future? Can I still change it?</div>
-      <div className="relative text-[12px] italic" style={{ color: X.frostSoft }}>He never speaks. He shows you next year: every month you keep paying drops into the stocking.</div>
+      <div className="x-rise bub-r relative text-[14px] font-extrabold" style={{ animationDelay: '2.4s' }}>Spirit, is this my future? Can I still change it?</div>
+      <div className="relative text-[13px] italic" style={{ color: X.frostSoft }}>He never speaks. He shows you next year: every month you keep paying drops into the stocking.</div>
       <div className="relative rounded-2xl px-3.5 py-4" style={{ background: 'linear-gradient(135deg, rgba(220,235,255,.18), rgba(220,235,255,.05))', border: '2px solid rgba(220,235,255,.35)' }}>
         <div className="x-frost x-fredoka text-[22px] font-semibold leading-snug" style={{ color: X.frost, textShadow: '0 0 10px rgba(200,225,255,.8)', animationDelay: '4s' }}>{money(monthly * 12)} over the next 12 months if nothing changes.</div>
       </div>
-      <div className="relative text-[12.5px]" style={{ color: X.muted }}>Below: the days you were charged, and reminders for the next charge in your own calendar.</div>
+      <div className="relative text-[13.5px]" style={{ color: X.muted }}>Below: the days you were charged, and reminders for the next charge in your own calendar.</div>
     </XScreen>
   );
 }

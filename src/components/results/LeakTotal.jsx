@@ -40,23 +40,23 @@ export default function LeakTotal({ total, months, from, to, monthlyIncome, leak
           in {months} {months === 1 ? 'month' : 'months'}
         </p>
         {leakCount > 0 && (
-          <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[12.5px] font-bold text-primary">
+          <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[13.5px] font-bold text-primary">
             across {leakCount} {leakCount === 1 ? 'ghost' : 'ghosts'}
           </span>
         )}
       </div>
       {source && (
-        <p className="mt-2 flex items-center gap-1.5 text-[12.5px] font-bold text-muted-foreground">
+        <p className="mt-2 flex items-center gap-1.5 text-[13.5px] font-bold text-muted-foreground">
           <FileText className="h-3.5 w-3.5 shrink-0 text-primary" />
           <span className="truncate">{source}</span>
         </p>
       )}
-      <p className="mt-3 max-w-md text-[13.5px] leading-relaxed text-muted-foreground">
+      <p className="mt-3 max-w-md text-[14.5px] leading-relaxed text-muted-foreground">
         {range ? `Covering ${range} (${months} ${months === 1 ? 'month' : 'months'}).` : ''}
         {months < 12 ? ' Upload 12 months to catch more price rises.' : ''}
       </p>
       <HoursLine total={total} monthlyIncome={monthlyIncome} />
-      <p className="mt-2 max-w-md text-[12.5px] leading-relaxed text-muted-foreground/80">
+      <p className="mt-2 max-w-md text-[13.5px] leading-relaxed text-muted-foreground/80">
         Real charges from your own statement. Nothing guessed, nothing projected.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">

@@ -49,7 +49,7 @@ export function ScanScreen({ lastLine = 'Ghost detected', onDone, onCancel }) {
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-xl px-3 py-2 text-[13.5px] font-medium text-muted-foreground transition-colors hover:text-white"
+            className="rounded-xl px-3 py-2 text-[14.5px] font-medium text-muted-foreground transition-colors hover:text-white"
           >
             Cancel
           </button>
@@ -74,7 +74,7 @@ export function ScanScreen({ lastLine = 'Ghost detected', onDone, onCancel }) {
           </div>
         </div>
 
-        <p className="mt-8 text-[13px] text-muted-foreground">
+        <p className="mt-8 text-[14px] text-muted-foreground">
           Usually takes about 10 seconds. Your file stays private.
         </p>
       </main>
@@ -218,7 +218,7 @@ export function CapturedJar({ message = 'Thanks! Ghosts captured.' }) {
       </div>
 
       <p className="mt-3 animate-rise text-[18px] font-bold text-white" style={{ animationDelay: '3s' }}>{message}</p>
-      <p className="animate-rise text-[13px] text-muted-foreground" style={{ animationDelay: '3.2s' }}>{CATCHES.length} ghosts in the jar. Your answers help us catch more.</p>
+      <p className="animate-rise text-[14px] text-muted-foreground" style={{ animationDelay: '3.2s' }}>{CATCHES.length} ghosts in the jar. Your answers help us catch more.</p>
     </div>
   );
 }

@@ -12,7 +12,7 @@ export default function PaybackNote({ results, usedSample }) {
       <p className="text-[14px] font-semibold leading-snug text-foreground">
         {line.found} <span className="text-primary">{line.price}</span>{line.times ? ` ${line.times}` : ''}
       </p>
-      <button type="button" onClick={() => openPaywall('scan')} className="rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground">
+      <button type="button" onClick={() => openPaywall('scan')} className="rounded-full bg-primary px-3.5 py-1.5 text-[14px] font-bold text-primary-foreground">
         Unlock everything
       </button>
     </div>

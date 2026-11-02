@@ -57,7 +57,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
           <p className="text-[16px] leading-snug" style={{ color: P.soft }}>Sign in so your Ghost List and payment stay with you on any device.</p>
           <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="flex min-h-[54px] items-center justify-center gap-2.5 rounded-2xl bg-white text-[16px] font-semibold" style={{ color: P.bg }}>Continue with Google</Link>
           <Link to={`/login?returnTo=${returnTo}`} onClick={onClose} className="flex min-h-[54px] items-center justify-center gap-2.5 rounded-2xl text-[16px] font-semibold" style={{ background: P.sheet, border: `1px solid ${P.handle}` }}><Mail className="h-5 w-5" /> Continue with email</Link>
-          <p className="rounded-2xl px-4 py-3 text-left text-[13.5px] leading-snug" style={{ background: P.sheet, color: P.muted }}>
+          <p className="rounded-2xl px-4 py-3 text-left text-[14.5px] leading-snug" style={{ background: P.sheet, color: P.muted }}>
             We store your email and your scan count. Never your statement. <Link to="/privacy" onClick={onClose} className="underline" style={{ color: P.accent }}>Privacy</Link>
           </p>
         </DialogContent>
@@ -113,24 +113,28 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
             <DialogTitle className="font-heading text-[26px] font-bold leading-tight">Unlock everything for $10 once</DialogTitle>
             <ul className="space-y-1.5 text-left">
               {statsFor('paywall').map((fact) => (
-                <li key={fact.key} className="rounded-2xl px-3 py-2 text-[13.5px]" style={{ background: P.card, color: P.soft }}>
-                  <b style={{ color: P.accent }}>{fact.stat}</b> {fact.text} <span className="block text-[11px]" style={{ color: P.faint }}>({fact.source})</span>
+                <li key={fact.key} className="rounded-2xl px-3 py-2 text-[14.5px]" style={{ background: P.card, color: P.soft }}>
+                  <b style={{ color: P.accent }}>{fact.stat}</b> {fact.text} <span className="block text-[12.5px]" style={{ color: P.faint }}>({fact.source})</span>
                 </li>
               ))}
             </ul>
           </>
         )}
 
+        {/* The promise, in one line, right before the button. */}
+        <p className="text-[15px] leading-snug" style={{ color: P.soft }}>
+          <b style={{ color: '#FFFFFF' }}>Ghost them once. Pay once.</b> Pro finds every subscription and fee, helps you cancel each one and checks they stopped. Never a subscription.
+        </p>
         <Link to={unlockTo} onClick={onClose} className="motion-safe:animate-pulse-soft flex min-h-[54px] items-center justify-center rounded-2xl text-[17px] font-semibold" style={{ background: P.accent, color: P.ink }}>
           Unlock everything, $10
         </Link>
         <div>
           <button type="button" onClick={onClose} className="min-h-[44px] w-full text-[15px]" style={{ color: P.soft }}>Maybe later</button>
         </div>
-        <p className="text-[13px]" style={{ color: P.muted }}>
+        <p className="text-[14px]" style={{ color: P.muted }}>
           Your results stay visible. <Link to="/upgrade#compare" onClick={onClose} className="underline" style={{ color: P.accent }}>See how we compare</Link>
         </p>
-        {foundingLeft > 0 && <p className="text-[11.5px]" style={{ color: P.faint }}>Founding members: $5 for the first 50 ({foundingLeft} left).</p>}
+        {foundingLeft > 0 && <p className="text-[12.5px]" style={{ color: P.faint }}>Founding members: $5 for the first 50 ({foundingLeft} left).</p>}
       </DialogContent>
     </Dialog>
   );

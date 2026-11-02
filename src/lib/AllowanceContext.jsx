@@ -14,10 +14,10 @@ export function AllowanceProvider({ children }) {
   const [status, setStatus] = useState(null);
   const [local, setLocal] = useState(() => (typeof window === 'undefined' ? { guides: [], cass: [] } : localUsage()));
   const [paywall, setPaywall] = useState(null); // null or a reason: sign_in | scan | guide | cass | report
-  // Development only: /?preview_paywall=scan (or guide, cass, report) opens the
-  // limit sheet so it can be checked without hitting a real limit.
+  // /?preview_paywall=scan (or guide, cass, report, sign_in) opens the limit sheet
+  // so it can be seen without hitting a real limit (it's free during the beta).
+  // It only shows the sheet; nothing is charged or counted.
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
     const preview = new URLSearchParams(window.location.search).get('preview_paywall');
     if (preview) setPaywall(preview);
   }, []);

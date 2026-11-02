@@ -14,8 +14,8 @@ export default function FounderCard({ founder, full = false }) {
       </div>
       <div className="min-w-0">
         <div className="font-heading text-[17px] font-semibold text-foreground">{founder.name}</div>
-        <div className="text-[12.5px] font-bold text-primary">{founder.role}</div>
-        <p className={`mt-1 text-[13px] leading-relaxed text-muted-foreground ${full ? '' : 'line-clamp-2'}`}>{founder.bio}</p>
+        <div className="text-[13.5px] font-bold text-primary">{founder.role}</div>
+        <p className={`mt-1 text-[14px] leading-relaxed text-muted-foreground ${full ? '' : 'line-clamp-2'}`}>{founder.bio}</p>
       </div>
     </div>
   );

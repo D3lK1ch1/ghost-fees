@@ -12,15 +12,15 @@ export default function UploadErrors({ errors = [], onSample, onUpload }) {
       <ul className="mt-4 space-y-2 text-left">
         {errors.map((error, index) => (
           <li key={`${error.name}-${index}`} className="rounded-xl border border-border bg-card/60 px-4 py-3">
-            <span className="inline-block max-w-full truncate rounded-md bg-background px-2 py-0.5 font-mono text-[12.5px] font-bold text-foreground">
+            <span className="inline-block max-w-full truncate rounded-md bg-background px-2 py-0.5 font-mono text-[13.5px] font-bold text-foreground">
               {error.name}
             </span>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">{error.message}</p>
+            <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">{error.message}</p>
           </li>
         ))}
       </ul>
 
-      <p className="mt-4 text-[13.5px] leading-relaxed text-muted-foreground">
+      <p className="mt-4 text-[14.5px] leading-relaxed text-muted-foreground">
         We need a .csv or .pdf with date, description and amount. Most banks have it under{' '}
         <span className="font-bold text-foreground">Export transactions</span>.
       </p>
@@ -45,7 +45,7 @@ export default function UploadErrors({ errors = [], onSample, onUpload }) {
           </button>
         )}
       </div>
-      <p className="mt-5 text-[12.5px] text-muted-foreground">CSVs are processed in your browser. Never stored.</p>
+      <p className="mt-5 text-[13.5px] text-muted-foreground">CSVs are processed in your browser. Never stored.</p>
     </div>
   );
 }

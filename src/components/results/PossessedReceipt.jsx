@@ -54,14 +54,14 @@ export default function PossessedReceipt({ leaks, onDraft }) {
       <section className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-[#4a3770] bg-[#231838] px-4 py-4 sm:px-5">
         <div className="min-w-0">
           <p className="font-retro text-[15px] uppercase tracking-[0.18em] text-primary/80">Possessed receipt</p>
-          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
             Every charge behind a ghost, printed on paper that refuses to die.
           </p>
         </div>
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-[13.5px] font-bold text-primary-foreground transition-all hover:brightness-105"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-[14.5px] font-bold text-primary-foreground transition-all hover:brightness-105"
         >
           <Receipt className="h-4 w-4" />
           Open the receipt
@@ -81,7 +81,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                   type="button"
                   onClick={() => setActiveId(ALL)}
                   className={cn(
-                    'rounded-full border px-2.5 py-1 text-[11.5px] font-bold transition-colors',
+                    'rounded-full border px-2.5 py-1 text-[12.5px] font-bold transition-colors',
                     showAll ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground',
                   )}
                 >
@@ -93,7 +93,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                     type="button"
                     onClick={() => setActiveId(leak.id)}
                     className={cn(
-                      'rounded-full border px-2.5 py-1 text-[11.5px] font-bold transition-colors',
+                      'rounded-full border px-2.5 py-1 text-[12.5px] font-bold transition-colors',
                       leak.id === active?.id
                         ? 'border-primary bg-primary text-primary-foreground'
                         : 'border-border text-muted-foreground hover:text-foreground',
@@ -106,7 +106,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
             )}
 
             <div className="relative mt-4">
-              <div className="relative max-h-[52vh] overflow-y-auto bg-[#f6efe1] px-4 py-5 font-mono text-[12.5px] text-[#1b1233] sm:px-5">
+              <div className="relative max-h-[52vh] overflow-y-auto bg-[#f6efe1] px-4 py-5 font-mono text-[13.5px] text-[#1b1233] sm:px-5">
                 {/* The stamp sits on the paper's header and scrolls with it, so it never covers an amount. */}
                 <span
                   aria-hidden="true"
@@ -115,10 +115,10 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                   Ghosted
                 </span>
                 <p className="text-center font-retro text-[21px] uppercase tracking-[0.22em]">Possessed receipt</p>
-                <p className="mt-1 text-center text-[10.5px] uppercase tracking-[0.18em] text-[#7a6f8f]">
+                <p className="mt-1 text-center text-[12px] uppercase tracking-[0.18em] text-[#7a6f8f]">
                   {active ? active.badge : `${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}`}
                 </p>
-                <p className="mt-3 text-center text-[13px] font-bold">{active ? active.title || active.merchant : 'Every ghost charge'}</p>
+                <p className="mt-3 text-center text-[14px] font-bold">{active ? active.title || active.merchant : 'Every ghost charge'}</p>
 
                 <div className="my-3 border-t border-dashed border-[#1b1233]/30" />
 
@@ -127,7 +127,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                     const wasted = (leak.rows || []).filter((row) => row.wasted);
                     return (
                       <div key={leak.id} className="mb-3">
-                        <div className="mb-1 flex items-center gap-2 border-b border-[#1b1233]/20 pb-1 text-[11px] font-bold uppercase tracking-[0.1em]">
+                        <div className="mb-1 flex items-center gap-2 border-b border-[#1b1233]/20 pb-1 text-[12.5px] font-bold uppercase tracking-[0.1em]">
                           {onDraft && (
                             <input
                               type="checkbox"
@@ -159,7 +159,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                           ))}
                         </ul>
                         {onDraft && (
-                          <button type="button" onClick={() => draft(leak)} className="mt-1 text-[11px] font-bold text-[#b03a2e] underline underline-offset-4">
+                          <button type="button" onClick={() => draft(leak)} className="mt-1 text-[12.5px] font-bold text-[#b03a2e] underline underline-offset-4">
                             Dispute this
                           </button>
                         )}
@@ -171,7 +171,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                   {groups.map((group) => (
                     <div key={group.label} className={cn(grouped && 'mb-3')}>
                       {grouped && (
-                        <p className="mb-1.5 flex items-baseline justify-between border-b border-[#1b1233]/20 pb-1 text-[11px] font-bold uppercase tracking-[0.12em]">
+                        <p className="mb-1.5 flex items-baseline justify-between border-b border-[#1b1233]/20 pb-1 text-[12.5px] font-bold uppercase tracking-[0.12em]">
                           <span className="truncate">{group.label}</span>
                           <span className="shrink-0 tabular-nums">{money(group.rows.reduce((sum, row) => sum + row.amount, 0))}</span>
                         </p>
@@ -190,7 +190,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                     </div>
                   ))}
                   {onDraft && active && (
-                    <button type="button" onClick={() => draft(active)} className="mt-2 text-[11.5px] font-bold text-[#b03a2e] underline underline-offset-4">
+                    <button type="button" onClick={() => draft(active)} className="mt-2 text-[12.5px] font-bold text-[#b03a2e] underline underline-offset-4">
                       Dispute this with {active.merchant}
                     </button>
                   )}
@@ -204,7 +204,7 @@ export default function PossessedReceipt({ leaks, onDraft }) {
                   <span className="tabular-nums">{money(printed)}</span>
                 </div>
 
-                <p className="mt-3 text-center text-[10.5px] leading-relaxed text-[#7a6f8f]">
+                <p className="mt-3 text-center text-[12px] leading-relaxed text-[#7a6f8f]">
                   Copied from your own statement. Nothing here is estimated.
                 </p>
               </div>
@@ -215,13 +215,13 @@ export default function PossessedReceipt({ leaks, onDraft }) {
             {onDraft && showAll && (
               <div className="mt-3 rounded-2xl border border-border bg-background/40 px-3 py-2.5">
                 {claim.length ? (
-                  <button type="button" onClick={() => draft({ claim, amount: claimTotal, merchant: 'your bank', badge: 'Claim' })} className="w-full rounded-xl bg-primary px-4 py-2.5 text-[13.5px] font-bold text-primary-foreground">
+                  <button type="button" onClick={() => draft({ claim, amount: claimTotal, merchant: 'your bank', badge: 'Claim' })} className="w-full rounded-xl bg-primary px-4 py-2.5 text-[14.5px] font-bold text-primary-foreground">
                     Ask my bank about {claim.length} {claim.length === 1 ? 'ghost' : 'ghosts'} · {money(claimTotal)}
                   </button>
                 ) : (
-                  <p className="text-[12.5px] text-muted-foreground">Tick the ghosts above to put them in one claim to your bank.</p>
+                  <p className="text-[13.5px] text-muted-foreground">Tick the ghosts above to put them in one claim to your bank.</p>
                 )}
-                <p className="mt-1.5 text-[11px] leading-relaxed text-muted-foreground">
+                <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">
                   Banks usually ask whether you contacted the company first, so Dispute this on each one is a good first step.
                 </p>
               </div>

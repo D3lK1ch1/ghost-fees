@@ -51,7 +51,7 @@ export default function UseCases() {
                   {String(index + 1).padStart(2, '0')}
                 </span>
               </div>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{body}</p>
+              <p className="mt-1 text-[14.5px] leading-relaxed text-muted-foreground">{body}</p>
             </div>
           </li>
         ))}

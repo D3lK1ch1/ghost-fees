@@ -18,7 +18,7 @@ export default function DetectionInfo({ className }) {
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className || 'inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-[12.5px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground'}>
+      <button type="button" onClick={() => setOpen(true)} className={className || 'inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-3.5 py-1.5 text-[13.5px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground'}>
         <Info className="h-4 w-4" />
         What doesn&apos;t it detect?
       </button>
@@ -26,14 +26,14 @@ export default function DetectionInfo({ className }) {
         <DialogContent className="max-w-md rounded-[1.5rem] border-border bg-popover p-0">
           <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-6">
             <DialogTitle className="pr-8 font-heading text-lg font-semibold text-foreground">What Ghost Fees doesn&apos;t detect</DialogTitle>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
+            <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
               It finds bank fees, free trials that turned paid, duplicate charges and price rises. Here is what it leaves out, and why.
             </p>
             <ul className="mt-4 space-y-3">
               {NOT_DETECTED.map((item) => (
                 <li key={item.title} className="rounded-xl border border-white/[0.07] bg-background/50 px-3.5 py-2.5">
-                  <p className="text-[13.5px] font-bold text-foreground">{item.title}</p>
-                  <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">{item.why}</p>
+                  <p className="text-[14.5px] font-bold text-foreground">{item.title}</p>
+                  <p className="mt-0.5 text-[13.5px] leading-relaxed text-muted-foreground">{item.why}</p>
                 </li>
               ))}
             </ul>

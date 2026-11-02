@@ -11,7 +11,6 @@ import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import ValueLine from '@/components/landing/ValueLine';
 import HomeTabs from '@/components/landing/HomeTabs';
-import HomeTour from '@/components/landing/HomeTour';
 import IsThisYou from '@/components/landing/IsThisYou';
 import PlansAtAGlance from '@/components/landing/PlansAtAGlance';
 import { Link } from 'react-router-dom';
@@ -163,7 +162,6 @@ export default function Landing() {
             { key: 'who', label: 'Who made it', content: <FoundersSection /> },
           ]} />
           <SiteFooter />
-          <HomeTour />
         </>
       )}
       <input

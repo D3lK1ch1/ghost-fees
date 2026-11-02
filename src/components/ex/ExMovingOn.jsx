@@ -56,14 +56,14 @@ export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, 
         <div key={group.key} className="ex-in flex flex-col gap-3 p-4" style={{ ...card, border: `1.5px solid ${C.coral}`, animationDelay: '.65s' }}>
           <div className="flex items-center gap-2">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.coral} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10z" /><path d="M15 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10z" /></svg>
-            <span className="text-[13px] font-extrabold" style={{ color: C.coralSoft }}>Double-ups</span>
+            <span className="text-[14px] font-extrabold" style={{ color: C.coralSoft }}>Double-ups</span>
           </div>
           <div className="ex-fredoka text-[21px] font-semibold leading-snug">
             {group.items.length} {group.label.replace('video ', '').replace(/ (services|apps|plans|tools|assistants|memberships)$/, '')} exes at once? That&apos;s <span style={{ color: C.coral }}>{money(group.yearly)}/yr</span>.
           </div>
           <div className="flex flex-wrap gap-1.5">
             {group.items.map((item) => (
-              <span key={item.id} className="rounded-full px-2.5 py-1.5 text-[13px] font-bold" style={{ background: C.bg, border: `1px solid ${C.line}` }}>{item.merchant} {money(item.monthly)}</span>
+              <span key={item.id} className="rounded-full px-2.5 py-1.5 text-[14px] font-bold" style={{ background: C.bg, border: `1px solid ${C.line}` }}>{item.merchant} {money(item.monthly)}</span>
             ))}
           </div>
           <div className="text-[14px]" style={{ color: C.soft }}>Keep the one you actually use. Block the rest.</div>
@@ -82,11 +82,11 @@ export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, 
               <img src={avatarFor(item.merchant)} alt="" className="ex-av h-[42px] w-[42px] flex-none object-contain" />
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="text-[17px] font-extrabold">{item.merchant}</span>
-                <span className="text-[13px]" style={{ color: C.muted }}>{kindOf(item.merchant)}{tag && ` · ${tag}`}</span>
+                <span className="text-[14px]" style={{ color: C.muted }}>{kindOf(item.merchant)}{tag && ` · ${tag}`}</span>
               </div>
               <div className="flex flex-col items-end">
                 <span className="ex-fredoka text-[20px] font-semibold">{money(item.monthly)}/mo</span>
-                <span className="text-[13px]" style={{ color: C.muted }}>{yearly(item.monthly)}/yr</span>
+                <span className="text-[14px]" style={{ color: C.muted }}>{yearly(item.monthly)}/yr</span>
               </div>
             </div>
             <div className="max-w-[88%] self-start px-3 py-2 text-[14px]" style={{ borderRadius: '16px 16px 16px 4px', background: C.bg, color: C.soft }}>&quot;{line}&quot;</div>
@@ -111,7 +111,7 @@ export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, 
         <div className="ex-in flex flex-col gap-2.5" style={{ animationDelay: '.3s' }}>
           <div className="flex items-baseline justify-between">
             <h3 className="ex-fredoka m-0 text-[22px] font-bold">Blocked list</h3>
-            <span className="text-[13px]" style={{ color: C.muted }}>{gone.length} {gone.length === 1 ? 'ex' : 'exes'}</span>
+            <span className="text-[14px]" style={{ color: C.muted }}>{gone.length} {gone.length === 1 ? 'ex' : 'exes'}</span>
           </div>
           <div className="flex flex-col" style={card}>
             {gone.map((item, index) => {
@@ -120,14 +120,14 @@ export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, 
                 <div key={item.id} className="flex items-center gap-3 px-4 py-3.5" style={index < gone.length - 1 ? { borderBottom: `1px solid ${C.line}` } : undefined}>
                   <div className="flex min-w-0 flex-1 flex-col">
                     <span className="text-[16px] font-extrabold">{item.merchant}</span>
-                    <span className="text-[13px]" style={{ color: C.muted }}>{badge.note(item)}</span>
+                    <span className="text-[14px]" style={{ color: C.muted }}>{badge.note(item)}</span>
                   </div>
-                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[13px] font-extrabold" style={badge.style}>{badge.label}</span>
+                  <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[14px] font-extrabold" style={badge.style}>{badge.label}</span>
                 </div>
               );
             })}
           </div>
-          <div className="text-[12.5px]" style={{ color: C.muted }}>Next month, check your statement and mark them Gone for good on the Subscriptions tab.</div>
+          <div className="text-[13.5px]" style={{ color: C.muted }}>Next month, check your statement and mark them Gone for good on the Subscriptions tab.</div>
         </div>
       )}
 

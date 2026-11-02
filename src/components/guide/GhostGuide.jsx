@@ -288,7 +288,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">
-                {guide.name} <span className="text-[13px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
+                {guide.name} <span className="text-[14px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
               <div className="mt-1 grid grid-cols-2 gap-1" role="group" aria-label="Pick your ghost guide">
@@ -304,11 +304,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                       guideKey === key ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:text-foreground',
                     )}
                   >
-                    <span className="flex items-center gap-1 text-[11.5px] font-bold leading-tight">
+                    <span className="flex items-center gap-1 text-[12.5px] font-bold leading-tight">
                       <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
                       {GUIDES[key].name.replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
                     </span>
-                    <span className={cn('mt-0.5 text-[10.5px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
+                    <span className={cn('mt-0.5 text-[12px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
                   </button>
                 ))}
               </div>
@@ -318,8 +318,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             </button>
           </div>
           <div className="border-b border-border px-4 py-2.5">
-            <p className="text-[13px] leading-relaxed text-foreground">{guide.does}</p>
-            <p className="mt-0.5 text-[11.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
+            <p className="text-[14px] leading-relaxed text-foreground">{guide.does}</p>
+            <p className="mt-0.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
           </div>
 
           <div ref={listRef} aria-live="polite" className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
@@ -327,7 +327,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <div key={index} className={cn('flex flex-col', message.role === 'user' ? 'items-end' : 'items-start')}>
                 <p
                   className={cn(
-                    'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[13.5px] leading-relaxed',
+                    'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-relaxed',
                     message.role === 'user'
                       ? 'rounded-br-sm bg-primary font-semibold text-primary-foreground'
                       : 'rounded-tl-sm bg-background text-foreground',
@@ -336,7 +336,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   {message.text}
                 </p>
                 {message.unlock && (
-                  <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">
+                  <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
                   </button>
                 )}
@@ -345,7 +345,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <button
                     type="button"
                     onClick={() => run(message)}
-                    className="mt-1.5 rounded-full border border-primary px-3 py-1 text-[12px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                    className="mt-1.5 rounded-full border border-primary px-3 py-1 text-[13px] font-bold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
                   >
                     {ACTION_LABELS[message.action]}
                   </button>
@@ -357,7 +357,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                         key={chip}
                         type="button"
                         onClick={() => ask(chip)}
-                        className="rounded-full border border-border bg-background/60 px-3 py-1.5 text-left text-[12px] font-bold text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
+                        className="rounded-full border border-border bg-background/60 px-3 py-1.5 text-left text-[13px] font-bold text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
                       >
                         {chip}
                       </button>
@@ -389,13 +389,13 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               maxLength={MAX_INPUT}
               onChange={(event) => setInput(event.target.value)}
               placeholder="Ask about your ghosts"
-              className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2.5 text-[13.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+              className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2.5 text-[14.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
             <button type="submit" aria-label="Send" className="rounded-xl bg-primary p-2.5 text-primary-foreground disabled:opacity-50" disabled={!input.trim() || thinking}>
               <Send className="h-4 w-4" />
             </button>
           </form>
-          <p className="px-4 pb-3 text-center text-[10.5px] text-muted-foreground">Factual information only, not financial advice.</p>
+          <p className="px-4 pb-3 text-center text-[12px] text-muted-foreground">Factual information only, not financial advice.</p>
         </div>
       )}
     </>

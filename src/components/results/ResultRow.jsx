@@ -19,19 +19,19 @@ export default function ResultRow({ merchant, badge, tone = 'fee', meta, yearly,
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="truncate text-[15px] font-semibold text-white">{merchant}</h3>
             {badge && (
-              <span className={cn('rounded-full px-2 py-0.5 text-[11px] font-medium', TONES[tone] || TONES.fee)}>
+              <span className={cn('rounded-full px-2 py-0.5 text-[12.5px] font-medium', TONES[tone] || TONES.fee)}>
                 {badge}
               </span>
             )}
           </div>
-          {meta && <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{meta}</p>}
+          {meta && <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{meta}</p>}
         </div>
         <div className="shrink-0 text-right">
           <div className="text-[1.35rem] font-semibold leading-none tabular-nums text-white">
             {yearly}
-            <span className="text-[12px] font-normal text-muted-foreground">/yr</span>
+            <span className="text-[13px] font-normal text-muted-foreground">/yr</span>
           </div>
-          {amount && <div className="mt-1.5 text-[12px] text-muted-foreground">{amount}</div>}
+          {amount && <div className="mt-1.5 text-[13px] text-muted-foreground">{amount}</div>}
         </div>
       </div>
       {children && <div className="mt-3.5 flex flex-wrap items-center justify-between gap-3 border-t border-white/[0.06] pt-3">{children}</div>}

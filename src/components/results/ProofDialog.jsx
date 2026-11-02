@@ -72,13 +72,13 @@ export function ProofSummary({ proof, className, onAdd }) {
   const [big, setBig] = useState(false);
   if (!proof) {
     return onAdd ? (
-      <button type="button" onClick={onAdd} className={cn('text-[12px] font-bold text-[#ffc27a] underline underline-offset-4', className)}>
+      <button type="button" onClick={onAdd} className={cn('text-[13px] font-bold text-[#ffc27a] underline underline-offset-4', className)}>
         No proof yet. Add proof of cancelling
       </button>
     ) : null;
   }
   return (
-    <div className={cn('text-[12px] text-muted-foreground', className)}>
+    <div className={cn('text-[13px] text-muted-foreground', className)}>
       <p><span className="font-bold text-foreground">Proof:</span> {proofLine(proof)}</p>
       {proof.shot && (
         <button type="button" onClick={() => setBig((value) => !value)} aria-expanded={big} className="mt-1.5 block" aria-label={big ? 'Make screenshot smaller' : 'See the screenshot bigger'}>
@@ -133,7 +133,7 @@ export default function ProofDialog({ target, onSave, onClose, saveLabel = '👻
     <Dialog open={!!target} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[92vh] max-w-md overflow-y-auto rounded-3xl border-border bg-card text-foreground">
         <DialogTitle className="font-heading text-[20px]">How did you cancel {target.merchant}?</DialogTitle>
-        <p className="-mt-2 text-[13px] text-muted-foreground">Keep proof, so you can get your money back if they charge you again.</p>
+        <p className="-mt-2 text-[14px] text-muted-foreground">Keep proof, so you can get your money back if they charge you again.</p>
 
         <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label="How you cancelled">
           {METHODS.map((item) => (
@@ -143,7 +143,7 @@ export default function ProofDialog({ target, onSave, onClose, saveLabel = '👻
               role="radio"
               aria-checked={method === item.key}
               onClick={() => setMethod(item.key)}
-              className={cn('flex flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-[13px] font-bold', method === item.key ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:border-primary/50')}
+              className={cn('flex flex-col items-center gap-1 rounded-2xl border px-2 py-3 text-[14px] font-bold', method === item.key ? 'border-primary bg-primary/10 text-foreground' : 'border-border text-muted-foreground hover:border-primary/50')}
             >
               <item.Icon className="h-5 w-5" /> {item.label}
             </button>
@@ -151,8 +151,8 @@ export default function ProofDialog({ target, onSave, onClose, saveLabel = '👻
         </div>
 
         <div className="rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-3.5 py-2.5">
-          <p className="text-[12px] font-bold uppercase tracking-wide text-[#5ee6c8]">What counts as proof</p>
-          <ul className="mt-1 space-y-0.5 text-[13px] text-foreground">
+          <p className="text-[13px] font-bold uppercase tracking-wide text-[#5ee6c8]">What counts as proof</p>
+          <ul className="mt-1 space-y-0.5 text-[14px] text-foreground">
             {m.proves.map((line) => (
               <li key={line} className="flex gap-1.5"><Check className="mt-0.5 h-3.5 w-3.5 flex-none text-[#5ee6c8]" /> {line}</li>
             ))}
@@ -160,32 +160,32 @@ export default function ProofDialog({ target, onSave, onClose, saveLabel = '👻
         </div>
 
         <div>
-          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">Screenshot <span className="font-normal normal-case">(optional)</span></p>
+          <p className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">Screenshot <span className="font-normal normal-case">(optional)</span></p>
           {shot ? (
             <div className="mt-1 flex items-center gap-3">
               <img src={shot} alt="Your cancellation screenshot" className="h-20 w-20 rounded-xl border border-border object-cover object-top" />
-              <button type="button" onClick={() => setShot('')} className="inline-flex items-center gap-1 text-[12.5px] font-bold text-muted-foreground underline underline-offset-4">
+              <button type="button" onClick={() => setShot('')} className="inline-flex items-center gap-1 text-[13.5px] font-bold text-muted-foreground underline underline-offset-4">
                 <X className="h-3.5 w-3.5" /> Remove
               </button>
             </div>
           ) : (
-            <button type="button" onClick={() => fileRef.current?.click()} className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border px-3 py-3 text-[13.5px] font-bold text-foreground hover:border-primary/60">
+            <button type="button" onClick={() => fileRef.current?.click()} className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border px-3 py-3 text-[14.5px] font-bold text-foreground hover:border-primary/60">
               <ImagePlus className="h-4 w-4" /> Add a screenshot or photo
             </button>
           )}
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={pickShot} />
-          {shotError && <p className="mt-1 text-[12px] font-semibold text-[#ff8f8f]" role="alert">{shotError}</p>}
+          {shotError && <p className="mt-1 text-[13px] font-semibold text-[#ff8f8f]" role="alert">{shotError}</p>}
         </div>
 
-        <label className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+        <label className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">
           {method === 'phone' ? 'Date and time of the call' : 'When'}
           <input type="datetime-local" value={when} onChange={(event) => setWhen(event.target.value)} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] font-normal normal-case text-foreground" />
         </label>
-        <label className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+        <label className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">
           {m.ref} <span className="font-normal normal-case">(optional)</span>
           <input value={ref} maxLength={60} onChange={(event) => setRef(event.target.value)} placeholder={m.refHint} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] font-normal normal-case text-foreground" />
         </label>
-        <label className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+        <label className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">
           {m.note} <span className="font-normal normal-case">(optional)</span>
           <input value={note} maxLength={80} onChange={(event) => setNote(event.target.value)} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] font-normal normal-case text-foreground" />
         </label>
@@ -198,13 +198,13 @@ export default function ProofDialog({ target, onSave, onClose, saveLabel = '👻
         >
           {saveLabel}
         </button>
-        {!hasProof && <p className="-mt-1 text-center text-[12px] text-muted-foreground">Add a screenshot, a reference or a note to save it as proof.</p>}
+        {!hasProof && <p className="-mt-1 text-center text-[13px] text-muted-foreground">Add a screenshot, a reference or a note to save it as proof.</p>}
         {laterLabel && (
-          <button type="button" onClick={() => onSave(null)} className="text-[13px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">
+          <button type="button" onClick={() => onSave(null)} className="text-[14px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">
             {laterLabel}
           </button>
         )}
-        <p className="text-[11px] text-muted-foreground">Saved in this browser only, with your Ghost List. Nothing is uploaded. Cover card numbers in screenshots, and don&apos;t type passwords.</p>
+        <p className="text-[12.5px] text-muted-foreground">Saved in this browser only, with your Ghost List. Nothing is uploaded. Cover card numbers in screenshots, and don&apos;t type passwords.</p>
       </DialogContent>
     </Dialog>
   );

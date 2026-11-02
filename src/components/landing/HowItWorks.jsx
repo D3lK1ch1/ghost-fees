@@ -24,7 +24,7 @@ export default function HowItWorks() {
           <div key={step.number} className="relative border-t border-white/[0.08] pt-5">
             <span className="text-xs font-semibold tracking-[0.2em] text-primary/70">{step.number}</span>
             <h3 className="mt-2 text-[15px] font-semibold text-white">{step.title}</h3>
-            <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground">{step.body}</p>
+            <p className="mt-1.5 text-[14.5px] leading-relaxed text-muted-foreground">{step.body}</p>
           </div>
         ))}
       </div>

@@ -83,7 +83,7 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', leaks = null
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-xl px-3 py-2 text-[13.5px] font-medium text-muted-foreground transition-colors hover:text-white"
+            className="rounded-xl px-3 py-2 text-[14.5px] font-medium text-muted-foreground transition-colors hover:text-white"
           >
             Cancel
           </button>
@@ -138,13 +138,13 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', leaks = null
             <p className="font-heading text-[2.8rem] font-bold leading-none tabular-nums text-primary [text-shadow:0_0_24px_hsl(var(--primary)/0.4)]">
               {money(running)}
             </p>
-            <p key={current.id} className="mt-2 animate-rise text-[13.5px] text-muted-foreground">
+            <p key={current.id} className="mt-2 animate-rise text-[14.5px] text-muted-foreground">
               Ghost {tick + 1} of {count}: <span className="font-bold text-foreground">{current.title || current.merchant}</span>
             </p>
           </div>
         )}
 
-        <p className="mt-6 text-[13px] text-muted-foreground">
+        <p className="mt-6 text-[14px] text-muted-foreground">
           The board only reads the file you picked. CSVs never leave your browser.
         </p>
       </main>

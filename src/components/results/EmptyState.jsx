@@ -14,11 +14,11 @@ export default function EmptyState({ fileNames = [], onRestart, onSample, transa
         No ghosts found. Your account is clean.
       </h2>
       <p className="mt-3 max-w-md text-[14.5px] leading-relaxed text-muted-foreground">
-        We checked every transaction in <span className="rounded-md bg-background px-1.5 py-0.5 font-mono text-[13px] font-bold text-foreground">{file}</span>{' '}
+        We checked every transaction in <span className="rounded-md bg-background px-1.5 py-0.5 font-mono text-[14px] font-bold text-foreground">{file}</span>{' '}
         for repeat charges, bank fees and price rises. Nothing spooky.
       </p>
       {transactionCount > 0 && (
-        <p className="mt-3 max-w-md rounded-xl border border-border bg-background/50 px-4 py-2.5 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="mt-3 max-w-md rounded-xl border border-border bg-background/50 px-4 py-2.5 text-[14px] leading-relaxed text-muted-foreground">
           We read <span className="font-bold text-foreground">{transactionCount} transactions</span> over{' '}
           <span className="font-bold text-foreground">{months} {months === 1 ? 'month' : 'months'}</span>.
           {months < 3
@@ -49,7 +49,7 @@ export default function EmptyState({ fileNames = [], onRestart, onSample, transa
 
       <div className="mt-4"><DetectionInfo /></div>
 
-      <p className="mt-4 text-[13.5px] text-muted-foreground">
+      <p className="mt-4 text-[14.5px] text-muted-foreground">
         Think we missed one?{' '}
         <button
           type="button"

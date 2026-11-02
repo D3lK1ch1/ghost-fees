@@ -13,7 +13,7 @@ import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
 import AskGhostIt from './AskGhostIt';
 import ResultsTour from './ResultsTour';
-import { TourButton } from '@/components/landing/HomeTour';
+import { TourButton } from '@/components/tour/Tour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
@@ -55,12 +55,12 @@ import { cn } from '@/lib/utils';
 // One tab per feature so each is easy to find.
 const TABS = [
   { key: 'ghosts', label: 'Ghosts', Icon: Ghost, title: 'Your ghosts, biggest first', blurb: 'Each card is one money leak, with the transactions behind it. Tap a card to mark it most useful.' },
-  { key: 'house', label: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
+  { key: 'house', label: 'Mark as sorted', themed: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
   { key: 'path', label: 'Goal path', Icon: Route, title: 'Goal path', blurb: 'One stop per ghost. Walk your lantern up the hill to the ghost-free house.' },
   { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged, and add reminders for the next charges to your own calendar.' },
   { key: 'emails', label: 'Email templates', Icon: Mail, title: 'Email templates', blurb: 'Cancel, refund and fee-waiver emails, ready to edit and send.' },
   { key: 'subscriptions', label: 'Subscriptions', Icon: Repeat, title: 'Still using these?', blurb: 'Your regular subscriptions. Not counted in the total.' },
-  { key: 'receipt', label: 'Possessed receipt', Icon: Receipt, title: 'Possessed receipt', blurb: 'Every ghost charge printed on one spooky receipt.' },
+  { key: 'receipt', label: 'Receipt', themed: 'Possessed receipt', Icon: Receipt, title: 'Possessed receipt', blurb: 'Every ghost charge printed on one spooky receipt.' },
   { key: 'feedback', label: 'Feedback', Icon: MessageSquareHeart, title: 'Tell us in 20 seconds', blurb: 'Did it find something real? It helps us tune the ghost detector.' },
 ];
 
@@ -235,12 +235,12 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
       <main className="relative mx-auto w-full max-w-6xl px-5 pb-24 sm:px-8">
         <div className="flex flex-wrap items-center justify-end gap-3">
-          <label className="flex items-center gap-2 text-[12px] font-bold text-muted-foreground">
+          <label className="flex items-center gap-2 text-[13px] font-bold text-muted-foreground">
             <span className="sr-only">Statement period</span>
             <select
               value={windowMonths}
               onChange={(event) => setWindowMonths(Number(event.target.value))}
-              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-[12.5px] font-bold text-foreground outline-none focus:border-primary"
+              className="rounded-lg border border-border bg-card px-2.5 py-1.5 text-[13.5px] font-bold text-foreground outline-none focus:border-primary"
             >
               {WINDOWS.map((option) => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -283,8 +283,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         {leaks.length > 0 && (guessDone || exStory) && (
           <>
             <PaybackNote results={analysis} usedSample={usedSample} />
-            <ReportButton analysis={analysis} usedSample={usedSample} />
-            <AskGhostIt items={subscriptions} label="Ask Ghost It about these" className="ml-2 mt-3" />
+            <div data-tour="actions">
+              <ReportButton analysis={analysis} usedSample={usedSample} />
+              <AskGhostIt items={subscriptions} label="Ask Ghost It about these" className="ml-2 mt-3" />
+              {!exStory && <TourButton name="results" label="New here? Take the tour" className="ml-2 mt-3" />}
+            </div>
           </>
         )}
 
@@ -301,7 +304,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           />
         )}
 
-        <p className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-[12.5px] leading-relaxed text-muted-foreground">
+        <p className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-[13.5px] leading-relaxed text-muted-foreground">
           <ShieldCheck className="h-4 w-4 shrink-0 text-[#5ee6c8]" />
           <span>Nothing is saved. Results vanish when you close this tab.</span>
         </p>
@@ -309,7 +312,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
         <FileErrors errors={fileErrors} />
 
         {!enoughHistory && (
-          <div className="mt-4 rounded-2xl border border-[#ffb37c]/25 bg-[#ffb37c]/[0.06] px-4 py-3.5 text-[13px] leading-relaxed text-[#ffb37c]">
+          <div className="mt-4 rounded-2xl border border-[#ffb37c]/25 bg-[#ffb37c]/[0.06] px-4 py-3.5 text-[14px] leading-relaxed text-[#ffb37c]">
             Upload at least 3 months to catch subscriptions and price rises.
           </div>
         )}
@@ -328,30 +331,37 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   onClick={() => setTab(item.key)}
                   aria-current={tab === item.key ? 'page' : undefined}
                   className={cn(
-                    'flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2 text-left text-[13px] font-bold transition-colors',
+                    'flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2 text-left text-[14px] font-bold transition-colors',
                     tab === item.key ? 'bg-white/[0.07] text-foreground' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground',
                   )}
                 >
                   <item.Icon className={cn('h-4 w-4 shrink-0', tab === item.key && 'text-primary')} />
-                  {exText[item.key]?.label || item.label}
+                  {/* Plain name first (what the tab does), the theme's name under it on wide screens. */}
+                  <span className="flex flex-col">
+                    <span>{item.label}</span>
+                    {(exText[item.key]?.label || item.themed) && (exText[item.key]?.label || item.themed) !== item.label && (
+                      <span className="hidden text-[12.5px] font-semibold text-muted-foreground lg:block">{exText[item.key]?.label || item.themed}</span>
+                    )}
+                  </span>
                   {item.key === 'ghosts' && (
-                    <span className="ml-auto rounded-full bg-white/10 px-1.5 text-[11px]">{leaks.length}</span>
+                    <span className="ml-auto rounded-full bg-white/10 px-1.5 text-[12.5px]">{leaks.length}</span>
                   )}
                 </button>
               ))}
               <button
                 type="button"
                 onClick={() => setGuideOpen((count) => count + 1)}
-                className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl border border-primary/50 bg-card px-3 py-2 text-left text-[13px] font-bold text-foreground transition-colors hover:bg-white/5 lg:mt-2"
+                className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl border border-primary/50 bg-card px-3 py-2 text-left text-[14px] font-bold text-foreground transition-colors hover:bg-white/5 lg:mt-2"
               >
                 <GhostMark className="h-4 w-4 shrink-0 text-primary" eyeColor="hsl(var(--card))" />
                 Ask a ghost
               </button>
             </nav>
 
-            <div key={tab} className="min-w-0 animate-rise">
+            <div key={tab} data-tour="panel" className="min-w-0 animate-rise">
+              <p className="text-[12.5px] font-bold uppercase tracking-[0.12em] text-primary">{TABS.find((item) => item.key === tab)?.label}</p>
               <h2 className="font-heading text-xl font-semibold text-foreground">{current.title}</h2>
-              <p className="mt-1 text-[13.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
+              <p className="mt-1 text-[14.5px] leading-relaxed text-muted-foreground">{current.blurb}</p>
 
               {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
 
@@ -372,7 +382,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         )}
                       >
                         {mostUsefulId === leak.id && (
-                          <span className="absolute -top-2.5 left-4 z-10 animate-poof rounded-full bg-primary px-2.5 py-0.5 text-[11px] font-bold text-primary-foreground shadow">
+                          <span className="absolute -top-2.5 left-4 z-10 animate-poof rounded-full bg-primary px-2.5 py-0.5 text-[12.5px] font-bold text-primary-foreground shadow">
                             Most useful
                           </span>
                         )}
@@ -472,13 +482,13 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               <Trash2 className="h-5 w-5 text-[#ff9db1]" />
               Clear my data?
             </DialogTitle>
-            <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">This wipes everything from this browser tab straight away:</p>
-            <ul className="mt-3 space-y-1.5 text-[13px] text-foreground">
+            <p className="mt-2 text-[14.5px] leading-relaxed text-muted-foreground">This wipes everything from this browser tab straight away:</p>
+            <ul className="mt-3 space-y-1.5 text-[14px] text-foreground">
               {['Your statement and every transaction read from it', 'The ghosts, totals and receipt', 'Busted ghosts, goals, your life goal and subscription answers', 'Your chat with the ghost guide'].map((item) => (
                 <li key={item} className="flex gap-2"><span className="text-[#5ee6c8]">✓</span>{item}</li>
               ))}
             </ul>
-            <p className="mt-3 flex gap-2 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[12px] leading-relaxed text-[#bff5e8]">
+            <p className="mt-3 flex gap-2 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[13px] leading-relaxed text-[#bff5e8]">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
               <span>
                 CSVs never left your browser, so there is nothing to delete anywhere else.
@@ -498,7 +508,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
       </Dialog>
 
       <GhostGuide analysis={analysis} guideKey={guideKey} onGuide={setGuideKey} onAction={onGuideAction} openRequest={guideOpen} />
-      <ResultsTour ready={leaks.length > 0 && guessDone && !exStory} />
+      <ResultsTour ready={leaks.length > 0 && guessDone && !exStory} setTab={setTab} />
     </div>
   );
 }

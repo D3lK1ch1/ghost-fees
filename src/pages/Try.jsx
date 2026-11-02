@@ -33,7 +33,7 @@ export const markTry = (step) => {
 function Scale({ label, value, onChange }) {
   return (
     <div>
-      <p className="text-[13.5px] font-bold text-foreground">{label}</p>
+      <p className="text-[14.5px] font-bold text-foreground">{label}</p>
       <div className="mt-1.5 flex gap-1.5" role="radiogroup" aria-label={label}>
         {[1, 2, 3, 4, 5].map((n) => (
           <button key={n} type="button" role="radio" aria-checked={value === n} onClick={() => onChange(n)} className={cn('h-10 w-10 rounded-xl border text-[15px] font-bold', value === n ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground')}>
@@ -41,7 +41,7 @@ function Scale({ label, value, onChange }) {
           </button>
         ))}
       </div>
-      <p className="mt-1 text-[11.5px] text-muted-foreground">1 = confusing, 5 = really clear</p>
+      <p className="mt-1 text-[12.5px] text-muted-foreground">1 = confusing, 5 = really clear</p>
     </div>
   );
 }
@@ -131,7 +131,7 @@ export default function Try() {
         <h1 className="font-heading text-[2rem] font-bold leading-tight text-foreground">Try Ghost Fees in 3 minutes</h1>
         <p className="mt-2 text-[15px] text-muted-foreground">Three quick steps: our app, our chat agent, then one thing you&apos;d change. It really helps a hackathon team.</p>
         <div className="mt-4" aria-label={`${count} of 3 done`}>
-          <div className="flex justify-between text-[12.5px] font-bold text-muted-foreground"><span>{count} of 3 done</span>{allDone && <span className="text-[#5ee6c8]">All done!</span>}</div>
+          <div className="flex justify-between text-[13.5px] font-bold text-muted-foreground"><span>{count} of 3 done</span>{allDone && <span className="text-[#5ee6c8]">All done!</span>}</div>
           <div className="mt-1 h-2.5 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${(count / 3) * 100}%` }} /></div>
         </div>
 
@@ -143,7 +143,7 @@ export default function Try() {
 
           <Step n={2} title="Ask Ghost It (agent)" isDone={done.agent}>
             <p className="text-[14px] text-muted-foreground">Ghost It is our chat agent on ASI:One. It shows the maths and the cancel steps.</p>
-            <p className="mt-2 rounded-xl bg-background/60 px-3 py-2 font-mono text-[12.5px] text-foreground">{ASK_TEXT}</p>
+            <p className="mt-2 rounded-xl bg-background/60 px-3 py-2 font-mono text-[13.5px] text-foreground">{ASK_TEXT}</p>
             <button type="button" onClick={askGhostIt} className="mt-3 rounded-2xl bg-primary px-5 py-3 text-[15px] font-bold text-primary-foreground">Copy and open ASI:One</button>
           </Step>
 
@@ -154,19 +154,19 @@ export default function Try() {
               <div className="flex flex-col gap-4">
                 <Scale label="How clear was the app?" value={form.clarity_app} onChange={(value) => setForm({ ...form, clarity_app: value })} />
                 <Scale label="How clear was Ghost It?" value={form.clarity_agent} onChange={(value) => setForm({ ...form, clarity_agent: value })} />
-                <label className="text-[13.5px] font-bold text-foreground">
+                <label className="text-[14.5px] font-bold text-foreground">
                   What was confusing?
                   <textarea value={form.confusion_text} maxLength={500} onChange={(event) => setForm({ ...form, confusion_text: event.target.value })} rows={3} className="mt-1.5 block w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] font-normal" />
                 </label>
                 <div>
-                  <p className="text-[13.5px] font-bold text-foreground">Would you pay $10 once?</p>
+                  <p className="text-[14.5px] font-bold text-foreground">Would you pay $10 once?</p>
                   <div className="mt-1.5 flex gap-1.5" role="radiogroup" aria-label="Would you pay $10 once?">
                     {['Yes', 'Maybe', 'No'].map((option) => (
                       <button key={option} type="button" role="radio" aria-checked={form.would_pay === option} onClick={() => setForm({ ...form, would_pay: option })} className={cn('rounded-xl border px-4 py-2 text-[14px] font-bold', form.would_pay === option ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground')}>{option}</button>
                     ))}
                   </div>
                 </div>
-                <label className="flex items-center gap-2 text-[13.5px] font-bold text-foreground">
+                <label className="flex items-center gap-2 text-[14.5px] font-bold text-foreground">
                   <input type="checkbox" checked={form.quote_ok} onChange={(event) => setForm({ ...form, quote_ok: event.target.checked })} className="h-4 w-4 accent-[hsl(var(--primary))]" />
                   Can we quote you?
                 </label>
@@ -188,7 +188,7 @@ export default function Try() {
           </div>
         )}
 
-        <p className="mt-6 text-center text-[12.5px] text-muted-foreground">Made-up prices are fine. Ghost Fees never asks for bank logins or card numbers. <Link to="/privacy" className="underline">Privacy</Link></p>
+        <p className="mt-6 text-center text-[13.5px] text-muted-foreground">Made-up prices are fine. Ghost Fees never asks for bank logins or card numbers. <Link to="/privacy" className="underline">Privacy</Link></p>
       </main>
       <SiteFooter />
     </div>

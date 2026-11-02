@@ -50,27 +50,27 @@ export default function TaskDialog({ target, onClose }) {
     <Dialog open={!!target} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md rounded-3xl border-border bg-card text-foreground">
         <DialogTitle className="font-heading text-[20px]">Schedule a task</DialogTitle>
-        <p className="-mt-2 text-[13px] text-muted-foreground">
+        <p className="-mt-2 text-[14px] text-muted-foreground">
           {target.biggest && <span className="mr-1.5 inline-block rounded-full bg-[hsl(30_100%_62%)] px-1.5 text-[10px] font-bold uppercase text-[#1b1233]">Biggest</span>}
           <span className="font-bold text-foreground">{target.name}</span> · {money(target.amount)}{target.kind === 'sub' ? ' a month' : ''}
         </p>
 
         <fieldset className="mt-1 space-y-2">
-          <legend className="mb-1.5 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">What to do</legend>
+          <legend className="mb-1.5 text-[13px] font-bold uppercase tracking-wide text-muted-foreground">What to do</legend>
           {options.map((option, index) => (
-            <label key={option.key} className={cn('flex cursor-pointer items-start gap-3 rounded-2xl border px-3 py-2.5 text-[13.5px]', index === choice ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50')}>
+            <label key={option.key} className={cn('flex cursor-pointer items-start gap-3 rounded-2xl border px-3 py-2.5 text-[14.5px]', index === choice ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50')}>
               <input type="radio" name="task" checked={index === choice} onChange={() => setChoice(index)} className="mt-1 accent-[hsl(var(--primary))]" />
-              <span><span className="block font-bold">{option.title}</span><span className="text-[12px] text-muted-foreground">{option.details}</span></span>
+              <span><span className="block font-bold">{option.title}</span><span className="text-[13px] text-muted-foreground">{option.details}</span></span>
             </label>
           ))}
         </fieldset>
 
         <div className="grid gap-3 sm:grid-cols-[1fr_1fr]">
-          <label className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+          <label className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">
             When
             <input type="date" value={date} onChange={(event) => setDate(event.target.value)} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] font-normal normal-case text-foreground" />
           </label>
-          <label className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+          <label className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">
             Note (optional)
             <input value={note} onChange={(event) => setNote(event.target.value)} placeholder="e.g. use the app" className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] font-normal normal-case text-foreground" />
           </label>
@@ -113,13 +113,13 @@ export default function TaskDialog({ target, onClose }) {
               target="_blank"
               rel="noreferrer"
               onClick={() => date && scheduled(item.where)}
-              className={cn('inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-primary/70 px-2 py-2.5 text-center text-[13px] font-bold text-foreground', !date && 'pointer-events-none opacity-40')}
+              className={cn('inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-primary/70 px-2 py-2.5 text-center text-[14px] font-bold text-foreground', !date && 'pointer-events-none opacity-40')}
             >
               {item.label} <ExternalLink className="h-3.5 w-3.5 shrink-0" />
             </a>
           ))}
         </div>
-        <p className="text-[11px] leading-relaxed text-muted-foreground">
+        <p className="text-[12.5px] leading-relaxed text-muted-foreground">
           The first button saves a calendar file for Apple Calendar or any app. Google and Outlook open with the task filled in, and only then is the task text sent to them.
         </p>
       </DialogContent>

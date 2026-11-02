@@ -33,7 +33,7 @@ export default function GlowUpFund({ glow, compact = false, milestonesOnly = fal
         <>
           <div className="flex items-baseline justify-between gap-2">
             <span className={`ex-fredoka font-semibold ${compact ? 'text-[14px]' : 'text-[18px]'}`}>Glow-up fund</span>
-            <span className={`${compact ? 'text-[13px]' : 'text-[14px]'} font-extrabold`}>
+            <span className={`${compact ? 'text-[14px]' : 'text-[14px]'} font-extrabold`}>
               <span style={{ color: C.mint }}>{money(glow.fund)}</span>{compact ? '/yr' : ` of ${money(glow.goal)} a year`}
             </span>
           </div>
@@ -47,8 +47,8 @@ export default function GlowUpFund({ glow, compact = false, milestonesOnly = fal
           {steps.map((step) => (
             <div key={step.key} className="flex flex-col items-center gap-1 text-center" title={`${step.label}: ${money(step.amount)}`}>
               <MilestoneIcon icon={step.icon} on={step.unlocked} />
-              <span className="text-[12px] font-extrabold leading-tight">{step.label}</span>
-              <span className="text-[11px] font-extrabold" style={{ color: step.unlocked ? C.mint : step.state === 'Next up' ? C.muted : C.faint }}>{step.state}</span>
+              <span className="text-[13px] font-extrabold leading-tight">{step.label}</span>
+              <span className="text-[12.5px] font-extrabold" style={{ color: step.unlocked ? C.mint : step.state === 'Next up' ? C.muted : C.faint }}>{step.state}</span>
             </div>
           ))}
         </div>

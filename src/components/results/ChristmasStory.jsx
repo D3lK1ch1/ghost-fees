@@ -27,7 +27,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
   const stave = staves[Math.min(step, staves.length - 1)];
   const next = () => setStep((value) => Math.min(value + 1, staves.length - 1));
 
-  const kicker = 'text-[11px] font-bold uppercase tracking-[0.14em] text-[#e8563f]';
+  const kicker = 'text-[12.5px] font-bold uppercase tracking-[0.14em] text-[#e8563f]';
   const title = 'mt-1 font-heading text-[20px] font-bold leading-tight text-foreground';
   const art = 'h-auto w-[130px] shrink-0 sm:w-[150px]';
 
@@ -51,14 +51,14 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
                 <GhostTip className="w-full" align="fill" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
                   <span className="flex w-full flex-col items-center rounded-xl bg-[#fbf3e4] px-1.5 py-2 text-center text-[#14301f] shadow">
                     <img src={xmasAvatar(item.merchant, season)} alt={item.merchant} width={40} height={40} className="object-contain h-10 w-10" />
-                    <span className="mt-1 line-clamp-1 text-[11px] font-bold">{item.merchant}</span>
-                    <span className="text-[11px] font-bold text-[#c0392b]">{money(item.monthly)}</span>
+                    <span className="mt-1 line-clamp-1 text-[12.5px] font-bold">{item.merchant}</span>
+                    <span className="text-[12.5px] font-bold text-[#c0392b]">{money(item.monthly)}</span>
                   </span>
                 </GhostTip>
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-center text-[13px] text-muted-foreground">
+          <p className="mt-3 text-center text-[14px] text-muted-foreground">
             {subscriptions.length} {subscriptions.length === 1 ? 'link' : 'links'}. <span className="font-bold text-primary">{money(monthly)}</span> every month.
           </p>
         </>
@@ -82,9 +82,9 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
               <li key={leak.id} className="flex">
                 <GhostTip className="w-full" align="fill" biggest={leak.id === leaks[0]?.id} label={leak.title || leak.merchant} detail={leak.reason || `${leak.badge} · ${money(leak.amount)}`}>
                   <span className="block w-full rounded-xl bg-[#fbf3e4] px-2 py-2 text-[#14301f] shadow">
-                    <span className="block rounded-md bg-[#1f5c3a] px-1.5 py-1 text-center text-[10.5px] font-bold text-white">{leak.badge}</span>
-                    <span className="mt-1.5 block line-clamp-2 text-[11.5px] font-bold">{leak.title || leak.merchant}</span>
-                    <span className="text-[11px] font-bold text-[#c0392b]">{money(leak.amount)}</span>
+                    <span className="block rounded-md bg-[#1f5c3a] px-1.5 py-1 text-center text-[12px] font-bold text-white">{leak.badge}</span>
+                    <span className="mt-1.5 block line-clamp-2 text-[12.5px] font-bold">{leak.title || leak.merchant}</span>
+                    <span className="text-[12.5px] font-bold text-[#c0392b]">{money(leak.amount)}</span>
                   </span>
                 </GhostTip>
               </li>
@@ -92,8 +92,8 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           </ul>
           <div className="mt-3 rounded-2xl border border-[#5ee6c8]/40 bg-[#5ee6c8]/[0.08] px-4 py-3">
             <div className="font-heading text-[26px] font-bold text-primary">{money(leaksTotal)}</div>
-            <div className="text-[12.5px] text-foreground">already lost to the leaks in your statement</div>
-            <div className="text-[11.5px] text-muted-foreground">These can&apos;t be undone, but some can be refunded.</div>
+            <div className="text-[13.5px] text-foreground">already lost to the leaks in your statement</div>
+            <div className="text-[12.5px] text-muted-foreground">These can&apos;t be undone, but some can be refunded.</div>
           </div>
         </>
       ),
@@ -116,7 +116,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
                 <GhostTip className="w-full" align="fill" biggest={item.id === subscriptions[0]?.id} label={item.merchant} detail={`${money(item.monthly)} a month · ${money(item.monthly * 12)} a year`}>
                   <span className="flex w-full flex-col items-center text-center">
                     <span className="h-5 w-14 rounded-[50%] bg-[#efe6d8] shadow-inner" aria-hidden="true" />
-                    <span className="mt-1 rounded bg-[#fbf3e4] px-1.5 py-0.5 text-[10.5px] font-bold text-[#14301f]">
+                    <span className="mt-1 rounded bg-[#fbf3e4] px-1.5 py-0.5 text-[12px] font-bold text-[#14301f]">
                       {item.merchant} <span className="text-[#c0392b]">{money(item.monthly)}</span>
                     </span>
                   </span>
@@ -125,7 +125,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
             ))}
           </ul>
           <p className="mt-4 text-center font-heading text-[26px] font-bold text-primary">{money(monthly)} a month</p>
-          <p className="text-center text-[12.5px] text-muted-foreground">charging right now.</p>
+          <p className="text-center text-[13.5px] text-muted-foreground">charging right now.</p>
         </>
       ),
     },
@@ -138,9 +138,9 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           <div className="mt-3 flex items-start gap-3">
             <img src={XMAS.hooded} alt="The Hooded One, a silent cloaked ghost holding a lantern" width={320} className={art} />
             <div className="space-y-2">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">Next 12 months</p>
+              <p className="text-[12.5px] font-bold uppercase tracking-wide text-muted-foreground">Next 12 months</p>
               <SpeechBubble side="right">Spirit, is this my future? Can I still change it?</SpeechBubble>
-              <p className="text-[11.5px] italic text-muted-foreground">He never speaks. He shows you next year: every month you keep paying drops into the stocking.</p>
+              <p className="text-[12.5px] italic text-muted-foreground">He never speaks. He shows you next year: every month you keep paying drops into the stocking.</p>
             </div>
           </div>
           <div className="mt-3 rounded-2xl border border-primary/30 bg-background/60 px-4 py-3 font-heading text-[18px] font-bold text-foreground">
@@ -170,7 +170,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
     <section className="mx-auto mt-4 w-full max-w-3xl overflow-hidden rounded-3xl border border-primary/30 bg-card/70 p-4 sm:p-5" aria-label="The Ghosts of Christmas">
       <div className="flex items-center justify-between gap-3">
         <SeasonToggle season={season} setSeason={setSeason} />
-        <button type="button" onClick={onSkip} className="text-[12px] font-bold text-muted-foreground underline-offset-4 hover:underline">
+        <button type="button" onClick={onSkip} className="text-[13px] font-bold text-muted-foreground underline-offset-4 hover:underline">
           Skip
         </button>
       </div>
@@ -200,7 +200,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
       >
         {screen.cta}
       </button>
-      <p className="mt-2 text-center text-[11px] text-muted-foreground">General information about subscriptions, not financial advice.</p>
+      <p className="mt-2 text-center text-[12.5px] text-muted-foreground">General information about subscriptions, not financial advice.</p>
     </section>
   );
 }

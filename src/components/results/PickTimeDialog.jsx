@@ -59,7 +59,7 @@ export default function PickTimeDialog({ target, onClose }) {
     <Dialog open={Boolean(target)} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md rounded-3xl border-border bg-card text-foreground">
         <DialogTitle className="font-heading text-[20px]">When will you cancel {target.merchant}?</DialogTitle>
-        <p className="-mt-2 text-[13px] text-muted-foreground">Picking a time makes it much more likely to happen. We&apos;ll put it in your calendar with everything you need.</p>
+        <p className="-mt-2 text-[14px] text-muted-foreground">Picking a time makes it much more likely to happen. We&apos;ll put it in your calendar with everything you need.</p>
         <div className="flex flex-col gap-2" role="radiogroup" aria-label="When">
           {[...quick, { key: 'custom', label: 'Pick a date and time' }].map((item) => (
             <button
@@ -77,15 +77,15 @@ export default function PickTimeDialog({ target, onClose }) {
             <input type="datetime-local" value={custom} onChange={(event) => setCustom(event.target.value)} aria-label="Date and time" className="rounded-xl border border-border bg-background px-3 py-2 text-[14px] text-foreground" />
           )}
         </div>
-        {!valid && choice === 'custom' && <p className="text-[12.5px] font-semibold text-[#ffc27a]">Pick a time in the future.</p>}
+        {!valid && choice === 'custom' && <p className="text-[13.5px] font-semibold text-[#ffc27a]">Pick a time in the future.</p>}
         <div className="grid grid-cols-2 gap-2">
           <button type="button" disabled={!valid} onClick={() => add('file')} className="col-span-2 inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-[14.5px] font-bold text-primary-foreground disabled:opacity-40">
             <CalendarPlus className="h-4 w-4" /> Add to my calendar{when ? ` · ${when}` : ''}
           </button>
-          <button type="button" disabled={!valid} onClick={() => add('google')} className="inline-flex items-center justify-center gap-1 rounded-xl border border-border px-3 py-2 text-[13px] font-bold disabled:opacity-40">Google <ExternalLink className="h-3 w-3" /></button>
-          <button type="button" disabled={!valid} onClick={() => add('outlook')} className="inline-flex items-center justify-center gap-1 rounded-xl border border-border px-3 py-2 text-[13px] font-bold disabled:opacity-40">Outlook <ExternalLink className="h-3 w-3" /></button>
+          <button type="button" disabled={!valid} onClick={() => add('google')} className="inline-flex items-center justify-center gap-1 rounded-xl border border-border px-3 py-2 text-[14px] font-bold disabled:opacity-40">Google <ExternalLink className="h-3 w-3" /></button>
+          <button type="button" disabled={!valid} onClick={() => add('outlook')} className="inline-flex items-center justify-center gap-1 rounded-xl border border-border px-3 py-2 text-[14px] font-bold disabled:opacity-40">Outlook <ExternalLink className="h-3 w-3" /></button>
         </div>
-        <p className="text-[11px] text-muted-foreground">&ldquo;Add to my calendar&rdquo; downloads a file for Apple Calendar, Outlook or any calendar app. Only the time you pick is kept, in this browser.</p>
+        <p className="text-[12.5px] text-muted-foreground">&ldquo;Add to my calendar&rdquo; downloads a file for Apple Calendar, Outlook or any calendar app. Only the time you pick is kept, in this browser.</p>
       </DialogContent>
     </Dialog>
   );

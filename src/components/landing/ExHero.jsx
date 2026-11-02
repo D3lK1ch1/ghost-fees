@@ -42,7 +42,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
           <span aria-hidden="true">💔</span>
           <span className={BLEND}>My Ex Ghosted Me</span>
         </p>
-        <p className="mt-1.5 text-[12.5px] font-bold uppercase tracking-[0.18em] text-muted-foreground">By Ghost Fees</p>
+        <p className="mt-1.5 text-[13.5px] font-bold uppercase tracking-[0.18em] text-muted-foreground">By Ghost Fees</p>
       </div>
 
       <div className="relative mt-6 w-full">
@@ -76,7 +76,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
             >
               <img src={item.pickArt || item.avatar} alt="" width={76} height={88} className="h-[88px] w-[76px] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.45)]" />
               <span className="mt-2 font-heading text-[15px] font-bold text-foreground">{item.label}</span>
-              <span className={cn('text-[12.5px] font-semibold', selected ? 'text-[#5ee6c8]' : 'text-muted-foreground')}>
+              <span className={cn('text-[13.5px] font-semibold', selected ? 'text-[#5ee6c8]' : 'text-muted-foreground')}>
                 {selected ? 'Selected' : item.note}
               </span>
             </button>
@@ -108,7 +108,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
           Upload my CSV or PDF
         </button>
 
-        <p className="mt-4 flex items-start justify-center gap-2 text-center text-[12.5px] text-muted-foreground">
+        <p className="mt-4 flex items-start justify-center gap-2 text-center text-[13.5px] text-muted-foreground">
           <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
           CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 3 free scans. The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
         </p>

@@ -59,7 +59,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
         >
           <RotateCcw className="h-5 w-5" />
         </button>
-        <button type="button" onClick={onSkip} className="ml-auto text-[12px] font-bold text-muted-foreground underline-offset-4 hover:underline">
+        <button type="button" onClick={onSkip} className="ml-auto text-[13px] font-bold text-muted-foreground underline-offset-4 hover:underline">
           Skip
         </button>
       </div>
@@ -77,9 +77,9 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
             </div>
             <div className="min-w-0 flex-1">
               <div className="font-heading text-[16px] font-bold leading-tight text-white">The Exes</div>
-              <div className="text-[12px] leading-snug text-white/60">{subscriptions.length} members · all still charging</div>
+              <div className="text-[13px] leading-snug text-white/60">{subscriptions.length} members · all still charging</div>
             </div>
-            <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-[12px] font-bold text-primary-foreground">{subscriptions.length} new</span>
+            <span className="shrink-0 rounded-full bg-primary px-2.5 py-1 text-[13px] font-bold text-primary-foreground">{subscriptions.length} new</span>
           </div>
 
           <ul key={replay} className="mt-3 space-y-2.5">
@@ -91,8 +91,8 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
                     <img src={avatar(item.merchant)} alt={item.merchant} width={34} height={34} className="object-contain h-[34px] w-[34px]" />
                   </GhostTip>
                   <div className="min-w-0 flex-1">
-                    <div className="pl-1 text-[12px] font-bold text-primary">{item.merchant}</div>
-                    <div className="rounded-2xl rounded-bl-md bg-white/[0.08] px-3 py-2 text-[13.5px] leading-snug text-white">
+                    <div className="pl-1 text-[13px] font-bold text-primary">{item.merchant}</div>
+                    <div className="rounded-2xl rounded-bl-md bg-white/[0.08] px-3 py-2 text-[14.5px] leading-snug text-white">
                       {line}
                       {!line.includes('$') && <span className="font-bold text-primary"> {money(item.monthly)}/mo</span>}
                     </div>
@@ -101,11 +101,11 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
               );
             })}
           </ul>
-          {more > 0 && <p className="mt-2 text-center text-[12px] text-white/45">+ {more} more {more === 1 ? 'ex' : 'exes'} typing...</p>}
+          {more > 0 && <p className="mt-2 text-center text-[13px] text-white/45">+ {more} more {more === 1 ? 'ex' : 'exes'} typing...</p>}
 
           <div className="mt-3 flex items-center justify-between rounded-full bg-white/[0.07] px-4 py-2.5">
-            <span className="text-[13px] text-white/45">Reply to your exes...</span>
-            <button type="button" onClick={onMoveOn} className="text-[13px] font-bold text-primary hover:underline">
+            <span className="text-[14px] text-white/45">Reply to your exes...</span>
+            <button type="button" onClick={onMoveOn} className="text-[14px] font-bold text-primary hover:underline">
               Block all
             </button>
           </div>

@@ -62,15 +62,15 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
                 >
                   <img src={xmasAvatar(leak.merchant, season)} alt="" width={34} height={34} className={`object-contain h-[34px] w-[34px] flex-none ${broken ? 'opacity-50 grayscale' : ''}`} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[13.5px] font-extrabold">{leak.title || leak.merchant}</span>
-                    <span className="block text-[11.5px] font-bold" style={{ color: broken ? X.mint : '#c0392b' }}>{broken ? 'Link broken' : `${leak.badge} · ${money(leak.amount)}`}</span>
+                    <span className="block truncate text-[14.5px] font-extrabold">{leak.title || leak.merchant}</span>
+                    <span className="block text-[12.5px] font-bold" style={{ color: broken ? X.mint : '#c0392b' }}>{broken ? 'Link broken' : `${leak.badge} · ${money(leak.amount)}`}</span>
                   </span>
                 </button>
               </li>
             );
           })}
         </ul>
-        <div className="relative text-center text-[13px]" style={{ color: X.muted }}>
+        <div className="relative text-center text-[14px]" style={{ color: X.muted }}>
           {left.length} of {leaks.length} links left · <span className="font-extrabold" style={{ color: X.gold }}>{money(weight)}</span> still on the chain
         </div>
       </XScreen>
@@ -80,7 +80,7 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
           <img src={xmasAvatar(selected.merchant, season)} alt="" width={46} height={46} className="object-contain h-[46px] w-[46px]" />
           <div className="min-w-0 flex-1">
             <div className="x-fredoka text-[18px] font-semibold">{selected.title || selected.merchant}</div>
-            <div className="text-[12.5px]" style={{ color: X.muted }}>{selected.badge}</div>
+            <div className="text-[13.5px]" style={{ color: X.muted }}>{selected.badge}</div>
           </div>
           <div className="x-fredoka text-[20px] font-semibold" style={{ color: X.gold }}>{money(selected.amount)}</div>
         </div>
@@ -89,12 +89,12 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
         {isBroken ? (
           <div className="flex items-center justify-between rounded-2xl px-4 py-3" style={{ border: `2px solid ${X.mint}` }}>
             <span className="x-fredoka text-[15px] font-semibold" style={{ color: X.mint }}>Link broken · {money(selected.amount)} off the chain</span>
-            <button type="button" onClick={() => mend(selected)} className="text-[12.5px] font-bold underline" style={{ color: X.muted }}>Undo</button>
+            <button type="button" onClick={() => mend(selected)} className="text-[13.5px] font-bold underline" style={{ color: X.muted }}>Undo</button>
           </div>
         ) : (
-          <LineButton X={X} onClick={() => breakLink(selected)}>⛓️ Break this link</LineButton>
+          <LineButton X={X} onClick={() => breakLink(selected)}>✓ It’s sorted: break this link ⛓️</LineButton>
         )}
-        <p className="m-0 text-[12.5px] leading-relaxed" style={{ color: X.muted }}>Break a link once you&apos;ve cancelled, asked for a refund, or decided to keep it.</p>
+        <p className="m-0 text-[13.5px] leading-relaxed" style={{ color: X.muted }}>Breaking a link marks this one as dealt with. Do it once you&apos;ve cancelled, asked for a refund, or decided to keep it. Break every link to free Jacob.</p>
       </div>
     </div>
   );

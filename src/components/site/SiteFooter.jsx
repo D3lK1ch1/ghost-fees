@@ -9,8 +9,8 @@ export default function SiteFooter() {
         <Link to="/progress" className="font-bold text-primary underline-offset-4 hover:underline">Our progress</Link>
         <Link to="/privacy" className="font-bold text-primary underline-offset-4 hover:underline">Privacy</Link>
       </p>
-      <p className="mt-3 text-[13px]">{DISCLAIMER} CSV statements never leave your browser.</p>
-      <p className="mt-1.5 text-[12px] text-muted-foreground/80">
+      <p className="mt-3 text-[14px]">{DISCLAIMER} CSV statements never leave your browser.</p>
+      <p className="mt-1.5 text-[13px] text-muted-foreground/80">
         Original art and animations. Type: Fredoka, Nunito and VT323 (Google Fonts, open licences).
       </p>
     </footer>
