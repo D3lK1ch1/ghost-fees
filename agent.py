@@ -68,8 +68,15 @@ CHANGES = [
 ]
 
 # v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
-PURPOSE = ("I hunt the money leaks your bank statement can't show you, with a Ghost Pack for each kind: "
-           "streaming, music, AI tools, food, gym and gaming. Tell me what you pay for below.")
+PURPOSE = ("👻 **I'm Ghost It, a specialised AI agent.** I hunt the money leaks your bank statement can't show you, "
+           "with a Ghost Pack for each kind: streaming, music, AI tools, food, gym and gaming. "
+           "Every number is real maths and every cancel link is checked. Your first pack is free. "
+           "Tell me what you pay for below.")
+
+
+def try_next(*ideas):
+    """A short 'Try next' list after a reply, so people always know what to send."""
+    return "\n**Try next:** " + " · ".join(f"`{i}`" for i in ideas if i)
 
 # v9.3: typical Australian prices, the same checked list the Ghost Fees app shows
 # (src/data/commonSubs.js, checked 2 Nov 2026). Only used when someone names a service
@@ -497,6 +504,8 @@ def check_reply(ctx, sender, text, subs, missing):
         first = next((s["name"] for s in subs if s["known"]), subs[0]["name"])
         lines.append(f"Cancel one: type `cancel {first}`.")
     lines.append(f"\nMost people have more than they remember. Scan your statement free: {app_link([s['key'] for s in subs if s['known']])}")
+    first_pack = (packs[0].split()[0].lower() + " pack") if packs else "packs"
+    lines.append(try_next(first_pack, f"cancel {subs[0]['name']}", "my ghost list"))
     lines.append("\n" + DISCLAIMER)
 
     # Remember everything they've told us, not just this message (newest price wins),
@@ -586,6 +595,7 @@ def typical_reply(ctx, sender, names):
     packs = sorted({C[k]["pack"] for k in keys})
     if packs:
         lines.append(f"\n**Next:** send your real prices, or type `{packs[0].split()[0].lower()} pack` for the cancel steps.")
+    lines.append(try_next(f"{items[0]['name']} $19" if items else "Netflix $19", (packs[0].split()[0].lower() + " pack") if packs else "packs"))
     lines.append("\n_Typical prices, not yours. General information, not financial advice._")
     card = ("review", {
         "title": "Typical cost of what you named",
@@ -660,6 +670,7 @@ def pack_report(ctx, sender, items, pack):
     lines.append("\n**Next:** tap **Cancel steps** for the steps and a ready email, or type `cancel steps`.")
     lines.append("\n" + ("Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in the chat."
                          if paying() else "Ghost Packs are free during beta."))
+    lines.append(try_next("cancel steps", f"{items[0]['name']} stopped" if items else None, "packs"))
     lines.append("\n" + DISCLAIMER)
     card = ("review", {
         "title": f"{emoji} {pack} pack: {money(total)} a year",
