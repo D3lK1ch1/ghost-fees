@@ -1,4 +1,5 @@
 import { Lock, Upload } from 'lucide-react';
+import GhostItOffer from '@/components/landing/GhostItOffer';
 import { useAllowance } from '@/lib/AllowanceContext';
 import { ThoughtBubble } from '@/components/site/Bubbles';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
@@ -107,6 +108,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
           <Upload className="h-4 w-4" strokeWidth={2.4} />
           Upload my CSV or PDF
         </button>
+        <GhostItOffer className="mx-auto mt-3" />
 
         <p className="mt-4 flex items-start justify-center gap-2 text-center text-[13.5px] text-muted-foreground">
           <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />

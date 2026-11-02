@@ -72,7 +72,8 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mos
         />
       </label>
 
-      <ChoiceGroup label="Would you pay $5 for the full report?" options={['Yes', 'Maybe', 'No']} value={wouldPay} onChange={setWouldPay} />
+      <ChoiceGroup label="Would you pay $10 once for Pro: unlimited scans, every ghost guide and the full PDF report?" options={['Yes', 'Maybe', 'No']} value={wouldPay} onChange={setWouldPay} />
+      <p className="mt-1.5 text-[13px] text-muted-foreground">The full report is the <b className="text-foreground">Download PDF report</b> button under your total at the top of your results.</p>
 
       <label className="mt-5 block">
         <span className="text-[14px] font-medium text-white">Your builder name</span>

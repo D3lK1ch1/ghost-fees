@@ -4,7 +4,7 @@ import { GHOST_IT_MASCOT, GHOST_IT_PRICE } from '@/lib/ghostFees/ghostItAgent';
 import { useGo } from './AskGhostIt';
 import GhostItDialog from './GhostItDialog';
 
-// Ghost It's own box on your results. Cassy cancels each subscription here in the
+// Ghost It's own box on your results. Cassy helps you cancel each subscription here in the
 // app; Ghost It does something else: its Ghost Packs hunt the leaks a statement
 // can't show (doubles across services, things hidden in bundles or on another
 // card, weekly costs a year). One box, its own look, its own job.
@@ -35,7 +35,7 @@ export default function GhostItPacks({ items = [], className = '' }) {
           <p className="text-[12.5px] font-bold uppercase tracking-[0.14em]" style={{ color: BLUE }}>Ghost It · AI agent on ASI:One</p>
           <h3 className="mt-1 font-heading text-[24px] font-bold leading-tight text-white">The leaks your statement can&apos;t show</h3>
           <p className="mt-1 text-[15px] leading-snug text-white/75">
-            Cassy cancels each one here. Ghost It hunts across them in chat: doubles, things hidden in Apple or Google bundles or on another card, and what weekly costs add up to.
+            Cassy helps you cancel each one here. Ghost It hunts across them in chat: doubles, things hidden in Apple or Google bundles or on another card, and what weekly costs add up to.
           </p>
         </div>
       </div>

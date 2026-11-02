@@ -36,6 +36,7 @@ import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import HauntedCalendar from './HauntedCalendar';
 import SubscriptionTracker from './SubscriptionTracker';
+import TrialTracker from './TrialTracker';
 import GoalPath from './GoalPath';
 import EmailsPanel from './EmailsPanel';
 import NightSky from './NightSky';
@@ -180,6 +181,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     if (leaks.length) window.history.replaceState(null, '', `#${tab}`);
   }, [tab, leaks.length]);
   const [guideKey, setGuideKey] = useState('penny');
+  const [houseFocus, setHouseFocus] = useState(null); // "<leakId>:<time>" from Goal path
   // Pressing Tour before the reveal skips the guess, so the tour can start straight away.
   useEffect(() => {
     const onTour = (event) => event.detail === 'results' && setGuessDone(true);
@@ -364,7 +366,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                 onClick={() => setGuideOpen((count) => count + 1)}
                 className="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl border border-primary/50 bg-card px-3 py-2 text-left text-[14px] font-bold text-foreground transition-colors hover:bg-white/5 lg:mt-2"
               >
-                <GhostMark className="h-4 w-4 shrink-0 text-primary" eyeColor="hsl(var(--card))" />
+                <GhostMark className="h-4 w-4 shrink-0 text-white" eyeColor="#1a1230" />
                 Ask a ghost
               </button>
             </nav>
@@ -417,7 +419,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                 <JacobsChain leaks={leaks} cleared={cleared} onClearedChange={setCleared} onDraft={openEmail} />
               )}
               {tab === 'house' && theme.key !== 'ex' && theme.key !== 'christmas' && (
-                <HauntedHouse leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
+                <HauntedHouse focusLeakId={houseFocus ? houseFocus.slice(0, houseFocus.lastIndexOf('@')) : null} leaks={leaks} onDraft={openEmail} monthlyIncome={analysis.monthlyIncome} guideKey={guideKey} onGuide={setGuideKey} cleared={cleared} onClearedChange={setCleared} onSetGoals={() => setTab('path')} onAskGuide={() => setGuideOpen((count) => count + 1)} />
               )}
               {theme.key === 'ex' && ['path', 'calendar', 'emails', 'receipt'].includes(tab) && (
                 <ExTabScreens tab={tab} subscriptions={subscriptions} avatarFor={avatarFor} onUpload={onRestart} />
@@ -432,7 +434,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   remindersDone={remindersDone}
                   onRemindersDone={setRemindersDone}
                   onDraft={openEmail}
-                  onOpenHouse={() => setTab('house')}
+                  onOpenHouse={(leakId) => { setHouseFocus(leakId ? `${leakId}@${Date.now()}` : null); setTab('house'); }}
                   cancelSubs={cancelSubs}
                   lifeGoal={lifeGoal}
                   onLifeGoal={setLifeGoal}
@@ -444,6 +446,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                 <>
                   <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
                   <SubscriptionTracker subscriptions={subscriptions} answers={subAnswers} onAnswer={setSubAnswers} />
+                  <TrialTracker leaks={leaks} />
                   <CancelAssistant subscriptions={subscriptions} onDraft={openEmail} />
                 </>
               )}

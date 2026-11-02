@@ -1,6 +1,7 @@
 import { Ghost, Lock, Receipt, TrendingUp, Upload } from 'lucide-react';
 import { useAllowance } from '@/lib/AllowanceContext';
 import GhostMark from '@/components/site/GhostMark';
+import GhostItOffer from '@/components/landing/GhostItOffer';
 import ExHero from '@/components/landing/ExHero';
 import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
 import { useTheme } from '@/lib/ThemeContext';
@@ -59,6 +60,7 @@ export default function Hero({ onSample, onUpload }) {
           Upload my CSV or PDF
         </button>
       </div>
+      <GhostItOffer className="mx-auto mt-4" />
 
       <p className="mt-6 flex items-center gap-2 text-[14px] text-muted-foreground">
         <Lock className="h-3.5 w-3.5 shrink-0 text-primary" />
