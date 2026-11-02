@@ -49,11 +49,44 @@ function Avatar({ size = 'h-12 w-12' }) {
   );
 }
 
-export default function AskGhostIt({ items, label, small = false, variant, className }) {
+// What Ghost It does for this kind of ghost, in its own words (only things it does today).
+function benefitFor(leak, name) {
+  if (leak?.priceRise) {
+    const yearly = (Number(leak.priceRise.newPrice) - Number(leak.priceRise.oldPrice)) * 12;
+    return {
+      line: `Works out what the rise really costs you${yearly > 0 ? ` ($${yearly.toFixed(2)} more a year)` : ''}, asks if you'd still sign up at the new price, and gives you the cancel steps.`,
+      text: `@ghostit ${name} went from $${Number(leak.priceRise.oldPrice).toFixed(2)} to $${Number(leak.priceRise.newPrice).toFixed(2)}`,
+    };
+  }
+  return {
+    line: `Shows the yearly cost, spots double-ups, gives the official cancel steps and a ready email, then tracks that ${name} really stopped.`,
+    text: null,
+  };
+}
+
+export default function AskGhostIt({ items, label, small = false, variant, leak, className }) {
   const list = (items || []).filter(Boolean);
-  const text = ghostItText(list);
+  const name = list.length === 1 ? list[0].merchant : null;
+  const benefit = variant === 'strip' && name ? benefitFor(leak, name) : null;
+  const text = benefit?.text || ghostItText(list);
   const go = useGo(text);
   if (!text) return null;
+
+  // Attached under a ghost card: what Ghost It does for this one, and one button.
+  if (variant === 'strip' && benefit) {
+    return (
+      <div className={cn('flex flex-col gap-3 rounded-b-3xl border-2 border-t-0 px-4 pb-4 pt-6 sm:flex-row sm:items-center', className)} style={{ borderColor: `${BLUE}55`, background: `linear-gradient(180deg, transparent, ${BLUE}14)` }}>
+        <Avatar size="h-11 w-11" />
+        <div className="min-w-0 flex-1">
+          <p className="text-[15px] font-bold text-foreground">Let Ghost It handle {name} in chat</p>
+          <p className="text-[14px] leading-snug text-muted-foreground">{benefit.line}</p>
+        </div>
+        <button type="button" onClick={go} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-[14.5px] font-bold text-[#0f1730]" style={{ background: BLUE }}>
+          <MessageCircle className="h-4 w-4" aria-hidden="true" /> Message Ghost It
+        </button>
+      </div>
+    );
+  }
 
   if (variant === 'card') {
     return (
@@ -75,7 +108,6 @@ export default function AskGhostIt({ items, label, small = false, variant, class
     );
   }
 
-  const name = list.length === 1 ? list[0].merchant : null;
   return (
     <button
       type="button"
