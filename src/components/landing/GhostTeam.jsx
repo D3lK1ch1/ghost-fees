@@ -43,7 +43,7 @@ export default function GhostTeam() {
             <span className="relative shrink-0" aria-hidden="true">
               <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full" style={{ background: `${agent.color}2e`, boxShadow: `0 0 24px ${agent.color}40` }}>
                 {agent.key === 'ghostit' ? (
-                  <img src={GHOST_IT_MASCOT} alt="" className="h-[68px] w-[68px] rounded-full object-cover motion-safe:animate-float" />
+                  <img src={GHOST_IT_MASCOT} alt="" className="h-[60px] w-[60px] object-contain motion-safe:animate-float" />
                 ) : (
                   <GhostMark className="h-11 w-11 motion-safe:animate-float" style={{ color: agent.color }} eyeColor="#1a1230" />
                 )}

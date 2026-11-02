@@ -1,6 +1,6 @@
 import { Calculator, Copy, ListChecks, MailCheck, MessageCircle, Scissors, Sparkles } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 
 // "Meet Ghost It": what makes our chat agent special, what it does, and the free
 // try, in one pop-up. Opened from "What is Ghost It?" on the Ghost It card and strips.
@@ -18,7 +18,7 @@ export default function GhostItDialog({ open, onClose, onMessage }) {
     <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="max-h-[90vh] max-w-md overflow-y-auto rounded-3xl border-2 border-[#8FB8FF]/50 bg-popover p-5 sm:p-6">
         <div className="text-center">
-          <img src={GHOST_IT_MASCOT} alt="Ghost It, a happy ghost cutting up a credit card" width={112} height={112} className="motion-safe:animate-float mx-auto h-28 w-28 rounded-full shadow-[0_0_40px_rgba(143,184,255,0.35)]" />
+          <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={150} height={150} className="motion-safe:animate-float mx-auto h-[150px] w-[150px] object-contain drop-shadow-[0_0_24px_rgba(143,184,255,0.35)]" />
           <DialogTitle className="mt-3 font-heading text-[26px] font-bold text-foreground">Meet Ghost It</DialogTitle>
           <p className="mt-1 text-[15px] leading-snug text-muted-foreground">Our AI agent on Fetch.ai&apos;s ASI:One. Ghost Fees reads your statement; Ghost It keeps going with you in chat.</p>
         </div>
@@ -31,8 +31,13 @@ export default function GhostItDialog({ open, onClose, onMessage }) {
           ))}
         </ul>
         <div className="mt-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3">
-          <p className="flex items-center gap-1.5 text-[15px] font-bold text-foreground"><Sparkles className="h-4 w-4 text-primary" aria-hidden="true" /> Free trial: 1 try</p>
-          <p className="mt-0.5 text-[14px] leading-snug text-muted-foreground">{GHOST_IT_PRICE}</p>
+          <div className="flex items-center gap-3">
+            <img src={GHOST_IT_THUMBS} alt="" className="h-14 w-14 shrink-0 object-contain" />
+            <div>
+              <p className="flex items-center gap-1.5 text-[15px] font-bold text-foreground"><Sparkles className="h-4 w-4 text-primary" aria-hidden="true" /> Free trial: 1 try</p>
+              <p className="mt-0.5 text-[14px] leading-snug text-muted-foreground">{GHOST_IT_PRICE}</p>
+            </div>
+          </div>
         </div>
         <button type="button" onClick={() => { onMessage?.(); onClose(); }} className="mt-4 flex min-h-[52px] w-full items-center justify-center gap-2 rounded-2xl bg-[#8FB8FF] text-[16px] font-bold text-[#0f1730]">
           <MessageCircle className="h-5 w-5" aria-hidden="true" /> Message Ghost It

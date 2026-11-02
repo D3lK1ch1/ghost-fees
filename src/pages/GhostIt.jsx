@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Check, Copy, ExternalLink, MessageCircle } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_SAMPLE } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
 
@@ -34,7 +34,7 @@ export default function GhostIt() {
       <BrandHeader />
       <main className="mx-auto w-full max-w-xl px-5 pb-16">
         <div className="text-center">
-          <img src={GHOST_IT_MASCOT} alt="Ghost It, a happy ghost cutting up a credit card" width={120} height={120} className="motion-safe:animate-float mx-auto h-[120px] w-[120px] rounded-full shadow-[0_0_40px_rgba(143,184,255,0.35)]" />
+          <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={170} height={170} className="motion-safe:animate-float mx-auto h-[170px] w-[170px] object-contain drop-shadow-[0_0_30px_rgba(143,184,255,0.35)]" />
           <h1 className="mt-4 font-heading text-[32px] font-bold leading-tight text-foreground">Try Ghost It</h1>
           <p className="mt-2 text-[16px] leading-snug text-muted-foreground">
             Our AI agent on Fetch.ai&apos;s ASI:One. Tell it what you pay for and it shows the yearly cost, spots double-ups and gives you the official cancel steps. 1 minute, nothing to install.
@@ -71,7 +71,10 @@ export default function GhostIt() {
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
         <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on Agentverse. Press <b className="text-foreground">Chat with Agent</b> there.</p>
-        <p className="mt-4 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground"><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE}</p>
+        <div className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground">
+          <img src={GHOST_IT_THUMBS} alt="" className="h-14 w-14 shrink-0 object-contain" />
+          <p><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE}</p>
+        </div>
 
         <div className="mt-8 rounded-2xl border border-border bg-card/50 px-4 py-3.5 text-[14.5px] text-muted-foreground">
           <b className="text-foreground">Want to find the ones you forgot?</b> Ghost It works from what you tell it. Our web app, Ghost Fees, reads a bank statement instead (no bank login).{' '}

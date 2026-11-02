@@ -8,7 +8,7 @@ import { money } from '@/lib/ghostFees/format';
 import { useTheme } from '@/lib/ThemeContext';
 import { lastRealTotal } from '@/lib/ghostFees/payback';
 import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
-import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_SNIP } from '@/lib/ghostFees/ghostItAgent';
 
 // The limit-reached sheet (B7) and the sign-in screen (B8), styled to the Claude
 // Design canvas "Ghost Fees upgrade flow" (screens 1A, 1B, 2, and the 💔 / 🎄 variants).
@@ -130,7 +130,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
             <p><b style={{ color: '#FFFFFF' }}>Ghost Fees:</b> 3 statement scans, 1 ghost guide chat, 1 Cassy lookup.</p>
           </div>
           <div className="mt-2 flex items-center gap-3 border-t pt-2" style={{ borderColor: P.line }}>
-            <img src={GHOST_IT_MASCOT} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+            <img src={GHOST_IT_SNIP} alt="" className="h-11 w-11 shrink-0 object-contain" />
             <p><b style={{ color: '#FFFFFF' }}>Ghost It:</b> 1 free try (your first Ghost Pack), then $2 a pack or $5 for all, in ASI:One.</p>
           </div>
         </div>

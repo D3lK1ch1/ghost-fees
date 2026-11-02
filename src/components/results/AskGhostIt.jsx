@@ -4,7 +4,7 @@ import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_SNIP } from '@/lib/ghostFees/ghostItAgent';
 import GhostItDialog from './GhostItDialog';
 
 // "Message Ghost It": hands subscriptions to our chat agent on ASI:One (a separate
@@ -37,12 +37,11 @@ function useGo(text) {
   };
 }
 
-function Avatar({ size = 'h-12 w-12' }) {
+function Avatar({ size = 'h-12 w-12', src = GHOST_IT_MASCOT }) {
   return (
     <span className="relative shrink-0" aria-hidden="true">
-      <img src={GHOST_IT_MASCOT} alt="" className={cn('rounded-full object-cover motion-safe:animate-float', size)} style={{ boxShadow: `0 0 20px ${BLUE}55` }} />
-      <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-card" style={{ background: BLUE, color: '#1a1230' }}>
-        <MessageCircle className="h-3.5 w-3.5" strokeWidth={2.5} />
+      <span className={cn('flex items-center justify-center rounded-full', size)} style={{ background: `${BLUE}24`, boxShadow: `0 0 20px ${BLUE}40` }}>
+        <img src={src} alt="" className="h-[92%] w-[92%] object-contain motion-safe:animate-float" />
       </span>
     </span>
   );
@@ -80,7 +79,7 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
   if (variant === 'strip' && benefit) {
     return (
       <div className={cn('flex flex-col gap-3 rounded-b-3xl border-2 border-t-0 px-4 pb-4 pt-6 sm:flex-row sm:items-center', className)} style={{ borderColor: `${BLUE}55`, background: `linear-gradient(180deg, transparent, ${BLUE}14)` }}>
-        <Avatar size="h-11 w-11" />
+        <Avatar size="h-14 w-14" src={GHOST_IT_SNIP} />
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-bold text-foreground">Let Ghost It handle {name} in chat</p>
           <ul className="mt-1 grid gap-x-4 gap-y-0.5 text-[14px] leading-snug text-muted-foreground sm:grid-cols-2">
@@ -101,7 +100,7 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
   if (variant === 'card') {
     return (
       <section aria-label="Ghost It, our chat agent" className={cn('flex flex-col gap-3 rounded-3xl border-2 p-4 sm:flex-row sm:items-center', className)} style={{ borderColor: `${BLUE}66`, background: `linear-gradient(90deg, ${BLUE}1a, transparent 70%)` }}>
-        <Avatar size="h-14 w-14" />
+        <Avatar size="h-16 w-16" />
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-2 font-heading text-[18px] font-bold text-foreground">
             Ghost It <span className="rounded-full px-2 py-0.5 text-[12.5px] font-bold" style={{ background: `${BLUE}26`, color: BLUE }}>AI agent on ASI:One</span>
