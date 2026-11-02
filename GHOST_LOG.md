@@ -479,3 +479,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/ResultsView.jsx
 - How to test: Sample > results at about 900px wide: sidebar on the left. On a phone: the bar along the top.
 - User feedback that drove this: "why does Christmas have this bar up top"
+
+### Ghost It strip under each ghost card, with what it does for that one
+- What: The loose "Message Ghost It about Spotify" button is now a strip attached under each subscription's card: Ghost It's blue avatar, "Let Ghost It handle Spotify in chat", what it does for that ghost, and a "Message Ghost It" button. For price creep it says it works out what the rise costs a year (e.g. $24.00 more a year), asks if you'd still sign up and gives the cancel steps, and sends Ghost It "Spotify went from $12.99 to $14.99" (checked: Ghost It replies with that maths). For other subscriptions: yearly cost, double-ups, cancel steps and a ready email, then tracks that it stopped. Bank fees don't get one (Ghost It doesn't handle those).
+- Files: src/components/results/AskGhostIt.jsx, src/components/results/ResultsView.jsx
+- How to test: Sample > Ghosts > Spotify (price creep): the strip under the card; Message Ghost It copies "@ghostit Spotify went from $12.99 to $14.99".
+- User feedback that drove this: "needs to be designed better and the better benefits of Ghost It"
