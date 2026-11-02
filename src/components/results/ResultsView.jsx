@@ -36,6 +36,7 @@ import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import HauntedCalendar from './HauntedCalendar';
 import SubscriptionTracker from './SubscriptionTracker';
+import TrialTracker from './TrialTracker';
 import GoalPath from './GoalPath';
 import EmailsPanel from './EmailsPanel';
 import NightSky from './NightSky';
@@ -445,6 +446,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                 <>
                   <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
                   <SubscriptionTracker subscriptions={subscriptions} answers={subAnswers} onAnswer={setSubAnswers} />
+                  <TrialTracker leaks={leaks} />
                   <CancelAssistant subscriptions={subscriptions} onDraft={openEmail} />
                 </>
               )}
