@@ -246,3 +246,39 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Landing.jsx, base44/functions/parseStatement/entry.ts, src/lib/ghostFees/cleanMerchant.js, src/lib/ghostFees/overlaps.js (tipFor), src/components/results/SubscriptionsSection.jsx
 - How to test: before publishing the new allowance function (or with it failing), upload a CSV: it scans. Upload a CSV with a "PAYPAL *name@example.com" monthly charge: the subscription reads Paypal.
 - User feedback that drove this: found while clicking through the pack; tester asked to "scrub small amounts of identifying information".
+
+### Filter and sort your ghosts by leak type
+- What: the Ghosts tab (every theme) has chips for each leak type found on this statement, with a count: All, Duplicate, Price creep, Trial converted, Bank fee and so on. Picking one shows just those ghosts and their total ("2 ghosts · $117.00"). Sort: Biggest first, By type, A to Z. The biggest ghost keeps its highlight whatever the filter. If a new scan doesn't have the picked type, it goes back to All.
+- Files: src/components/results/LeakFilter.jsx (new), src/components/results/ResultsView.jsx
+- How to test: Try a sample statement, Ghosts tab, tap Bank fee (2 ghosts, $117.00), then Sort A to Z.
+- User feedback that drove this: "sorting filtering by types of subscriptions such as duplicates".
+
+### Possessed receipt: tap, dispute, and one claim to your bank
+- What: on All ghosts, tap a ghost's name to see all its charges; Dispute this under each ghost opens the ready email to that company; tick ghosts and "Ask my bank about N ghosts · $X" drafts one email to your own bank listing every charge, its date and why it isn't right, with the total and the AFCA line. A note says banks usually ask whether you contacted the company first. The GHOSTED stamp now sits on the paper's header and scrolls with it, so it no longer covers the first amount.
+- Files: src/components/results/PossessedReceipt.jsx, src/components/results/LeakEmailDialog.jsx, src/components/results/ResultsView.jsx
+- How to test: Try a sample statement, Possessed receipt, Open the receipt, tick Streammax and Monthly Account Fee (2 ghosts · $218.94), Ask my bank; and press Dispute this on Adobe.
+- User feedback that drove this: "the possessed receipt can we do something more with it functionality wise"; the stamp covered "$15.00" in the user's screenshot.
+
+### 💔 Heartbreak House: a card for every ex
+- What: under the house there is now a card for every ex, biggest first, each with its line, cancel link or steps, and Block and delete (or Blocked, Undo and its proof). Tapping an ex in the house highlights its card and scrolls to it. The "Block once you've cancelled" note shows once, under the cards. Also: no comma before "with" in the Cassy lines under the calendar.
+- Files: src/components/ex/HeartbreakHouse.jsx, src/components/results/HauntedCalendar.jsx
+- How to test: pick 💔, Try a sample statement, See everything, Heartbreak House: all 7 exes have a card; tap Netflix in the house.
+- User feedback that drove this: "these cards should show all the ghosts"; "remove commas before with".
+
+### 💔 Meet Tilly, who texts you in the scanning chat
+- What: the scanning chat and the monthly check-in used "Ghost Fees" as the contact. The contact is now Tilly (as in the till that rings up every charge), a new ghost holding a bank card, from the Image Assets folder, in a round avatar: "Tilly is typing...". Same for Heartbroken and I'm Fine. Name and art live in EX_CONTACT, so they are easy to change.
+- Files: public/themes/ex/tilly.webp (new, 15 KB), src/lib/ghostFees/exArt.js (EX_CONTACT), src/components/ex/ExScanChat.jsx, src/components/ex/ExAct2.jsx
+- How to test: pick 💔, Try a sample statement: the phone chat header says Tilly. Monthly check-in tab: Tilly too.
+- User feedback that drove this: "this should be new agent from the image folder, we cannot have the agent be called Ghost Fees as that's very lame".
+
+### 💔 If an ex charges you again: their page and Talk to Cassy
+- What: the "If <ex> charges you after you cancelled" card now has "Go to <company>'s page" (the checked cancel page, when we have one; otherwise "Cassy can find it") and a Talk to Cassy button that opens Ask a ghost with Cassy picked. Any screen can open the chat with a chosen guide the same way (askGuide).
+- Files: src/components/ex/ExAct2.jsx, src/lib/ghostFees/askGuide.js (new), src/components/results/ResultsView.jsx
+- How to test: pick 💔, Try a sample statement, See everything, Messages to exes: press Talk to Cassy and the chat opens on Cassy.
+- User feedback that drove this: "this should link to the web page to cancel directly and maybe have a talk to Cassy button that will link to the chat".
+
+### 💔 Heartbreak House: more room for the jar, your ghost and the sign
+- What: the scene under the house is taller (250px) and spread out: the jar and the Dinner / BBQ sign sit further in from the edges, your ghost is a little left of centre, and her speech bubble sits higher, so it no longer runs into the sign.
+- Files: src/components/ex/HeartbreakHouse.jsx
+- How to test: pick 💔, Try a sample statement, See everything, Heartbreak House, block one ex: "Out of bed. One down." has room.
+- User feedback that drove this: "spread this out a bit".

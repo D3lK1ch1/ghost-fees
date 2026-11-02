@@ -105,9 +105,11 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   }, [stage]);
 
   if (!selected) return null;
-  const info = cancelInfo(selected.merchant);
-  const line = theme.lines.find((entry) => entry.match.test(selected.merchant))?.text || theme.fallbackLine;
-  const isBlocked = blocked.has(selected.id);
+  // Tapping an ex in the house highlights its card below and scrolls to it.
+  const pickEx = (id) => {
+    setSelectedId(id);
+    setTimeout(() => document.getElementById(`ex-card-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+  };
 
   return (
     <div className="mx-auto max-w-[460px]">
@@ -154,7 +156,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                 avatar={avatarFor(item.merchant)}
                 active={item.id === selected.id}
                 lit={blocked.has(item.id)}
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => pickEx(item.id)}
               />
             ))}
             {rest.length > 0 && !expanded && (
@@ -180,7 +182,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                 avatar={avatarFor(item.merchant)}
                 active={item.id === selected.id}
                 lit={blocked.has(item.id)}
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => pickEx(item.id)}
               />
             ))}
             {expanded && (
@@ -193,17 +195,17 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         </div>
 
         {/* Under the house: the F**k-ex jar, your ghost, and the Dinner or BBQ sign. */}
-        <div className="relative mt-[-2px] h-[200px] w-full overflow-hidden rounded-[10px]" style={{ background: 'linear-gradient(180deg, #111016 0%, #15131a 100%)' }}>
+        <div className="relative mt-[-2px] h-[250px] w-full overflow-hidden rounded-[10px]" style={{ background: 'linear-gradient(180deg, #111016 0%, #15131a 100%)' }}>
           {allClear && Array.from({ length: 18 }, (_, i) => (
             <span key={i} aria-hidden="true" className="hh-conf pointer-events-none absolute" style={{ left: `${(i * 23 + 9) % 96}%`, top: 30, width: i % 2 ? 6 : 8, height: i % 3 ? 10 : 6, borderRadius: i % 4 ? 2 : '50%', background: ['#ff6f7d', '#5ee6c8', '#f2c14e', '#fbf8fa', '#ffb8bf', '#8fb8ff'][i % 6], animationDelay: `${((i * 0.19) % 2.6).toFixed(2)}s` }} />
           ))}
-          <div className="absolute bottom-2.5 left-1.5"><FkJar amount={glow.fund} total={glow.goal} size={104} /></div>
-          <div aria-hidden="true" className="absolute bottom-3.5 right-2.5 flex w-24 flex-col items-center gap-[3px] transition-opacity duration-500" style={{ opacity: allClear ? 1 : 0.35 }}>
+          <div className="absolute bottom-3 left-3"><FkJar amount={glow.fund} total={glow.goal} size={104} /></div>
+          <div aria-hidden="true" className="absolute bottom-4 right-4 flex w-24 flex-col items-center gap-[3px] transition-opacity duration-500" style={{ opacity: allClear ? 1 : 0.35 }}>
             <div className="h-[18px] w-24 rounded-t-md" style={{ background: 'repeating-linear-gradient(90deg, #ff6f7d 0 12px, #fbf8fa 12px 24px)' }} />
             <div className="ex-fredoka w-[84px] rounded-b-lg py-1.5 text-center text-[13px] font-semibold" style={{ background: '#221f29', border: '1px solid #3a3644', color: '#ffd36e' }}>{fine ? 'BBQ' : 'Dinner'}</div>
             <div className="h-[26px] w-2.5" style={{ background: '#34303e' }} />
           </div>
-          <div className="absolute bottom-1.5 left-1/2 -ml-14 flex flex-col items-center">
+          <div className="absolute bottom-2 left-[44%] -ml-[46px] flex flex-col items-center">
             <div key={stage} className={`${wakeUp ? '' : 'animate-rise'} relative ${allClear ? 'hh-walk' : ''}`}>
               {/* Out of bed: the covers fly off and the bed sinks away, she pops up cross. */}
               {wakeUp && (
@@ -219,7 +221,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
               <div className={wakeUp ? 'hh-rise' : ''}>
                 <div className={`relative ${mood.motion}`} style={{ '--gs': stage >= 2 ? '2.06s' : '3.2s' }}>
                   <img src={mood.art} alt={mood.alt} width={92} className="block h-auto w-[92px]" />
-                  <div className="bub-l ex-in absolute bottom-[calc(100%-30px)] left-[58px] z-10 w-[132px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
+                  <div className="bub-l ex-in absolute bottom-[calc(100%-14px)] left-[60px] z-10 w-[138px] !min-w-0 !px-4 !pb-7 !pt-3 text-center text-[11.5px] font-extrabold leading-tight" style={{ animationDelay: wakeUp ? '1.4s' : '0s' }}>{mood.line}</div>
                 </div>
               </div>
             </div>
@@ -233,45 +235,58 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         )}
       </div>
 
-      {/* The selected ex */}
-      <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
-        <div className="flex items-start gap-3">
-          <img src={avatarFor(selected.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="font-heading text-[17px] font-bold text-white">{selected.merchant}</p>
-            <p className="text-[12.5px] text-white/60">{kindOf(selected.merchant)}</p>
-          </div>
-          <div className="text-right">
-            <p className="font-heading text-[18px] font-bold text-white">{money(selected.monthly)}/mo</p>
-            <p className="text-[12px] text-white/60">{yearly(selected.monthly)}/yr</p>
-          </div>
-        </div>
-        <p className="mt-3 rounded-2xl bg-white/[0.07] px-3.5 py-2 text-[14px] text-white">{line}</p>
-        {info.url ? (
-          <a href={info.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[14px] font-bold text-primary underline underline-offset-4">
-            Cancel on {info.name} <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        ) : (
-          <p className="mt-3 text-[13px] text-white/70">{info.steps}</p>
-        )}
-        {isBlocked ? (
-          <div className="mt-3 rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(selected.monthly)}/yr in your jar</span>
-              <button type="button" onClick={() => unblock(selected)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+      {/* A card for every ex, biggest first. The one picked in the house is highlighted. */}
+      <div className="mt-5 flex flex-col gap-3">
+        {subscriptions.map((item) => {
+          const info = cancelInfo(item.merchant);
+          const line = theme.lines.find((entry) => entry.match.test(item.merchant))?.text || theme.fallbackLine;
+          const isBlocked = blocked.has(item.id);
+          return (
+            <div
+              key={item.id}
+              id={`ex-card-${item.id}`}
+              className={cn('rounded-[22px] border bg-white/[0.04] p-4 transition-shadow', item.id === selected.id ? 'border-primary shadow-[0_0_0_2px_hsl(var(--primary)/0.5)]' : 'border-white/10')}
+            >
+              <div className="flex items-start gap-3">
+                <img src={avatarFor(item.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-heading text-[17px] font-bold text-white">{item.merchant}</p>
+                  <p className="text-[12.5px] text-white/60">{kindOf(item.merchant)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-heading text-[18px] font-bold text-white">{money(item.monthly)}/mo</p>
+                  <p className="text-[12px] text-white/60">{yearly(item.monthly)}/yr</p>
+                </div>
+              </div>
+              <p className="mt-3 rounded-2xl bg-white/[0.07] px-3.5 py-2 text-[14px] text-white">{line}</p>
+              {info.url ? (
+                <a href={info.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[14px] font-bold text-primary underline underline-offset-4">
+                  Cancel on {info.name} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              ) : (
+                <p className="mt-3 text-[13px] text-white/70">{info.steps}</p>
+              )}
+              {isBlocked ? (
+                <div className="mt-3 rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(item.monthly)}/yr in your jar</span>
+                    <button type="button" onClick={() => unblock(item)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+                  </div>
+                  {proofOf(item) ? (
+                    <ProofSummary proof={proofOf(item)} className="mt-1.5 text-[12.5px] text-white/75" />
+                  ) : (
+                    <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === item.id))} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
+                  )}
+                </div>
+              ) : (
+                <button type="button" onClick={() => { setSelectedId(item.id); proof.ask(item); }} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
+                  💔 Block and delete
+                </button>
+              )}
             </div>
-            {proofOf(selected) ? (
-              <ProofSummary proof={proofOf(selected)} className="mt-1.5 text-[12.5px] text-white/75" />
-            ) : (
-              <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === selected.id))} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
-            )}
-          </div>
-        ) : (
-          <button type="button" onClick={() => proof.ask(selected)} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
-            💔 Block and delete
-          </button>
-        )}
-        <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
+          );
+        })}
+        <p className="text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
         {proof.dialog}
       </div>
     </div>

@@ -11,6 +11,8 @@ import ExLeakCard from '@/components/ex/ExLeakCard';
 import CancelAssistant from './CancelAssistant';
 import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
+import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
+import LeakFilter, { filterLeaks } from './LeakFilter';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
 import XmasLeakCard from '@/components/xmas/XmasLeakCard';
@@ -124,6 +126,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     }
   }, [subAnswers]);
   const [confirmClear, setConfirmClear] = useState(false);
+  // Ghosts tab: filter by leak type and sort (this visit only).
+  const [leakType, setLeakType] = useState('all');
+  const [leakSort, setLeakSort] = useState('biggest');
+  // A new scan may not have the type picked before: fall back to All.
+  const activeLeakType = leaks.some((leak) => leak.badge === leakType) ? leakType : 'all';
   const [lifeGoal, setLifeGoal] = useState({ name: '', amount: 0 });
   // Guess-your-number comes first; the guess stays in this tab only.
   const [guessDone, setGuessDone] = useState(false);
@@ -152,6 +159,15 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     if (leaks.length) window.history.replaceState(null, '', `#${tab}`);
   }, [tab, leaks.length]);
   const [guideKey, setGuideKey] = useState('penny');
+  // "Talk to Cassy" (and similar) buttons on any screen open the chat with that guide.
+  useEffect(() => {
+    const open = (event) => {
+      if (event.detail?.guide) setGuideKey(event.detail.guide);
+      setGuideOpen((count) => count + 1);
+    };
+    window.addEventListener(ASK_GUIDE, open);
+    return () => window.removeEventListener(ASK_GUIDE, open);
+  }, []);
   const [pulseId, setPulseId] = useState(null);
   const [mostUsefulId, setMostUsefulId] = useState(null);
   const mostUseful = leaks.find((leak) => leak.id === mostUsefulId) || null;
@@ -316,8 +332,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
 
               {tab === 'ghosts' && (
-                <CardList className="mt-4 grid gap-3">
-                  {leaks.map((leak, index) => (
+                <LeakFilter leaks={leaks} type={activeLeakType} sort={leakSort} onType={setLeakType} onSort={setLeakSort} />
+              )}
+              {tab === 'ghosts' && (
+                <CardList key={`${activeLeakType}-${leakSort}`} className="mt-4 grid gap-3">
+                  {filterLeaks(leaks, activeLeakType, leakSort).map((leak, index) => (
                     <CardItem key={leak.id} index={index}>
                       <div
                         id={`leak-${leak.id}`}
@@ -334,9 +353,9 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                           </span>
                         )}
                         {theme.key === 'ex' ? (
-                          <ExLeakCard leak={leak} avatar={avatarFor(leak.merchant)} primary={index === 0} onDraft={() => openEmail(leak)} />
+                          <ExLeakCard leak={leak} avatar={avatarFor(leak.merchant)} primary={leak.id === leaks[0]?.id} onDraft={() => openEmail(leak)} />
                         ) : theme.key === 'christmas' ? (
-                          <XmasLeakCard leak={leak} primary={index === 0} onDraft={() => openEmail(leak)} />
+                          <XmasLeakCard leak={leak} primary={leak.id === leaks[0]?.id} onDraft={() => openEmail(leak)} />
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
@@ -397,7 +416,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   onOpenPath={() => setTab('path')}
                 />
               )}
-              {tab === 'receipt' && <PossessedReceipt leaks={leaks} />}
+              {tab === 'receipt' && <PossessedReceipt leaks={leaks} onDraft={openEmail} />}
               {tab === 'feedback' && (
                 <div id="feedback">
                   <FeedbackPanel usedSample={usedSample} leaksFound={leaks.length} yearlyTotal={total} mostUseful={mostUseful} />
