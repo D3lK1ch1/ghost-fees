@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 import GhostList from './GhostList';
 import { useCancelProof } from './ProofDialog';
+import PickTimeDialog from './PickTimeDialog';
 import { LIFE_STAGES, TYPE_LABELS, findOverlaps, tipFor, typeOf } from '@/lib/ghostFees/overlaps';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import StatNote from '@/components/stats/StatNote';
@@ -33,6 +34,8 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   const [ghosts, setGhosts] = useGhostList();
   // "I cancelled it" asks for proof first (how, when, a reference or a screenshot).
   const proof = useCancelProof();
+  // "When will you do it?" (pick a time to cancel, B3).
+  const [planFor, setPlanFor] = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
   const [sortBy, setSortBy] = useState('cost');
   const [stage, setStage] = useSavedChoice('ghostFees.lifeStage', LIFE_STAGES.map((item) => item.key), 'solo');
@@ -119,6 +122,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
       <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} onAddProof={proof.addProof} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />
       {proof.dialog}
+      <PickTimeDialog target={planFor} onClose={() => setPlanFor(null)} />
 
       <p className="mt-3 text-[11.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
 
@@ -164,7 +168,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                 <p className="mt-1 text-[11.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
               )}
 
-              <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} />
+              <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} onPlan={() => setPlanFor(subscription)} />
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 <span className="text-[11.5px] text-muted-foreground">Would you sign up for it today?</span>
@@ -227,7 +231,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                   </div>
                   {!keep && (
                     <>
-                      <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} />
+                      <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} onPlan={() => setPlanFor(subscription)} />
                       <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px]">
                         <span className="flex-1 text-foreground">Added &quot;Cancel {subscription.merchant}&quot; to your goal path.</span>
                         {onDraftCancel && (
@@ -279,7 +283,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 }
 
 // Official cancel link and steps, plus "I cancelled it", which adds it to the Ghost List.
-function CancelHelp({ subscription, ghosted, onGhost }) {
+function CancelHelp({ subscription, ghosted, onGhost, onPlan }) {
   const info = cancelInfo(subscription.merchant);
   return (
     <div className="mt-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
@@ -306,6 +310,11 @@ function CancelHelp({ subscription, ghosted, onGhost }) {
         >
           {ghosted ? 'On your Ghost List' : '👻 I cancelled it'}
         </button>
+        {!ghosted && onPlan && (
+          <button type="button" onClick={onPlan} className="rounded-full border border-primary/60 px-2.5 py-0.5 text-[11.5px] font-bold text-foreground hover:bg-primary/10">
+            ⏰ When will you cancel it?
+          </button>
+        )}
       </div>
       <p className="mt-1 text-[11.5px] leading-relaxed text-muted-foreground">{info.steps}</p>
     </div>

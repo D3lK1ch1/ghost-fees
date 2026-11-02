@@ -125,3 +125,58 @@ export function outlookCalendarUrl({ title, details = '', date }, work = false) 
   const params = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: title, body: details, startdt: date, enddt: next.toISOString().slice(0, 10), allday: 'true' });
   return `https://outlook.${work ? 'office' : 'live'}.com/calendar/0/deeplink/compose?${params.toString()}`;
 }
+
+// ---- Timed tasks with a reminder (Pick a time to cancel) ----
+// start is a Date. Times are written in UTC (…Z), so every calendar shows them in
+// the person's own time zone. The event lasts 15 minutes with a reminder 15 minutes
+// before.
+const icsStamp = (date) => `${icsDate(date)}T${pad(date.getUTCHours())}${pad(date.getUTCMinutes())}00Z`;
+const fold = (text) => String(text).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+
+export function buildTimedIcs({ title, details = '', start, uid }, today = new Date()) {
+  if (!(start instanceof Date) || Number.isNaN(start.getTime())) return null;
+  const end = new Date(start.getTime() + 15 * 60000);
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Ghost Fees//Cancel plan//EN',
+    'BEGIN:VEVENT',
+    `UID:${(uid || title).replace(/[^a-z0-9]+/gi, '-')}-${icsStamp(start)}@ghostfees`,
+    `DTSTAMP:${icsStamp(today)}`,
+    `DTSTART:${icsStamp(start)}`,
+    `DTEND:${icsStamp(end)}`,
+    `SUMMARY:${fold(title)}`,
+    `DESCRIPTION:${fold(details)}`,
+    'BEGIN:VALARM',
+    'ACTION:DISPLAY',
+    `DESCRIPTION:${fold(title)}`,
+    'TRIGGER:-PT15M',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n');
+}
+
+export function downloadTimedTask(task) {
+  const ics = buildTimedIcs(task);
+  if (!ics) return false;
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${task.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}.ics`;
+  link.click();
+  URL.revokeObjectURL(url);
+  return true;
+}
+
+export function googleTimedUrl({ title, details = '', start }) {
+  const end = new Date(start.getTime() + 15 * 60000);
+  const params = new URLSearchParams({ action: 'TEMPLATE', text: title, details, dates: `${icsStamp(start)}/${icsStamp(end)}` });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+export function outlookTimedUrl({ title, details = '', start }, work = false) {
+  const end = new Date(start.getTime() + 15 * 60000);
+  const params = new URLSearchParams({ path: '/calendar/action/compose', rru: 'addevent', subject: title, body: details, startdt: start.toISOString(), enddt: end.toISOString() });
+  return `https://outlook.${work ? 'office' : 'live'}.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
