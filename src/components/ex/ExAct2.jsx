@@ -1,8 +1,10 @@
-import ReceiptGhost from '@/components/site/ReceiptGhost';
+import { EX_CONTACT } from '@/lib/ghostFees/exArt';
 import { useState } from 'react';
 import { useGhostList } from '@/hooks/use-ghost-list';
 import FkJar from './FkJar';
 import { money } from '@/lib/ghostFees/format';
+import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
+import { askGuide } from '@/lib/ghostFees/askGuide';
 import { Bubble, C, GhostButton, GhostPal, PrimaryButton, Screen } from './ExKit';
 import { MilestoneIcon } from './GlowUpFund';
 
@@ -57,6 +59,19 @@ export function ExComesBack({ pick, pickKey, ex, onNext, label = 'Act 2 · If th
         <span className="ex-fredoka text-[19px] font-semibold">If {ex.merchant} charges you after you cancelled</span>
         <div className="text-[14px]" style={{ color: C.soft }}>You&apos;re owed that back. Here&apos;s a message ready to send:</div>
         <div className="px-3.5 py-3 text-[14px] font-bold leading-relaxed" style={{ borderRadius: '16px 16px 4px 16px', background: C.coral, color: C.bg }}>{message}</div>
+        {/* Straight to their page, or Cassy, who finds the contact details and helps. */}
+        <div className="flex flex-wrap items-center gap-2 pt-0.5">
+          {cancelInfo(ex.merchant).url ? (
+            <a href={cancelInfo(ex.merchant).url} target="_blank" rel="noreferrer" className="rounded-full px-3.5 py-2 text-[13.5px] font-extrabold" style={{ border: `1.5px solid ${C.coral}`, color: C.text }}>
+              Go to {cancelInfo(ex.merchant).name}&apos;s page ↗
+            </a>
+          ) : (
+            <span className="text-[13px]" style={{ color: C.muted }}>No checked page for {ex.merchant} yet. Cassy can find it.</span>
+          )}
+          <button type="button" onClick={() => askGuide('cass')} className="rounded-full px-3.5 py-2 text-[13.5px] font-extrabold" style={{ background: C.mint, color: C.bg }}>
+            Talk to Cassy
+          </button>
+        </div>
       </div>
       <div className="flex-1" />
       <PrimaryButton onClick={copy} delay="2s">{copied ? 'Copied' : 'Copy refund message'}</PrimaryButton>
@@ -214,15 +229,15 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
   );
 }
 
-// Design screen Ex11Checkin: next month, Ghost Fees checks the exes stayed blocked.
+// Design screen Ex11Checkin: next month, Tilly (EX_CONTACT) checks the exes stayed blocked.
 export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
   const them = { background: C.card, borderRadius: '20px 20px 20px 6px' };
   return (
     <Screen stars={false}>
       <div className="relative z-[1] flex items-center gap-3 px-4 pb-3.5 pt-[18px]" style={{ background: C.bar, borderBottom: `1px solid ${C.barLine}` }}>
-        <ReceiptGhost width={34} className="flex-none" />
+        <span className="flex h-[42px] w-[42px] flex-none items-center justify-center overflow-hidden rounded-full" style={{ background: C.card, border: `1.5px solid ${C.mint}` }}><img src={EX_CONTACT.art} alt="" width={34} height={40} className="h-[36px] w-auto translate-y-[3px] object-contain" /></span>
         <div className="flex flex-col gap-0.5">
-          <div className="ex-fredoka text-[18px] font-semibold">Ghost Fees</div>
+          <div className="ex-fredoka text-[18px] font-semibold">{EX_CONTACT.name}</div>
           <div className="text-[13px] font-bold" style={{ color: C.mint }}>Monthly check-in</div>
         </div>
       </div>

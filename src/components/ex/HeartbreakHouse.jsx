@@ -105,9 +105,11 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
   }, [stage]);
 
   if (!selected) return null;
-  const info = cancelInfo(selected.merchant);
-  const line = theme.lines.find((entry) => entry.match.test(selected.merchant))?.text || theme.fallbackLine;
-  const isBlocked = blocked.has(selected.id);
+  // Tapping an ex in the house highlights its card below and scrolls to it.
+  const pickEx = (id) => {
+    setSelectedId(id);
+    setTimeout(() => document.getElementById(`ex-card-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 60);
+  };
 
   return (
     <div className="mx-auto max-w-[460px]">
@@ -154,7 +156,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                 avatar={avatarFor(item.merchant)}
                 active={item.id === selected.id}
                 lit={blocked.has(item.id)}
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => pickEx(item.id)}
               />
             ))}
             {rest.length > 0 && !expanded && (
@@ -180,7 +182,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
                 avatar={avatarFor(item.merchant)}
                 active={item.id === selected.id}
                 lit={blocked.has(item.id)}
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => pickEx(item.id)}
               />
             ))}
             {expanded && (
@@ -233,45 +235,58 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
         )}
       </div>
 
-      {/* The selected ex */}
-      <div className="mt-5 rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
-        <div className="flex items-start gap-3">
-          <img src={avatarFor(selected.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
-          <div className="min-w-0 flex-1">
-            <p className="font-heading text-[17px] font-bold text-white">{selected.merchant}</p>
-            <p className="text-[12.5px] text-white/60">{kindOf(selected.merchant)}</p>
-          </div>
-          <div className="text-right">
-            <p className="font-heading text-[18px] font-bold text-white">{money(selected.monthly)}/mo</p>
-            <p className="text-[12px] text-white/60">{yearly(selected.monthly)}/yr</p>
-          </div>
-        </div>
-        <p className="mt-3 rounded-2xl bg-white/[0.07] px-3.5 py-2 text-[14px] text-white">{line}</p>
-        {info.url ? (
-          <a href={info.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[14px] font-bold text-primary underline underline-offset-4">
-            Cancel on {info.name} <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        ) : (
-          <p className="mt-3 text-[13px] text-white/70">{info.steps}</p>
-        )}
-        {isBlocked ? (
-          <div className="mt-3 rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
-            <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(selected.monthly)}/yr in your jar</span>
-              <button type="button" onClick={() => unblock(selected)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+      {/* A card for every ex, biggest first. The one picked in the house is highlighted. */}
+      <div className="mt-5 flex flex-col gap-3">
+        {subscriptions.map((item) => {
+          const info = cancelInfo(item.merchant);
+          const line = theme.lines.find((entry) => entry.match.test(item.merchant))?.text || theme.fallbackLine;
+          const isBlocked = blocked.has(item.id);
+          return (
+            <div
+              key={item.id}
+              id={`ex-card-${item.id}`}
+              className={cn('rounded-[22px] border bg-white/[0.04] p-4 transition-shadow', item.id === selected.id ? 'border-primary shadow-[0_0_0_2px_hsl(var(--primary)/0.5)]' : 'border-white/10')}
+            >
+              <div className="flex items-start gap-3">
+                <img src={avatarFor(item.merchant)} alt="" width={44} height={44} className="object-contain h-11 w-11 shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-heading text-[17px] font-bold text-white">{item.merchant}</p>
+                  <p className="text-[12.5px] text-white/60">{kindOf(item.merchant)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-heading text-[18px] font-bold text-white">{money(item.monthly)}/mo</p>
+                  <p className="text-[12px] text-white/60">{yearly(item.monthly)}/yr</p>
+                </div>
+              </div>
+              <p className="mt-3 rounded-2xl bg-white/[0.07] px-3.5 py-2 text-[14px] text-white">{line}</p>
+              {info.url ? (
+                <a href={info.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-[14px] font-bold text-primary underline underline-offset-4">
+                  Cancel on {info.name} <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              ) : (
+                <p className="mt-3 text-[13px] text-white/70">{info.steps}</p>
+              )}
+              {isBlocked ? (
+                <div className="mt-3 rounded-[18px] border-2 border-[#5ee6c8] px-4 py-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 font-heading text-[15px] font-bold text-[#5ee6c8]"><Check className="h-4 w-4" /> Blocked · {yearly(item.monthly)}/yr in your jar</span>
+                    <button type="button" onClick={() => unblock(item)} className="text-[12.5px] font-bold text-white/60 underline underline-offset-4">Undo</button>
+                  </div>
+                  {proofOf(item) ? (
+                    <ProofSummary proof={proofOf(item)} className="mt-1.5 text-[12.5px] text-white/75" />
+                  ) : (
+                    <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === item.id))} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
+                  )}
+                </div>
+              ) : (
+                <button type="button" onClick={() => { setSelectedId(item.id); proof.ask(item); }} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
+                  💔 Block and delete
+                </button>
+              )}
             </div>
-            {proofOf(selected) ? (
-              <ProofSummary proof={proofOf(selected)} className="mt-1.5 text-[12.5px] text-white/75" />
-            ) : (
-              <button type="button" onClick={() => proof.addProof(ghostList.find((entry) => entry.id === selected.id))} className="mt-1.5 text-[12.5px] font-bold text-[#ffb8bf] underline underline-offset-4">Add proof of cancelling</button>
-            )}
-          </div>
-        ) : (
-          <button type="button" onClick={() => proof.ask(selected)} className="mt-3 w-full rounded-[18px] bg-primary px-5 py-3 font-heading text-[16px] font-bold text-primary-foreground">
-            💔 Block and delete
-          </button>
-        )}
-        <p className="mt-2 text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
+          );
+        })}
+        <p className="text-[12.5px] leading-relaxed text-white/55">Block once you&apos;ve cancelled. You&apos;ll note how and when (email, phone call or online) and can add a screenshot as proof, then the room lights up and the money goes in your jar.</p>
         {proof.dialog}
       </div>
     </div>

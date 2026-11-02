@@ -11,6 +11,7 @@ import ExLeakCard from '@/components/ex/ExLeakCard';
 import CancelAssistant from './CancelAssistant';
 import PaybackNote from '@/components/stats/PaybackNote';
 import ReportButton from './ReportButton';
+import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
 import LeakFilter, { filterLeaks } from './LeakFilter';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
@@ -158,6 +159,15 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     if (leaks.length) window.history.replaceState(null, '', `#${tab}`);
   }, [tab, leaks.length]);
   const [guideKey, setGuideKey] = useState('penny');
+  // "Talk to Cassy" (and similar) buttons on any screen open the chat with that guide.
+  useEffect(() => {
+    const open = (event) => {
+      if (event.detail?.guide) setGuideKey(event.detail.guide);
+      setGuideOpen((count) => count + 1);
+    };
+    window.addEventListener(ASK_GUIDE, open);
+    return () => window.removeEventListener(ASK_GUIDE, open);
+  }, []);
   const [pulseId, setPulseId] = useState(null);
   const [mostUsefulId, setMostUsefulId] = useState(null);
   const mostUseful = leaks.find((leak) => leak.id === mostUsefulId) || null;
