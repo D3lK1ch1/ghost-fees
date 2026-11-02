@@ -4,6 +4,7 @@ import GhostMark from '@/components/site/GhostMark';
 import { money } from '@/lib/ghostFees/format';
 import { cachedLookup, findCancelInfo } from '@/lib/ghostFees/cancelLookup';
 import { cn } from '@/lib/utils';
+import { useAllowance } from '@/lib/AllowanceContext';
 
 export const CASS_COLOR = '#f2a65a';
 
@@ -30,11 +31,23 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
   const [info, setInfo] = useState(() => cachedLookup(merchant));
   const [state, setState] = useState(info ? 'done' : 'idle');
   const [copied, setCopied] = useState(false);
+  const { canAskCass, markCass, openPaywall } = useAllowance();
 
+  // Free tier: Cassy's web lookup covers one subscription. Asking again about it is free.
   const look = async () => {
+    if (!canAskCass(merchant)) {
+      setState('locked');
+      return;
+    }
     setState('loading');
     try {
-      setInfo(await findCancelInfo(merchant));
+      const data = await findCancelInfo(merchant);
+      if (data?.locked) {
+        setState(data.reason === 'busy' ? 'error' : 'locked');
+        return;
+      }
+      markCass(merchant);
+      setInfo(data);
       setState('done');
     } catch {
       setState('error');
@@ -44,6 +57,20 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
     if (auto && state === 'idle') look();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auto, merchant]);
+
+  if (state === 'locked') {
+    return (
+      <div className={cn('flex items-center gap-3 rounded-2xl border border-dashed p-3', className)} style={{ borderColor: `${CASS_COLOR}88` }}>
+        <GhostMark className="h-8 w-8 shrink-0" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
+        <div className="min-w-0 flex-1 text-[13px] text-foreground">
+          Cassy looked up your first subscription for free. Unlock once and she&apos;ll find the official cancel page and phone number for {merchant} and every other one.
+        </div>
+        <button type="button" onClick={() => openPaywall('cass')} className="shrink-0 rounded-full px-3 py-1.5 text-[12.5px] font-bold text-[#1a1230]" style={{ background: CASS_COLOR }}>
+          Unlock
+        </button>
+      </div>
+    );
+  }
 
   if (state === 'idle' || state === 'error') {
     return (

@@ -23,6 +23,7 @@ export async function findCancelInfo(merchant) {
   const response = await base44.functions.invoke('findCancelInfo', { merchant });
   const data = response?.data;
   if (!data || data.error) throw new Error(data?.error || 'Cassy went quiet.');
+  if (data.locked) return data; // free tier used; never cached
   try {
     window.sessionStorage.setItem(KEY, JSON.stringify({ ...cache(), [String(merchant).toUpperCase()]: data }));
   } catch {

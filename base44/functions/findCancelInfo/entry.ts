@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
+import { secrets } from 'base44:runtime';
 
 // Cassy, the cancel ghost. Looks up one company online and returns how to cancel:
 // the official cancel page, the steps, the support phone number and hours, a
@@ -23,6 +24,73 @@ const RESULT_SCHEMA = {
   required: ['company', 'found', 'cancelUrl', 'steps', 'phone', 'email', 'supportUrl', 'sources', 'confidence'],
 };
 
+// ---- Free-tier limits (same block in allowance, parseStatement, askGhostGuide, findCancelInfo) ----
+// Only counters and salted one-way hashes are stored, on the Allowance entity.
+const FREE_SCANS = 1;
+const FREE_CASS = 1; // Cassy looks up one subscription for free
+const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
+const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass'];
+
+function secretOr(name, fallback = '') {
+  try {
+    return secrets.get(name) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+async function hmac(text) {
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secretOr('QUOTA_SECRET', 'ghost-fees-unset')), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 32);
+}
+
+async function currentUser(base44) {
+  try {
+    return (await base44.auth.me()) || null;
+  } catch {
+    return null;
+  }
+}
+
+async function loadAllowance(base44, user) {
+  const rows = await base44.asServiceRole.entities.Allowance.filter({ user_id: user.id });
+  if (rows?.length) return rows[0];
+  return base44.asServiceRole.entities.Allowance.create({ user_id: user.id, scans_used: 0, scan_prints: [], guides_used: [], cass_prints: [], paid: false });
+}
+
+// Beta: everything stays free (usage is still counted) until the secret
+// PAYMENTS_ENABLED is set to "true". Flip it once enough people have tried it.
+const chargingOn = () => secretOr('PAYMENTS_ENABLED') === 'true';
+const isUnlimited = (user, allowance) => Boolean(!chargingOn() || user?.role === 'admin' || user?.paid || allowance?.paid);
+
+// Shared daily ceiling for visitors who aren't signed in. Returns false once it's hit.
+async function takeAnonymous(base44, kind) {
+  const date = new Date().toISOString().slice(0, 10);
+  const rows = await base44.asServiceRole.entities.UsageDay.filter({ date, kind });
+  const row = rows?.[0];
+  const count = Number(row?.count) || 0;
+  if (count >= ANON_DAILY[kind]) return false;
+  if (row) await base44.asServiceRole.entities.UsageDay.update(row.id, { count: count + 1 });
+  else await base44.asServiceRole.entities.UsageDay.create({ date, kind, count: 1 });
+  return true;
+}
+// ---- end free-tier block ----
+
+// Cassy is the most expensive feature (a live web search), so the free tier gets
+// one subscription. Asking again about that same one is free. Unlimited once paid.
+async function cassGate(base44, merchant) {
+  const user = await currentUser(base44);
+  if (!user) return (await takeAnonymous(base44, 'cass')) ? { ok: true } : { ok: false, reason: 'busy' };
+  const allowance = await loadAllowance(base44, user);
+  if (isUnlimited(user, allowance)) return { ok: true };
+  const prints = Array.isArray(allowance.cass_prints) ? allowance.cass_prints : [];
+  const print = await hmac(`cass:${user.id}:${merchant.toUpperCase()}`);
+  if (prints.includes(print)) return { ok: true };
+  if (prints.length >= FREE_CASS) return { ok: false, reason: 'limit' };
+  return { ok: true, record: () => base44.asServiceRole.entities.Allowance.update(allowance.id, { cass_prints: [...prints, print] }) };
+}
+
 const clean = (value, max) => String(value ?? '').replace(/[\r\n]+/g, ' ').trim().slice(0, max);
 const url = (value) => {
   try {
@@ -42,6 +110,8 @@ export default async function (req) {
     // Strip card numbers, references and locations bank statements add to merchant names.
     const merchant = clean(body.merchant, 60).replace(/\b(CARD|REF|XX)\S*\s*\d*/gi, '').replace(/\d{3,}/g, '').replace(/\s{2,}/g, ' ').trim();
     if (merchant.length < 2) return Response.json({ error: 'Which subscription should I look up?' }, { status: 400 });
+    const gate = await cassGate(base44, merchant);
+    if (!gate.ok) return Response.json({ locked: true, reason: gate.reason });
 
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt: `You are Cassy, the cancel ghost in the Ghost Fees app. An Australian customer wants to cancel "${merchant}" (as it appears on a bank statement; it may be abbreviated).
@@ -66,6 +136,7 @@ Rules:
     const steps = (Array.isArray(result?.steps) ? result.steps : []).slice(0, 6).map((step) => clean(step, 160)).filter(Boolean);
     const sources = (Array.isArray(result?.sources) ? result.sources : []).map(url).filter(Boolean).slice(0, 4);
     const confidence = ['high', 'medium', 'low'].includes(result?.confidence) ? result.confidence : 'low';
+    if (gate.record) await gate.record().catch(() => {});
 
     return Response.json({
       merchant,

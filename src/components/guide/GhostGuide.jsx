@@ -7,6 +7,7 @@ import CassLookup from '@/components/results/CassLookup';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
+import { useAllowance } from '@/lib/AllowanceContext';
 
 const MAX_INPUT = 500;
 const MAX_AI_MESSAGES = 20;
@@ -148,6 +149,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const [messages, setMessages] = useState([]);
   const [thinking, setThinking] = useState(false);
   const [aiCount, setAiCount] = useState(0);
+  const { canAskGuide, markGuide, openPaywall } = useAllowance();
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const guide = GUIDES[guideKey];
@@ -218,12 +220,32 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       return;
     }
 
+    // Free tier: one AI answer per ghost. The quick answers above are always free.
+    const lockedReply = () => reply({
+      text: `That was my free answer. Unlock Ghost Fees once and all four of us will answer as much as you like. The quick questions below still work.`,
+      unlock: 'guide',
+      chips: nextChips,
+    });
+    if (!canAskGuide(guideKey)) {
+      lockedReply();
+      return;
+    }
+
     setThinking(true);
     setAiCount((count) => count + 1);
     try {
       const response = await base44.functions.invoke('askGhostGuide', { guide: guideKey, question: text, history, summary: summaryFor(analysis) });
       const data = response?.data || {};
+      if (data.locked) {
+        if (data.reason === 'busy') reply({ text: 'Lots of ghost hunters at once. Sign in, or try again soon. The quick questions below still work.', chips: nextChips });
+        else {
+          markGuide(guideKey);
+          lockedReply();
+        }
+        return;
+      }
       if (!data.reply) throw new Error('empty');
+      markGuide(guideKey);
       const leak = leaks.find((item) => item.id === data.leakId);
       const action = ACTION_LABELS[data.action] && (leak || !['draft_email', 'open_leak', 'show_transactions'].includes(data.action)) ? data.action : null;
       reply({ text: data.reply, action, leak, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
@@ -312,6 +334,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 >
                   {message.text}
                 </p>
+                {message.unlock && (
+                  <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">
+                    Unlock all ghosts
+                  </button>
+                )}
                 {message.lookup && <CassLookup merchant={message.lookup.merchant} monthly={message.lookup.monthly} auto className="mt-2 w-full" />}
                 {message.action && (
                   <button

@@ -45,7 +45,7 @@ export default function UploadErrors({ errors = [], onSample, onUpload }) {
           </button>
         )}
       </div>
-      <p className="mt-5 text-[12.5px] text-muted-foreground">CSVs are processed in your browser. Never stored. No sign-in.</p>
+      <p className="mt-5 text-[12.5px] text-muted-foreground">CSVs are processed in your browser. Never stored.</p>
     </div>
   );
 }

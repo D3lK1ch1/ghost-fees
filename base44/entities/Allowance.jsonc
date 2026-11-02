@@ -1,0 +1,39 @@
+// What each signed-in person has used of the free tier, and whether they paid.
+// Only counters and one-way hashes. Never statement files, transactions,
+// merchant names or results. Users cannot read or change these rows: only
+// backend functions (service role) and admins can.
+{
+  "name": "Allowance",
+  "type": "object",
+  "properties": {
+    "user_id": { "type": "string", "description": "Base44 user id" },
+    "scans_used": { "type": "number", "default": 0, "description": "Real statement scans used (one scan = one upload of up to 6 files)" },
+    "scan_prints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Salted one-way hashes of file name+size+date, so re-scanning the same files is free. Never file contents. Last 20 only."
+    },
+    "guides_used": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["penny", "sir", "gus", "cass"] },
+      "description": "Ghosts whose one free AI message has been used"
+    },
+    "cass_prints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Salted hash of the one subscription Cassy looked up for free. Never the name."
+    },
+    "paid": { "type": "boolean", "default": false },
+    "tier": { "type": "string", "enum": ["founding", "standard"], "description": "Set when checkout starts, kept when paid" },
+    "amount_cents": { "type": "number", "description": "What they paid, in AUD cents" },
+    "paid_at": { "type": "string", "format": "date-time" },
+    "checkout_id": { "type": "string", "description": "Latest Stripe Checkout session id (cs_...), used to confirm payment" }
+  },
+  "required": ["user_id"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

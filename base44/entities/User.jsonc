@@ -11,7 +11,10 @@
     "paid": {
       "type": "boolean",
       "default": false,
-      "description": "Founding member who paid the $5 one-off unlock"
+      "description": "Admin-only manual unlock (e.g. a refund or a gift). Payments are recorded on Allowance. Users can't change this field.",
+      "rls": {
+        "write": { "user_condition": { "role": "admin" } }
+      }
     }
   },
   "required": [

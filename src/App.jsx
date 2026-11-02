@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import { ScanProvider } from '@/lib/ScanContext';
+import { AllowanceProvider } from '@/lib/AllowanceContext';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import Landing from '@/pages/Landing';
 import FeedbackAdmin from '@/pages/FeedbackAdmin';
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
   return (
     <ThemeProvider>
     <ScanProvider>
+    <AllowanceProvider>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/progress" element={<Progress />} />
@@ -61,6 +63,7 @@ const AuthenticatedApp = () => {
         </Route>
         <Route path="*" element={<PageNotFound />} />
       </Routes>
+    </AllowanceProvider>
     </ScanProvider>
     </ThemeProvider>
   );

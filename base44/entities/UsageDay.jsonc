@@ -1,0 +1,19 @@
+// Daily totals of AI calls from people who are not signed in (sample statement
+// visitors). No ids, no IPs: just a date and a count, so a runaway script can't
+// spend the whole AI budget. One row per day per kind.
+{
+  "name": "UsageDay",
+  "type": "object",
+  "properties": {
+    "date": { "type": "string", "format": "date", "description": "UTC day" },
+    "kind": { "type": "string", "enum": ["guide", "cass"] },
+    "count": { "type": "number", "default": 0 }
+  },
+  "required": ["date", "kind"],
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": { "user_condition": { "role": "admin" } },
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

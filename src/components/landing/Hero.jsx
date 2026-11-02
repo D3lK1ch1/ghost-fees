@@ -1,4 +1,5 @@
 import { Lock, Upload } from 'lucide-react';
+import { useAllowance } from '@/lib/AllowanceContext';
 import GhostMark from '@/components/site/GhostMark';
 import ExHero from '@/components/landing/ExHero';
 import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
@@ -9,6 +10,7 @@ import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
 const TAGS = ['Forgotten subscriptions', 'Sneaky fees', 'Price creep'];
 
 export default function Hero({ onSample, onUpload }) {
+  const { charging } = useAllowance();
   const { theme } = useTheme();
   const [season, setSeason] = useSavedChoice(SEASON_KEY, SEASONS, 'winter');
   if (theme.key === 'ex') return <ExHero theme={theme} onSample={onSample} onUpload={onUpload} />;
@@ -54,7 +56,7 @@ export default function Hero({ onSample, onUpload }) {
 
       <p className="mt-6 flex items-center gap-2 text-[13px] text-muted-foreground">
         <Lock className="h-3.5 w-3.5 shrink-0 text-primary" />
-        CSVs never leave your browser. PDFs are uploaded privately so they can be read. 1 free scan (add all your accounts in one go), no sign-in.
+        CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 1 free scan (add all your accounts in one go). The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
       </p>
 
       <div className="mt-10 flex flex-wrap justify-center gap-2.5">

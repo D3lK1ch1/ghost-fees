@@ -3,7 +3,7 @@ import SiteFooter from '@/components/site/SiteFooter';
 
 // Exactly what is kept, where, and for how long. Keep this true: update it with every data change.
 const STORED = [
-  { what: 'Your results, Ghost List, theme and free-scan count', where: 'Your browser only', how: 'Until you press Clear my data or clear your browser' },
+  { what: 'Your results, Ghost List and theme', where: 'Your browser only', how: 'Until you press Clear my data or clear your browser' },
   { what: 'Proof of cancelling (how and when, references, screenshots you add)', where: 'Your browser only, with your Ghost List. Never uploaded', how: 'Until you press Clear my data, remove it, or clear your browser' },
   { what: 'CSV statements', where: 'Never leave your browser', how: 'Not stored' },
   { what: 'PDF statements', where: 'Base44 private storage, so they can be read', how: 'Kept for now: we are working on deleting them right after reading' },
@@ -13,6 +13,8 @@ const STORED = [
   { what: 'Cassy cancel lookups', where: 'Sent to our AI provider to search the web', how: 'Only the company name; nothing is stored' },
   { what: 'Visits from the Ghost It agent', where: 'Ghost Fees database', how: 'Date, where you came from, and how many subscriptions were passed (no names or prices)' },
   { what: 'Your account, if you sign in', where: 'Base44 sign-in', how: 'Email and name, until you delete your account' },
+  { what: 'Free tier used and whether you paid', where: 'Ghost Fees database, only our server can read it', how: 'Counts, plus scrambled one-way codes for the files you scanned (from file name, size and date, never the contents) and the one subscription Cassy looked up. No statement, transactions, merchants or results.' },
+  { what: 'Payment, if you unlock', where: 'Stripe', how: 'Stripe holds your card. We keep the Stripe session id, the amount and the date.' },
 ];
 
 export default function Privacy() {
@@ -48,7 +50,7 @@ export default function Privacy() {
 
         <h2 className="mt-8 font-heading text-[20px] font-semibold text-foreground">Delete my data</h2>
         <ul className="mt-2 list-disc space-y-1.5 pl-5 text-[14px] leading-relaxed text-muted-foreground">
-          <li>Results, Ghost List and free-scan count: press <span className="font-bold text-foreground">Clear my data</span> on the results page.</li>
+          <li>Results and Ghost List: press <span className="font-bold text-foreground">Clear my data</span> on the results page.</li>
           <li>Calendar sync: press <span className="font-bold text-foreground">Stop syncing</span> in the calendar and the reminders are deleted.</li>
           <li>Feedback, usage events and uploaded PDFs: these are anonymous, so tell us roughly when you scanned and we will delete them.</li>
           <li>Your account: ask us and we will delete it.</li>
