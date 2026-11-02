@@ -490,3 +490,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/AskGhostIt.jsx, src/components/results/ResultsView.jsx
 - How to test: Sample > Ghosts > Spotify (price creep): the strip under the card; Message Ghost It copies "@ghostit Spotify went from $12.99 to $14.99".
 - User feedback that drove this: "needs to be designed better and the better benefits of Ghost It"
+
+### 🎄 Dusty speaks in real speech bubbles, and every mini card has a button
+- What: Dusty (Stave one) now talks with the speech-bubble art: the first bubble comes out of his mouth and goes up and right, the second sits just under it, both pointing back at him and never over his eyes. The three cards under him each have a button: "Cancel it" (the checked official cancel page) or "Find it" (a search, never a guessed link) for subscriptions, and "Waive it" for bank fees, which jumps to that fee's card with the waiver email.
+- Files: src/components/xmas/XmasKit.jsx (SpiritSays), src/components/xmas/XmasTabScreens.jsx, src/components/results/CancelSiteLink.jsx
+- How to test: 🎄 theme > sample > Ghosts: Dusty's two bubbles; tap Waive it on Monthly Account Fee.
+- User feedback that drove this: "use speech bubble assets more cleanly and have one coming out of the ghost's mouth and one under", "all need cancel on site button"

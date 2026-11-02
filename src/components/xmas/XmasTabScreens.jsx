@@ -3,7 +3,8 @@ import { statFor } from '@/data/stats';
 import { money } from '@/lib/ghostFees/format';
 import { XMAS } from '@/lib/ghostFees/christmasArt';
 import ChangedMyWays from './ChangedMyWays';
-import { Disclaimer, Kicker, Spirit, Stocking, Title, XScreen, useSeason } from './XmasKit';
+import { Disclaimer, Kicker, Spirit, SpiritSays, Stocking, Title, XScreen, useSeason } from './XmasKit';
+import CancelSiteLink from '@/components/results/CancelSiteLink';
 
 // The 🎄 design screen at the top of each results tab. Every number is from the scan.
 //   Ghosts > Stave one, Dusty the Ghost of Fees Past (CW3)
@@ -18,19 +19,18 @@ function FeesPast({ leaks, total, X, season }) {
     <XScreen X={X} season={season}>
       <Kicker X={X}>STAVE ONE · THE PAST</Kicker>
       <Title size={24}>Dusty, the Ghost of Fees Past</Title>
-      <div className="relative flex items-end gap-2">
-        <Spirit src={XMAS.dusty} name="Dusty" alt="Dusty, a candle ghost reading an old ledger" width={130} X={X} />
-        <div className="flex flex-col gap-2 pb-6">
-          <SpeechBubble>I am the Ghost of Fees Past.</SpeechBubble>
-          <SpeechBubble>Long past? No. Your past, from this statement.</SpeechBubble>
-        </div>
-      </div>
+      <SpiritSays src={XMAS.dusty} name="Dusty" alt="Dusty, a candle ghost reading an old ledger" width={130} ratio={422 / 320} mouth={[80, 44]} lines={['I am the Ghost of Fees Past.', 'Long past? No. Your past, from this statement.']} X={X} />
       <div className="relative grid grid-cols-3 gap-2">
         {leaks.slice(0, 3).map((leak, index) => (
           <div key={leak.id} className="x-flip rounded-xl px-2 py-2" style={{ background: X.cream, color: '#14301f', animationDelay: `${0.4 + index * 0.5}s` }}>
             <div className="rounded-md px-1.5 py-1 text-center text-[12px] font-bold text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
             <div className="mt-1.5 line-clamp-2 text-[12.5px] font-bold">{leak.title || leak.merchant}</div>
             <div className="text-[12.5px] font-bold" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>
+            {leak.action === 'waive' || leak.badge === 'Bank fee' ? (
+              <button type="button" onClick={() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="mt-1.5 block w-full rounded-lg border-2 py-1 text-center text-[12px] font-bold" style={{ borderColor: '#1f5c3a', color: '#1f5c3a' }}>Waive it ↓</button>
+            ) : (
+              <CancelSiteLink leak={{ ...leak, action: 'cancel' }} compact className="mt-1.5" style={{ borderColor: '#1f5c3a', color: '#1f5c3a' }} />
+            )}
           </div>
         ))}
       </div>
