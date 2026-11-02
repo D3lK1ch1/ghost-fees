@@ -9,12 +9,13 @@ const STORED = [
   { what: 'CSV statements', where: 'Never leave your browser', how: 'Not stored' },
   { what: 'PDF statements', where: 'Base44 private storage, so they can be read', how: 'Kept for now: we are working on deleting them right after reading' },
   { what: 'Anonymous usage events (e.g. "scan finished")', where: 'Ghost Fees database', how: 'A random session id and the event type only' },
-  { what: 'Feedback you choose to send', where: 'Ghost Fees database', how: 'Only what you type, plus how many ghosts were found and their total' },
+  { what: 'Feedback you choose to send', where: 'Ghost Fees database', how: 'Only what you type, plus how many ghosts were found and their total. If our team alert is on, a copy also goes to the team\'s private Slack channel' },
+  { what: 'Feedback older than 30 days', where: 'Ghost Fees database', how: 'Anonymised: your name, your written comments and the leak you picked are cleared. Only the counts and Yes / Kinda / No answers stay' },
   { what: 'Calendar sync, only if you turn it on', where: 'Ghost Fees database, behind a private link', how: 'Reminder titles, amounts and dates you chose to sync, until you press Stop syncing' },
   { what: 'Cassy cancel lookups', where: 'Sent to our AI provider to search the web', how: 'Only the company name; nothing is stored' },
   { what: 'Visits from the Ghost It agent', where: 'Ghost Fees database', how: 'Date, where you came from, and how many subscriptions were passed (no names or prices)' },
   { what: 'Your account, if you sign in', where: 'Base44 sign-in', how: 'Email and name, until you delete your account' },
-  { what: 'Free tier used and whether you paid', where: 'Ghost Fees database, only our server can read it', how: 'Counts, plus scrambled one-way codes for the files you scanned (from file name, size and date, never the contents) and the one subscription Cassy looked up. No statement, transactions, merchants or results.' },
+  { what: 'Free tier used and whether you paid', where: 'Ghost Fees database, only our server can read it', how: 'Counts, plus scrambled one-way codes for the files you scanned (from file name, size and date, never the contents) and the one subscription Cassy looked up. No statement, transactions, merchants or results. Kept until you delete it or your account. Download it any time from this page.' },
   { what: 'Payment, if you unlock', where: 'Stripe', how: 'Stripe holds your card. We keep the Stripe session id, the amount and the date.' },
 ];
 
@@ -54,7 +55,7 @@ export default function Privacy() {
           <li>Results and Ghost List: press <span className="font-bold text-foreground">Clear my data</span> on the results page.</li>
           <li>Calendar sync: press <span className="font-bold text-foreground">Stop syncing</span> in the calendar and the reminders are deleted.</li>
           <li>Feedback, usage events and uploaded PDFs: these are anonymous, so tell us roughly when you scanned and we will delete them.</li>
-          <li>Free-tier counters and payment flag: the button below deletes them straight away.</li>
+          <li>Free-tier counters and payment flag: download them, or delete them straight away, with the buttons below.</li>
           <li>Your account: ask us and we will delete it.</li>
         </ul>
         <DeleteServerData />

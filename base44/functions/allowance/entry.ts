@@ -4,6 +4,7 @@ import { secrets } from 'base44:runtime';
 // The free tier, counted on the server so clearing the browser doesn't reset it.
 //   { action: 'status' }                 what's left, whether paid, founding spots left
 //   { action: 'claimScan', print }       use (or re-use) the free scan; returns a scan ticket
+//   { action: 'export' }                 Download my data: this account's row, labelled
 // print = SHA-256 the browser made from each file's name, size and date. It is
 // salted and hashed again here before it's kept. File contents never come here.
 
@@ -99,11 +100,35 @@ export default async function (req) {
     const price = spots > 0 ? PRICES.founding : PRICES.standard;
 
     if (!user) {
+      if (action === 'export') return Response.json({ error: 'Sign in first.' }, { status: 401 });
       // Beta: no sign-in needed to scan. Once charging is on, the free scan needs an account.
       if (action === 'claimScan') {
         return chargingOn() ? Response.json({ allowed: false, reason: 'sign_in' }) : Response.json({ allowed: true, ticket: await ticketFor('anon') });
       }
       return Response.json({ charging: chargingOn(), signedIn: false, paid: !chargingOn(), scansLeft: FREE_SCANS, guidesUsed: [], cassLeft: FREE_CASS, foundingLeft: spots, priceCents: price });
+    }
+
+    // Download my data (Privacy page). Doesn't create a row if there isn't one.
+    if (action === 'export') {
+      const row = (await base44.asServiceRole.entities.Allowance.filter({ user_id: user.id }))?.[0] || null;
+      return Response.json({
+        exported_at: new Date().toISOString(),
+        about: 'Everything Ghost Fees keeps on its server for your account. Statements, transactions, merchant names and results are never kept here. The *_one_way_hashes are scrambled codes that cannot be turned back into file names or company names.',
+        account_id: user.id,
+        free_tier: row ? {
+          scans_used: Number(row.scans_used) || 0,
+          scanned_files_one_way_hashes: row.scan_prints || [],
+          ghosts_free_message_used: row.guides_used || [],
+          cassy_lookup_one_way_hashes: row.cass_prints || [],
+        } : null,
+        payment: row ? {
+          paid: Boolean(row.paid),
+          tier: row.tier || null,
+          amount_cents_aud: row.amount_cents ?? null,
+          paid_at: row.paid_at || null,
+          stripe_checkout_session: row.checkout_id || null,
+        } : null,
+      });
     }
 
     let allowance = await confirmCheckout(base44, user, await loadAllowance(base44, user));

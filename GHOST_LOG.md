@@ -222,3 +222,9 @@ One entry per change. Newest at the bottom.
 
 ### Slack feedback, Delete my server data, life-stage tips
 - What: feedback posts to Slack when SLACK_WEBHOOK_URL is set. Privacy page button deletes your free-tier counters. Double-ups ask "Who are these for?" (Just me, Student, Couple, Sharehouse, Family) and tailor the tip.
+
+### Feedback anonymised after 30 days, and Download my data
+- What: feedback older than 30 days is anonymised once a day: the name, the written comments and the leak picked are cleared, while the counts and Yes / Kinda / No answers stay (so /progress numbers don't change). It runs inside progressStats, at most once a UTC day, tracked in a new admin-only Maintenance entity (job name and date only). Signed in, the Privacy page has Download my data: everything the server keeps for your account as ghost-fees-my-data.json, with the hashes labelled as one-way. The Privacy page now says how long the free-tier record is kept, about the 30-day anonymising, and that feedback can be copied to the team's private Slack.
+- Files: base44/entities/Maintenance.jsonc (new), base44/functions/progressStats/entry.ts, base44/functions/allowance/entry.ts (export), src/components/site/DeleteServerData.jsx, src/pages/Privacy.jsx
+- How to test (published app): in Base44 Data add a Feedback row with created_at 31 days ago and a name and text, open /progress, and the name and text are blank. Signed in, Privacy > Download my data saves the file. Copies already sent to Slack are not changed.
+- User feedback that drove this: "can we enhance the delete my data, how it adds security", "can we scrub small amounts of identifying information" (tester).
