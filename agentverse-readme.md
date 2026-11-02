@@ -25,6 +25,15 @@ Every pack shows the maths line by line, the pack total, the leaks with what you
 - "How much does my $25 a week gym cost per year?"
 - "Netflix went up from $16.99 to $18.99. Is it still worth it?"
 
+## Pricing
+- **Free:** adding up your subscriptions, finding doubles, your ghost list, and your **first Ghost Pack**.
+- **$2 AUD a pack** after that, or **$5 AUD for every pack, forever**. Paid once, never a subscription.
+- Secure Stripe card checkout inside ASI:One. Ghost It never sees your card.
+
+## New here? Ask me
+- "How does it work?"  ·  "Is it free?"  ·  "Is my data safe?"  ·  "How do you calculate it?"
+Each answer comes on a card with a button to try it.
+
 ## How to use me
 1. **List what you pay:** `Netflix $19, Stan $16, Spotify $14, gym $25 a week`
 2. **Run a pack:** `screen pack`, `sound pack`, `tech pack`, or `ghost everything`
