@@ -2,10 +2,12 @@ import { base44 } from '@/api/base44Client';
 import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
 import { cn } from '@/lib/utils';
+import { GHOST_IT_PROFILE } from '@/lib/ghostFees/ghostItAgent';
 
 // "Ask Ghost It": hands subscriptions to our chat agent on ASI:One (a separate
 // product, judged inside ASI:One). Copies "@ghostit Netflix $16.99/mo, ...",
-// opens asi1.ai and counts the click (count only, nothing about the person).
+// opens Ghost It's Agentverse page (its "Chat with Agent" button starts the chat
+// in ASI:One) and counts the click (count only, nothing about the person).
 const isLocal = () => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
 
 export function ghostItText(items) {
@@ -22,11 +24,11 @@ export default function AskGhostIt({ items, label = 'Ask Ghost It', small = fals
   const go = async () => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied. Paste it in ASI:One', description: text });
+      toast({ title: 'Copied. Press "Chat with Agent", then paste', description: text });
     } catch {
-      toast({ title: 'Type this in ASI:One', description: text });
+      toast({ title: 'Press "Chat with Agent", then type this', description: text });
     }
-    window.open('https://asi1.ai', '_blank', 'noopener');
+    window.open(GHOST_IT_PROFILE, '_blank', 'noopener');
     if (!isLocal()) base44.functions.invoke('logEvent', { session_id: getSessionId(), event_type: 'ask_ghostit_click' }).catch(() => {});
   };
   return (
