@@ -288,3 +288,10 @@ One entry per change. Newest at the bottom.
 - Files: index.html (Open Graph and Twitter tags), public/og-image.png (new, 1200 x 630, 248 KB)
 - How to test: after publishing, paste https://hunt-ghost-fees.base44.app into a new Slack message, or check it at opengraph.xyz. Old posts keep their old preview until re-posted.
 - User feedback that drove this: the Slack preview had a grey placeholder image.
+
+### Free plan: 3 scans and one ghost try (B1)
+- What: the free allowance is now 3 statement uploads (was 1) and 1 ghost guide try in total, on whichever ghost you pick (was 1 message per ghost). Counted on the server in Allowance for signed-in people; the sample never counts. Still all free until PAYMENTS_ENABLED=true, but ghost answers are now counted during the beta too, so the numbers are real. Wording updated on the home page and the paywall.
+- Not done: deleting uploaded PDFs right after reading. Base44's SDK has no call to delete an uploaded file (only upload and signed links), so the Privacy page's "kept for now" stays true. The real fix is reading PDFs in the browser.
+- Files: base44/functions/{allowance,askGhostGuide,createCheckout,findCancelInfo,parseStatement}/entry.ts, base44/entities/Allowance.jsonc, src/lib/AllowanceContext.jsx, Hero.jsx, ExHero.jsx, Paywall.jsx, Landing.jsx
+- How to test (published): sign in, ask Penny one question, then Cassy: in Base44 Data, Allowance shows guides_used ["penny","cass"]. Upload a CSV: scans_used goes up by 1.
+- User feedback that drove this: pricing decided 2 Nov (FINAL_UPDATE_PACK 1.2).

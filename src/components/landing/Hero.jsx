@@ -56,7 +56,7 @@ export default function Hero({ onSample, onUpload }) {
 
       <p className="mt-6 flex items-center gap-2 text-[13px] text-muted-foreground">
         <Lock className="h-3.5 w-3.5 shrink-0 text-primary" />
-        CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 1 free scan (add all your accounts in one go). The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
+        CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 3 free scans (add all your accounts in one go). The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
       </p>
 
       <div className="mt-10 flex flex-wrap justify-center gap-2.5">

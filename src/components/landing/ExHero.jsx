@@ -110,7 +110,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
 
         <p className="mt-4 flex items-start justify-center gap-2 text-center text-[12.5px] text-muted-foreground">
           <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-          CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 1 free scan. The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
+          CSVs never leave your browser. PDFs are uploaded privately so they can be read. {charging ? 'Sign in for 3 free scans. The sample needs no sign-in.' : 'Free while we’re in beta, no sign-in.'}
         </p>
       </div>
     </section>

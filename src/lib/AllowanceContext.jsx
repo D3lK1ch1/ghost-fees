@@ -35,7 +35,8 @@ export function AllowanceProvider({ children }) {
   const signedIn = Boolean(isAuthenticated);
   const guidesUsed = signedIn ? status?.guidesUsed || [] : local.guides;
 
-  const canAskGuide = useCallback((key) => paid || !guidesUsed.includes(key), [paid, guidesUsed]);
+  // One free ghost try in total, on any ghost (B1). Paid or beta: unlimited.
+  const canAskGuide = useCallback(() => paid || guidesUsed.length === 0, [paid, guidesUsed]);
   const markGuide = useCallback((key) => {
     if (paid) return;
     if (signedIn) setStatus((current) => (current ? { ...current, guidesUsed: [...new Set([...(current.guidesUsed || []), key])] } : current));
