@@ -14,3 +14,4 @@ All on 2 Nov 2026 (Melbourne). Each line is a commit; see the history for the co
 | v8.1 | "Tell me what you were created to do" (ASI:One's suggested prompt) gets the purpose, 4 things it does and one to try | Profile suggestion gave a bare reply |
 | v8.2 | ASI:One's pre-filled "What's new with you?" starts with the purpose and a card | First impression |
 | v8.3 / v8.4 | Never crash on data saved by an older version (`'str' object has no attribute 'get'`) | Live crash found while testing on asi1.ai |
+| **v9** | **Ghost Packs are the main job:** each pack hunts its own kind of leak (e.g. Sound: YouTube Premium already includes YouTube Music; Tech Stack: AI tools and storage paid twice, with the saving if you keep the cheapest); `packs` lists them; purpose line and profile now say Ghost It fills the gap the bank scan can't see | Team: Ghost It shouldn't repeat the app |

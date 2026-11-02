@@ -451,8 +451,8 @@ class About(unittest.TestCase):
     def test_created_to_do_gets_the_purpose_and_what_it_does(self):
         for msg in ["Tell me what you were created to do", "who are you", "what is this", "what were you made for?"]:
             reply, card = A.route(FakeCtx(), SENDER, msg)
-            self.assertIn("I find subscriptions you're paying for twice", reply, msg)
-            self.assertIn("Check it stopped", reply, msg)
+            self.assertIn("can't show you", reply, msg)
+            self.assertIn("Ghost Pack", reply, msg)
             self.assertEqual(card[0], "form", msg)
             self.assertNotIn("—", reply)
 
@@ -466,7 +466,7 @@ class AsiOneGreeting(unittest.TestCase):
 
     def test_whats_new_with_you_leads_with_the_purpose_and_a_card(self):
         reply, card = A.route(FakeCtx(), SENDER, "What's new with you, Ghost.it?")
-        self.assertTrue(reply.startswith("I find subscriptions you're paying for twice"))
+        self.assertTrue(reply.startswith("I hunt the money leaks"))
         self.assertIn("AI tools double up", reply)
         self.assertIn("Try it", reply)
         self.assertEqual(card[0], "form")
@@ -507,3 +507,29 @@ class OldCounters(unittest.TestCase):
         A.bump(ctx, "users")
         A.bump(ctx, "messages")
         self.assertEqual(ctx.storage.get("stats"), {"users": 1, "messages": 4})
+
+
+class V9Packs(unittest.TestCase):
+    """Ghost It fills the gap the app can't see, with specialised Ghost Packs."""
+
+    def test_sound_pack_finds_youtube_music_double(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Spotify $14, YouTube Premium $17")
+        reply, _ = A.route(ctx, SENDER, "sound pack")
+        self.assertIn("Leaks found", reply)
+        self.assertIn("YouTube Premium already includes YouTube Music", reply)
+
+    def test_tech_pack_ai_tools_saving(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "ChatGPT $30, Claude $30, Cursor $30, Copilot $15")
+        reply, _ = A.route(ctx, SENDER, "tech pack")
+        self.assertIn("Keep just Copilot and save $1,080.00/yr", reply)
+
+    def test_packs_command_lists_every_pack(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "packs")
+        for pack in A.PACKS:
+            self.assertIn(pack, reply)
+
+    def test_results_name_their_packs(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Netflix $19, Spotify $14")
+        self.assertIn("Your Ghost Packs", reply)

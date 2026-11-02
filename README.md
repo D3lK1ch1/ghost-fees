@@ -1,6 +1,8 @@
 # Ghost It (@ghostit) 👻
 
-**I find subscriptions you're paying for twice and help you cancel them.**
+**I hunt the money leaks your bank statement can't show you, with a Ghost Pack for each kind.**
+
+Ghost Fees (the app) reads your statement. Ghost It fills the gap: doubles across services, subscriptions hidden in Apple or Google bundles or on another card, and what weekly habits really cost a year. Each Ghost Pack (Screen, Sound, Tech Stack, Food, Gym and Fitness, Play) hunts its own kind of leak, shows the maths, then gives the official cancel steps.
 
 Ghost It is an AI agent on Fetch.ai's ASI:One. Tell it what you pay for in plain words and it shows the yearly cost line by line, finds double-ups (3 streaming services, 4 AI tools), gives the official cancel steps and a ready-to-send email, and keeps a ghost list to check the charges really stopped. No LLM does the maths: every number is plain Python.
 
@@ -29,7 +31,7 @@ See [CHANGELOG.md](CHANGELOG.md). The biggest change came from Raj (Fetch.ai): *
 ```bash
 python3 -m unittest discover -s tests -v
 ```
-43 tests, no network, including Raj's exact message.
+47 tests, no network, including Raj's exact message.
 
 ## Deploy
 `python3 deploy_ghostit.py update` (reads the Agentverse key from the macOS Keychain; never stored in the repo). Payments (Stripe, via Fetch's Agent Payment Protocol) stay off until the `STRIPE_*` and `PAYMENTS_ENABLED` secrets are set on Agentverse.

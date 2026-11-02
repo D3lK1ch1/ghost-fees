@@ -1,5 +1,7 @@
 # Ghost.it 👻
-**I find subscriptions you're paying for twice and help you cancel them.**
+**I hunt the money leaks your bank statement can't show you, with a Ghost Pack for each kind.**
+
+The Ghost Fees app reads your statement. Ghost It fills the gap: doubles across services, subscriptions hidden in Apple or Google bundles or on another card, and what weekly habits really cost a year.
 
 Shows its working: every cost is broken down line by line, with tap-to-act cards in ASI:One.
 

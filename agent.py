@@ -63,10 +63,27 @@ CHANGES = [
      "every reply says what it did, shows the maths line by line, and uses cards"),
     ("Builders", "AI tools double up",
      "Cursor, Windsurf, Midjourney, Lovable, Replit, Bolt and v0 now recognised"),
+    ("The team", "Ghost It shouldn't repeat the app",
+     "Ghost It now fills the gap the bank scan can't see, with a Ghost Pack for each kind of money leak"),
 ]
 
 # v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
-PURPOSE = "I find subscriptions you're paying for twice and help you cancel them. Add yours below."
+PURPOSE = ("I hunt the money leaks your bank statement can't show you, with a Ghost Pack for each kind: "
+           "streaming, music, AI tools, food, gym and gaming. Tell me what you pay for below.")
+
+# v9: what each Ghost Pack hunts. Ghost Fees (the app) reads a statement; Ghost It fills
+# the gap: doubles and overlaps across services, things hidden in Apple or Google bundles
+# or on another card, and the cost of habits you only see weekly. Facts here are general
+# and true for these services; every dollar figure is worked out from what you tell me.
+PACK_HUNTS = {
+    "Screen": "streaming services doing the same job; keep one and rotate the rest month to month",
+    "Sound": "two music apps at once (YouTube Premium already includes YouTube Music); duo and family plans",
+    "Tech Stack": "AI tools that do the same job, and cloud storage paid twice (Microsoft 365 includes 1 TB of OneDrive)",
+    "Food": "two delivery passes at once, and a meal kit on top of a delivery pass",
+    "Gym and Fitness": "what a weekly membership really costs a year, and a gym plus fitness apps",
+    "Play": "two or three gaming passes at once",
+}
+PACK_EMOJI = {"Screen": "📺", "Sound": "🎧", "Tech Stack": "💻", "Food": "🍔", "Gym and Fitness": "💪", "Play": "🎮"}
 
 DISCLAIMER = "_General information about subscriptions, not financial advice._"
 
@@ -355,20 +372,27 @@ def help_reply(full=False):
 
 
 def about_reply():
-    """v8: "what were you created to do?" (ASI:One's suggested question on the profile),
-    "who are you", "what is this": the purpose, what it does, one thing to try."""
-    text = (
-        "**I'm Ghost It.** I find subscriptions you're paying for twice and help you cancel them.\n\n"
-        "I'm the chat side of the Ghost Fees app. Here's what I do:\n"
-        "1. **Add up the real cost**, line by line: $8.99/mo x 12 = $107.88/yr\n"
-        "2. **Find doubles**, like 3 streaming services or 4 AI tools\n"
-        "3. **Give the official cancel steps** and a ready-to-send email. I never guess a link\n"
-        "4. **Check it stopped:** I keep your ghost list and ask after 7 days\n\n"
-        "**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or fill in the card below.\n"
-        "Something unclear? Tell me with `feedback: ...` and I'll change it.\n\n"
-        + DISCLAIMER
-    )
-    return text, help_card()
+    """"What were you created to do?": the gap Ghost It fills and its Ghost Packs."""
+    lines = [
+        "**I'm Ghost It.** I hunt the money leaks your bank statement can't show you.",
+        "",
+        "The Ghost Fees app reads your statement. I fill the gap: doubles across services, "
+        "subscriptions hidden in Apple or Google bundles or on another card, and what weekly habits really cost a year. "
+        "Each **Ghost Pack** hunts one kind of leak:",
+        "",
+    ]
+    for pack in PACKS:
+        lines.append(f"{PACK_EMOJI.get(pack, '')} **{pack}:** {PACK_HUNTS[pack]}")
+    lines += [
+        "",
+        "Every pack shows the maths, then the official cancel steps and a ready email, and I check after 7 days that it stopped.",
+        "",
+        "**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or fill in the card below.",
+        "Something unclear? `feedback: ...` and I'll change it.",
+        "",
+        DISCLAIMER,
+    ]
+    return "\n".join(lines), help_card()
 
 
 def help_card():
@@ -423,7 +447,9 @@ def check_reply(ctx, sender, text, subs, missing):
         lines.append(f"\nI need a price for: {', '.join(missing)}. Add it like `{missing[0]} $15`.")
     packs = sorted({C[s['key']]['pack'] for s in subs if s['known']})
     if packs:
-        lines.append("\n**Next:** type `" + packs[0].split()[0].lower() + " pack` for cancel steps, "
+        lines.append("\n**Your Ghost Packs:** " + ", ".join(f"{PACK_EMOJI.get(p, '')} {p}" for p in packs) +
+                     ". Each one hunts its own kind of leak.")
+        lines.append("**Next:** type `" + packs[0].split()[0].lower() + " pack` for its leaks and cancel steps, "
                      "or `ghost everything` for all of them.")
         first = next((s["name"] for s in subs if s["known"]), subs[0]["name"])
         lines.append(f"Cancel one: type `cancel {first}`.")
@@ -449,18 +475,61 @@ def check_reply(ctx, sender, text, subs, missing):
     return "\n".join(lines), card
 
 
+def pack_leaks(items, pack):
+    """The specialised leak hunt for one pack, from what the person told us. Plain maths."""
+    subs = [s for s in items if s.get("known") and s.get("price") and C[s["key"]]["pack"] == pack]
+    keys = {s["key"] for s in subs}
+    out = []
+    for g, group in overlaps(subs).items():
+        total = sum(yearly(s) for s in group)
+        cheapest = min(group, key=yearly)
+        out.append(f"{len(group)} {OVERLAP_NAMES[g]} ({', '.join(s['name'] for s in group)}) = {money(total)}/yr. "
+                   f"Keep just {cheapest['name']} and save {money(total - yearly(cheapest))}/yr, or rotate one a month.")
+    if {"spotify", "youtube"} <= keys:
+        out.append("YouTube Premium already includes YouTube Music, so Spotify may be a double.")
+    if "m365" in keys and keys & {"icloud", "googleone", "dropbox"}:
+        out.append("Microsoft 365 already includes 1 TB of OneDrive storage, so another storage plan may be a double.")
+    if keys & {"uberone", "dashpass"} and keys & {"hellofresh", "marleyspoon", "dinnerly", "youfoodz"}:
+        out.append("A meal kit and a delivery pass at once: check you use both each week.")
+    for s in subs:
+        if s["per"] == "wk":
+            out.append(f"{s['name']} at {money(s['price'])} a week is {money(yearly(s))} a year. Would you pay that up front?")
+    return out
+
+
+def packs_reply():
+    lines = ["**Ghost Packs: each one hunts a different kind of money leak**", ""]
+    for pack in PACKS:
+        lines.append(f"{PACK_EMOJI.get(pack, '')} **{pack} pack:** {PACK_HUNTS[pack]}.")
+    lines.append("\nList what you pay (e.g. `Netflix $19, Stan $16, Spotify $14, YouTube Premium $17`) "
+                 "and I'll run every pack that fits. Then type a pack, e.g. `screen pack`, for its leaks and cancel steps.")
+    lines.append(f"\nFor the ones you've forgotten, the Ghost Fees app reads your bank statement: {app_link()}")
+    return "\n".join(lines), help_card()
+
+
 def ghost_reply(ctx, sender, items, title, browse=False):
     """browse=True: the person hasn't told us they have these (e.g. `screen pack` before
     listing anything), so show the steps but don't add them to their ghost list."""
     if not items:
         return ("I don't have any subscriptions from you for that yet. List them first, "
                 "e.g. `Netflix $19, Stan $16`.", None)
+    pack_name = title.replace(" pack", "") if title.endswith(" pack") else None
+    hunt = []
+    if pack_name in PACK_HUNTS:
+        found = [] if browse else pack_leaks(items, pack_name)
+        hunt = [f"{PACK_EMOJI.get(pack_name, '')} **{title} hunts:** {PACK_HUNTS[pack_name]}."]
+        if found:
+            hunt.append("**Leaks found:**")
+            hunt += [f"- {line}" for line in found]
+        elif not browse:
+            hunt.append("No leaks of this kind in what you told me. Cancel steps below in case you still want them.")
+        hunt.append("")
     if browse:
-        parts = [f"**What I did:** got the cancel steps for the {title}. You haven't told me which of these you have, "
+        parts = hunt + [f"**What I did:** got the cancel steps for the {title}. You haven't told me which of these you have, "
                  "so I haven't added any to your ghost list. Type `cancel Netflix` (or any name) to add one.\n"]
     else:
         add_to_list(ctx, sender, items)
-        parts = [f"**What I did:** got the cancel steps for {len(items)} subscription"
+        parts = hunt + [f"**What I did:** got the cancel steps for {len(items)} subscription"
                  f"{'s' if len(items) != 1 else ''} and added {'them' if len(items) != 1 else 'it'} "
                  "to your ghost list as Requested.\n"]
     for s in items:
@@ -589,8 +658,8 @@ def feedback_reply(ctx, sender, body):
 def whats_new_reply():
     """Also the answer to ASI:One's pre-filled "What's new with you, Ghost.it?", so it
     starts with what Ghost It is for, then the latest changes, one thing to try and the card."""
-    lines = [PURPOSE.replace(" Add yours below.", ""), "", "**What's new (from your feedback)**"]
-    for who, said, changed in CHANGES[-2:]:
+    lines = [PURPOSE.replace(" Tell me what you pay for below.", ""), "", "**What's new (from your feedback)**"]
+    for who, said, changed in CHANGES[-3:]:
         lines.append(f"- {who} said: \"{said}\" We changed: {changed}.")
     lines.append("\n**Try it:** `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`, or add yours below.")
     lines.append("Something unclear? `feedback: ...` and I'll change it.")
@@ -827,6 +896,8 @@ def route(ctx, sender, raw):
         return ("Evidence is for the Ghost It team only.", None)
     if re.search(r"(created|made|built|designed) (you )?(to|for)|what (were|are) you (for|made|built|created)|who are you|what is this|what are you|about you|your purpose", low):
         return about_reply()
+    if re.fullmatch(r"\s*(packs?|ghost packs?|what packs\??|list packs|show packs)\s*", low):
+        return packs_reply()
     if re.fullmatch(r"\s*(commands|menu|what can you do\??|all commands)\s*", low):
         return help_reply(full=True)
     if re.search(r"what'?s new|changelog", low):
