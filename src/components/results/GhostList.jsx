@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Share2 } from 'lucide-react';
 import { BadgePop } from '@/components/GhostAnimations';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { money } from '@/lib/ghostFees/format';
 import { badgesFor, levelFor } from '@/lib/ghostFees/levels';
 import { STATUSES, daysSince, ghostTotals, savedSoFar } from '@/lib/ghostFees/ghostList';
@@ -69,27 +70,42 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
       <p className="mt-1 text-[11.5px] text-muted-foreground">Saved in this browser only. Clear my data removes it. A new statement checks each one for you.</p>
       <GhostNameField className="mt-2" />
 
-      <div className="mt-3 rounded-xl bg-white/[0.03] px-3 py-2.5">
+      {/* Level and badges: a bit of fun as you cancel. They never change any numbers.
+          Each badge says how to earn it, so the purpose is clear (feedback, 2 Nov). */}
+      <div className="mt-3 rounded-xl bg-white/[0.03] px-3 py-3">
         <div className="flex items-center justify-between gap-2 text-[12.5px]">
           <BadgePop key={current.name} delay={0.1} className="font-bold text-primary">Level: {current.name}</BadgePop>
-          <span className="text-muted-foreground">{next ? `${money(next.min - ghosted)} to ${next.name}` : 'Top level'}</span>
+          <span className="text-muted-foreground">{next ? `Ghost ${money(next.min - ghosted)}/yr more to reach ${next.name}` : 'Top level'}</span>
         </div>
         <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-white/[0.08]" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)} aria-label="Progress to next level">
           <div className="h-full rounded-full bg-primary transition-[width] duration-700" style={{ width: `${Math.round(progress * 100)}%` }} />
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
+        <p className="mt-1.5 text-[11.5px] text-muted-foreground">Your level goes up with every dollar a year you ghost. Badges are just for fun: earn them as you cancel, then share them.</p>
+        <ul className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4" aria-label="Badges">
           {badges.map((badge) => (
-            badge.earned ? (
-              <BadgePop key={badge.key} delay={0.15} className="rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-bold text-foreground">
-                {badge.emoji} {badge.name}
-              </BadgePop>
-            ) : (
-              <span key={badge.key} title={badge.how} className="rounded-full border border-dashed border-white/15 px-2 py-0.5 text-[11px] text-muted-foreground/70">
-                🔒 {badge.name}
-              </span>
-            )
+            <li key={badge.key}>
+              {/* Tap a badge for what it is and how to earn it. */}
+              <Popover>
+                <PopoverTrigger className={badge.earned ? 'h-full w-full rounded-xl bg-primary/15 px-2.5 py-2 text-left hover:bg-primary/25' : 'h-full w-full rounded-xl border border-dashed border-white/15 px-2.5 py-2 text-left hover:border-primary/50'}>
+                  {badge.earned ? (
+                    <BadgePop delay={0.15} className="block text-[12px] font-bold text-foreground">{badge.emoji} {badge.name}</BadgePop>
+                  ) : (
+                    <span className="block text-[12px] font-bold text-muted-foreground">🔒 {badge.name}</span>
+                  )}
+                  <span className={badge.earned ? 'block text-[11px] text-primary' : 'block text-[11px] leading-snug text-muted-foreground/80'}>{badge.earned ? 'Earned · what’s this?' : badge.how}</span>
+                </PopoverTrigger>
+                <PopoverContent className="w-72 rounded-2xl text-[13px]">
+                  <p className="font-heading text-[15px] font-bold text-foreground">{badge.emoji} {badge.name}</p>
+                  <p className="mt-0.5 text-[12px] font-bold text-primary">{badge.earned ? 'You earned this one' : `How to earn it: ${badge.how.toLowerCase()}`}</p>
+                  <p className="mt-1.5 leading-snug text-muted-foreground">{badge.about}</p>
+                  <p className="mt-2 border-t border-border pt-2 text-[11.5px] text-muted-foreground">Badges and levels are just for fun and never change your numbers. They come with Pro (free while we&apos;re in beta), along with the PDF report.</p>
+                </PopoverContent>
+              </Popover>
+            </li>
           ))}
-          <button type="button" onClick={share} className="ml-auto inline-flex items-center gap-1 text-[11.5px] font-bold text-primary underline-offset-4 hover:underline">
+        </ul>
+        <div className="mt-2 flex justify-end">
+          <button type="button" onClick={share} className="inline-flex items-center gap-1 text-[11.5px] font-bold text-primary underline-offset-4 hover:underline">
             <Share2 className="h-3.5 w-3.5" />
             {shared ? 'Shared' : 'Share my level'}
           </button>

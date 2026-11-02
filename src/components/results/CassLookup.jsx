@@ -27,7 +27,7 @@ Kind regards,
 
 // Cassy's answer card: official cancel page, steps, phone, support email or page,
 // a ready email to that address, and where it came from. Works in every theme.
-export default function CassLookup({ merchant, monthly, auto = false, className = '' }) {
+export default function CassLookup({ merchant, monthly, auto = false, plain = false, className = '' }) {
   const [info, setInfo] = useState(() => cachedLookup(merchant));
   const [state, setState] = useState(info ? 'done' : 'idle');
   const [copied, setCopied] = useState(false);
@@ -104,6 +104,16 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
   }
 
   const mail = cancelEmail(info, monthly);
+  // One link per website (the same site was sometimes listed twice).
+  const sites = [...new Map((info.sources || []).flatMap((src) => {
+    try {
+      return [[new URL(src).hostname.replace(/^www\./, ''), src]];
+    } catch {
+      return [];
+    }
+  })).entries()];
+  const when = new Date(`${info.checkedAt}T00:00:00`);
+  const checkedOn = Number.isNaN(when.getTime()) ? info.checkedAt : when.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
   const mailto = info.email ? `mailto:${info.email}?subject=${encodeURIComponent(mail.subject)}&body=${encodeURIComponent(mail.body)}` : null;
   const copy = async () => {
     await navigator.clipboard.writeText(mail.body);
@@ -111,7 +121,7 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
   };
 
   return (
-    <div className={cn('rounded-2xl border bg-background/40 p-4', className)} style={{ borderColor: `${CASS_COLOR}aa` }}>
+    <div className={cn(plain ? '' : 'rounded-2xl border bg-background/40 p-4', className)} style={plain ? undefined : { borderColor: `${CASS_COLOR}aa` }}>
       <div className="flex items-center gap-2.5">
         <GhostMark className="h-7 w-7 shrink-0 animate-float" style={{ color: CASS_COLOR }} eyeColor="#1a1230" />
         <p className="min-w-0 flex-1 font-heading text-[15px] font-bold text-foreground">How to cancel {info.company}</p>
@@ -154,8 +164,8 @@ export default function CassLookup({ merchant, monthly, auto = false, className 
       </div>
 
       <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
-        Cassy checked online on {info.checkedAt}. {info.confidence === 'high' ? 'From the official site.' : 'Not all from the official site, so double-check before you call or pay.'}
-        {info.sources.length > 0 && <> Sources: {info.sources.map((src, i) => <a key={src} href={src} target="_blank" rel="noreferrer" className="underline">{i ? ', ' : ''}{new URL(src).hostname.replace(/^www\./, '')}</a>)}.</>}
+        Cassy checked online on {checkedOn}. {info.confidence === 'high' ? 'From the official site' : 'Not all from the official site, so double-check before you call or pay'}
+        {sites.length > 0 && <> ({sites.map(([host, src], i) => <a key={host} href={src} target="_blank" rel="noreferrer" className="underline">{i ? ', ' : ''}{host}</a>)})</>}
       </p>
     </div>
   );

@@ -50,6 +50,7 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
   };
   // Asks for proof (how, when, a reference or a screenshot), then adds it to the Ghost List.
   const markCancelled = () => proof.ask(sub);
+  const nextSub = subs.find((item) => item.id !== sub.id && !isGone(item.id));
   const scheduleCheck = () => {
     const next = sub.lastDate ? nextChargeDate(sub.lastDate) : null;
     const date = (next || new Date(Date.now() + 30 * 864e5)).toISOString().slice(0, 10);
@@ -77,9 +78,10 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
                 'rounded-full border px-3 py-1.5 text-[12.5px] font-bold transition-colors',
                 item.id === sub.id ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-foreground hover:border-primary/60',
                 index === 0 && item.id !== sub.id && 'border-[hsl(30_100%_62%)] text-[hsl(30_100%_62%)]',
-                gone && 'line-through opacity-60',
+                gone && item.id !== sub.id && 'opacity-60',
               )}
             >
+              {gone && <Check className="mr-1 inline h-3.5 w-3.5" strokeWidth={3} aria-label="Cancelled" />}
               {item.merchant} · {money(item.monthly)}
             </button>
           );
@@ -100,7 +102,7 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
       <div key={`${sub.id}-${step}`} className="mt-4 animate-rise rounded-2xl border border-border bg-background/50 p-4">
         {step === 0 && (
           <>
-            <p className="font-heading text-[16px] font-bold text-foreground">Go to {info.name}&apos;s cancel page</p>
+            {info.url && <p className="font-heading text-[16px] font-bold text-foreground">Go to {info.name}&apos;s cancel page</p>}
             {info.url ? (
               <>
                 <a href={info.url} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-3 text-[14px] font-bold text-primary-foreground">
@@ -109,9 +111,9 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
                 <p className="mt-2 text-[12px] text-muted-foreground">Official page, opens in a new tab. Sign in there. We never see your login.</p>
               </>
             ) : (
-              <CassLookup key={sub.id} merchant={sub.merchant} monthly={sub.monthly} auto className="mt-3" />
+              <CassLookup key={sub.id} merchant={sub.merchant} monthly={sub.monthly} auto plain />
             )}
-            <p className="mt-2 text-[12px] text-muted-foreground">{APP_STORE_NOTE}</p>
+            <p className="mt-3 border-t border-white/[0.06] pt-2 text-[12px] text-muted-foreground">{APP_STORE_NOTE}</p>
             {info.url && <CassLookup key={`c-${sub.id}`} merchant={sub.merchant} monthly={sub.monthly} className="mt-3" />}
           </>
         )}
@@ -162,24 +164,26 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
             </div>
           </>
         )}
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3">
+          {step < STEPS.length - 1 ? (
+            <button type="button" onClick={() => setStep((value) => value + 1)} className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-4 py-2 text-[13.5px] font-bold text-foreground hover:bg-primary/25">
+              Next: {STEPS[step + 1]} <ChevronRight className="h-4 w-4" />
+            </button>
+          ) : (
+            nextSub && (
+              <button type="button" onClick={() => pick(nextSub.id)} className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-4 py-2 text-[13.5px] font-bold text-foreground hover:bg-primary/25">
+                Next subscription: {nextSub.merchant} <ChevronRight className="h-4 w-4" />
+              </button>
+            )
+          )}
+          {step > 0 && (
+            <button type="button" onClick={() => setStep((value) => value - 1)} className="inline-flex items-center gap-1 rounded-full px-3 py-2 text-[13px] font-bold text-muted-foreground hover:text-foreground">
+              <ChevronLeft className="h-4 w-4" /> Back
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="mt-3 flex justify-between">
-        <button type="button" disabled={step === 0} onClick={() => setStep((value) => value - 1)} className="inline-flex items-center gap-1 text-[13px] font-bold text-muted-foreground disabled:opacity-30">
-          <ChevronLeft className="h-4 w-4" /> Back
-        </button>
-        {step < STEPS.length - 1 ? (
-          <button type="button" onClick={() => setStep((value) => value + 1)} className="inline-flex items-center gap-1 text-[13px] font-bold text-primary">
-            Next <ChevronRight className="h-4 w-4" />
-          </button>
-        ) : (
-          subs.find((item) => item.id !== sub.id && !isGone(item.id)) && (
-            <button type="button" onClick={() => pick(subs.find((item) => item.id !== sub.id && !isGone(item.id)).id)} className="inline-flex items-center gap-1 text-[13px] font-bold text-primary">
-              Next subscription <ChevronRight className="h-4 w-4" />
-            </button>
-          )
-        )}
-      </div>
       <TaskDialog target={task} onClose={() => setTask(null)} />
       {proof.dialog}
     </section>
