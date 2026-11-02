@@ -5,12 +5,15 @@ import { money } from '@/lib/ghostFees/format';
 import { badgesFor, levelFor } from '@/lib/ghostFees/levels';
 import { STATUSES, daysSince, ghostTotals, savedSoFar } from '@/lib/ghostFees/ghostList';
 import { cn } from '@/lib/utils';
+import { useGhostName } from '@/hooks/use-ghost-name';
+import GhostNameField from './GhostNameField';
 import { ProofSummary } from './ProofDialog';
 
 // Tracks what the user has ghosted, the proof they kept, and whether it actually
 // stopped charging. Still charging? The proof is what gets the money back.
 export default function GhostList({ items, onStatus, onRemove, onAddProof, overlapIds, priceRiseIds }) {
   const [shared, setShared] = useState(false);
+  const [ghostName] = useGhostName();
   if (!items.length) return null;
   const { ghosted, confirmed } = ghostTotals(items);
   const { current, next, progress } = levelFor(ghosted);
@@ -19,7 +22,7 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
 
 
   const share = async () => {
-    const text = `I ghosted ${money(ghosted)}/yr of forgotten subscriptions. Level: ${current.name} 👻 hunt-ghost-fees.base44.app`;
+    const text = `${ghostName} and I ghosted ${money(ghosted)}/yr of forgotten subscriptions. Level: ${current.name} 👻 hunt-ghost-fees.base44.app`;
     try {
       if (navigator.share) await navigator.share({ text });
       else await navigator.clipboard.writeText(text);
@@ -32,7 +35,7 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
   return (
     <section className="mt-3 rounded-2xl border border-primary/30 bg-primary/[0.05] p-4 sm:p-5" aria-label="Ghost List">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-[15px] font-semibold tracking-tight text-white">👻 Your Ghost List</h3>
+        <h3 className="text-[15px] font-semibold tracking-tight text-white">👻 {ghostName}&apos;s Ghost List</h3>
         <p className="text-[12.5px] text-muted-foreground">
           <span className="font-bold text-white">{money(ghosted)}/yr</span> ghosted
           {' · '}
@@ -44,7 +47,8 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
           Saved so far: {money(saved)} <span className="text-[11px] font-normal text-muted-foreground">(each price, per day since you ghosted it)</span>
         </p>
       )}
-      <p className="mt-1 text-[11.5px] text-muted-foreground">Saved in this browser only. Clear my data removes it.</p>
+      <p className="mt-1 text-[11.5px] text-muted-foreground">Saved in this browser only. Clear my data removes it. A new statement checks each one for you.</p>
+      <GhostNameField className="mt-2" />
 
       <div className="mt-3 rounded-xl bg-white/[0.03] px-3 py-2.5">
         <div className="flex items-center justify-between gap-2 text-[12.5px]">
@@ -91,6 +95,9 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
                 <p className="mt-1 rounded-lg bg-[#ffc27a]/10 px-2.5 py-1.5 text-[12px] leading-relaxed text-foreground">
                   <span className="font-bold">Charged again?</span> {item.proof ? 'Send' : 'Find your cancel email or screenshot and send'} {item.merchant} your proof, and ask for a refund. If they say no, call your bank and ask to dispute the charge.
                 </p>
+              )}
+              {item.checkNote && (
+                <p className={cn('mt-1 text-[12px] font-semibold', item.status === 'charging' ? 'text-[#ffc27a]' : 'text-[#5ee6c8]')}>{item.checkNote}</p>
               )}
               {askCheck && (
                 <p className="mt-1 text-[12px] font-semibold text-[#ffc27a]">Did {item.merchant} stop charging?</p>
