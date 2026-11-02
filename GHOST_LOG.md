@@ -343,3 +343,14 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/GhostList.jsx, src/index.css
 - How to test: put something on the Ghost List, set its date 8 days back (or wait), open Subscriptions and press Yes, it stopped.
 - User feedback that drove this: retention research: celebrate the confirm, not the click (FINAL_UPDATE_PACK 1.6).
+### Animated 36-second demo to screen-record at /demo
+- What: a new page, /demo, plays a 36-second animated walkthrough in six scenes with big one-word captions: Upload (Tilly's chat), Found (the sample's 5 ghosts and $296.92 counting up), Block (Fitlife Gym blocked, the F**k-ex jar fills), Cancel (Cassy's official steps and email), Ask (Ghost It on ASI:One: $612 a year, 3 streaming services) and Free to try (the link). Real ghost art and the sample's real numbers. ?ratio=16x9 (default), 1x1 or 9x16; press R to replay. Record it with Cmd + Shift + 5.
+- Files: src/pages/Demo.jsx (new), src/pages/demo.css (new), src/App.jsx
+- How to test: open /demo, start a screen recording, click Start; or /demo?ratio=9x16 for stories.
+- User feedback that drove this: "how did people make cool videos like this", "I should do animated video".
+
+### 💔 Postcard links to the ex's cancel page; Cassy bubble clears the sunglasses
+- What: the Weekend away postcard ("Wish you weren't here, Adobe Creative Cloud.") now links to that ex's official cancel page ("Cancel Adobe Creative Cloud on their site"), or, with no checked page, a Find their cancel page with Cassy button that opens the chat on Cassy. The ghost under the calendar: the comma is back ("Scroll down to f**k your exes more, with help from Cassy."), and the speech bubble's tail now sits just beside each ghost's face, so it no longer covers the sunglasses or eyes.
+- Files: src/components/ex/ExAct2.jsx, src/components/results/HauntedCalendar.jsx
+- How to test: pick 💔, Try a sample statement, See everything: Glow-up plan (postcard) and Check-ins & reminders (the bubble), for I'm Fine and Heartbroken.
+- User feedback that drove this: "can this link here to the actual cancel link on the website"; "comma before Cassy and do not cut off the sunnies".

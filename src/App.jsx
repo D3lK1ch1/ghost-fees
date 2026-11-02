@@ -18,6 +18,7 @@ import Upgrade from './pages/Upgrade';
 import Unlocked from './pages/Unlocked';
 import Try from './pages/Try';
 import DoneLink from '@/components/site/DoneLink';
+import Demo from './pages/Demo';
 import Login from '@/pages/Login';
 import Register from '@/pages/Register';
 import ForgotPassword from '@/pages/ForgotPassword';
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
         <Route path="/upgrade" element={<Upgrade />} />
         <Route path="/unlocked" element={<Unlocked />} />
         <Route path="/try" element={<Try />} />
+        <Route path="/demo" element={<Demo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
