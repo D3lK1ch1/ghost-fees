@@ -69,7 +69,11 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
   const cells = [...Array(offset).fill(null), ...Array.from({ length: daysInMonth }, (_, i) => `${month}-${String(i + 1).padStart(2, '0')}`)];
 
   const onDay = (date) => charges.filter((item) => item.date === date);
-  const dueOn = (date) => upcoming.filter((item) => item.next === date);
+  // Bells every month: each subscription rings on its charge day (3 Nov: "bells on the demo").
+  const subDay = (item) => Math.min(Number(String(item.lastDate || item.next).slice(8, 10)) || 1, daysInMonth);
+  const dueOn = (date) => upcoming.filter((item) => subDay(item) === Number(date.slice(8, 10)));
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const subsTotal = upcoming.reduce((sum, item) => sum + (Number(item.monthly) || 0), 0);
   const isDouble = (date) => {
     const ids = onDay(date).map((item) => item.leakId);
     return ids.length !== new Set(ids).size;
@@ -96,6 +100,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
             <h3 className="font-heading text-xl font-semibold text-foreground">{monthName(month)}</h3>
             <p className="text-[13px] text-muted-foreground">
               {monthTotal > 0 ? <>Ghost charges this month: <span className="font-bold text-primary">{money(monthTotal)}</span></> : 'No ghost charges this month'}
+              {subsTotal > 0 && <span className="block text-[13px]">🔔 Subscriptions every month: <span className="font-bold text-[#5ee6c8]">{money(subsTotal)}</span></span>}
             </p>
           </div>
           <button
@@ -142,15 +147,21 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
                           {art ? <img src={art} alt={lead.name} width={28} height={28} className="h-5 w-5 object-contain sm:h-7 sm:w-7" /> : <GhostMark className="h-5 w-5 text-[#f4efe8] sm:h-7 sm:w-7" eyeColor="#1a1230" />}
                         </span>
                       </GhostTip>
-                      <span className={cn('mt-0.5 hidden w-full truncate text-[9px] font-bold leading-tight sm:block', lead.leakId === biggestId ? 'text-[hsl(30_100%_62%)]' : 'text-foreground/80')}>{lead.name}</span>
+                      <span className={cn('mt-0.5 hidden w-full text-[9px] font-bold leading-tight sm:line-clamp-2', lead.leakId === biggestId ? 'text-[hsl(30_100%_62%)]' : 'text-foreground/80')}>{lead.name}</span>
                     </span>
                   );
                 })()}
                 {due.length > 0 && !ghosts.length && (
-                  <span className="mt-auto flex w-full flex-col items-center">
-                    <BellRing className="h-4 w-4 text-[#5ee6c8] sm:h-5 sm:w-5" />
-                    <span className="mt-0.5 hidden w-full truncate text-[9px] font-bold leading-tight text-[#5ee6c8] sm:block">{due[0].merchant}</span>
+                  <span className={cn('mt-auto flex w-full flex-col items-center', date < todayIso && 'opacity-60')}>
+                    <span className="relative">
+                      <BellRing className={cn('h-4 w-4 sm:h-5 sm:w-5', date >= todayIso ? 'animate-bob text-[#5ee6c8]' : 'text-[#f2c14e]')} />
+                      {due.length > 1 && <span className="absolute -right-2 -top-1.5 rounded-full bg-[#5ee6c8] px-1 text-[8.5px] font-black text-[#12302a]">{due.length}</span>}
+                    </span>
+                    <span className={cn('mt-0.5 hidden w-full text-[9px] font-bold leading-tight sm:line-clamp-2', date >= todayIso ? 'text-[#5ee6c8]' : 'text-[#f2c14e]')}>{due.map((item) => item.merchant).join(' + ')}</span>
                   </span>
+                )}
+                {due.length > 0 && ghosts.length > 0 && (
+                  <BellRing aria-hidden="true" className="absolute right-1 top-1 h-3.5 w-3.5 text-[#5ee6c8]" />
                 )}
                 {double && (
                   <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 rounded-full bg-[#ff6b8a] px-1.5 text-[9px] font-bold uppercase text-white">Double!</span>
@@ -161,7 +172,8 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
         </div>
         <p className="relative mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-muted-foreground">
           <span className="flex items-center gap-1.5"><GhostMark className="h-3.5 w-3.5 text-[#f4efe8]" eyeColor="#1a1230" /> Ghost charge</span>
-          <span className="flex items-center gap-1.5"><BellRing className="h-3.5 w-3.5 text-[#5ee6c8]" /> Subscription due</span>
+          <span className="flex items-center gap-1.5"><BellRing className="h-3.5 w-3.5 text-[#5ee6c8]" /> Subscription coming up</span>
+          <span className="flex items-center gap-1.5"><BellRing className="h-3.5 w-3.5 text-[#f2c14e]" /> Subscription paid</span>
           <span className="flex items-center gap-1.5"><span className="rounded-full bg-[#ff6b8a] px-1.5 text-[9px] font-bold text-white">DOUBLE!</span> Charged twice</span>
           <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-[hsl(30_100%_62%)] shadow-[0_0_8px_hsl(30_100%_62%)]" /> Biggest ghost</span>
         </p>
@@ -200,7 +212,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
               )}
             </ul>
           ) : (
-            <p className="mt-1 text-[14px] text-muted-foreground">Ghosts mark the days a leak charged you. Bells mark upcoming subscription charges.</p>
+            <p className="mt-1 text-[14px] text-muted-foreground">Ghosts mark the days a leak charged you. Bells mark the day each subscription charges, every month.</p>
           )}
         </div>
 
