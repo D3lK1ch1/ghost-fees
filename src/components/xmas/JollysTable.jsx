@@ -1,8 +1,10 @@
 import { money } from '@/lib/ghostFees/format';
 import LAYOUT from '@/lib/ghostFees/jollysTable.json';
+import { xmasAvatar, xmasGhost } from '@/lib/ghostFees/christmasArt';
+import { useSeason } from './XmasKit';
 
-// Stave Two: Jolly's feast (assets from jollys-table-assets.zip, 3 Nov). The table and
-// Jolly are one background; each subscription is a guest ghost eating at its own dish,
+// Stave Two: Jolly's feast. Table from jollys-table-assets.zip; the guests are each
+// subscription's own festive ghost from Image Assets (same as everywhere in 🎄), at its dish,
 // with the price on the plate's tag. Positions come from layout.json (1600x1000 scene).
 const ART = '/themes/christmas/table';
 const SEATS = ['gym', 'design', 'trial', 'netflix', 'music', 'stan'];
@@ -31,6 +33,7 @@ export function seatGuests(subscriptions) {
 }
 
 export default function JollysTable({ subscriptions }) {
+  const { season } = useSeason();
   const { w: W, h: H } = LAYOUT.canvas;
   const { seats, extra } = seatGuests(subscriptions);
   const seated = SEATS.filter((seat) => seats[seat]);
@@ -53,13 +56,14 @@ export default function JollysTable({ subscriptions }) {
           const tagY = g.tag.y + g.tag.h / 2 - tagH / 2;
           return (
             <div key={seat}>
+              {/* The guest is this subscription's own ghost from Image Assets (same as everywhere in 🎄). */}
               <img
-                src={`${ART}/${g.file.replace('.png', '.webp')}`}
-                alt={`${item.merchant} guest ghost`}
-                width={260}
-                height={300}
-                className="x-bob absolute"
-                style={{ left: pct(g.x, W), top: pct(g.y, H), width: pct(gw, W), height: pct(gh, H), transform: g.mirror ? 'scaleX(-1)' : undefined, animationDelay: `${index * 0.35}s` }}
+                src={xmasAvatar(item.merchant, season)}
+                alt={`${xmasGhost(item.merchant).name}, the ${item.merchant} ghost`}
+                width={160}
+                height={160}
+                className="x-bob absolute object-contain"
+                style={{ left: pct(g.x, W), top: pct(g.y + gh - gw, H), width: pct(gw, W), height: pct(gw, H), transform: g.mirror ? 'scaleX(-1)' : undefined, animationDelay: `${index * 0.35}s` }}
               />
               <span
                 className="absolute flex flex-col items-center justify-center rounded-md border border-[#c99a2e] bg-[#fbf6ec] text-center font-bold leading-none text-[#14301f] shadow"
@@ -75,13 +79,14 @@ export default function JollysTable({ subscriptions }) {
       <ul className="relative mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[13.5px] leading-tight">
         {seated.map((seat) => (
           <li key={seat} className="flex items-center gap-2">
-            <img src={`${ART}/${LAYOUT.guests[seat].file.replace('.png', '.webp')}`} alt="" width={26} height={30} className="h-[30px] w-[26px] shrink-0 object-contain" />
+            <img src={xmasAvatar(seats[seat].merchant, season)} alt="" width={30} height={30} className="h-[30px] w-[30px] shrink-0 object-contain" />
             <span className="min-w-0 flex-1 break-words font-bold">{seats[seat].merchant}</span>
             <span className="shrink-0 font-bold text-[#f2c14e]">{money(seats[seat].monthly)}</span>
           </li>
         ))}
         {extra.map((item) => (
-          <li key={item.id} className="flex items-center gap-2 pl-[34px]">
+          <li key={item.id} className="flex items-center gap-2">
+            <img src={xmasAvatar(item.merchant, season)} alt="" width={30} height={30} className="h-[30px] w-[30px] shrink-0 object-contain" />
             <span className="min-w-0 flex-1 break-words font-bold">{item.merchant}</span>
             <span className="shrink-0 font-bold text-[#f2c14e]">{money(item.monthly)}</span>
           </li>
