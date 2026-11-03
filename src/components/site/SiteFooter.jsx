@@ -11,7 +11,7 @@ export default function SiteFooter() {
       </p>
       <p className="mt-3 text-[14px]">{DISCLAIMER} CSV statements never leave your browser.</p>
       <p className="mt-1.5 text-[13px] text-muted-foreground/80">
-        Original art and animations. Type: Lato, Baloo 2 and VT323 (Google Fonts, open licences).
+        Original art and animations. Type: Inter, Baloo 2 and VT323 (Google Fonts, open licences).
       </p>
     </footer>
   );
