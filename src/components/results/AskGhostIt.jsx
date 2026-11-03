@@ -87,7 +87,7 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
               <li key={point} className="flex gap-1.5"><Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: BLUE }} aria-hidden="true" />{point}</li>
             ))}
           </ul>
-          <p className="mt-1.5 text-[13.5px] text-muted-foreground"><b className="text-foreground">1 free try,</b> then $5 once for all (free in the beta). {whatIs}</p>
+          <p className="mt-1.5 text-[13.5px] text-muted-foreground"><b className="text-foreground">1 free try,</b> then $5 once for every pack. {whatIs}</p>
         </div>
         <button type="button" onClick={go} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-[14.5px] font-bold text-[#0f1730]" style={{ background: BLUE }}>
           <MessageCircle className="h-4 w-4" aria-hidden="true" /> Message Ghost It
