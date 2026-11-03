@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v11.4 (3 Nov 2026): text and cards sent as separate messages; GHOSTIT_CARDS=off for text only.
 # v11.3 (3 Nov 2026): first replies also list the tap-to-try prompts as text (in case cards don't show).
 # v11.1 (3 Nov 2026): ASI:One's pre-filled "What's new with you?" gets a welcome and tap cards, not the changelog.
 # v11 (3 Nov 2026): consolidate plan (keep one, cancel or rotate the rest, bundle tips).
@@ -56,7 +57,8 @@ ALL_PRICE_CENTS = 500
 STRIPE_SUCCESS_URL = os.environ.get("STRIPE_SUCCESS_URL", "https://agentverse.ai/payment-success")
 # Set the secret GHOSTIT_ADMIN_CODE in Agentverse (or change the word here), then type: evidence <your code>
 ADMIN_CODE = os.environ.get("GHOSTIT_ADMIN_CODE") or os.environ.get("GHOST_IT_ADMIN_CODE") or "change-me"
-USE_CARDS = True          # set False to send text only
+# Cards on/off without a code change: Agentverse secret GHOSTIT_CARDS=off sends text only.
+USE_CARDS = os.environ.get("GHOSTIT_CARDS", "on").lower() != "off"
 
 # "You said, we changed" pairs. Add one each time you ship a fix from feedback.
 CHANGES = [
@@ -1311,7 +1313,7 @@ async def on_commit(ctx, sender, msg):
     bump(ctx, "paid_cents", pending["cents"])
     ctx.logger.info(f"PAID ...{sender[-6:]} {pending['packs']} {pending['cents']}c")
     text, card = ghost_reply(ctx, sender, pending["items"], pending["title"])
-    await ctx.send(sender, make_msg("**Paid, thank you!** 👻 Here are your cancel steps.\n\n" + text, card))
+    await send_reply(ctx, sender, "**Paid, thank you!** 👻 Here are your cancel steps.\n\n" + text, card)
 
 
 async def on_reject(ctx, sender, msg):
@@ -1519,18 +1521,30 @@ agent = Agent()
 protocol = Protocol(spec=chat_protocol_spec)
 
 
-def make_msg(text, card):
-    content = [TextContent(type="text", text=text)]
+def make_msg(text, card=None):
+    """A plain text reply. Cards go in their own message (card_msg), so if a chat window
+    rejects a card the text still arrives (3 Nov: replies were sent but not shown)."""
+    return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=[TextContent(type="text", text=text)])
+
+
+def card_msg(card):
+    kind, payload = card
+    return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=[MetadataContent(type="metadata", metadata={
+        "card_protocol_version": "1",
+        "requires_card_interaction": "false",
+        "card_kind": kind,
+        "card_payload": json.dumps(payload),
+        "preferred_drawer_width_px": "540",
+    })])
+
+
+async def send_reply(ctx, sender, text, card=None):
+    await ctx.send(sender, make_msg(text))
     if card and USE_CARDS:
-        kind, payload = card
-        content.append(MetadataContent(type="metadata", metadata={
-            "card_protocol_version": "1",
-            "requires_card_interaction": "true",
-            "card_kind": kind,
-            "card_payload": json.dumps(payload),
-            "preferred_drawer_width_px": "540",
-        }))
-    return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=content)
+        try:
+            await ctx.send(sender, card_msg(card))
+        except Exception as e:  # a card must never stop the text reply
+            ctx.logger.error(f"card send failed: {e}")
 
 
 @protocol.on_message(ChatMessage)
@@ -1547,7 +1561,7 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
         text, card = help_reply()
     # Reply first: ASI:One stops waiting after about 30 seconds, and the counters
     # below are extra storage writes, so they happen after the person has their answer.
-    await ctx.send(sender, make_msg(text, card))
+    await send_reply(ctx, sender, text, card)
     try:
         if not ctx.storage.get(f"seen:{sender}"):
             ctx.storage.set(f"seen:{sender}", True)

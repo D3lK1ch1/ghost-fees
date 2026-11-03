@@ -239,10 +239,13 @@ class EdgeCases(unittest.TestCase):
         A.route(ctx, SENDER, "ghost everything")
         self.assertTrue(A.ghost_list(ctx, SENDER))
 
-    def test_message_with_card(self):
-        msg = A.make_msg("hi", ("form", {"a": 1}))
-        kinds = [type(c).__name__ for c in msg.content]
-        self.assertEqual(kinds, ["TextContent", "MetadataContent"])
+    def test_text_and_card_are_separate_messages(self):
+        # v11.4: the text never travels with a card, so a rejected card can't hide it.
+        self.assertEqual([type(c).__name__ for c in A.make_msg("hi").content], ["TextContent"])
+        self.assertEqual([type(c).__name__ for c in A.card_msg(("form", {"a": 1})).content], ["MetadataContent"])
+        ctx = PaidCtx()
+        asyncio.run(A.send_reply(ctx, SENDER, "hi", ("form", {"a": 1})))
+        self.assertEqual([type(m.content[0]).__name__ for m in ctx.sent], ["TextContent", "MetadataContent"])
 
 
 if __name__ == "__main__":
@@ -337,7 +340,7 @@ class PaidPacks(unittest.TestCase):
         asyncio.run(self.P.on_commit(self.ctx, SENDER, commit))
         kinds = [type(m).__name__ for m in self.ctx.sent]
         self.assertIn("CompletePayment", kinds)
-        delivered = self.ctx.sent[-1].content[0].text
+        delivered = next(m.content[0].text for m in reversed(self.ctx.sent) if hasattr(m, "content") and hasattr(m.content[0], "text"))
         self.assertIn("Paid, thank you", delivered)
         self.assertIn("spotify", delivered.lower())
         self.assertIn("Sound", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
@@ -503,7 +506,7 @@ class OldStorage(unittest.TestCase):
         msg.msg_id = "x"
         msg.content = [A.TextContent(type="text", text="@ghostit netflix $8.99 espn plus 11.99 paramount 13.99")]
         asyncio.run(A.handle_message(ctx, SENDER, msg))
-        self.assertEqual(len(ctx.sent), 2)  # the acknowledgement and the reply
+        self.assertEqual(len(ctx.sent), 3)  # the acknowledgement, the reply text, then its card
         reply = ctx.sent[1].content[0].text
         self.assertIn("$419.64", reply)
 
