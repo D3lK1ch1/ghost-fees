@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { CardList, CardItem } from '@/components/GhostAnimations';
-import { CalendarPlus, ExternalLink } from 'lucide-react';
+import { CalendarPlus, ChevronDown, ExternalLink } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
 import { downloadReminder } from '@/lib/ghostFees/reminder';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
@@ -39,6 +38,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   const [planFor, setPlanFor] = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
   const [sortBy, setSortBy] = useState('cost');
+  const [view, setView] = useState('open');
   const [stage, setStage] = useSavedChoice('ghostFees.lifeStage', LIFE_STAGES.map((item) => item.key), 'solo');
 
   if (!subscriptions.length) return null;
@@ -51,8 +51,8 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   const answer = (subscription, key) => {
     onAnswer?.((current) => ({ ...current, [subscription.id]: key }));
     toast(key === 'yes'
-      ? { title: `Keeping ${subscription.merchant}`, description: 'Moved to Decided below. Tap Undo to change it.' }
-      : { title: `${subscription.merchant} is on your goal path`, description: 'Its cancel link and email are in Decided below.' });
+      ? { title: `Keeping ${subscription.merchant}`, description: 'Moved to the Keeping tab. Undo is there.' }
+      : { title: `${subscription.merchant} is on your goal path`, description: 'Its cancel link and email are in the Cancelling tab.' });
   };
   const undo = (id) => onAnswer?.((current) => ({ ...current, [id]: undefined }));
   const types = [...new Set(subscriptions.map((item) => typeOf(item.merchant)))];
@@ -65,7 +65,6 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
     .filter((item) => !answers[item.id])
     .filter((item) => typeFilter === 'all' || typeOf(item.merchant) === typeFilter)
     .sort(sorters[sortBy]);
-  const decided = subscriptions.filter((item) => answers[item.id]);
   const keeping = subscriptions.filter((item) => answers[item.id] === 'yes').length;
   const cancelling = subscriptions.filter((item) => answers[item.id] === 'no');
 
@@ -128,131 +127,65 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
       <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">{APP_STORE_NOTE}</p>
 
-      {types.length > 1 || subscriptions.length > 3 ? (
-        <div className="mt-3 flex flex-wrap items-center gap-1.5" aria-label="Filter and sort subscriptions">
-          {['all', ...types].map((key) => (
-            <button
-              key={key}
-              type="button"
-              aria-pressed={typeFilter === key}
-              onClick={() => setTypeFilter(key)}
-              className={cn('rounded-full border px-2.5 py-1 text-[13px] font-semibold', typeFilter === key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}
-            >
-              {key === 'all' ? 'All' : TYPE_LABELS[key]}
-            </button>
-          ))}
+      {/* Tabs (To decide / Cancelling / Keeping), then one drop-down row per subscription,
+          so the list stays short and every row looks the same (3 Nov). */}
+      <div className="mt-4 flex gap-1 rounded-full border border-border bg-card/60 p-1" role="tablist" aria-label="Your subscriptions">
+        {[['open', 'To decide', 0], ['cancel', 'Cancelling', cancelling.length], ['keep', 'Keeping', keeping]].map(([key, label, count]) => (
+          <button key={key} type="button" role="tab" aria-selected={view === key} onClick={() => setView(key)}
+            className={cn('flex-1 rounded-full px-3 py-2 text-[14px] font-bold transition-colors', view === key ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}>
+            {label} <span className="opacity-70">{key === 'open' ? subscriptions.filter((item) => !answers[item.id]).length : count}</span>
+          </button>
+        ))}
+      </div>
+
+      {view === 'open' && (types.length > 1 || subscriptions.length > 3) && (
+        <div className="mt-2 flex flex-wrap items-center gap-2" aria-label="Filter and sort subscriptions">
+          <label className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
+            Show
+            <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="rounded-full border border-border bg-card px-2.5 py-1 text-[13px] text-foreground">
+              {['all', ...types].map((key) => <option key={key} value={key}>{key === 'all' ? 'All types' : TYPE_LABELS[key]}</option>)}
+            </select>
+          </label>
           <label className="ml-auto flex items-center gap-1.5 text-[13px] text-muted-foreground">
             Sort
-            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-full border border-border bg-card px-2 py-1 text-[13px] text-foreground">
+            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-full border border-border bg-card px-2.5 py-1 text-[13px] text-foreground">
               <option value="cost">Highest cost</option>
               <option value="type">By type</option>
               <option value="name">A to Z</option>
             </select>
           </label>
         </div>
-      ) : null}
-
-      {open.length > 0 ? (
-        <CardList className="mt-2 divide-y divide-white/[0.06] rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 sm:px-5">
-          {open.map((subscription, index) => (
-            <CardItem key={subscription.id} index={index} className="py-3">
-              <div className="flex items-center justify-between gap-4">
-                <span className="flex min-w-0 items-center gap-2">
-                  <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
-                </span>
-                <span className="shrink-0 text-[14px] font-semibold tabular-nums text-white">
-                  {money(subscription.monthly)}
-                  <span className="text-[13px] font-normal text-muted-foreground">/mo</span>
-                </span>
-              </div>
-
-              {bundleHint(subscription.merchant) && (
-                <p className="mt-1 text-[12.5px] leading-relaxed text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>
-              )}
-
-              <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} onPlan={() => setPlanFor(subscription)} />
-
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-[12.5px] text-muted-foreground">Would you sign up for it today?</span>
-                {ANSWERS.map((option) => (
-                  <button
-                    key={option.key}
-                    type="button"
-                    aria-pressed={answers[subscription.id] === option.key}
-                    onClick={() => answer(subscription, option.key)}
-                    className={cn(
-                      'rounded-full border px-2.5 py-0.5 text-[12.5px] font-bold transition-colors',
-                      answers[subscription.id] === option.key
-                        ? 'border-primary bg-primary text-primary-foreground'
-                        : 'border-border text-muted-foreground hover:text-foreground',
-                    )}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-                {subscription.lastDate && (
-                  <button
-                    type="button"
-                    onClick={() => downloadReminder(subscription)}
-                    className="ml-auto inline-flex items-center gap-1 text-[12.5px] font-bold text-primary underline-offset-4 hover:underline"
-                  >
-                    <CalendarPlus className="h-3.5 w-3.5" />
-                    Remind me
-                  </button>
-                )}
-              </div>
-
-            </CardItem>
-          ))}
-        </CardList>
-      ) : (
-        <p className="mt-2 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3 text-[14px] font-semibold text-foreground">
-          {typeFilter === 'all' ? 'All decided. Your answers are below.' : 'Nothing of this type left to decide.'}
-        </p>
       )}
 
-      {decided.length > 0 && (
-        <div className="mt-5">
-          <h3 className="text-[14px] font-semibold text-white">Decided</h3>
-          <ul className="mt-2 space-y-2">
-            {decided.map((subscription) => {
-              const keep = answers[subscription.id] === 'yes';
-              return (
-                <li key={subscription.id} className={cn('animate-rise rounded-2xl border px-4 py-3', keep ? 'border-white/[0.07] bg-white/[0.025]' : 'border-primary/30 bg-primary/[0.06]')}>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="flex min-w-0 items-center gap-2">
-                      <span className="truncate text-[14px] text-white/90">{subscription.merchant}</span>
-                      <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[12.5px] font-bold', keep ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary/15 text-primary')}>
-                        {keep ? 'Keeping it' : 'To cancel'}
-                      </span>
-                    </span>
-                    <span className="flex shrink-0 items-center gap-3">
-                      <span className="text-[14px] font-semibold tabular-nums text-white">{money(subscription.monthly)}<span className="text-[13px] font-normal text-muted-foreground">/mo</span></span>
-                      <button type="button" onClick={() => undo(subscription.id)} className="text-[13px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">Undo</button>
-                    </span>
-                  </div>
-                  {!keep && (
-                    <>
-                      <CancelHelp subscription={subscription} ghosted={isGhosted(subscription.id)} onGhost={() => ghostIt(subscription)} onPlan={() => setPlanFor(subscription)} />
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-[13.5px]">
-                        <span className="flex-1 text-foreground">Added &quot;Cancel {subscription.merchant}&quot; to your goal path.</span>
-                        {onDraftCancel && (
-                          <button type="button" onClick={() => onDraftCancel(subscription)} className="rounded-full bg-primary px-3 py-1 font-bold text-primary-foreground">
-                            Draft cancel email
-                          </button>
-                        )}
-                        {onOpenPath && (
-                          <button type="button" onClick={onOpenPath} className="font-bold text-primary underline underline-offset-4">See goal path</button>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </li>
-              );
-            })}
+      {(() => {
+        const list = view === 'open' ? open : view === 'cancel' ? cancelling : subscriptions.filter((item) => answers[item.id] === 'yes');
+        if (!list.length) {
+          return (
+            <p className="mt-2 rounded-2xl border border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.06] px-4 py-3 text-[14px] font-semibold text-foreground">
+              {view === 'open' ? (typeFilter === 'all' ? 'All decided. See Cancelling and Keeping.' : 'Nothing of this type left to decide.') : view === 'cancel' ? 'Nothing to cancel yet. Answer No on one to add it here.' : 'Nothing kept yet. Answer Yes on one to keep it.'}
+            </p>
+          );
+        }
+        return (
+          <ul className="mt-2 divide-y divide-white/[0.06] overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025]">
+            {list.map((subscription) => (
+              <SubRow
+                key={subscription.id}
+                subscription={subscription}
+                view={view}
+                ghosted={isGhosted(subscription.id)}
+                answer={answers[subscription.id]}
+                onAnswer={(key) => answer(subscription, key)}
+                onUndo={() => undo(subscription.id)}
+                onGhost={() => ghostIt(subscription)}
+                onPlan={() => setPlanFor(subscription)}
+                onDraftCancel={onDraftCancel}
+                onOpenPath={onOpenPath}
+              />
+            ))}
           </ul>
-        </div>
-      )}
+        );
+      })()}
 
       {(keeping > 0 || cancelling.length > 0) && (
         <p className="mt-2.5 text-[13.5px] text-muted-foreground">
@@ -277,41 +210,86 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   );
 }
 
-// Official cancel link and steps, plus "I cancelled it", which adds it to the Ghost List.
+// One subscription as a drop-down row: closed shows name, price and status; open shows
+// the cancel help, the actions and the "would you sign up today?" question.
+function SubRow({ subscription, view, ghosted, answer, onAnswer, onUndo, onGhost, onPlan, onDraftCancel, onOpenPath }) {
+  const [open, setOpen] = useState(false);
+  const status = ghosted ? { text: 'On your Ghost List', cls: 'bg-[#5ee6c8]/15 text-[#5ee6c8]' }
+    : view === 'cancel' ? { text: 'To cancel', cls: 'bg-primary/15 text-primary' }
+      : view === 'keep' ? { text: 'Keeping', cls: 'bg-[#5ee6c8]/15 text-[#5ee6c8]' }
+        : { text: 'To decide', cls: 'bg-white/[0.06] text-muted-foreground' };
+  return (
+    <li>
+      <button type="button" aria-expanded={open} onClick={() => setOpen((value) => !value)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.02] sm:px-5">
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[15px] font-semibold text-foreground">{subscription.merchant}</span>
+          <span className={cn('mt-1 inline-block rounded-full px-2 py-0.5 text-[12px] font-bold', status.cls)}>{status.text}</span>
+        </span>
+        <span className="shrink-0 text-[15px] font-semibold tabular-nums text-foreground">{money(subscription.monthly)}<span className="text-[13px] font-normal text-muted-foreground">/mo</span></span>
+        <ChevronDown className={cn('h-5 w-5 shrink-0 text-muted-foreground transition-transform', open && 'rotate-180')} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 sm:px-5">
+          {bundleHint(subscription.merchant) && <p className="mb-2 text-[13px] leading-snug text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>}
+          <CancelHelp subscription={subscription} ghosted={ghosted} onGhost={onGhost} onPlan={onPlan} />
+          {view === 'open' && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="text-[13.5px] text-muted-foreground">Would you sign up for it today?</span>
+              {ANSWERS.map((option) => (
+                <button key={option.key} type="button" aria-pressed={answer === option.key} onClick={() => onAnswer(option.key)}
+                  className={cn('min-w-[64px] rounded-full border px-3 py-1.5 text-[13.5px] font-bold', answer === option.key ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-foreground hover:border-primary/60')}>
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
+          {view === 'cancel' && (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {onDraftCancel && <button type="button" onClick={() => onDraftCancel(subscription)} className="rounded-full bg-primary px-3.5 py-1.5 text-[13.5px] font-bold text-primary-foreground">Draft cancel email</button>}
+              {onOpenPath && <button type="button" onClick={onOpenPath} className="text-[13.5px] font-bold text-primary underline underline-offset-4">See goal path</button>}
+              <button type="button" onClick={onUndo} className="ml-auto text-[13.5px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">Undo</button>
+            </div>
+          )}
+          {view === 'keep' && (
+            <div className="mt-3 flex justify-end">
+              <button type="button" onClick={onUndo} className="text-[13.5px] font-bold text-muted-foreground underline underline-offset-4 hover:text-foreground">Undo</button>
+            </div>
+          )}
+        </div>
+      )}
+    </li>
+  );
+}
+
+// Official cancel link (or a search for it) and steps, then the actions in one row.
 function CancelHelp({ subscription, ghosted, onGhost, onPlan }) {
   const info = cancelInfo(subscription.merchant);
   return (
-    <div className="mt-2 rounded-xl border border-white/[0.06] bg-white/[0.02] px-3 py-2">
-      <div className="flex flex-wrap items-center gap-2">
-        {info.url && (
-          <a
-            href={info.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[13px] font-bold text-primary underline-offset-4 hover:underline"
-          >
-            Cancel on {info.name}
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        )}
-        <button
-          type="button"
-          onClick={onGhost}
-          disabled={ghosted}
-          className={cn(
-            'ml-auto rounded-full px-2.5 py-0.5 text-[12.5px] font-bold transition-colors',
-            ghosted ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary text-primary-foreground',
-          )}
-        >
-          {ghosted ? 'On your Ghost List' : '👻 I cancelled it'}
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-3.5 py-3">
+      <a
+        href={info.url || `https://www.google.com/search?q=${encodeURIComponent(`cancel ${subscription.merchant} subscription`)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1 text-[14px] font-bold text-primary underline-offset-4 hover:underline"
+      >
+        {info.url ? `Cancel on ${info.name}` : `Find ${subscription.merchant}'s cancel page`}
+        <ExternalLink className="h-3.5 w-3.5" />
+      </a>
+      <p className="mt-1 text-[13.5px] leading-snug text-muted-foreground">{info.url ? info.steps : 'No checked cancel link yet. Search their site or check your sign-up email.'}</p>
+      <div className="mt-2.5 flex flex-wrap gap-2">
+        <button type="button" onClick={onGhost} disabled={ghosted}
+          className={cn('rounded-full px-3.5 py-1.5 text-[13.5px] font-bold', ghosted ? 'bg-[#5ee6c8]/15 text-[#5ee6c8]' : 'bg-primary text-primary-foreground')}>
+          {ghosted ? '✓ On your Ghost List' : '👻 I cancelled it'}
         </button>
         {!ghosted && onPlan && (
-          <button type="button" onClick={onPlan} className="rounded-full border border-primary/60 px-2.5 py-0.5 text-[12.5px] font-bold text-foreground hover:bg-primary/10">
-            ⏰ When will you cancel it?
+          <button type="button" onClick={onPlan} className="rounded-full border border-primary/60 px-3.5 py-1.5 text-[13.5px] font-bold text-foreground hover:bg-primary/10">⏰ Pick a day to cancel</button>
+        )}
+        {subscription.lastDate && (
+          <button type="button" onClick={() => downloadReminder(subscription)} className="inline-flex items-center gap-1 rounded-full border border-border px-3.5 py-1.5 text-[13.5px] font-bold text-foreground hover:border-primary/60">
+            <CalendarPlus className="h-3.5 w-3.5" /> Remind me
           </button>
         )}
       </div>
-      <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">{info.steps}</p>
     </div>
   );
 }

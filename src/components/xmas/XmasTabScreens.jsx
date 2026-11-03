@@ -130,7 +130,8 @@ function GiftTag({ leaks, subscriptions, total, X, season }) {
   ].filter(Boolean);
   return (
     <XScreen X={X} season={season}>
-      <div className="relative flex items-end gap-1.5">
+      {/* Room around the bobbing picture so it never touches the title or the tag below. */}
+      <div className="relative mb-2 flex items-center gap-5 pt-2">
         <img src={XMAS.morning(season)} alt="" width={150} className="x-bob h-[110px] w-[150px] flex-none rounded-2xl object-cover" />
         <Title size={26}>One more gift to yourself.</Title>
       </div>
