@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { SpeechBubble } from '@/components/site/Bubbles';
 import { money } from '@/lib/ghostFees/format';
+import CancelSiteLink from '@/components/results/CancelSiteLink';
 import { XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
-import { GoldButton, Kicker, LineButton, Spirit, Title, XScreen, useSeason } from './XmasKit';
+import { GoldButton, Kicker, LineButton, SpiritSays, Title, XScreen, XmasGhostButton, useSeason } from './XmasKit';
+import { xmasGhost } from '@/lib/ghostFees/christmasArt';
 
 // Jacob's chain (design CW2), the 🎄 version of the Haunted House: every leak is one
 // receipt link in Jacob Ledger's chain. Pick a link, draft the email, then break the
@@ -33,13 +34,20 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
       <XScreen X={X} season={season}>
         <Kicker X={X}>THE FIRST VISITOR</Kicker>
         <Title>Jacob Ledger</Title>
-        <div className="relative flex items-end gap-2">
-          <Spirit src={XMAS.jacob} name="Jacob Ledger" alt="Jacob Ledger, a weary ghost wrapped in a chain of receipts" width={130} X={X} />
-          <div className="flex flex-col gap-2 pb-6">
-            <SpeechBubble>I wear the chain I forged in life. Every link a fee.</SpeechBubble>
-            <SpeechBubble>{left.length ? `${left.length} links still. Break them.` : 'Free! Every link is broken.'}</SpeechBubble>
-          </div>
-        </div>
+        <p className="relative -mt-1 max-w-[420px] text-[14.5px] leading-snug" style={{ color: X.muted }}>
+          {left.length
+            ? 'The first visitor. Every fee and forgotten subscription in your statement is a receipt link in his chain. Break them to set him free.'
+            : 'Every link is broken. Jacob is free, and so is that money.'}
+        </p>
+        {/* Asset bubbles from his mouth, as in every stave. Two poses from Image Assets:
+            weary in the chain, then cheering once every link is broken. */}
+        {left.length ? (
+          <SpiritSays key="weary" src={XMAS.jacob} name="Jacob Ledger" alt="Jacob Ledger, a weary ghost tangled in a chain of receipts" width={150} ratio={320 / 420} mouth={[76, 47]} bubbleWidth={190}
+            lines={['I wear the chain I forged in life. Every link a fee.', `${left.length} ${left.length === 1 ? 'link' : 'links'} still. Break them.`]} X={X} />
+        ) : (
+          <SpiritSays key="free" src={XMAS.jacobFree} name="Jacob Ledger" alt="Jacob Ledger, free of his chain and cheering" width={130} ratio={420 / 350} mouth={[60, 36]} bubbleWidth={190}
+            lines={['Free! Every link is broken.', `${money(leaks.reduce((sum, leak) => sum + leak.amount, 0))} off my chain. Thank you.`]} X={X} />
+        )}
 
         <ul className="relative m-0 flex list-none flex-col items-center p-0" aria-label="Jacob's chain">
           {leaks.map((leak, index) => {
@@ -77,15 +85,17 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
 
       <div className="x-root flex flex-col gap-3 self-start rounded-[22px] p-4" style={{ background: X.card, border: `1px solid ${X.line}`, color: X.text }}>
         <div className="flex items-center gap-3">
-          <img src={xmasAvatar(selected.merchant, season)} alt="" width={46} height={46} className="object-contain h-[46px] w-[46px]" />
+          <XmasGhostButton leak={selected} season={season} size={54} X={X} />
           <div className="min-w-0 flex-1">
             <div className="x-fredoka text-[18px] font-semibold">{selected.title || selected.merchant}</div>
-            <div className="text-[13.5px]" style={{ color: X.muted }}>{selected.badge}</div>
+            <div className="text-[13.5px]" style={{ color: X.muted }}>{selected.badge} · haunted by <b style={{ color: X.text }}>{xmasGhost(selected.merchant).name}</b> (tap them)</div>
           </div>
           <div className="x-fredoka text-[20px] font-semibold" style={{ color: X.gold }}>{money(selected.amount)}</div>
         </div>
         <p className="m-0 text-[14px] leading-snug">{selected.reason}</p>
         {selected.action && <GoldButton X={X} onClick={() => onDraft?.(selected)}>🎄 Draft the email</GoldButton>}
+        {/* Straight to their website: the cancel page if we know it, otherwise a search for it. */}
+        <CancelSiteLink leak={{ ...selected, action: selected.badge === 'Bank fee' ? selected.action : 'cancel' }} style={{ borderColor: X.gold, color: X.text }} />
         {isBroken ? (
           <div className="flex items-center justify-between rounded-2xl px-4 py-3" style={{ border: `2px solid ${X.mint}` }}>
             <span className="x-fredoka text-[15px] font-semibold" style={{ color: X.mint }}>Link broken · {money(selected.amount)} off the chain</span>

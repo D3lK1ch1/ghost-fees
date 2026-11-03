@@ -1,9 +1,9 @@
 import { SpeechBubble } from '@/components/site/Bubbles';
 import { statFor } from '@/data/stats';
 import { money } from '@/lib/ghostFees/format';
-import { XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
+import { XMAS, xmasGhost } from '@/lib/ghostFees/christmasArt';
 import ChangedMyWays from './ChangedMyWays';
-import { Disclaimer, Kicker, Spirit, SpiritSays, Stocking, Title, XScreen, useSeason } from './XmasKit';
+import { Disclaimer, Kicker, Spirit, SpiritSays, Stocking, Title, XScreen, XmasGhostButton, useSeason } from './XmasKit';
 import CancelSiteLink from '@/components/results/CancelSiteLink';
 
 // The 🎄 design screen at the top of each results tab. Every number is from the scan.
@@ -19,19 +19,25 @@ function FeesPast({ leaks, total, X, season }) {
     <XScreen X={X} season={season}>
       <Kicker X={X}>STAVE ONE · THE PAST</Kicker>
       <Title size={24}>Dusty, the Ghost of Fees Past</Title>
-      <SpiritSays src={XMAS.dusty} name="Dusty" alt="Dusty, a candle ghost reading an old ledger" width={130} ratio={422 / 320} mouth={[80, 44]} lines={['I am the Ghost of Fees Past.', 'Long past? No. Your past, from this statement.']} X={X} />
-      <div className="relative grid grid-cols-3 gap-2">
+      <SpiritSays src={XMAS.dusty} name="Dusty" alt="Dusty, a candle ghost reading an old ledger" width={130} ratio={422 / 320} mouth={[80, 44]} lines={['I am the Ghost of Fees Past.', 'Long past? No. Your past, from this statement.']} X={X} about="Reads your old statement by candlelight and shows what it already cost you." />
+      {/* Bigger cards with room above for the ghost to bob; text centred; buttons line up along the bottom. Tap a ghost for who they are. */}
+      <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-3">
         {leaks.slice(0, 3).map((leak, index) => (
-          <div key={leak.id} className="x-flip rounded-xl px-2 py-2" style={{ background: X.cream, color: '#14301f', animationDelay: `${0.4 + index * 0.5}s` }}>
-            <img src={xmasAvatar(leak.merchant, season)} alt="" width={56} height={56} className="x-bob mx-auto -mt-1 mb-1 block h-14 w-14 object-contain" style={{ animationDelay: `${index * 0.4}s` }} />
-            <div className="rounded-md px-1.5 py-1 text-center text-[12px] font-bold text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
-            <div className="mt-1.5 line-clamp-2 text-[12.5px] font-bold">{leak.title || leak.merchant}</div>
-            <div className="text-[12.5px] font-bold" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>
-            {leak.action === 'waive' || leak.badge === 'Bank fee' ? (
-              <button type="button" onClick={() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="mt-1.5 block w-full rounded-lg border-2 py-1 text-center text-[12px] font-bold" style={{ borderColor: '#1f5c3a', color: '#1f5c3a' }}>Waive it ↓</button>
-            ) : (
-              <CancelSiteLink leak={{ ...leak, action: 'cancel' }} compact className="mt-1.5" style={{ borderColor: '#1f5c3a', color: '#1f5c3a' }} />
-            )}
+          <div key={leak.id} className="x-flip flex flex-col items-center rounded-2xl px-3 pb-3 pt-4 text-center" style={{ background: X.cream, color: '#14301f', animationDelay: `${0.4 + index * 0.5}s` }}>
+            <div className="flex h-[88px] items-center justify-center">
+              <XmasGhostButton leak={leak} season={season} size={72} X={X} delay={index * 0.4} />
+            </div>
+            <p className="mt-1 text-[12.5px] font-bold" style={{ color: '#1f5c3a' }}>{xmasGhost(leak.merchant).name}</p>
+            <div className="mt-2 flex min-h-[42px] w-full items-center justify-center rounded-2xl px-2 py-1 text-[12.5px] font-bold leading-tight text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
+            <div className="mt-2 line-clamp-2 min-h-[2.6em] text-[15px] font-bold leading-tight">{leak.title || leak.merchant}</div>
+            <div className="mt-1 text-[16px] font-black" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>
+            <div className="mt-auto w-full pt-3">
+              {leak.action === 'waive' || leak.badge === 'Bank fee' ? (
+                <button type="button" onClick={() => document.getElementById(`leak-${leak.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })} className="flex w-full items-center justify-center gap-1 rounded-lg border-2 py-1 text-[12px] font-bold" style={{ borderColor: '#1f5c3a', color: '#1f5c3a' }}>Waive it ↓</button>
+              ) : (
+                <CancelSiteLink leak={{ ...leak, action: 'cancel' }} compact style={{ borderColor: '#1f5c3a', color: '#1f5c3a' }} />
+              )}
+            </div>
           </div>
         ))}
       </div>
@@ -59,6 +65,15 @@ function Morning({ leaks, cleared, subscriptions, X, season }) {
           <span key={leak.id} aria-hidden="true" className="x-coin absolute h-4 w-4 rounded-full" style={{ left: `${12 + ((index * 23) % 76)}%`, top: `${30 + ((index * 17) % 50)}%`, background: X.gold, border: `2px solid ${X.goldDeep}`, animationDelay: `${0.3 + index * 0.25}s` }} />
         ))}
       </div>
+      {/* Christmas morning in the story: the Sleeper wakes with a start. Once every link is
+          broken, Jacob (free of his chain) cheers instead. Asset bubbles from the mouth. */}
+      {pct >= 1 ? (
+        <SpiritSays key="jacob-free" src={XMAS.jacobFree} name="Jacob Ledger" alt="Jacob Ledger, free of his chain and cheering" width={120} ratio={420 / 350} mouth={[60, 36]}
+          lines={['You changed the ending!', `${money(saved)} off my chain. Merry Christmas!`]} X={X} />
+      ) : (
+        <SpiritSays key="awake" src={XMAS.awake} name="The Sleeper" alt="The Sleeper, waking with a start on Christmas morning" width={130} ratio={420 / 407} mouth={[53, 46]} bubbleWidth={190} about="That's you, waking up on Christmas morning with a second chance."
+          lines={['Is it Christmas morning? I haven\'t missed it!', `${leaks.length - done.length} ${leaks.length - done.length === 1 ? 'link' : 'links'} to break. Help me change the ending.`]} X={X} />
+      )}
       <Title size={24}>{pct >= 1 ? 'You changed the ending.' : 'It is not too late to change the ending.'}</Title>
       <div className="relative">
         <div className="mb-1.5 flex justify-between text-[14px] font-bold"><span>{done.length} of {leaks.length} links broken</span><span style={{ color: X.gold }}>{money(saved)} saved</span></div>
@@ -146,20 +161,30 @@ function YetToCome({ subscriptions, X, season }) {
     <XScreen X={X} season={season}>
       <Kicker X={X}>STAVE THREE · THE FUTURE</Kicker>
       <Title size={24}>The Hooded One, Ghost of Subscriptions Yet to Come</Title>
-      <div className="relative flex items-end gap-1.5">
-        <Spirit src={XMAS.hooded} name="The Hooded One" alt="The Hooded One, a silent cloaked ghost holding a lantern" width={130} X={X} />
-        <div className="flex flex-1 flex-col gap-2 pb-1.5">
-          <div className="text-[13px] font-extrabold" style={{ color: X.frostSoft }}>NEXT 12 MONTHS</div>
-          <div className="grid grid-cols-4 gap-1">
-            {months.map((month, i) => (
-              <div key={`${month}${i}`} className="x-tear rounded py-1.5 text-center text-[10px] font-extrabold" style={{ background: '#e9eef6', color: '#1a2033', animationDelay: `${0.8 + i * 0.25}s` }}>{month}</div>
-            ))}
-          </div>
-          <div className="flex items-end gap-1.5"><Stocking coins={12} X={X} /><span className="pb-1.5 text-[13px] font-extrabold" style={{ color: X.frost }}>Future you</span></div>
+      <div className="relative flex items-center gap-4">
+        <Spirit src={XMAS.hooded} name="The Hooded One" alt="The Hooded One, a silent cloaked ghost holding a lantern and pointing ahead" width={120} X={X} />
+        <p className="text-[14.5px] leading-snug" style={{ color: X.muted }}>
+          <b style={{ color: X.text }}>The Ghost of Subscriptions Yet to Come.</b> He never speaks. He points at next year: every month you keep paying drops a coin into your stocking.
+        </p>
+      </div>
+      {/* Future you is the Sleeper, speaking with the asset bubbles from the mouth. */}
+      <SpiritSays src={XMAS.awake} name="Future you" alt="Future you, the Sleeper, sitting up in bed in shock" width={115} ratio={420 / 407} mouth={[53, 46]} bubbleWidth={175}
+        lines={['Spirit, is this my future?', 'Can I still change it?']} X={X} />
+      <div className="relative flex items-center gap-3 rounded-2xl px-3 py-3" style={{ background: 'rgba(0,0,0,.22)', border: `1px solid ${X.line}` }}>
+        <Stocking coins={12} X={X} />
+        <div className="min-w-0">
+          <p className="text-[15px] font-bold" style={{ color: X.frost }}>Your stocking: 12 coins</p>
+          <p className="text-[13.5px] leading-snug" style={{ color: X.muted }}>One coin for each month you keep paying {money(monthly)}.</p>
         </div>
       </div>
-      <div className="x-rise bub-r relative text-[14px] font-extrabold" style={{ animationDelay: '2.4s' }}>Spirit, is this my future? Can I still change it?</div>
-      <div className="relative text-[13px] italic" style={{ color: X.frostSoft }}>He never speaks. He shows you next year: every month you keep paying drops into the stocking.</div>
+      <div className="relative">
+        <div className="text-[13px] font-extrabold" style={{ color: X.frostSoft }}>NEXT 12 MONTHS</div>
+        <div className="mt-1.5 grid grid-cols-6 gap-1">
+          {months.map((month, i) => (
+            <div key={`${month}${i}`} className="rounded py-1.5 text-center text-[11px] font-extrabold" style={{ background: '#e9eef6', color: '#1a2033' }}>{month}</div>
+          ))}
+        </div>
+      </div>
       <div className="relative rounded-2xl px-3.5 py-4" style={{ background: 'linear-gradient(135deg, rgba(220,235,255,.18), rgba(220,235,255,.05))', border: '2px solid rgba(220,235,255,.35)' }}>
         <div className="x-frost x-fredoka text-[22px] font-semibold leading-snug" style={{ color: X.frost, textShadow: '0 0 10px rgba(200,225,255,.8)', animationDelay: '4s' }}>{money(monthly * 12)} over the next 12 months if nothing changes.</div>
       </div>
