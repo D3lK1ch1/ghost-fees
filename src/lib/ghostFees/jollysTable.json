@@ -1,0 +1,106 @@
+{
+ "canvas": {
+  "w": 1600,
+  "h": 1000
+ },
+ "jolly": {
+  "x": 590,
+  "y": 40,
+  "w": 420,
+  "h": 420,
+  "note": "drawn behind the table"
+ },
+ "guests": {
+  "gym": {
+   "file": "ghost-1-gym.png",
+   "x": 367,
+   "y": 338,
+   "scale": 0.66,
+   "mirror": false,
+   "tag": {
+    "x": 549,
+    "y": 397,
+    "w": 72,
+    "h": 30,
+    "rotate": -4
+   },
+   "dish": "roast"
+  },
+  "design": {
+   "file": "ghost-2-design.png",
+   "x": 250,
+   "y": 473,
+   "scale": 0.82,
+   "mirror": false,
+   "tag": {
+    "x": 475,
+    "y": 548,
+    "w": 86,
+    "h": 36,
+    "rotate": -5
+   },
+   "dish": "pudding"
+  },
+  "trial": {
+   "file": "ghost-3-streaming-trial.png",
+   "x": 98,
+   "y": 633,
+   "scale": 1.0,
+   "mirror": false,
+   "tag": {
+    "x": 384,
+    "y": 723,
+    "w": 104,
+    "h": 44,
+    "rotate": -3
+   },
+   "dish": "pie"
+  },
+  "netflix": {
+   "file": "ghost-4-netflix.png",
+   "x": 1062,
+   "y": 338,
+   "scale": 0.66,
+   "mirror": true,
+   "tag": {
+    "x": 979,
+    "y": 397,
+    "w": 72,
+    "h": 30,
+    "rotate": 4
+   },
+   "dish": "cookies"
+  },
+  "music": {
+   "file": "ghost-5-music.png",
+   "x": 1137,
+   "y": 473,
+   "scale": 0.82,
+   "mirror": true,
+   "tag": {
+    "x": 1027,
+    "y": 518,
+    "w": 86,
+    "h": 36,
+    "rotate": 5
+   },
+   "dish": "trifle"
+  },
+  "stan": {
+   "file": "ghost-6-stan.png",
+   "x": 1242,
+   "y": 633,
+   "scale": 1.0,
+   "mirror": true,
+   "tag": {
+    "x": 1098,
+    "y": 708,
+    "w": 104,
+    "h": 44,
+    "rotate": 3
+   },
+   "dish": "gingerbread"
+  }
+ },
+ "units": "px in the 1600x1000 scene; ghost PNGs are 520x600 (@2x of 260x300), draw at 260*scale x 300*scale; mirror = flip horizontally"
+}
