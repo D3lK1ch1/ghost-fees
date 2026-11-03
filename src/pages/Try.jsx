@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
-import AsiSignInFirst from '@/components/site/AsiSignInFirst';
 import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
 import { cn } from '@/lib/utils';
@@ -144,7 +143,6 @@ export default function Try() {
           </Step>
 
           <Step n={2} title="Ask Ghost It (agent)" isDone={done.agent}>
-            <AsiSignInFirst className="mb-3" />
             <p className="text-[14px] text-muted-foreground">Ghost It is our chat agent on ASI:One. It shows the maths and the cancel steps. On its page, paste and send. Keep <b className="text-foreground">@ghostit</b> at the start so Ghost It answers.</p>
             <p className="mt-2 rounded-xl bg-background/60 px-3 py-2 font-mono text-[13.5px] text-foreground">{ASK_TEXT}</p>
             <button type="button" onClick={askGhostIt} className="mt-3 rounded-2xl bg-primary px-5 py-3 text-[15px] font-bold text-primary-foreground">Copy and open Ghost It</button>
