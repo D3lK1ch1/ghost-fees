@@ -27,7 +27,7 @@ function FeesPast({ leaks, total, X, season }) {
             <div className="flex h-[88px] items-center justify-center">
               <XmasGhostButton leak={leak} season={season} size={72} X={X} delay={index * 0.4} />
             </div>
-            <p className="mt-1 text-[12.5px] font-bold" style={{ color: '#1f5c3a' }}>{xmasGhost(leak.merchant).name}</p>
+            <p className="mt-1 flex min-h-[2.5em] items-center text-[12.5px] font-bold leading-tight" style={{ color: '#1f5c3a' }}>{xmasGhost(leak.merchant).name}</p>
             <div className="mt-2 flex min-h-[42px] w-full items-center justify-center rounded-2xl px-2 py-1 text-[12.5px] font-bold leading-tight text-white" style={{ background: '#1f5c3a' }}>{leak.badge}</div>
             <div className="mt-2 line-clamp-2 min-h-[2.6em] text-[15px] font-bold leading-tight">{leak.title || leak.merchant}</div>
             <div className="mt-1 text-[16px] font-black" style={{ color: '#c0392b' }}>{money(leak.amount)}</div>

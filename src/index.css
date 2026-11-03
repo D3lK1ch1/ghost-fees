@@ -29,10 +29,10 @@
     --chart-4: 43 96% 60%;
     --chart-5: 0 84% 71%;
     --radius: 1rem;
-    --font-heading: "Lato", ui-sans-serif, system-ui, sans-serif;
-    --font-body: "Lato", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-retro: "VT323", ui-monospace, monospace;
-    --font-display: "Lato", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --sidebar-background: 258 47% 9%;
     --sidebar-foreground: 40 33% 94%;
@@ -102,3 +102,9 @@
 @keyframes teamCascade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .team-cascade { animation: teamCascade 0.5s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .team-cascade { animation: none; } }
+
+/* Clean type (3 Nov): Inter for everything but the logo. Headings are semibold, not
+   bold, and nothing goes heavier than 700, so text never looks chunky. */
+.font-heading.font-bold, .font-heading.font-extrabold, .font-heading.font-black,
+.x-fredoka, .ex-fredoka { font-weight: 600; letter-spacing: -0.01em; }
+.font-black, .font-extrabold { font-weight: 700; }

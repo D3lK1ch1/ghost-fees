@@ -15,8 +15,8 @@
 @keyframes xRise{0%{opacity:0;transform:translateY(20px)}100%{opacity:1;transform:none}}
 @keyframes xBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
 @keyframes xSnap{0%{opacity:1;transform:none}100%{opacity:0;transform:translateY(24px) rotate(25deg)}}
-.x-root{font-family:Lato,system-ui,sans-serif}
-.x-root .x-fredoka{font-family:Lato,system-ui,sans-serif}
+.x-root{font-family:Inter,system-ui,sans-serif}
+.x-root .x-fredoka{font-family:Inter,system-ui,sans-serif}
 .x-snow{animation:xSnow linear infinite}
 .x-twinkle{animation:xTw 1.6s ease-in-out infinite}
 .x-link{animation:xLink .35s ease-out both}
