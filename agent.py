@@ -1556,7 +1556,9 @@ def for_asi(text):
         part = re.sub(r"`([^`\n]+)`", r'"\1"', part)
         part = re.sub(r"\n(?!\n|\s*[-*] |\s*\d+\. )", "\n\n", part)
         out.append(part)
-    return re.sub(r"\n{3,}", "\n\n", "".join(out))
+    text = re.sub(r"\n{3,}", "\n\n", "".join(out))
+    # No angle brackets: a reply with "keep <name>" sat 28 s and never showed (3 Nov).
+    return text.replace("<name>", "a name").replace("<", "‹").replace(">", "›")
 
 
 def make_msg(text, card=None):
