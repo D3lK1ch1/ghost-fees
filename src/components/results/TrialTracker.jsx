@@ -5,6 +5,7 @@ import { downloadTask, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ghost
 import { loadSync, syncEvents } from '@/lib/ghostFees/calendarSync';
 import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
+import CollapseCard from '@/components/site/CollapseCard';
 
 // Trial tracker (Calendar & reminders): free trials you've started, the day each one
 // turns paid, a countdown, and a reminder 2 days before in your own calendar. Trials
@@ -77,13 +78,18 @@ export default function TrialTracker({ leaks = [] }) {
   };
   const remove = (id) => setTrials((list) => list.filter((item) => item.id !== id));
 
-  const input = 'h-10 rounded-xl border border-border bg-background/60 px-3 text-[14.5px] text-foreground';
+  const input = 'h-11 w-full min-w-0 rounded-xl border border-border bg-background/60 px-3 text-[15px] text-foreground';
   return (
-    <section aria-label="Trial tracker" className="mt-6 rounded-3xl border border-border bg-card p-4 sm:p-5">
-      <p className="flex items-center gap-2 font-heading text-[18px] font-bold text-foreground"><Timer className="h-5 w-5 text-primary" aria-hidden="true" /> Trial tracker</p>
-      <p className="mt-0.5 text-[14px] text-muted-foreground">Started a free trial? Add it and I&apos;ll show the day it turns paid, and put a reminder in your calendar 2 days before.</p>
+    <CollapseCard
+      icon={Timer}
+      title="Trial tracker"
+      summary={`${converted.length ? `${converted.length} already paid on your statement · ` : ''}${trials.length} tracked. Tap to add a free trial.`}
+      defaultOpen={trials.length > 0}
+    >
+      <p className="text-[14.5px] leading-snug text-muted-foreground">Started a free trial? Add it here. I&apos;ll show the day it turns paid. You get a calendar reminder 2 days before.</p>
 
-      <form onSubmit={add} className="mt-3 grid gap-2 sm:grid-cols-[1.4fr_1fr_0.8fr_0.8fr_auto] sm:items-end">
+      {/* Two boxes per row until there's room for all five, so nothing runs off the card. */}
+      <form onSubmit={add} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:items-end 2xl:grid-cols-[1.4fr_1fr_0.8fr_0.8fr_auto]">
         <label className="flex flex-col gap-1 text-[13px] font-bold text-muted-foreground">Trial
           <input className={input} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Paramount+" required />
         </label>
@@ -98,7 +104,7 @@ export default function TrialTracker({ leaks = [] }) {
         <label className="flex flex-col gap-1 text-[13px] font-bold text-muted-foreground">Then $/mo
           <input type="number" min="0" step="0.01" className={input} value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Optional" />
         </label>
-        <button type="submit" className="h-10 rounded-xl bg-primary px-4 text-[14.5px] font-bold text-primary-foreground">Track it</button>
+        <button type="submit" className="h-11 w-full rounded-xl bg-primary px-5 text-[15px] font-bold text-primary-foreground sm:col-span-2 2xl:col-span-1 2xl:w-auto">Track it</button>
       </form>
 
       {trials.length > 0 && (
@@ -132,17 +138,18 @@ export default function TrialTracker({ leaks = [] }) {
 
       {converted.length > 0 && (
         <div className="mt-4">
-          <p className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#ff8a8a]">Already turned paid (from your statement)</p>
+          <p className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#ff8a8a]">Already paid on your statement</p>
           <ul className="mt-1.5 space-y-1.5">
             {converted.map((item) => (
-              <li key={item.id} className="rounded-2xl bg-[#ff8a8a]/[0.08] px-3.5 py-2.5 text-[14px] text-foreground">
-                <b>{item.name}</b> turned paid{item.since ? ` on ${nice(new Date(item.since))}` : ''}: {money(item.paid)} so far{item.monthly ? `, ${money(item.monthly)}/mo now` : ''}. Cancel it if you don&apos;t use it, and ask for the first charge back.
+              <li key={item.id} className="rounded-2xl bg-[#ff8a8a]/[0.08] px-4 py-3 text-[14.5px] leading-snug text-foreground">
+                <span className="block"><b>{item.name}</b> turned paid{item.since ? ` on ${nice(new Date(item.since))}` : ''}.</span>
+                <span className="block text-muted-foreground">{money(item.paid)} so far.{item.monthly ? ` Now ${money(item.monthly)}/mo.` : ''} Not using it? Cancel it. Ask for the first charge back.</span>
               </li>
             ))}
           </ul>
         </div>
       )}
-      <p className="mt-3 text-[12.5px] text-muted-foreground">Saved in this browser only. Using calendar sync above? New trials go straight into your synced calendar.</p>
-    </section>
+      <p className="mt-3 text-[13px] text-muted-foreground">Saved in this browser only. Calendar sync on? New trials go straight into your calendar.</p>
+    </CollapseCard>
   );
 }

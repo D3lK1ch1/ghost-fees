@@ -6,6 +6,7 @@ import { TYPE_LABELS, findOverlaps, typeOf } from '@/lib/ghostFees/overlaps';
 import { useGhostList } from '@/hooks/use-ghost-list';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { cn } from '@/lib/utils';
+import CollapseCard from '@/components/site/CollapseCard';
 import { useCancelProof } from './ProofDialog';
 
 // Subscription tracker (Calendar tab): one checklist of every subscription, so you
@@ -80,18 +81,13 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
   const keep = (row) => onAnswer?.((current) => ({ ...current, [row.id]: current[row.id] === 'yes' ? undefined : 'yes' }));
 
   return (
-    <section className="mt-6 rounded-3xl border border-border bg-card p-4 sm:p-5" aria-label="Subscription tracker">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="flex items-center gap-2 font-heading text-[18px] font-bold text-foreground"><ListChecks className="h-5 w-5 text-primary" aria-hidden="true" /> Subscription tracker</p>
-          <p className="mt-0.5 text-[14px] text-muted-foreground">Every subscription in one checklist. Tick Keep or Cancel until nothing is left to decide.</p>
-        </div>
-        <p className="text-right text-[14px] text-muted-foreground">
-          <b className="text-foreground">{sorted.length} of {rows.length}</b> sorted
-          {ghostedYearly > 0 && <><br /><b className="text-[#5ee6c8]">{money(ghostedYearly)}/yr</b> ghosted</>}
-        </p>
-      </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.08]" role="progressbar" aria-valuemin={0} aria-valuemax={rows.length} aria-valuenow={sorted.length} aria-label="Subscriptions sorted">
+    <CollapseCard
+      icon={ListChecks}
+      title="Subscription tracker"
+      summary={`${sorted.length} of ${rows.length} sorted${ghostedYearly > 0 ? ` · ${money(ghostedYearly)}/yr ghosted` : ''}. Tick Keep or Cancel for each one.`}
+      defaultOpen
+    >
+      <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.08]" role="progressbar" aria-valuemin={0} aria-valuemax={rows.length} aria-valuenow={sorted.length} aria-label="Subscriptions sorted">
         <div className="h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: `${Math.round((sorted.length / rows.length) * 100)}%` }} />
       </div>
 
@@ -150,6 +146,6 @@ export default function SubscriptionTracker({ subscriptions = [], answers = {}, 
       </div>
       <p className="mt-3 text-[12.5px] text-muted-foreground">Saved in this browser only. Cancel asks for proof (a screenshot, their email or a reference), then your next statement checks it stopped.</p>
       {proof.dialog}
-    </section>
+    </CollapseCard>
   );
 }
