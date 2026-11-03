@@ -1564,14 +1564,19 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     raw = " ".join(c.text for c in msg.content if isinstance(c, TextContent)).strip()
     if not raw:
         return
+    import time as _t
+    t0 = _t.monotonic()
     try:
         text, card = route(ctx, sender, raw)
     except Exception as e:  # never crash on odd input
         ctx.logger.error(f"route error: {type(e).__name__}: {e}")
         text, card = help_reply()
+    t1 = _t.monotonic()
     # Reply first: ASI:One stops waiting after about 30 seconds, and the counters
     # below are extra storage writes, so they happen after the person has their answer.
     await send_reply(ctx, sender, text, card)
+    # Timings (3 Nov): replies left ~30 s after the message. Which part is slow?
+    ctx.logger.info(f"TIMING route={t1 - t0:.1f}s send={_t.monotonic() - t1:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
     try:
         if not ctx.storage.get(f"seen:{sender}"):
             ctx.storage.set(f"seen:{sender}", True)
