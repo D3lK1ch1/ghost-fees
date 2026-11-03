@@ -165,7 +165,7 @@ function YetToCome({ subscriptions, X, season }) {
       <div className="relative flex items-center gap-4">
         <Spirit src={XMAS.hooded} name="The Hooded One" alt="The Hooded One in a dark cloak holding a lantern and pointing ahead" width={120} X={X} />
         <p className="text-[14.5px] leading-snug" style={{ color: X.muted }}>
-          <b style={{ color: X.text }}>The Ghost of Subscriptions Yet to Come.</b> He never speaks. He points at next year: every month you keep paying drops a coin into your stocking.
+          <b className="mb-1.5 block" style={{ color: X.text }}>The Ghost of Subscriptions Yet to Come.</b>He never speaks. He points at next year: every month you keep paying drops a coin into your stocking.
         </p>
       </div>
       {/* Future you is the Sleeper, speaking with the asset bubbles from the mouth. */}
