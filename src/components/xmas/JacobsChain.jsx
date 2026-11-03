@@ -70,7 +70,7 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
                 >
                   <img src={xmasAvatar(leak.merchant, season)} alt="" width={34} height={34} className={`object-contain h-[34px] w-[34px] flex-none ${broken ? 'opacity-50 grayscale' : ''}`} />
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[14.5px] font-extrabold">{leak.title || leak.merchant}</span>
+                    <span className="block break-words text-[14.5px] font-extrabold leading-tight">{leak.title || leak.merchant}</span>
                     <span className="block text-[12.5px] font-bold" style={{ color: broken ? X.mint : '#c0392b' }}>{broken ? 'Link broken' : `${leak.badge} · ${money(leak.amount)}`}</span>
                   </span>
                 </button>
