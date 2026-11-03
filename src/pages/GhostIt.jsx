@@ -64,6 +64,11 @@ export default function GhostIt() {
               </li>
             ))}
           </ul>
+          {/* What it costs, inside the box that explains Ghost It (3 Nov). */}
+          <div className="mt-2 flex items-center gap-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground">
+            <img src={GHOST_IT_THUMBS} alt="" className="h-12 w-12 shrink-0 object-contain" />
+            <p><b className="text-foreground">Free trial: your first Ghost Pack.</b> {GHOST_IT_PRICE.replace('Your first Ghost Pack is free. ', '')}</p>
+          </div>
           <p className="mt-2 text-center text-[13px] text-muted-foreground">Every number is plain maths from what you tell it. Nothing guessed.</p>
         </section>
 
@@ -99,10 +104,6 @@ export default function GhostIt() {
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
         <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on ASI:One. Start your message with <b className="text-foreground">@ghostit</b>.</p>
-        <div className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground">
-          <img src={GHOST_IT_THUMBS} alt="" className="h-14 w-14 shrink-0 object-contain" />
-          <p><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE}</p>
-        </div>
 
         <div className="mt-8 rounded-2xl border border-border bg-card/50 px-4 py-3.5 text-[14.5px] text-muted-foreground">
           <b className="text-foreground">Want to find the ones you forgot?</b> Ghost It works from what you tell it. Our web app, Ghost Fees, reads a bank statement instead (no bank login).{' '}
