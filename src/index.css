@@ -29,10 +29,10 @@
     --chart-4: 43 96% 60%;
     --chart-5: 0 84% 71%;
     --radius: 1rem;
-    --font-heading: "Fredoka", ui-sans-serif, system-ui, sans-serif;
-    --font-body: "Nunito", ui-sans-serif, system-ui, sans-serif;
+    --font-heading: "Lato", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Lato", ui-sans-serif, system-ui, sans-serif;
     --font-retro: "VT323", ui-monospace, monospace;
-    --font-display: "Fredoka", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Lato", ui-sans-serif, system-ui, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     --sidebar-background: 258 47% 9%;
     --sidebar-foreground: 40 33% 94%;

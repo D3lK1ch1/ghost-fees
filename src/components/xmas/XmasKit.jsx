@@ -1,3 +1,7 @@
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { xmasAvatar, xmasGhost } from '@/lib/ghostFees/christmasArt';
+import { BADGE_MEANING } from '@/lib/ghostFees/leaks';
+import { money } from '@/lib/ghostFees/format';
 import '@/components/ex/exKit.css';
 import './xmasKit.css';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
@@ -83,11 +87,12 @@ export function LineButton({ children, onClick, X, className = '' }) {
 }
 
 // A ghost from the story with its gold name tag underneath, as in every stave.
-export function Spirit({ src, name, alt = '', width = 140, X, className = '' }) {
+export function Spirit({ src, name, alt = '', width = 140, X, className = '', about }) {
   return (
     <div className={`relative flex flex-none flex-col items-center ${className}`}>
       <img src={src} alt={alt} width={width} className="x-breathe block h-auto" style={{ width }} />
       <div className="x-fredoka mt-1 rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
+      {about && <p className="mt-1 max-w-[170px] text-center text-[12.5px] leading-snug" style={{ color: X.muted }}>{about}</p>}
     </div>
   );
 }
@@ -139,27 +144,58 @@ export const Disclaimer = ({ X }) => (
 // its mouth and goes up and right, the second sits just under it. Both tails point
 // back at the ghost. mouth: where the tail tip goes, as % of the picture (width x
 // height). Bubbles never cover the eyes.
-export function SpiritSays({ src, name, alt = '', width = 130, ratio = 1.3, mouth = [80, 40], lines = [], X }) {
+export function SpiritSays({ src, name, alt = '', width = 130, ratio = 1.3, mouth = [80, 40], lines = [], X, bubbleWidth = 220, about }) {
+  // The ghost on the left; its bubbles sit beside it, starting at mouth height with the
+  // tail pointing back at the mouth. The bubbles shrink to the space left, so they can
+  // never run off the card.
   const height = Math.round(width * ratio);
-  const tipX = (mouth[0] / 100) * width;
-  const tipY = (mouth[1] / 100) * height;
-  const [first, second] = lines;
+  const top = Math.max(0, Math.round((mouth[1] / 100) * height) - 54);
   return (
-    <div className="relative" style={{ paddingTop: 70, minHeight: height + 110 }}>
-      <div className="relative" style={{ width }}>
+    <div className="relative flex items-start gap-1">
+      <div className="flex flex-none flex-col items-center" style={{ width }}>
         <img src={src} alt={alt} width={width} height={height} className="x-breathe block h-auto" style={{ width }} />
-        <div className="x-fredoka mx-auto mt-1 w-fit rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
-        {first && (
-          <div className="absolute z-10" style={{ left: tipX, top: tipY, transform: 'translate(-9.4%, -100%)' }}>
-            <div className="bub-l x-rise !min-w-0 text-[14.5px] font-semibold" style={{ width: 210, animationDelay: '.3s' }}>{first}</div>
-          </div>
-        )}
-        {second && (
-          <div className="absolute z-10" style={{ left: tipX + 34, top: tipY + 8 }}>
-            <div className="bub-l x-rise !min-w-0 text-[14.5px] font-semibold" style={{ width: 210, animationDelay: '.9s' }}>{second}</div>
-          </div>
-        )}
+        <div className="x-fredoka mt-1 w-fit rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
+        {about && <p className="mt-1 text-center text-[12.5px] leading-snug" style={{ color: X.muted, width: Math.max(width, 150) }}>{about}</p>}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-1" style={{ paddingTop: top }}>
+        {lines.filter(Boolean).map((line, index) => (
+          <div key={line} className="bub-l x-rise !min-w-0 text-[14.5px] font-semibold" style={{ width: '100%', maxWidth: bubbleWidth, animationDelay: `${0.3 + index * 0.6}s` }}>{line}</div>
+        ))}
       </div>
     </div>
+  );
+}
+
+
+// A festive ghost you can tap: a popup says who they are and what this kind of leak
+// means. Bobs gently (x-bob); its box leaves room above so the bob never clips.
+export function XmasGhostButton({ leak, season, size = 64, X, className = '', delay = 0 }) {
+  const ghost = xmasGhost(leak.merchant);
+  const meaning = BADGE_MEANING[leak.badge];
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button type="button" aria-label={`Who is ${ghost.name}?`} className={`group relative flex-none rounded-full focus:outline-none focus-visible:ring-2 ${className}`} style={{ '--tw-ring-color': X.gold }}>
+          <img src={xmasAvatar(leak.merchant, season)} alt={ghost.name} width={size} height={size} className="x-bob block object-contain" style={{ width: size, height: size, animationDelay: `${delay}s` }} />
+          <span aria-hidden="true" className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black" style={{ background: X.gold, color: '#14301f' }}>?</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-72 rounded-2xl border-2 p-4" style={{ background: '#fbf6ec', color: '#14301f', borderColor: X.gold }}>
+        <div className="flex items-center gap-3">
+          <img src={xmasAvatar(leak.merchant, season)} alt="" width={52} height={52} className="h-[52px] w-[52px] object-contain" />
+          <div>
+            <p className="text-[17px] font-black leading-tight">{ghost.name}</p>
+            <p className="text-[13px] font-bold" style={{ color: '#c0392b' }}>{leak.badge} · {money(leak.amount)}</p>
+          </div>
+        </div>
+        <p className="mt-2.5 text-[14px] leading-snug">{ghost.who}</p>
+        {meaning && (
+          <div className="mt-2.5 rounded-xl px-3 py-2 text-[13.5px] leading-snug" style={{ background: '#1f5c3a14' }}>
+            <p><b>{leak.badge}:</b> {meaning.what}</p>
+            <p className="mt-1"><b>What to do:</b> {meaning.todo}</p>
+          </div>
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }

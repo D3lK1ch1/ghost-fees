@@ -34,7 +34,7 @@ function drawGhost(ctx, x, y, scale, alpha = 1) {
 
 export async function makeShareCard({ total, months, ghosts }) {
   if (document.fonts?.load) {
-    await Promise.all(['700 170px Fredoka', '600 64px Fredoka', '700 34px Nunito'].map((font) => document.fonts.load(font).catch(() => null)));
+    await Promise.all(['700 170px Lato', '700 64px Lato', '700 34px Lato'].map((font) => document.fonts.load(font).catch(() => null)));
   }
   const canvas = document.createElement('canvas');
   canvas.width = SIZE;
@@ -67,23 +67,23 @@ export async function makeShareCard({ total, months, ghosts }) {
 
   ctx.textAlign = 'center';
   ctx.fillStyle = '#f5f1ea';
-  ctx.font = '600 64px Fredoka, Nunito, sans-serif';
+  ctx.font = '700 64px Lato, Lato, sans-serif';
   ctx.fillText('I found', SIZE / 2, 640);
 
   ctx.save();
   ctx.shadowColor = 'rgba(255,154,60,0.55)';
   ctx.shadowBlur = 40;
   ctx.fillStyle = '#ff9a3c';
-  ctx.font = '700 170px Fredoka, Nunito, sans-serif';
+  ctx.font = '700 170px Lato, Lato, sans-serif';
   ctx.fillText(money(total), SIZE / 2, 800);
   ctx.restore();
 
   ctx.fillStyle = '#f5f1ea';
-  ctx.font = '600 52px Fredoka, Nunito, sans-serif';
+  ctx.font = '700 52px Lato, Lato, sans-serif';
   ctx.fillText(`of ghost fees in ${monthsLabel(months)} months`, SIZE / 2, 880);
 
   ctx.fillStyle = '#c3b8db';
-  ctx.font = '700 34px Nunito, sans-serif';
+  ctx.font = '700 34px Lato, sans-serif';
   ctx.fillText(`${ghosts} ${ghosts === 1 ? 'ghost' : 'ghosts'} found · hunt-ghost-fees.base44.app`, SIZE / 2, 990);
 
   return new Promise((resolve) => { canvas.toBlob(resolve, 'image/png'); });
