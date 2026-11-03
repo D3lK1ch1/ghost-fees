@@ -21,7 +21,7 @@ export const TEAM = [
     role: 'the chat agent',
     color: '#8FB8FF',
     job: 'Chat in ASI:One',
-    does: 'Tell @ghostit what you pay for. It shows the maths, finds double-ups and gives cancel steps. First Ghost Pack free.',
+    does: 'Tell @ghostit what you pay for. It shows the maths, finds double-ups, then a plan to keep one and cancel or rotate the rest. First Ghost Pack free.',
     Icon: MessageCircle,
   },
 ];

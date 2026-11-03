@@ -66,7 +66,7 @@ function Offer() {
         <span>
           <span className="block text-[15px] font-bold text-foreground">Ghost It in ASI:One · first Ghost Pack free</span>
           <span className="mt-0.5 block text-[14px] leading-snug text-muted-foreground">
-            Then $2 a pack or $5 for every pack, paid once in the chat. Finds what you pay for twice, like YouTube Premium and Spotify.
+            Then $2 a pack or $5 for every pack, paid once in the chat. Finds what you pay for twice, like YouTube Premium and Spotify, and plans which to keep, cancel or rotate.
           </span>
         </span>
       </Link>
