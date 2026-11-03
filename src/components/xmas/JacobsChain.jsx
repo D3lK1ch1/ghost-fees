@@ -37,15 +37,15 @@ export default function JacobsChain({ leaks, cleared = [], onClearedChange, onDr
         <p className="relative -mt-1 max-w-[420px] text-[14.5px] leading-snug" style={{ color: X.muted }}>
           {left.length
             ? 'The first visitor. Every fee and forgotten subscription in your statement is a receipt link in his chain. Break them to set him free.'
-            : 'Every link is broken. Jacob is free, and so is that money.'}
+            : 'Every link is broken. Jacob is free. So is that money.'}
         </p>
         {/* Asset bubbles from his mouth, as in every stave. Two poses from Image Assets:
             weary in the chain, then cheering once every link is broken. */}
         {left.length ? (
-          <SpiritSays key="weary" src={XMAS.jacob} name="Jacob Ledger" alt="Jacob Ledger, a weary ghost tangled in a chain of receipts" width={150} ratio={320 / 420} mouth={[76, 47]} bubbleWidth={190}
+          <SpiritSays key="weary" src={XMAS.jacob} name="Jacob Ledger" alt="Jacob Ledger tangled in a chain of receipts" width={150} ratio={320 / 420} mouth={[76, 47]} bubbleWidth={190}
             lines={['I wear the chain I forged in life. Every link a fee.', `${left.length} ${left.length === 1 ? 'link' : 'links'} still. Break them.`]} X={X} />
         ) : (
-          <SpiritSays key="free" src={XMAS.jacobFree} name="Jacob Ledger" alt="Jacob Ledger, free of his chain and cheering" width={130} ratio={420 / 350} mouth={[60, 36]} bubbleWidth={190}
+          <SpiritSays key="free" src={XMAS.jacobFree} name="Jacob Ledger" alt="Jacob Ledger free of his chain and cheering" width={130} ratio={420 / 350} mouth={[60, 36]} bubbleWidth={190}
             lines={['Free! Every link is broken.', `${money(leaks.reduce((sum, leak) => sum + leak.amount, 0))} off my chain. Thank you.`]} X={X} />
         )}
 

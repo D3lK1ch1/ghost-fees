@@ -28,12 +28,12 @@ export function xmasAvatar(merchant, season) {
 // Who each festive ghost is, for the tap-for-popup on every card (3 Nov: "each ghost
 // needs a description and popup"). Same keys as the avatars above.
 export const XMAS_GHOSTS = {
-  netflix: { name: 'Popcorn Pete', who: 'The binge-watcher in the Christmas jumper. He haunts the streaming you keep paying for after the show ends.' },
-  stan: { name: 'Tangled Tinsel', who: 'Wrapped up in fairy lights and grumpy about it. She haunts the subscriptions that are easy to start and fiddly to leave.' },
-  gym: { name: 'Sweaty Holly', who: 'Holding a dumbbell and a candy cane, mostly the candy cane. Haunts the membership you pay for but skip.' },
-  adobe: { name: 'Cool Yule', who: 'Too cool to unwrap the present. Haunts design and software tools, often paid twice.' },
-  streammax: { name: 'Frosty', who: 'A chilly little ghost with a scarf and mistletoe. Haunts free trials that quietly turned paid, and streaming add-ons.' },
-  more: { name: 'Mystery Parcel', who: 'A gift you never asked for. Haunts bank fees, price rises and charges you didn\'t expect.' },
+  netflix: { name: 'Popcorn Pete', who: 'The binge-watcher in the Christmas jumper. He haunts streaming you still pay for after the show ends.' },
+  stan: { name: 'Tangled Tinsel', who: 'Tangled in fairy lights and grumpy about it. She haunts subscriptions that are easy to start and hard to leave.' },
+  gym: { name: 'Sweaty Holly', who: 'Holds a dumbbell and a candy cane. Mostly the candy cane. Haunts the gym you pay for but skip.' },
+  adobe: { name: 'Cool Yule', who: 'Too cool to open the present. Haunts design and software tools you often pay for twice.' },
+  streammax: { name: 'Frosty', who: 'A chilly ghost with a scarf and mistletoe. Haunts free trials that quietly turned paid.' },
+  more: { name: 'Mystery Parcel', who: 'A gift you never asked for. Haunts bank fees and charges you didn\'t expect.' },
 };
 
 export function xmasGhost(merchant) {
