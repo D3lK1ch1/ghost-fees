@@ -19,7 +19,7 @@ function FeesPast({ leaks, total, X, season }) {
     <XScreen X={X} season={season}>
       <Kicker X={X}>STAVE ONE · THE PAST</Kicker>
       <Title size={24}>Dusty, the Ghost of Fees Past</Title>
-      <SpiritSays src={XMAS.dusty} name="Dusty" alt="Dusty, a candle ghost reading an old ledger" width={130} ratio={422 / 320} mouth={[80, 44]} lines={['I am the Ghost of Fees Past.', 'Long past? No. Your past, from this statement.']} X={X} about="Reads your old statement by candlelight and shows what it already cost you." />
+      <SpiritSays src={XMAS.dusty} name="Dusty" alt="Dusty the candle ghost reading an old ledger" width={130} ratio={422 / 320} mouth={[80, 44]} lines={['I am the Ghost of Fees Past.', 'Long past? No. Your past. This statement.']} X={X} about="Reads your old statement by candlelight. Shows what it already cost you." />
       {/* Bigger cards with room above for the ghost to bob; text centred; buttons line up along the bottom. Tap a ghost for who they are. */}
       <div className="relative grid grid-cols-1 gap-3 sm:grid-cols-3">
         {leaks.slice(0, 3).map((leak, index) => (
@@ -59,7 +59,7 @@ function Morning({ leaks, cleared, subscriptions, X, season }) {
     <XScreen X={X} season={season} snow={false} background={`linear-gradient(180deg, ${pct >= 1 ? '#ffb48a' : '#1b2a4a'} 0%, ${X.glow} 45%, ${X.bg} 80%)`}>
       <Kicker X={X}>CHRISTMAS MORNING</Kicker>
       <div className="relative overflow-hidden rounded-2xl" style={{ border: `1px solid ${X.line}` }}>
-        <img src={XMAS.morning(season)} alt="Christmas morning, with coins falling like snow" width={720} className="block h-[200px] w-full object-cover" />
+        <img src={XMAS.morning(season)} alt="Christmas morning with coins falling like snow" width={720} className="block h-[200px] w-full object-cover" />
         <div aria-hidden="true" className="absolute inset-0 transition-opacity duration-1000" style={{ background: '#0b1020', opacity: 0.65 * (1 - pct) }} />
         {done.map((leak, index) => (
           <span key={leak.id} aria-hidden="true" className="x-coin absolute h-4 w-4 rounded-full" style={{ left: `${12 + ((index * 23) % 76)}%`, top: `${30 + ((index * 17) % 50)}%`, background: X.gold, border: `2px solid ${X.goldDeep}`, animationDelay: `${0.3 + index * 0.25}s` }} />
@@ -68,10 +68,10 @@ function Morning({ leaks, cleared, subscriptions, X, season }) {
       {/* Christmas morning in the story: the Sleeper wakes with a start. Once every link is
           broken, Jacob (free of his chain) cheers instead. Asset bubbles from the mouth. */}
       {pct >= 1 ? (
-        <SpiritSays key="jacob-free" src={XMAS.jacobFree} name="Jacob Ledger" alt="Jacob Ledger, free of his chain and cheering" width={120} ratio={420 / 350} mouth={[60, 36]}
+        <SpiritSays key="jacob-free" src={XMAS.jacobFree} name="Jacob Ledger" alt="Jacob Ledger free of his chain and cheering" width={120} ratio={420 / 350} mouth={[60, 36]}
           lines={['You changed the ending!', `${money(saved)} off my chain. Merry Christmas!`]} X={X} />
       ) : (
-        <SpiritSays key="awake" src={XMAS.awake} name="The Sleeper" alt="The Sleeper, waking with a start on Christmas morning" width={130} ratio={420 / 407} mouth={[53, 46]} bubbleWidth={190} about="That's you, waking up on Christmas morning with a second chance."
+        <SpiritSays key="awake" src={XMAS.awake} name="The Sleeper" alt="The Sleeper waking with a start on Christmas morning" width={130} ratio={420 / 407} mouth={[53, 46]} bubbleWidth={190} about="That's you. Awake on Christmas morning with a second chance."
           lines={['Is it Christmas morning? I haven\'t missed it!', `${leaks.length - done.length} ${leaks.length - done.length === 1 ? 'link' : 'links'} to break. Help me change the ending.`]} X={X} />
       )}
       <Title size={24}>{pct >= 1 ? 'You changed the ending.' : 'It is not too late to change the ending.'}</Title>
@@ -98,7 +98,7 @@ function Present({ subscriptions, X, season }) {
         <div className="flex flex-col gap-2 pb-8">
           <SpeechBubble>Come in, and know me better, friend! Every dish is something you pay for.</SpeechBubble>
         </div>
-        <Spirit src={XMAS.jolly} name="Jolly" alt="Jolly, a cheerful ghost in a patchwork robe holding a torch" width={130} X={X} className="ml-auto" />
+        <Spirit src={XMAS.jolly} name="Jolly" alt="Jolly the cheerful ghost in a patchwork robe holding a torch" width={130} X={X} className="ml-auto" />
       </div>
       <ul className="relative m-0 grid list-none grid-cols-3 gap-2 rounded-2xl border-t-4 border-dashed p-3" style={{ borderColor: '#c0392b', background: '#5a3a24' }}>
         {subscriptions.slice(0, 9).map((item, index) => (
@@ -162,14 +162,14 @@ function YetToCome({ subscriptions, X, season }) {
       <Kicker X={X}>STAVE THREE · THE FUTURE</Kicker>
       <Title size={24}>The Hooded One, Ghost of Subscriptions Yet to Come</Title>
       <div className="relative flex items-center gap-4">
-        <Spirit src={XMAS.hooded} name="The Hooded One" alt="The Hooded One, a silent cloaked ghost holding a lantern and pointing ahead" width={120} X={X} />
+        <Spirit src={XMAS.hooded} name="The Hooded One" alt="The Hooded One in a dark cloak holding a lantern and pointing ahead" width={120} X={X} />
         <p className="text-[14.5px] leading-snug" style={{ color: X.muted }}>
           <b style={{ color: X.text }}>The Ghost of Subscriptions Yet to Come.</b> He never speaks. He points at next year: every month you keep paying drops a coin into your stocking.
         </p>
       </div>
       {/* Future you is the Sleeper, speaking with the asset bubbles from the mouth. */}
-      <SpiritSays src={XMAS.awake} name="Future you" alt="Future you, the Sleeper, sitting up in bed in shock" width={115} ratio={420 / 407} mouth={[53, 46]} bubbleWidth={175}
-        lines={['Spirit, is this my future?', 'Can I still change it?']} X={X} />
+      <SpiritSays src={XMAS.awake} name="Future you" alt="Future you sitting up in bed in shock" width={115} ratio={420 / 407} mouth={[53, 46]} bubbleWidth={175}
+        lines={['Spirit! Is this my future?', 'Can I still change it?']} X={X} />
       <div className="relative flex items-center gap-3 rounded-2xl px-3 py-3" style={{ background: 'rgba(0,0,0,.22)', border: `1px solid ${X.line}` }}>
         <Stocking coins={12} X={X} />
         <div className="min-w-0">
