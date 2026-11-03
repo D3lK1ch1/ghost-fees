@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v11.3 (3 Nov 2026): first replies also list the tap-to-try prompts as text (in case cards don't show).
 # v11.1 (3 Nov 2026): ASI:One's pre-filled "What's new with you?" gets a welcome and tap cards, not the changelog.
 # v11 (3 Nov 2026): consolidate plan (keep one, cancel or rotate the rest, bundle tips).
 # v10.1 (3 Nov 2026): answer first with the saving; spend, pay-per-use and bills replies.
@@ -386,7 +387,7 @@ def help_reply(full=False):
     """v8: vague or first messages get one purpose line and the form card. The full
     command list is for `commands`, and for text-only mode (no cards)."""
     if not full and USE_CARDS:
-        return PURPOSE.replace("Tell me what you pay for below.", "Tap one below to try it, or tell me what you pay for."), quick_start_card()
+        return PURPOSE.replace("Tell me what you pay for below.", "Tap one below to try it, or tell me what you pay for.") + "\n\n" + quick_start_text(), quick_start_card()
     text = (
         PURPOSE + "\n\n**I'm Ghost It.** I add up what your subscriptions really cost, find the doubles, "
         "give you the real cancel steps, and track that they actually stopped.\n\n"
@@ -420,7 +421,8 @@ def about_reply():
         "",
         "Every pack shows the maths, then the official cancel steps and a ready email, and I check after 7 days that it stopped.",
         "",
-        "**Try it:** tap a card below, or send `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`.",
+        quick_start_text(),
+        "",
         "Something unclear? `feedback: ...` and I'll change it.",
         "",
         DISCLAIMER,
@@ -435,6 +437,12 @@ QUICK_STARTS = [
     ("🧩 Which one should I keep?", "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?", "Consolidate plan"),
     ("💪 What does my gym really cost?", "gym $25 a week", "Gym pack"),
 ]
+
+
+def quick_start_text():
+    """The same tap-to-try prompts as text, in case a chat window doesn't show cards."""
+    return "\n".join(["**Try one (copy and send):**"] + [f"{i}. `{example}`" for i, (_, example, _) in enumerate(QUICK_STARTS, 1)]
+                     + [f"{len(QUICK_STARTS) + 1}. `How does it work?`"])
 
 
 def quick_start_card():
@@ -1109,7 +1117,7 @@ def welcome_reply():
     lines = [PURPOSE.replace(" Tell me what you pay for below.", ""), "",
              "🧩 **New:** paying for two or three of the same thing? I'll plan which one to keep, "
              "and cancel or rotate the rest, with the saving worked out.", "",
-             "**Try it:** tap a card below. Or send what you pay for, e.g. `Netflix $19, Stan $16, Disney+ $16`.",
+             quick_start_text(),
              "Every change from your feedback: `what's new`."]
     return "\n".join(lines), quick_start_card()
 

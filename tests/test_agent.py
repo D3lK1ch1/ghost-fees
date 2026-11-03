@@ -459,9 +459,13 @@ class About(unittest.TestCase):
             self.assertEqual(card[0], "carousel", msg)
             self.assertNotIn("—", reply)
 
-    def test_hi_is_still_one_line(self):
+    def test_hi_is_purpose_then_the_prompts(self):
+        # v11.3: one purpose line, then the tap-to-try prompts as text too.
         reply, _ = A.route(FakeCtx(), SENDER, "hi")
-        self.assertEqual(reply.count("\n"), 0)
+        first, rest = reply.split("\n", 1)
+        self.assertIn("I'm Ghost It", first)
+        self.assertIn("**Try one (copy and send):**", rest)
+        self.assertIn("`How does it work?`", rest)
 
 
 class AsiOneGreeting(unittest.TestCase):
@@ -472,7 +476,7 @@ class AsiOneGreeting(unittest.TestCase):
         self.assertIn("I hunt the money leaks", reply.split("\n")[0])
         self.assertIn("**New:**", reply)  # a welcome, not the changelog
         self.assertNotIn("We changed", reply)
-        self.assertIn("Try it", reply)
+        self.assertIn("Try one", reply)
         self.assertEqual(card[0], "carousel")
 
 
