@@ -29,7 +29,7 @@ export default function XmasLeakCard({ leak, onDraft, primary = false }) {
       <div className="flex items-center gap-2.5">
         <img src={xmasAvatar(leak.merchant, season)} alt="" width={46} height={46} className="object-contain x-bob h-[46px] w-[46px] flex-none" />
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-[16px] font-extrabold">{leak.title || leak.merchant}</span>
+          <span className="min-w-0 break-words text-[16px] font-extrabold leading-tight">{leak.title || leak.merchant}</span>
           <span title={BADGE_MEANING[leak.badge]?.what} className="mt-0.5 self-start rounded-md px-2 py-0.5 text-[12.5px] font-extrabold" style={{ background: X.cream, color: '#14301f' }}>{leak.badge}</span>
         </div>
         <div className="flex flex-none flex-col items-end">
