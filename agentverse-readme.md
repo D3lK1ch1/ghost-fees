@@ -21,7 +21,7 @@ Every pack shows the maths line by line, the pack total, the leaks with what you
 
 ## Try asking
 - "How does it work?" (a quick explainer on cards)
-- "consolidate" (after listing what you pay: keep one, cancel or rotate the rest)
+- "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?" (the consolidate plan: keep one, cancel or rotate the rest)
 - "packs" (see all six Ghost Packs and what each one hunts)
 - "Spotify $14, YouTube Premium $17. Am I paying twice?"
 - "ChatGPT $30, Claude $30, Cursor $30, Copilot $15" (builders: $1,260 a year, and which AI tools double up)

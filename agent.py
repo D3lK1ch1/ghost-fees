@@ -432,7 +432,7 @@ def about_reply():
 QUICK_STARTS = [
     ("🎧 Paying twice for music?", "Spotify $14, YouTube Premium $17", "Sound pack"),
     ("💻 Too many AI tools?", "ChatGPT $30, Claude $30, Cursor $30, Copilot $15", "Tech Stack pack"),
-    ("📺 Three streaming apps?", "Netflix $19, Stan $16, Disney+ $16", "Screen pack"),
+    ("🧩 Which one should I keep?", "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?", "Consolidate plan"),
     ("💪 What does my gym really cost?", "gym $25 a week", "Gym pack"),
 ]
 
@@ -1321,6 +1321,10 @@ def gated_ghost(ctx, sender, items, title, everything=False, browse=False, steps
     return ((note + "\n\n" + text) if note else text), card
 
 
+# "Which one should I keep?" with a list: go straight to the consolidate plan.
+KEEP_Q = re.compile(r"which (?:one |ones )?(?:should i|to|do i) keep|consolidate|which (?:one|ones) to cancel|what should i cancel")
+
+
 def route(ctx, sender, raw):
     text = raw.strip()
     text = re.sub(r"^@\S+\s*", "", text)   # strip @ghostit
@@ -1356,6 +1360,9 @@ def route(ctx, sender, raw):
         if a == "check":
             subs_text = str(sel.get("subs", "")) + " " + str(sel.get("who", ""))
             subs, missing = parse_subs(subs_text)
+            if subs and KEEP_Q.search(subs_text.lower()):
+                check_reply(ctx, sender, subs_text, subs, missing)   # saves the list
+                return consolidate_reply(ctx, sender)
             if subs:
                 return check_reply(ctx, sender, subs_text, subs, missing)
             return help_reply()
@@ -1481,6 +1488,9 @@ def route(ctx, sender, raw):
 
     # 3. A list of subscriptions
     subs, missing = parse_subs(text)
+    if subs and KEEP_Q.search(low):
+        check_reply(ctx, sender, text, subs, missing)   # saves the list, same as a normal check
+        return consolidate_reply(ctx, sender)
     if subs:
         return check_reply(ctx, sender, text, subs, missing)
     if missing and any(find_merchant(n) for n in missing):

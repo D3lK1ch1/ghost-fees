@@ -749,3 +749,17 @@ class OpenersGetCards(unittest.TestCase):
             _, card = A.route(FakeCtx(), SENDER, msg)
             self.assertEqual(card[0], "carousel", msg)
             self.assertIn("qs-how", [item["id"] for item in card[1]["items"]], msg)
+
+
+class KeepQuestion(unittest.TestCase):
+    def test_list_with_which_should_i_keep_gives_the_plan(self):
+        reply, card = A.route(FakeCtx(), SENDER, "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?")
+        self.assertIn("Your consolidate plan", reply)
+        self.assertIn("Save $420.00 a year", reply)
+        self.assertEqual(card[0], "detail")
+
+    def test_quick_start_card_runs_the_plan(self):
+        _, card = A.route(FakeCtx(), SENDER, "hi")
+        item = next(i for i in card[1]["items"] if i["title"].startswith("🧩"))
+        reply, _ = A.route(FakeCtx(), SENDER, json.dumps(item["primary_cta"]["selection"]))
+        self.assertIn("Your consolidate plan", reply)
