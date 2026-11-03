@@ -6,6 +6,7 @@ import { downloadAllReminders } from '@/lib/ghostFees/reminder';
 import GhostMark from '@/components/site/GhostMark';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
+import { buildGoals, useGoalTasks } from '@/lib/ghostFees/goalTasks';
 import { SEASON_KEY, SEASONS, XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
 
 // One colour set per theme for the hill, road, house and stops. Haunted keeps its
@@ -135,28 +136,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
   const gpVars = Object.fromEntries(Object.entries(P).map(([key, value]) => [`--gp-${key}`, value]));
   // Each stop's ghost is the theme's own: 💔 the ex, 🎄 the festive ghost, Haunted the plain ghost.
   const themeGhost = (merchant) => (theme.key === 'ex' && avatarFor ? avatarFor(merchant) : theme.key === 'christmas' ? xmasAvatar(merchant, season) : null);
-  const leakGoals = leaks.map((leak) => {
-    const kind = leak.action || 'check';
-    return { id: leak.id, kind, leak, label: KINDS[kind].label(leak.title || leak.merchant), save: leak.amount, why: leak.reason, done: cleared.includes(leak.id) };
-  });
-  const reminderGoal = subscriptions.length
-    ? [{ id: 'reminders', kind: 'reminders', label: KINDS.reminders.label(), save: 0, why: `You have ${subscriptions.length} subscriptions. A reminder 2 days before each charge means nothing renews without you deciding.`, done: remindersDone }]
-    : [];
-  // Subscriptions the user would not sign up for again become cancel goals.
-  const subGoals = cancelSubs.map((item) => {
-    const id = `sub:${item.id}`;
-    return {
-      id,
-      kind: 'cancel',
-      leak: { id, merchant: item.merchant, title: item.merchant, monthly: item.monthly, amount: item.monthly, action: 'cancel', badge: 'Subscription' },
-      label: KINDS.cancel.label(item.merchant),
-      save: 0,
-      monthly: item.monthly,
-      why: `You said you would not sign up for ${item.merchant} today. It costs ${money(item.monthly)} a month.`,
-      done: cleared.includes(id),
-    };
-  });
-  const goals = [...leakGoals.slice(0, 1), ...reminderGoal, ...leakGoals.slice(1), ...subGoals];
+  const goals = buildGoals({ leaks, subscriptions, cancelSubs, cleared, remindersDone });
   // 🎄 one different ghost per goal (3 Nov: the same ghost showed three times). Bank fees
   // get Jacob Ledger (his chain is fees); any repeat takes the next unused character.
   const xmasCast = (() => {
@@ -175,14 +155,14 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
   const ghostFor = (i, merchant) => (theme.key === 'christmas' ? xmasCast[i] : themeGhost(merchant));
 
   const [selectedId, setSelectedId] = useState(null);
-  const [ticked, setTicked] = useState({});
+  const { ticks: ticked, due, tick: tickStep, setDue } = useGoalTasks();
 
   const currentIndex = goals.findIndex((goal) => !goal.done);
   const selected = goals.find((goal) => goal.id === selectedId) || goals[currentIndex] || goals[goals.length - 1];
   const selectedIndex = goals.indexOf(selected);
   const doneCount = goals.filter((goal) => goal.done).length;
   const saved = goals.filter((goal) => goal.done).reduce((sum, goal) => sum + goal.save, 0);
-  const total = leakGoals.reduce((sum, goal) => sum + goal.save, 0);
+  const total = goals.filter((goal) => goal.leak && !String(goal.id).startsWith("sub:")).reduce((sum, goal) => sum + goal.save, 0);
   const allDone = goals.length > 0 && doneCount === goals.length;
   const months = leaks[0]?.months || 0;
 
@@ -196,7 +176,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
     if (goal.kind === 'reminders') onRemindersDone(done);
     else onClearedChange((current) => (done ? [...new Set([...current, goal.id])] : current.filter((id) => id !== goal.id)));
   };
-  const tick = (goalId, step) => setTicked((current) => ({ ...current, [goalId]: { ...current[goalId], [step]: !current[goalId]?.[step] } }));
+  const tick = (goalId, step) => tickStep(goalId, step);
   const nextGoal = () => {
     const next = goals.find((goal, i) => i > selectedIndex && !goal.done) || goals.find((goal) => !goal.done);
     if (next) setSelectedId(next.id);
@@ -424,11 +404,18 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                 <span className="font-heading text-[1.6rem] font-bold">{money(selected.save)}</span>
               </div>
             )}
+            {/* Pick a day: the goal goes on the Calendar tab's task list and the month grid. */}
+            {!selected.done && (
+              <label className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-[#1b1233]/20 px-3 py-2 text-[14px] font-bold">
+                <span>📅 Do it on</span>
+                <input type="date" value={due[selected.id] || ''} onChange={(event) => setDue(selected.id, event.target.value)} className="rounded-lg border border-[#1b1233]/30 bg-transparent px-2 py-1 text-[14px] font-semibold" />
+              </label>
+            )}
             <div className="mt-3 flex gap-2.5">
               {selected.leak?.action && (
                 <button
                   type="button"
-                  onClick={() => { onDraft(selected.leak); setTicked((current) => ({ ...current, [selected.id]: { ...current[selected.id], 0: true } })); }}
+                  onClick={() => { onDraft(selected.leak); tickStep(selected.id, 0, true); }}
                   className="flex-1 rounded-xl border-2 border-[#1b1233]/80 py-2.5 text-[14px] font-bold transition-colors hover:bg-[#1b1233]/[0.06]"
                 >
                   Draft email

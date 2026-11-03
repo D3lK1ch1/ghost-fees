@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { BellRing, CalendarPlus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useGoalTasks } from '@/lib/ghostFees/goalTasks';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { downloadAllReminders, nextChargeDate, nextReminderDate } from '@/lib/ghostFees/reminder';
@@ -57,6 +58,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
   const latestCharge = charges.map((item) => item.date).sort().pop();
   const [month, setMonth] = useState(latestCharge ? monthKey(latestCharge) : months[0]);
   const [day, setDay] = useState(null);
+  const { due: dueTasks } = useGoalTasks();
 
   if (!months.length) {
     return <p className="mt-4 text-[14.5px] text-muted-foreground">No dated charges to show yet.</p>;
@@ -73,6 +75,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
   const subDay = (item) => Math.min(Number(String(item.lastDate || item.next).slice(8, 10)) || 1, daysInMonth);
   const dueOn = (date) => upcoming.filter((item) => subDay(item) === Number(date.slice(8, 10)));
   const todayIso = new Date().toISOString().slice(0, 10);
+  const tasksOn = (date) => Object.entries(dueTasks).filter(([, d]) => d === date).length;
   const subsTotal = upcoming.reduce((sum, item) => sum + (Number(item.monthly) || 0), 0);
   const isDouble = (date) => {
     const ids = onDay(date).map((item) => item.leakId);
@@ -131,7 +134,7 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
                 aria-label={`${longDay(date)}${ghosts.length ? `, ${ghosts.length} ghost charges` : ''}${due.length ? `, ${due.length} upcoming` : ''}`}
                 className={cn(
                   'relative flex aspect-square flex-col items-center justify-start rounded-xl border p-1 text-[12.5px] font-bold transition-colors',
-                  ghosts.length ? 'border-primary/40 bg-[#2c1f47]' : due.length ? 'border-dashed border-[#5ee6c8]/50 bg-[#1b1630]' : 'border-white/[0.06] bg-white/[0.02]',
+                  ghosts.length ? 'border-primary/40 bg-[#2c1f47]' : due.length ? 'border-[#e5484d]/50 bg-[#2a1520]' : 'border-white/[0.06] bg-white/[0.02]',
                   selected === date && 'ring-2 ring-primary',
                   'hover:border-primary/60',
                 )}
@@ -154,14 +157,19 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
                 {due.length > 0 && !ghosts.length && (
                   <span className={cn('mt-auto flex w-full flex-col items-center', date < todayIso && 'opacity-60')}>
                     <span className="relative">
-                      <BellRing className={cn('h-4 w-4 sm:h-5 sm:w-5', date >= todayIso ? 'animate-bob text-[#5ee6c8]' : 'text-[#f2c14e]')} />
+                      <span className={cn('flex h-6 w-6 items-center justify-center rounded-full shadow-[0_2px_6px_rgba(0,0,0,0.35)] sm:h-7 sm:w-7', date >= todayIso ? 'animate-bob bg-[#e5484d] ring-2 ring-[#f2c14e]' : 'bg-[#a33a3d]/80')}>
+                        <BellRing className="h-3.5 w-3.5 text-[#fff6df] sm:h-4 sm:w-4" />
+                      </span>
                       {due.length > 1 && <span className="absolute -right-2 -top-1.5 rounded-full bg-[#5ee6c8] px-1 text-[8.5px] font-black text-[#12302a]">{due.length}</span>}
                     </span>
-                    <span className={cn('mt-0.5 hidden w-full text-[9px] font-bold leading-tight sm:line-clamp-2', date >= todayIso ? 'text-[#5ee6c8]' : 'text-[#f2c14e]')}>{due.map((item) => item.merchant).join(' + ')}</span>
+                    <span className={cn('mt-0.5 hidden w-full text-[9px] font-bold leading-tight sm:line-clamp-2', date >= todayIso ? 'text-[#ff8a8f]' : 'text-[#e3b4a0]')}>{due.map((item) => item.merchant).join(' + ')}</span>
                   </span>
                 )}
                 {due.length > 0 && ghosts.length > 0 && (
                   <BellRing aria-hidden="true" className="absolute right-1 top-1 h-3.5 w-3.5 text-[#5ee6c8]" />
+                )}
+                {tasksOn(date) > 0 && (
+                  <span title="A goal you scheduled" className="absolute left-1 top-1 rounded-full bg-[#5ee6c8] px-1 text-[9px] font-black text-[#12302a]">📌{tasksOn(date) > 1 ? tasksOn(date) : ''}</span>
                 )}
                 {double && (
                   <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 rounded-full bg-[#ff6b8a] px-1.5 text-[9px] font-bold uppercase text-white">Double!</span>
@@ -172,8 +180,9 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
         </div>
         <p className="relative mt-3 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-muted-foreground">
           <span className="flex items-center gap-1.5"><GhostMark className="h-3.5 w-3.5 text-[#f4efe8]" eyeColor="#1a1230" /> Ghost charge</span>
-          <span className="flex items-center gap-1.5"><BellRing className="h-3.5 w-3.5 text-[#5ee6c8]" /> Subscription coming up</span>
-          <span className="flex items-center gap-1.5"><BellRing className="h-3.5 w-3.5 text-[#f2c14e]" /> Subscription paid</span>
+          <span className="flex items-center gap-1.5"><span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#e5484d] ring-1 ring-[#f2c14e]"><BellRing className="h-2.5 w-2.5 text-white" /></span> Subscription coming up</span>
+          <span className="flex items-center gap-1.5"><span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#a33a3d]/80"><BellRing className="h-2.5 w-2.5 text-white" /></span> Subscription paid</span>
+          <span className="flex items-center gap-1.5"><span className="rounded-full bg-[#5ee6c8] px-1 text-[9px] font-black text-[#12302a]">📌</span> Your goal</span>
           <span className="flex items-center gap-1.5"><span className="rounded-full bg-[#ff6b8a] px-1.5 text-[9px] font-bold text-white">DOUBLE!</span> Charged twice</span>
           <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-[hsl(30_100%_62%)] shadow-[0_0_8px_hsl(30_100%_62%)]" /> Biggest ghost</span>
         </p>

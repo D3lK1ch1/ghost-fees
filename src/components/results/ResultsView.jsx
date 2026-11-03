@@ -1,3 +1,5 @@
+import GoalTasks from '@/components/results/GoalTasks';
+import { clearGoalTasks } from '@/lib/ghostFees/goalTasks';
 import DataSafety from '@/components/site/DataSafety';
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
@@ -166,6 +168,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     window.history.replaceState(null, '', window.location.pathname);
     clearGhostList();
     clearPlans();
+    clearGoalTasks();
     forgetRealTotal();
     setSubAnswers({});
     try {
@@ -455,6 +458,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               )}
               {tab === 'calendar' && (
                 <>
+                  <GoalTasks leaks={leaks} subscriptions={subscriptions} cancelSubs={cancelSubs} cleared={cleared} onClearedChange={setCleared} remindersDone={remindersDone} onRemindersDone={setRemindersDone} onOpenPath={() => setTab('path')} />
                   <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
                   <SubscriptionTracker subscriptions={subscriptions} answers={subAnswers} onAnswer={setSubAnswers} />
                   <TrialTracker leaks={leaks} />

@@ -65,7 +65,7 @@ function answer(question, analysis) {
     const more = leaks.length > 4 ? ` Plus ${leaks.length - 4} more.` : '';
     return {
       reply: leaks.length
-        ? `I've laid out your goals, biggest first: ${goals.join(' ')}.${more} Each one has 3 steps: open the email, send it, then check it worked. Add your reminders too, and tick goals off to walk up to the ghost-free house.`
+        ? `I've laid out your goals, biggest first: ${goals.join(' ')}.${more} Each one has 3 steps: open the email, send it, then check it worked. Pick a day for each and it goes on your calendar's task list. Tick them off there or on the goal path.`
         : 'No ghosts to chase. Add your reminders so renewals never sneak up on you.',
       action: leaks.length ? 'open_path' : 'open_calendar',
     };
