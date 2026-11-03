@@ -8,7 +8,7 @@ import { secrets } from 'base44:runtime';
 // print = SHA-256 the browser made from each file's name, size and date. It is
 // salted and hashed again here before it's kept. File contents never come here.
 
-const FOUNDING_SPOTS = 50;
+const FOUNDING_SPOTS = 0; // 4 Nov: one price, $10 once for everyone (was $5 for the first 50)
 const PRICES = { founding: 500, standard: 1000 }; // AUD cents
 const TICKET_MINUTES = 15;
 

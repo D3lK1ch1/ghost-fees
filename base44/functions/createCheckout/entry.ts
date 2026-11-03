@@ -1,12 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { secrets } from 'base44:runtime';
 
-// Starts a one-off Stripe Checkout: $5 for the first 50 founding members, then $10.
+// Starts a one-off Stripe Checkout: $10 once (the founding $5 tier is off: FOUNDING_SPOTS = 0).
 // Never a subscription. Stripe collects the card; we only keep the session id,
 // the tier and, once Stripe says it's paid, paid = true (see allowance).
 // Needs secret STRIPE_SECRET_KEY (sk_test_... while testing).
 
-const FOUNDING_SPOTS = 50;
+const FOUNDING_SPOTS = 0; // 4 Nov: one price, $10 once for everyone (was $5 for the first 50)
 const PRICES = { founding: 500, standard: 1000 };
 
 // ---- Free-tier limits (same block in allowance, parseStatement, askGhostGuide, findCancelInfo) ----
