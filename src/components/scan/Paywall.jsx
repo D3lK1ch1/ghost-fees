@@ -131,7 +131,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
           </div>
           <div className="mt-2 flex items-center gap-3 border-t pt-2" style={{ borderColor: P.line }}>
             <img src={GHOST_IT_SNIP} alt="" className="h-11 w-11 shrink-0 object-contain" />
-            <p><b style={{ color: '#FFFFFF' }}>Ghost It:</b> 1 free try (your first Ghost Pack), then $2 a pack or $5 for all, in ASI:One.</p>
+            <p><b style={{ color: '#FFFFFF' }}>Ghost It:</b> 1 free try (your first Ghost Pack), then $5 once for every pack, in ASI:One.</p>
           </div>
         </div>
         {/* The promise, in one line, right before the button. */}
