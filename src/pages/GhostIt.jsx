@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Check, Copy, ExternalLink, MessageCircle } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
-import AsiSignInFirst from '@/components/site/AsiSignInFirst';
 import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
@@ -68,7 +67,6 @@ export default function GhostIt() {
         </section>
 
         <p className="mt-8 text-center text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Try it in 1 minute</p>
-        <AsiSignInFirst className="mt-3" />
         <ol className="mt-3 flex flex-col gap-2.5">
           {STEPS.map((step, index) => (
             <li key={step.title} className="flex gap-3 rounded-2xl border border-border bg-card/70 px-4 py-3.5">
