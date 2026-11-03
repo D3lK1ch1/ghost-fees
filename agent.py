@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v11 (3 Nov 2026): consolidate plan (keep one, cancel or rotate the rest, bundle tips).
 # v10.1 (3 Nov 2026): answer first with the saving; spend, pay-per-use and bills replies.
 # v10 (3 Nov 2026): explanation cards, tap-to-try prompts, Stripe paywall card ($2 or $5).
 # v7 (2 Nov 2026): clear maths on every reply, interactive cards, app links,
@@ -65,6 +66,8 @@ CHANGES = [
      "every reply says what it did, shows the maths line by line, and uses cards"),
     ("Builders", "AI tools double up",
      "Cursor, Windsurf, Midjourney, Lovable, Replit, Bolt and v0 now recognised"),
+    ("The founders", "help me consolidate my double-ups and triple-ups",
+     "`consolidate` gives a plan: keep one, cancel the rest or rotate month by month, with bundle and sharing tips"),
     ("The team", "Ghost It shouldn't repeat the app",
      "Ghost It now fills the gap the bank scan can't see, with a Ghost Pack for each kind of money leak"),
 ]
@@ -459,8 +462,9 @@ EXPLAINERS = {
         ("1. Tell me", "What you pay for, e.g. Netflix $19, gym $25 a week"),
         ("2. The maths", "I work out the real yearly cost, line by line"),
         ("3. Ghost Packs", "Each pack hunts one kind of leak and shows what you'd save"),
-        ("4. Cancel", "Official cancel links, the steps and a ready email"),
-        ("5. Check", "After 7 days I ask if the charge really stopped"),
+        ("4. Consolidate", "Keep one, cancel or rotate the rest, with the saving"),
+        ("5. Cancel", "Official cancel links, the steps and a ready email"),
+        ("6. Check", "After 7 days I ask if the charge really stopped"),
     ], ("Try an example", {"action": "check", "subs": "Netflix $19, Stan $16, Disney+ $16"}), "packs"),
     "packs": ("👻 What's a Ghost Pack?", [
         ("What it is", "A hunt for one kind of money leak"),
@@ -594,7 +598,7 @@ def check_reply(ctx, sender, text, subs, missing):
         lines.append(f"Cancel one: type `cancel {first}`.")
     lines.append(f"\nMost people have more than they remember. Scan your statement free: {app_link([s['key'] for s in subs if s['known']])}")
     first_pack = (packs[0].split()[0].lower() + " pack") if packs else "packs"
-    lines.append(try_next(first_pack, f"cancel {subs[0]['name']}", "my ghost list"))
+    lines.append(try_next("consolidate" if ov else first_pack, first_pack if ov else f"cancel {subs[0]['name']}", "my ghost list"))
     lines.append("\n" + DISCLAIMER)
 
     # Remember everything they've told us, not just this message (newest price wins),
@@ -746,6 +750,150 @@ def packs_reply():
     return "\n".join(lines), card
 
 
+# ---------------------------------------------------------------- consolidate (v11)
+# After a double-up: keep one, cancel the rest, or rotate, plus bundle and sharing tips.
+# Every dollar figure is plain maths from what the person told us. Tips are general
+# facts about the services, with no prices we haven't checked.
+AI_KINDS = {
+    "chat": ({"chatgpt", "claude", "gemini", "perplexity"}, "general AI chat"),
+    "code": ({"cursor", "copilot", "windsurf", "replit", "bolt", "v0", "lovable"}, "AI coding"),
+}
+MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+
+def bundle_tips(group_key, keys):
+    tips = []
+    if group_key == "music":
+        if "youtube" in keys:
+            tips.append("YouTube Premium already includes YouTube Music, so you may not need another music app.")
+        tips.append("Live with someone who also pays? Spotify Duo and Family put 2 to 6 people at one address on one plan.")
+        if keys & {"applemusic", "icloud", "appletv"}:
+            tips.append("Apple One bundles Apple Music, Apple TV+ and iCloud+ in one bill. Compare it with what you pay now.")
+    elif group_key == "storage":
+        if "m365" in keys:
+            tips.append("Microsoft 365 already includes 1 TB of OneDrive storage.")
+        tips.append("Most storage plans can be shared with family (Google One with up to 5 others, iCloud+ through Family Sharing).")
+    elif group_key == "video":
+        tips.append("Most streaming apps let you cancel and come back any month, so rotating loses nothing but the wait.")
+        if "prime" in keys:
+            tips.append("Prime Video comes with Amazon Prime, so if you keep Prime for delivery, that's your free one.")
+    elif group_key == "ai":
+        tips.append("Most people need one general AI chat (ChatGPT, Claude or Gemini) and at most one coding tool.")
+    elif group_key == "delivery":
+        tips.append("Check your bank card and phone plan perks first: some include a delivery membership.")
+    elif group_key == "mealkit":
+        tips.append("One meal kit at a time is plenty. Most let you skip weeks for free instead of cancelling.")
+    elif group_key == "gaming":
+        tips.append("Keep the pass for the console you play most, and rotate the others month to month.")
+    return tips
+
+
+def keep_choice(ctx, sender, group):
+    """The one to keep: the person's choice (`keep Netflix`) if it's in the group, else the cheapest."""
+    prefs = get(ctx, f"keep:{sender}", [])
+    for k in prefs if isinstance(prefs, list) else []:
+        for x in group:
+            if x["key"] == k:
+                return x, "your pick"
+    return min(group, key=yearly), "the cheapest"
+
+
+def plan_groups(subs):
+    """Overlap groups to consolidate. AI tools split into chat and coding: keep one of each."""
+    out = []
+    for g, group in overlaps(subs).items():
+        if g != "ai":
+            out.append((g, OVERLAP_NAMES[g], group))
+            continue
+        rest = list(group)
+        for kind, (keys, label) in AI_KINDS.items():
+            part = [x for x in group if x["key"] in keys]
+            rest = [x for x in rest if x["key"] not in keys]
+            if len(part) > 1:
+                out.append(("ai", f"{label} tools", part))
+        if len(rest) > 1:
+            out.append(("ai", "other AI tools", rest))
+    return out
+
+
+def rotation(group, start=None):
+    """One service a month, cheapest first, for the next 12 months. Returns (schedule, yearly cost)."""
+    start = start or datetime.now(timezone.utc).month  # next month = index of this month
+    order = sorted(group, key=yearly)
+    sched, cost = [], 0.0
+    for i in range(12):
+        x = order[i % len(order)]
+        cost += yearly(x) / 12
+        if i < len(order):
+            sched.append(f"{MONTHS[(start + i) % 12]} {x['name']}")
+    return sched, round(cost, 2)
+
+
+def consolidate_reply(ctx, sender, pack=None):
+    subs = [s for s in last_subs(ctx, sender) if isinstance(s, dict) and s.get("known") and s.get("price")
+            and s.get("key") in C and (pack is None or C[s["key"]]["pack"] == pack)]
+    groups = plan_groups(subs)
+    if not groups:
+        where = f" in the {pack} pack" if pack else ""
+        return (f"**Nothing to consolidate{where} yet.** I need two or more that do the same job, with prices, "
+                "e.g. `Netflix $19, Stan $16, Disney+ $16`." + try_next("Netflix $19, Stan $16, Disney+ $16", "packs"), None)
+    lines = ["🧩 **Your consolidate plan**" + (f" ({pack} pack)" if pack else ""), ""]
+    rows, cancel_keys, total_save, shown = [], [], 0.0, set()
+    for g, label, group in groups:
+        gy = sum(yearly(x) for x in group)
+        keep, why = keep_choice(ctx, sender, group)
+        drop = [x for x in group if x is not keep]
+        save = gy - yearly(keep)
+        total_save += save
+        cancel_keys += [x["key"] for x in drop]
+        sched, rot_cost = rotation(group)
+        lines.append(f"**{len(group)} {label}: {money(gy)} a year**")
+        lines.append(f"- ✅ **Keep:** {keep['name']} ({money(yearly(keep))}/yr), {why}.")
+        lines.append(f"- ✂️ **Cancel:** {', '.join(x['name'] for x in drop)}")
+        lines.append(f"- 💰 **Save {money(save)} a year** ({money(gy)} - {money(yearly(keep))})")
+        lines.append(f"- 🔁 **Or rotate, one a month:** {', '.join(sched)}, then repeat = {money(rot_cost)}/yr, "
+                     f"save {money(gy - rot_cost)}")
+        for tip in bundle_tips(g, {x['key'] for x in group}):
+            if tip not in shown:
+                shown.add(tip)
+                lines.append(f"- 💡 {tip}")
+        lines.append("")
+        rows += [{"label": f"Keep ({label})", "value": f"{keep['name']}, {money(yearly(keep))}/yr"},
+                 {"label": "Cancel", "value": ", ".join(x["name"] for x in drop)},
+                 {"label": "Save", "value": f"{money(save)} a year"}]
+    lines.append(f"**Total you could save: {money(total_save)} a year** (about {money(total_save / 12)} a month).")
+    first_other = next((x["name"] for _, _, grp in groups for x in grp if x["key"] not in get(ctx, f"keep:{sender}", [])), None)
+    lines.append("\nWant to keep a different one? Type `keep <name>`" + (f", e.g. `keep {first_other}`." if first_other else "."))
+    lines.append(try_next("cancel the others", f"keep {first_other}" if first_other else None, "my ghost list"))
+    lines.append("\n" + DISCLAIMER)
+    rows.append({"label": "Total saving", "value": f"{money(total_save)} a year"})
+    ctx.storage.set(f"cancelkeys:{sender}", cancel_keys)
+    bump(ctx, "consolidations")
+    card = ("detail", {
+        "title": f"🧩 Save {money(total_save)} a year",
+        "summary_rows": rows[:12],
+        "ctas": [{"label": "Cancel the others", "primary": True, "selection": {"action": "cancel_others"}},
+                 {"label": "My ghost list", "selection": {"action": "list"}}],
+    })
+    return "\n".join(lines), card
+
+
+def keep_reply(ctx, sender, key):
+    prefs = [k for k in get(ctx, f"keep:{sender}", []) if k != key] if isinstance(get(ctx, f"keep:{sender}", []), list) else []
+    ctx.storage.set(f"keep:{sender}", [key] + prefs[:9])
+    text, card = consolidate_reply(ctx, sender)
+    return f"**Got it, keeping {C[key]['name']}.**\n\n" + text, card
+
+
+def cancel_others(ctx, sender):
+    keys = get(ctx, f"cancelkeys:{sender}", [])
+    known = {s["key"]: s for s in last_subs(ctx, sender) if isinstance(s, dict) and "key" in s}
+    items = [known[k] for k in keys if k in known] if isinstance(keys, list) else []
+    if not items:
+        return ("Run `consolidate` first so I know which ones to cancel.", None)
+    return gated_ghost(ctx, sender, items, "Cancel the others", everything=len(packs_for(items)) > 1)
+
+
 def pack_report(ctx, sender, items, pack):
     """v9.1: a pack's leak hunt, shown like the original Ghost It: the maths line by line,
     the leaks with the saving, and a review card with Cancel steps / Scan my statement."""
@@ -779,6 +927,8 @@ def pack_report(ctx, sender, items, pack):
     for x in items:
         link = (C.get(x["key"]) or {}).get("link")
         lines.append(f"- {x['name']}: {link or 'no checked link yet, search their official site'}")
+    if overlaps(priced):
+        lines.append("\n🧩 **Consolidate:** type `consolidate` for a plan: keep one, cancel the rest or rotate, with the saving.")
     lines.append("\n**Next:** tap **Cancel steps** for the steps and a ready email, or type `cancel steps`.")
     lines.append("\n" + ("Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in the chat."
                          if paying() else "Ghost Packs are free during beta."))
@@ -788,7 +938,8 @@ def pack_report(ctx, sender, items, pack):
         "title": f"{emoji} {pack} pack: {money(total)} a year",
         "summary_rows": [r for r in rows if r["label"] or r["value"]][:12],
         "approve_cta": {"label": "Cancel steps", "primary": True, "selection": {"action": "steps", "pack": pack}},
-        "reject_cta": {"label": "Scan my statement", "selection": {"action": "scan"}},
+        "reject_cta": ({"label": "Consolidate plan", "selection": {"action": "consolidate", "pack": pack}} if overlaps(priced)
+                       else {"label": "Scan my statement", "selection": {"action": "scan"}}),
     })
     return "\n".join(lines), card
 
@@ -1215,6 +1366,10 @@ def route(ctx, sender, raw):
             return list_reply(ctx, sender)
         if a == "help":
             return help_reply()
+        if a == "consolidate":
+            return consolidate_reply(ctx, sender, sel.get("pack") if sel.get("pack") in PACKS else None)
+        if a == "cancel_others":
+            return cancel_others(ctx, sender)
         if a == "buy":
             return buy_reply(ctx, sender, sel.get("plan", "pack"))
         if a == "explain":
@@ -1240,6 +1395,14 @@ def route(ctx, sender, raw):
         return ("Evidence is for the Ghost It team only.", None)
     if re.search(r"(created|made|built|designed) (you )?(to|for)|what (were|are) you (for|made|built|created)|who are you|what is this|what are you|about you|your purpose", low):
         return about_reply()
+    if re.fullmatch(r"\s*(consolidate|consolidate plan|combine|merge|rotate|rotation plan|which (?:one )?should i keep\??)(?:\s+(\w+))?(?:\s+pack)?\s*", low):
+        word = re.fullmatch(r"\s*\S+(?:\s+plan)?(?:\s+(\w+))?.*", low).group(1)
+        return consolidate_reply(ctx, sender, PACK_WORDS.get(word or "", None))
+    if re.fullmatch(r"\s*cancel (?:the )?others\s*", low):
+        return cancel_others(ctx, sender)
+    km = re.fullmatch(r"\s*keep\s+(.+?)\s*", low)
+    if km and find_merchant(km.group(1)):
+        return keep_reply(ctx, sender, find_merchant(km.group(1)))
     em = re.fullmatch(r"\s*explain\s*(\w+)?\s*", low)
     if em:
         return explain_reply(EXPLAIN_WORDS.get(em.group(1) or "", "")) if em.group(1) else explain_menu_reply()

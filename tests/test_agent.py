@@ -681,3 +681,50 @@ class V10Useful(unittest.TestCase):
         for msg in ["is it free?", "how much does it cost?", "how much is a pack?"]:
             reply, _ = A.route(FakeCtx(), SENDER, msg)
             self.assertIn("$2 AUD", reply, msg)
+
+
+class V11Consolidate(unittest.TestCase):
+    def setUp(self):
+        self.ctx = FakeCtx()
+        A.route(self.ctx, SENDER, "Netflix $19, Stan $16, Disney+ $16, Spotify $14, YouTube Premium $17, "
+                                  "ChatGPT $30, Claude $30, Cursor $30, Copilot $15")
+
+    def test_plan_keeps_cheapest_and_shows_saving(self):
+        reply, card = A.route(self.ctx, SENDER, "consolidate")
+        self.assertIn("**Keep:** Stan ($192.00/yr), the cheapest", reply)
+        self.assertIn("Save $420.00 a year** ($612.00 - $192.00)", reply)
+        self.assertIn("YouTube Premium already includes YouTube Music", reply)
+        self.assertEqual(card[0], "detail")
+        self.assertEqual(card[1]["ctas"][0]["selection"], {"action": "cancel_others"})
+
+    def test_ai_tools_split_chat_and_coding(self):
+        reply, _ = A.route(self.ctx, SENDER, "consolidate")
+        self.assertIn("2 general AI chat tools", reply)
+        self.assertIn("2 AI coding tools", reply)
+        self.assertEqual(reply.count("Most people need one general AI chat"), 1)
+        # 420 + 204 + 360 + 360
+        self.assertIn("Total you could save: $1,344.00 a year", reply)
+
+    def test_rotation_maths(self):
+        reply, _ = A.route(self.ctx, SENDER, "consolidate screen")
+        # 4 months each: 16x4 + 16x4 + 19x4 = 204
+        self.assertIn("= $204.00/yr, save $408.00", reply)
+        self.assertNotIn("music apps", reply)
+
+    def test_keep_changes_the_plan_and_cancel_others(self):
+        reply, _ = A.route(self.ctx, SENDER, "keep Netflix")
+        self.assertIn("**Keep:** Netflix ($228.00/yr), your pick", reply)
+        reply, _ = A.route(self.ctx, SENDER, "cancel the others")
+        self.assertIn("https://my.stan.com.au", reply)
+        self.assertNotIn("netflix.com/cancelplan", reply)
+
+    def test_pack_report_offers_consolidate(self):
+        reply, card = A.route(self.ctx, SENDER, "screen pack")
+        self.assertIn("type `consolidate`", reply)
+        self.assertEqual(card[1]["reject_cta"]["selection"], {"action": "consolidate", "pack": "Screen"})
+
+    def test_nothing_to_consolidate(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19, gym $25 a week")
+        reply, _ = A.route(ctx, SENDER, "consolidate")
+        self.assertIn("Nothing to consolidate", reply)
