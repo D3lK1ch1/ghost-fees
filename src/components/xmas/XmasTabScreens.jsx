@@ -58,8 +58,8 @@ function Morning({ leaks, cleared, subscriptions, X, season }) {
     <XScreen X={X} season={season} snow={false} background={`linear-gradient(180deg, ${pct >= 1 ? '#ffb48a' : '#1b2a4a'} 0%, ${X.glow} 45%, ${X.bg} 80%)`}>
       <Kicker X={X}>CHRISTMAS MORNING</Kicker>
       <div className="relative overflow-hidden rounded-2xl" style={{ border: `1px solid ${X.line}` }}>
-        <img src={XMAS.morning(season)} alt="Christmas morning with coins falling like snow" width={720} className="block h-[200px] w-full object-cover" />
-        <div aria-hidden="true" className="absolute inset-0 transition-opacity duration-1000" style={{ background: '#0b1020', opacity: 0.65 * (1 - pct) }} />
+        <img src={XMAS.morning(season)} alt="Christmas morning with coins falling like snow" width={1024} height={764} className="block aspect-[4/3] h-auto w-full object-cover" />
+        <div aria-hidden="true" className="absolute inset-0 transition-opacity duration-1000" style={{ background: '#0b1020', opacity: 0.18 * (1 - pct) }} />
         {done.map((leak, index) => (
           <span key={leak.id} aria-hidden="true" className="x-coin absolute h-4 w-4 rounded-full" style={{ left: `${12 + ((index * 23) % 76)}%`, top: `${30 + ((index * 17) % 50)}%`, background: X.gold, border: `2px solid ${X.goldDeep}`, animationDelay: `${0.3 + index * 0.25}s` }} />
         ))}
