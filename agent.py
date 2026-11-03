@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v11.1 (3 Nov 2026): ASI:One's pre-filled "What's new with you?" gets a welcome and tap cards, not the changelog.
 # v11 (3 Nov 2026): consolidate plan (keep one, cancel or rotate the rest, bundle tips).
 # v10.1 (3 Nov 2026): answer first with the saving; spend, pay-per-use and bills replies.
 # v10 (3 Nov 2026): explanation cards, tap-to-try prompts, Stripe paywall card ($2 or $5).
@@ -1100,6 +1101,18 @@ def feedback_reply(ctx, sender, body):
     return "\n".join(lines), None
 
 
+def welcome_reply():
+    """ASI:One's own pre-filled "What's new with you, Ghost.it?" (we can't change that
+    text). A new visitor gets a welcome, not a changelog: what Ghost It does, the newest
+    thing, and tap-to-try cards. `what's new` on its own still shows the feedback log."""
+    lines = [PURPOSE.replace(" Tell me what you pay for below.", ""), "",
+             "🧩 **New:** paying for two or three of the same thing? I'll plan which one to keep, "
+             "and cancel or rotate the rest, with the saving worked out.", "",
+             "**Try it:** tap a card below. Or send what you pay for, e.g. `Netflix $19, Stan $16, Disney+ $16`.",
+             "Every change from your feedback: `what's new`."]
+    return "\n".join(lines), quick_start_card()
+
+
 def whats_new_reply():
     """Also the answer to ASI:One's pre-filled "What's new with you, Ghost.it?", so it
     starts with what Ghost It is for, then the latest changes, one thing to try and the card."""
@@ -1428,6 +1441,8 @@ def route(ctx, sender, raw):
         return packs_reply()
     if re.fullmatch(r"\s*(commands|menu|what can you do\??|all commands)\s*", low):
         return help_reply(full=True)
+    if re.search(r"what'?s new with you|what'?s up\b|what'?s happening", low):
+        return welcome_reply()
     if re.search(r"what'?s new|changelog", low):
         return whats_new_reply()
     if re.search(r"ghost ?list|my list", low):

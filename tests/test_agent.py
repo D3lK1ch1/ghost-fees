@@ -470,7 +470,8 @@ class AsiOneGreeting(unittest.TestCase):
     def test_whats_new_with_you_leads_with_the_purpose_and_a_card(self):
         reply, card = A.route(FakeCtx(), SENDER, "What's new with you, Ghost.it?")
         self.assertIn("I hunt the money leaks", reply.split("\n")[0])
-        self.assertIn("AI tools double up", reply)
+        self.assertIn("**New:**", reply)  # a welcome, not the changelog
+        self.assertNotIn("We changed", reply)
         self.assertIn("Try it", reply)
         self.assertEqual(card[0], "carousel")
 
