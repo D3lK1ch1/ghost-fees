@@ -5,7 +5,7 @@ import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { findOverlaps } from '@/lib/ghostFees/overlaps';
 import { xmasAvatar } from '@/lib/ghostFees/christmasArt';
 import { useCancelProof } from '@/components/results/ProofDialog';
-import { Disclaimer, GoldButton, TinySavings, Title, XScreen, useSeason } from './XmasKit';
+import { Disclaimer, TinySavings, Title, XScreen, useSeason } from './XmasKit';
 
 // "Changed my ways" (design CW6): the 🎄 cancel list. Tick "I cancelled it", then
 // next month "It stopped" or "Still charging". Uses the same Ghost List (this
@@ -29,11 +29,13 @@ export default function ChangedMyWays({ subscriptions }) {
   const live = subscriptions.filter((item) => !['requested', 'confirmed'].includes(statusOf(item.id)));
   const overlaps = findOverlaps(subscriptions);
 
+  // One style for every status tag: outlined in its colour (3 Nov: cards looked different by state).
   const pill = {
     requested: { text: 'Requested', style: { border: `1.5px solid ${X.gold}`, color: X.gold } },
-    confirmed: { text: 'Confirmed', style: { background: X.mint, color: X.mintInk } },
-    charging: { text: 'Still charging', style: { background: X.orange, color: X.ink } },
+    confirmed: { text: 'Stopped', style: { border: `1.5px solid ${X.mint}`, color: X.mint } },
+    charging: { text: 'Still charging', style: { border: `1.5px solid ${X.orange}`, color: X.orange } },
   };
+  const btn = 'x-btn flex min-h-[46px] flex-1 items-center justify-center rounded-xl text-[15px] font-extrabold';
 
   return (
     <XScreen X={X} season={season} className="mx-auto">
@@ -48,7 +50,7 @@ export default function ChangedMyWays({ subscriptions }) {
         </div>
         <div className="flex flex-wrap gap-1.5">
           <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.requested.style}>Requested {req.length}</span>
-          <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.confirmed.style}>Confirmed {conf.length}</span>
+          <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.confirmed.style}>Stopped {conf.length}</span>
           <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={pill.charging.style}>Still charging {live.length}</span>
         </div>
         <div className="flex items-center gap-2 pt-2" style={{ borderTop: `1px solid ${X.line}` }}>
@@ -86,20 +88,25 @@ export default function ChangedMyWays({ subscriptions }) {
               <span className="x-fredoka text-[18px] font-semibold">{money(item.monthly)}/mo</span>
             </div>
             <div className="flex items-center justify-between gap-2">
-              {info.url ? (
-                <a href={info.url} target="_blank" rel="noreferrer" className="text-[14px] font-extrabold" style={{ color: X.gold }}>Cancel on {info.name} ↗</a>
-              ) : <span className="text-[14px]" style={{ color: X.muted }}>Search &quot;cancel {item.merchant}&quot;</span>}
-              <span className="rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={p.style}>{p.text}</span>
+              {/* Always a link: their cancel page if checked, otherwise a search for it. Never a guessed URL. */}
+              <a href={info.url || `https://www.google.com/search?q=${encodeURIComponent(`cancel ${item.merchant} subscription`)}`} target="_blank" rel="noreferrer" className="text-[14px] font-extrabold" style={{ color: X.gold }}>
+                {info.url ? `Cancel on ${info.name}` : `Find ${item.merchant}'s cancel page`} ↗
+              </a>
+              <span className="flex-none rounded-full px-2.5 py-1 text-[13px] font-extrabold" style={p.style}>{p.text}</span>
             </div>
-            <div className="text-[13px]" style={{ color: X.muted }}>{info.steps}</div>
-            {!status || status === 'charging' ? (
-              <GoldButton X={X} className="!min-h-[46px] !text-[16px]" onClick={() => proof.ask(item)}>🎄 I cancelled it</GoldButton>
+            <div className="text-[13.5px] leading-snug" style={{ color: X.muted }}>{info.url ? info.steps : 'No checked cancel link yet. Search their site or check your sign-up email.'}</div>
+            {status === 'confirmed' ? (
+              <div className="flex min-h-[46px] items-center justify-center rounded-xl text-[15px] font-extrabold" style={{ background: `${X.mint}1f`, color: X.mint }}>✓ Stopped. That money stays with you.</div>
             ) : status === 'requested' ? (
               <div className="flex gap-2">
-                <button type="button" onClick={() => set(item, 'confirmed')} className="x-btn min-h-[44px] flex-1 rounded-xl text-[14px] font-extrabold" style={{ background: X.mint, color: X.mintInk }}>It stopped</button>
-                <button type="button" onClick={() => set(item, 'charging')} className="x-btn min-h-[44px] flex-1 rounded-xl text-[14px] font-extrabold" style={{ border: `1.5px solid ${X.orange}`, color: X.text }}>Still charging</button>
+                <button type="button" onClick={() => set(item, 'confirmed')} className={btn} style={{ background: X.mint, color: X.mintInk }}>It stopped</button>
+                <button type="button" onClick={() => set(item, 'charging')} className={btn} style={{ border: `1.5px solid ${X.orange}`, color: X.text }}>Still charging</button>
               </div>
-            ) : null}
+            ) : (
+              <div className="flex gap-2">
+                <button type="button" onClick={() => proof.ask(item)} className={btn} style={{ background: X.gold, color: X.ink }}>🎄 I cancelled it</button>
+              </div>
+            )}
           </div>
         );
       })}
