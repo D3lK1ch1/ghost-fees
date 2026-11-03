@@ -78,7 +78,7 @@ CHANGES = [
 ]
 
 # v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
-PURPOSE = ("👻 **I'm Ghost It. I find subscriptions you pay for twice, and help you cancel them.**\n"
+PURPOSE = ("👻 **I'm Ghost It. I find subscriptions you pay for twice, and help you cancel them.**\n\n"
            "Streaming, music, AI tools, food, gym and gaming. Real maths, checked cancel links, first pack free. "
            "Tell me what you pay for below.")
 
@@ -442,16 +442,24 @@ QUICK_STARTS = [
 
 
 MENU = [example for _, example, _ in QUICK_STARTS] + ["How does it work?", "packs"]
-MENU_LABELS = [title for title, _, _ in QUICK_STARTS] + ["❓ How does it work?", "👻 See all six Ghost Packs"]
+# Short, plain menu lines. ASI:One joins single line breaks and shows backticks, so
+# each line is its own paragraph and examples are plain text (3 Nov).
+MENU_LABELS = [
+    "🎧 Music: am I paying twice? (Spotify + YouTube Premium)",
+    "💻 AI tools: too many? (ChatGPT, Claude, Cursor, Copilot)",
+    "🧩 Streaming: which one should I keep? (Netflix, Stan, Disney+)",
+    "💪 Gym: what does $25 a week cost a year?",
+    "❓ How does it work?",
+    "👻 See all six Ghost Packs",
+]
 
 
 def quick_start_text():
-    """The preloaded prompts as a numbered menu. Reply with just the number (works without cards)."""
+    """The preloaded prompts as a numbered menu. Reply with just the number."""
     lines = ["**Reply with a number to try one:**"]
-    lines += [f"**{i}.** {label}  `{example}`" if example != "packs" and not example.startswith("How") else f"**{i}.** {label}"
-              for i, (label, example) in enumerate(zip(MENU_LABELS, MENU), 1)]
-    lines.append("Or type what you pay for, e.g. `Netflix $19, gym $25 a week`.")
-    return "\n".join(lines)
+    lines += [f"**{i}.** {label}" for i, label in enumerate(MENU_LABELS, 1)]
+    lines.append("Or just tell me what you pay for, like: Netflix $19, gym $25 a week")
+    return "\n\n".join(lines)
 
 
 def quick_start_card():
