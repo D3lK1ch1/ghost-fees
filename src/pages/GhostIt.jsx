@@ -15,6 +15,15 @@ const STEPS = [
   { title: 'Paste and send', line: 'You get the yearly cost line by line, any double-ups, and the cancel steps.' },
 ];
 
+// What Ghost It does, and what you get from it (v11, 3 Nov: consolidate plan added).
+const BENEFITS = [
+  { emoji: '🧮', title: 'The real yearly cost', line: 'Every line worked out: $19 a month x 12 = $228 a year. Weekly, quarterly and yearly prices too.' },
+  { emoji: '👯', title: 'Double-ups and triple-ups', line: 'Three streaming apps, two music apps, four AI tools: it groups the ones doing the same job.' },
+  { emoji: '🧩', title: 'A plan to consolidate', line: 'Keep one (the cheapest, or the one you pick), cancel the rest, or rotate one a month. Each with the saving worked out.' },
+  { emoji: '💡', title: 'Bundles and sharing', line: 'YouTube Premium already includes YouTube Music; Spotify Duo and Family; one AI chat plus one coding tool.' },
+  { emoji: '✂️', title: 'Cancel steps for the rest', line: 'Official cancel links, the steps and a ready email, then a check after 7 days that it stopped.' },
+];
+
 const count = (event_type) => base44.functions.invoke('logEvent', { session_id: getSessionId(), event_type }).catch(() => {});
 
 export default function GhostIt() {
@@ -37,11 +46,28 @@ export default function GhostIt() {
           <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={170} height={170} className="motion-safe:animate-float mx-auto h-[170px] w-[170px] object-contain drop-shadow-[0_0_30px_rgba(143,184,255,0.35)]" />
           <h1 className="mt-4 font-heading text-[32px] font-bold leading-tight text-foreground">Try Ghost It</h1>
           <p className="mt-2 text-[16px] leading-snug text-muted-foreground">
-            Our AI agent on Fetch.ai&apos;s ASI:One. Tell it what you pay for and it shows the yearly cost, spots double-ups and gives you the official cancel steps. 1 minute, nothing to install.
+            Our AI agent on Fetch.ai&apos;s ASI:One. Tell it what you pay for and it shows the yearly cost, spots double-ups, plans which to keep, cancel or rotate, and gives you the official cancel steps. 1 minute, nothing to install.
           </p>
         </div>
 
-        <ol className="mt-6 flex flex-col gap-2.5">
+        <section aria-label="What Ghost It does for you" className="mt-6">
+          <p className="text-center text-[13px] font-bold uppercase tracking-[0.14em] text-primary">What it does for you</p>
+          <ul className="mt-3 flex flex-col gap-2">
+            {BENEFITS.map((item) => (
+              <li key={item.title} className="flex gap-3 rounded-2xl border border-[#8FB8FF44] bg-[#8FB8FF0f] px-4 py-3">
+                <span aria-hidden="true" className="text-[22px] leading-none">{item.emoji}</span>
+                <span className="min-w-0">
+                  <span className="block text-[15.5px] font-bold text-foreground">{item.title}</span>
+                  <span className="block text-[14px] leading-snug text-muted-foreground">{item.line}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-center text-[13px] text-muted-foreground">Every number is plain maths from what you tell it. Nothing guessed.</p>
+        </section>
+
+        <p className="mt-8 text-center text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Try it in 1 minute</p>
+        <ol className="mt-3 flex flex-col gap-2.5">
           {STEPS.map((step, index) => (
             <li key={step.title} className="flex gap-3 rounded-2xl border border-border bg-card/70 px-4 py-3.5">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-[15px] font-bold text-primary-foreground">{index + 1}</span>
