@@ -29,8 +29,8 @@ export async function claimScan(files) {
   return response?.data || { allowed: false, reason: 'error' };
 }
 
-// plan: 'founding' ($5, first 50) or 'standard' ($10).
-export async function startCheckout(plan = 'founding') {
+// plan: 'standard' ($10). The founding $5 tier is off on the server (FOUNDING_SPOTS = 0).
+export async function startCheckout(plan = 'standard') {
   const response = await base44.functions.invoke('createCheckout', { origin: window.location.origin, plan });
   const data = response?.data || {};
   if (data.url) {
