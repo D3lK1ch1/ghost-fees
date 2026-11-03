@@ -15,5 +15,5 @@ export const GHOST_IT_SAMPLE = '@ghostit netflix $18.99 stan $16 disney+ $15.99 
 export const GHOST_IT_MASCOT = '/themes/ghostit/ghost-it-wave.webp';
 export const GHOST_IT_SNIP = '/themes/ghostit/ghost-it-snip.webp';
 export const GHOST_IT_THUMBS = '/themes/ghostit/ghost-it-thumbs.webp';
-// What you get free, then what it costs (paid inside ASI:One with Stripe). Free in the beta.
-export const GHOST_IT_PRICE = 'Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in ASI:One. Free while we’re in beta.';
+// What you get free, then what it costs (paid inside ASI:One with Stripe). Charging is on (3 Nov).
+export const GHOST_IT_PRICE = 'Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack. Paid once in the chat with Stripe. Never a subscription.';
