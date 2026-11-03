@@ -6,7 +6,7 @@ import { downloadAllReminders } from '@/lib/ghostFees/reminder';
 import GhostMark from '@/components/site/GhostMark';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
-import { SEASON_KEY, SEASONS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
+import { SEASON_KEY, SEASONS, XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
 
 // One colour set per theme for the hill, road, house and stops. Haunted keeps its
 // purple; 💔 is charcoal with coral and mint; 🎄 is green and gold (Summer: blue).
@@ -157,6 +157,22 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
     };
   });
   const goals = [...leakGoals.slice(0, 1), ...reminderGoal, ...leakGoals.slice(1), ...subGoals];
+  // 🎄 one different ghost per goal (3 Nov: the same ghost showed three times). Bank fees
+  // get Jacob Ledger (his chain is fees); any repeat takes the next unused character.
+  const xmasCast = (() => {
+    if (theme.key !== 'christmas') return [];
+    const pool = ['gym', 'adobe', 'streammax', 'netflix', 'stan', 'more'].map((k) => `/themes/christmas/xav-${season === 'summer' ? 's' : 'w'}-${k}.webp`)
+      .concat([XMAS.dusty, XMAS.hooded, XMAS.jolly]);
+    const used = new Set();
+    return goals.map((goal) => {
+      if (!goal.leak) return null;
+      let pick = /fee|bank/i.test(goal.leak.badge || '') && !used.has(XMAS.jacob) ? XMAS.jacob : xmasAvatar(goal.leak.merchant, season);
+      if (used.has(pick)) pick = pool.find((src) => !used.has(src)) || pick;
+      used.add(pick);
+      return pick;
+    });
+  })();
+  const ghostFor = (i, merchant) => (theme.key === 'christmas' ? xmasCast[i] : themeGhost(merchant));
 
   const [selectedId, setSelectedId] = useState(null);
   const [ticked, setTicked] = useState({});
@@ -273,14 +289,20 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
 
                   {!goal.done && goal.leak && !isCurrent && (
                     <span className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2 animate-bob" style={{ left: pct(sideX, VIEW_W), top: pct(point.y - 16, height), animationDelay: `${i * 0.4}s` }}>
-                      {themeGhost(goal.leak.merchant) ? (
-                        <img src={themeGhost(goal.leak.merchant)} alt="" width={40} height={40} className="h-10 w-10 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.45)]" />
+                      {ghostFor(i, goal.leak.merchant) ? (
+                        <img src={ghostFor(i, goal.leak.merchant)} alt="" width={48} height={48} className="h-12 w-12 object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]" />
                       ) : (
                         <GhostMark className="h-8 w-8 text-[var(--gp-ghost)] drop-shadow-[0_0_10px_rgba(255,255,255,0.35)]" eyeColor={P.ink} />
                       )}
                     </span>
                   )}
-                  {goal.done && goal.leak && (
+                  {goal.done && goal.leak && P.cozy && (
+                    <span className="pointer-events-none absolute flex -translate-x-1/2 -translate-y-1/2 animate-rise flex-col items-center" style={{ left: pct(sideX, VIEW_W), top: pct(point.y, height) }}>
+                      <span className="text-[30px] leading-none" aria-hidden="true">🎁</span>
+                      <span className="mt-0.5 rounded-full bg-[var(--gp-card)] px-1.5 text-[10px] font-bold text-[var(--gp-gold)]">+{money(goal.save || goal.monthly)}</span>
+                    </span>
+                  )}
+                  {goal.done && goal.leak && !P.cozy && (
                     <span className="pointer-events-none absolute flex h-14 w-11 -translate-x-1/2 -translate-y-1/2 animate-rise flex-col items-center justify-center rounded-t-full bg-[var(--gp-tomb)] shadow-[0_6px_0_#140c22]" style={{ left: pct(sideX, VIEW_W), top: pct(point.y, height) }}>
                       <span className="text-[8px] font-bold tracking-[0.15em] text-[var(--gp-tombText)]">RIP</span>
                       <span className="text-[9.5px] font-bold text-[var(--gp-ghost)]">{money(goal.save || goal.monthly)}</span>
@@ -288,11 +310,19 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                   )}
                   {isCurrent && (
                     <span className="pointer-events-none absolute z-20 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center transition-[left,top] duration-700" style={{ left: pct(sideX, VIEW_W), top: pct(point.y - 18, height) }}>
-                      <span className="relative animate-float">
-                        <span className="absolute -top-1 left-1/2 h-3 w-6 -translate-x-1/2 rounded-t-full bg-primary" />
-                        <GhostMark className="h-8 w-8 text-[var(--gp-ghost)]" eyeColor={P.ink} />
-                        <span className="absolute -right-2 top-4 h-2.5 w-2.5 animate-flicker rounded-full bg-[var(--gp-gold)] shadow-[0_0_12px_4px_rgba(255,190,90,0.6)]" />
-                      </span>
+                      {P.cozy ? (
+                        // 🎄 you are the Sleeper, awake on Christmas morning, with a warm glow.
+                        <span className="relative animate-float">
+                          <span className="absolute inset-0 -z-10 m-auto h-14 w-14 rounded-full bg-[var(--gp-gold)] opacity-30 blur-md" />
+                          <img src={XMAS.awake} alt="" width={60} height={60} className="h-[60px] w-[60px] object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)]" />
+                        </span>
+                      ) : (
+                        <span className="relative animate-float">
+                          <span className="absolute -top-1 left-1/2 h-3 w-6 -translate-x-1/2 rounded-t-full bg-primary" />
+                          <GhostMark className="h-8 w-8 text-[var(--gp-ghost)]" eyeColor={P.ink} />
+                          <span className="absolute -right-2 top-4 h-2.5 w-2.5 animate-flicker rounded-full bg-[var(--gp-gold)] shadow-[0_0_12px_4px_rgba(255,190,90,0.6)]" />
+                        </span>
+                      )}
                       <span className="mt-1 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[12px] font-bold text-primary-foreground">You are here</span>
                     </span>
                   )}
