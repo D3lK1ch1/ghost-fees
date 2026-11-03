@@ -3,7 +3,7 @@ import { Check, Copy, ExternalLink, MessageCircle } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
 import AsiSignInFirst from '@/components/site/AsiSignInFirst';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
 
@@ -12,7 +12,7 @@ import { getSessionId } from '@/lib/session';
 // separate, optional next step, so nobody has to understand both at once.
 const STEPS = [
   { title: 'Copy the test message', line: 'Or type your own: what you pay for, in plain words.' },
-  { title: 'Open Ghost It and press "Chat with Agent"', line: 'It opens ASI:One already talking to Ghost It.' },
+  { title: 'Open Ghost It', line: 'Its ASI:One page opens. Tap its bubble, or paste the message and send. Keep @ghostit at the start so Ghost It answers, not your own assistant.' },
   { title: 'Paste and send', line: 'You get the yearly cost line by line, any double-ups, and the cancel steps.' },
 ];
 
@@ -90,7 +90,7 @@ export default function GhostIt() {
         </ol>
 
         <a
-          href={GHOST_IT_PROFILE}
+          href={GHOST_IT_CHAT}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => count('ghostit_page_open')}
@@ -98,7 +98,7 @@ export default function GhostIt() {
         >
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
-        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on Agentverse. Press <b className="text-foreground">Chat with Agent</b> there.</p>
+        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on ASI:One. Start your message with <b className="text-foreground">@ghostit</b>.</p>
         <div className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground">
           <img src={GHOST_IT_THUMBS} alt="" className="h-14 w-14 shrink-0 object-contain" />
           <p><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE}</p>

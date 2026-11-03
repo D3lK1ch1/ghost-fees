@@ -3,6 +3,9 @@
 // send people there instead of the ASI:One home page (no hunting for @ghostit).
 export const GHOST_IT_ADDRESS = 'agent1qvxxy97rjf9axql2xpn7d0rp8g6fxe39v7csh0ha60ud3qqghw9f7t7av43';
 export const GHOST_IT_PROFILE = `https://agentverse.ai/agents/details/${GHOST_IT_ADDRESS}/profile`;
+// Ghost It's own chat page on ASI:One. The "Open Ghost It" buttons go here, so people
+// land on Ghost It, not on a blank New Chat with their personal AI (3 Nov).
+export const GHOST_IT_CHAT = `https://asi1.ai/ai/${GHOST_IT_ADDRESS}`;
 export const GHOST_IT_PAGE = 'https://hunt-ghost-fees.base44.app/ghostit';
 // A message anyone can try without their own data.
 export const GHOST_IT_SAMPLE = '@ghostit netflix $18.99 stan $16 disney+ $15.99 spotify $14.99 gym $25 a week';

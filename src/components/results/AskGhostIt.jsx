@@ -4,7 +4,7 @@ import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_SNIP } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SNIP } from '@/lib/ghostFees/ghostItAgent';
 import GhostItDialog from './GhostItDialog';
 
 // "Message Ghost It": hands subscriptions to our chat agent on ASI:One (a separate
@@ -28,11 +28,11 @@ export function useGo(text) {
   return async () => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied. Press "Chat with Agent", then paste', description: text });
+      toast({ title: 'Copied. Paste it in the Ghost It chat and send', description: text });
     } catch {
-      toast({ title: 'Press "Chat with Agent", then type this', description: text });
+      toast({ title: 'Type this in the Ghost It chat', description: text });
     }
-    window.open(GHOST_IT_PROFILE, '_blank', 'noopener');
+    window.open(GHOST_IT_CHAT, '_blank', 'noopener');
     if (!isLocal()) base44.functions.invoke('logEvent', { session_id: getSessionId(), event_type: 'ask_ghostit_click' }).catch(() => {});
   };
 }
