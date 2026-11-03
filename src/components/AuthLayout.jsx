@@ -6,6 +6,7 @@ import GhostMark from "@/components/site/GhostMark";
 import { TEAM } from "@/components/landing/GhostTeam";
 import { GHOST_IT_MASCOT } from "@/lib/ghostFees/ghostItAgent";
 import ThemeChooser from "@/components/auth/ThemeChooser";
+import DataSafety from "@/components/site/DataSafety";
 
 // Sign in, sign up and password pages. Beside the form (below it on phones, so the
 // form is first): the purpose, the ghost team and what each does, and what's on offer
@@ -130,6 +131,7 @@ export default function AuthLayout({ icon: Icon, title, subtitle, footer, childr
             {children}
           </div>
           {footer && <p className="mt-5 text-center text-[14px] text-muted-foreground">{footer}</p>}
+          <p className="mt-3 text-center"><DataSafety /></p>
         </div>
       </div>
     </div>

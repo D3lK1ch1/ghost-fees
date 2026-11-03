@@ -251,7 +251,10 @@ export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions
             </p>
           )}
           <CalendarSync subscriptions={subscriptions} />
-          <p className="mt-2 text-[12.5px] leading-relaxed text-muted-foreground">Schedule picks a task and a day, then adds it to Google, Outlook or Apple Calendar. Add all puts a reminder 2 days before every charge.</p>
+          <ul className="mt-2 space-y-0.5 text-[12.5px] leading-snug text-muted-foreground">
+            <li><b className="text-foreground">Schedule:</b> pick a day for one task</li>
+            <li><b className="text-foreground">Add all:</b> a reminder 2 days before each charge</li>
+          </ul>
         </div>
       </div>
       <TaskDialog target={task} onClose={() => setTask(null)} />
@@ -275,7 +278,8 @@ const NUDGE = {
 const NUDGE_ART = {
   heartbroken: { src: '/themes/ex/ghost-sassy.webp', mouth: [116, 26] },
   fine: { src: '/themes/ex/men-block.webp', mouth: [114, 24] },
-  christmas: { src: '/themes/christmas/xc-festive.webp', mouth: [116, 30] },
+  // Jacob Ledger, tangled in his chain of past charges (3 Nov: "make the ghost fit").
+  christmas: { src: '/themes/christmas/xc-jacob-weary-v2.webp', w: 150, h: 115, mouth: [114, 79] },
   // Haunted: Cassy herself (the orange guide ghost); the card ghost is Ghost It's look.
   haunted: { cassy: true, mouth: [102, 40] },
 };
@@ -293,7 +297,7 @@ function CassyNudge() {
             <GhostMark className="h-[120px] w-[120px] drop-shadow-[0_0_18px_rgba(242,166,90,0.45)]" style={{ color: '#f2a65a' }} eyeColor="#1a1230" />
           </span>
         ) : (
-          <img src={art.src} alt="" width={130} height={140} className="absolute bottom-0 left-0 h-[140px] w-[130px] object-contain" />
+          <img src={art.src} alt="" width={art.w || 130} height={art.h || 140} className="absolute bottom-0 left-0 object-contain" style={{ width: art.w || 130, height: art.h || 140 }} />
         )}
         <div className="absolute z-10" style={{ left: art.mouth[0], top: 120 + art.mouth[1], transform: 'translate(-9.4%, -100%)' }}>
           <div className="bub-l w-[300px] !min-w-0 !px-11 !pb-14 !pt-8 text-center">

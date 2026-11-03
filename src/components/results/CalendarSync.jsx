@@ -50,7 +50,11 @@ export default function CalendarSync({ subscriptions }) {
     return (
       <div className="mt-3 rounded-2xl border border-primary/40 bg-primary/[0.06] p-3">
         <p className="flex items-center gap-2 font-heading text-[14px] font-semibold text-foreground"><RefreshCw className="h-4 w-4 text-primary" /> Sync to my calendar</p>
-        <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">Subscribe once in Google, Outlook or Apple Calendar. Every reminder and task you add here then shows up there on its own.</p>
+        <ul className="mt-1.5 space-y-1 text-[13px] leading-snug text-muted-foreground">
+          <li>✓ Works with Google, Outlook and Apple</li>
+          <li>✓ Set it up once</li>
+          <li>✓ New reminders appear on their own</li>
+        </ul>
         <button type="button" disabled={busy} onClick={start} className="mt-2 w-full rounded-xl bg-primary py-2 text-[14px] font-bold text-primary-foreground disabled:opacity-50">
           {busy ? 'Setting up...' : 'Set up calendar sync'}
         </button>

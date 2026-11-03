@@ -1,3 +1,4 @@
+import DataSafety from '@/components/site/DataSafety';
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -317,10 +318,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
           <FirstSteps setTab={setTab} answers={subAnswers} firstLeakTitle={[...leaks].sort((a, b) => b.amount - a.amount)[0]?.title || [...leaks].sort((a, b) => b.amount - a.amount)[0]?.merchant} />
         )}
 
-        <p className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-[13.5px] leading-relaxed text-muted-foreground">
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-border bg-card/60 px-4 py-2.5 text-[13.5px] leading-relaxed text-muted-foreground">
           <ShieldCheck className="h-4 w-4 shrink-0 text-[#5ee6c8]" />
-          <span>Nothing is saved. Results vanish when you close this tab.</span>
-        </p>
+          <span className="flex-1">Nothing is saved. Results vanish when you close this tab.</span>
+          <DataSafety label="How we keep your data safe" className="text-[13.5px]" />
+        </div>
 
         <FileErrors errors={fileErrors} />
 
