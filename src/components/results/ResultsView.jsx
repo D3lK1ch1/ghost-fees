@@ -57,7 +57,7 @@ import { cn } from '@/lib/utils';
 // One tab per feature so each is easy to find.
 const TABS = [
   { key: 'ghosts', label: 'Ghosts', Icon: Ghost, title: 'Your ghosts, biggest first', blurb: 'Each card is one money leak, with the transactions behind it. Tap a card to mark it most useful.' },
-  { key: 'house', label: 'Mark as sorted', themed: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
+  { key: 'house', label: 'Cancel & track', themed: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
   { key: 'path', label: 'Goal path', Icon: Route, title: 'Goal path', blurb: 'One stop per ghost. Walk your lantern up the hill to the ghost-free house.' },
   { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged, and add reminders for the next charges to your own calendar.' },
   { key: 'emails', label: 'Email templates', Icon: Mail, title: 'Email templates', blurb: 'Cancel, refund and fee-waiver emails, ready to edit and send.' },
