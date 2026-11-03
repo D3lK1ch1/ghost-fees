@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Check, Copy, ExternalLink, MessageCircle } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
+import AsiSignInFirst from '@/components/site/AsiSignInFirst';
 import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
@@ -11,7 +12,7 @@ import { getSessionId } from '@/lib/session';
 // separate, optional next step, so nobody has to understand both at once.
 const STEPS = [
   { title: 'Copy the test message', line: 'Or type your own: what you pay for, in plain words.' },
-  { title: 'Open Ghost It and press "Chat with Agent"', line: 'It opens ASI:One already talking to Ghost It. Sign in to ASI:One if it asks (free).' },
+  { title: 'Open Ghost It and press "Chat with Agent"', line: 'It opens ASI:One already talking to Ghost It.' },
   { title: 'Paste and send', line: 'You get the yearly cost line by line, any double-ups, and the cancel steps.' },
 ];
 
@@ -67,6 +68,7 @@ export default function GhostIt() {
         </section>
 
         <p className="mt-8 text-center text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Try it in 1 minute</p>
+        <AsiSignInFirst className="mt-3" />
         <ol className="mt-3 flex flex-col gap-2.5">
           {STEPS.map((step, index) => (
             <li key={step.title} className="flex gap-3 rounded-2xl border border-border bg-card/70 px-4 py-3.5">
@@ -96,7 +98,7 @@ export default function GhostIt() {
         >
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
-        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on Agentverse. Press <b className="text-foreground">Chat with Agent</b> there. Sign in to ASI:One first (free): agents only reply to signed-in people.</p>
+        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on Agentverse. Press <b className="text-foreground">Chat with Agent</b> there.</p>
         <div className="mt-4 flex items-center gap-3 rounded-2xl border-2 border-primary/60 bg-primary/10 px-4 py-3 text-[14px] leading-snug text-muted-foreground">
           <img src={GHOST_IT_THUMBS} alt="" className="h-14 w-14 shrink-0 object-contain" />
           <p><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE}</p>
