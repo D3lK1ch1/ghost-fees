@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v12 (3 Nov 2026): text-first. Cards off by default (blank in ASI:One); numbered menu, reply with a number; one-line purpose.
 # v11.4 (3 Nov 2026): text and cards sent as separate messages; GHOSTIT_CARDS=off for text only.
 # v11.3 (3 Nov 2026): first replies also list the tap-to-try prompts as text (in case cards don't show).
 # v11.1 (3 Nov 2026): ASI:One's pre-filled "What's new with you?" gets a welcome and tap cards, not the changelog.
@@ -58,7 +59,7 @@ STRIPE_SUCCESS_URL = os.environ.get("STRIPE_SUCCESS_URL", "https://agentverse.ai
 # Set the secret GHOSTIT_ADMIN_CODE in Agentverse (or change the word here), then type: evidence <your code>
 ADMIN_CODE = os.environ.get("GHOSTIT_ADMIN_CODE") or os.environ.get("GHOST_IT_ADMIN_CODE") or "change-me"
 # Cards on/off without a code change: Agentverse secret GHOSTIT_CARDS=off sends text only.
-USE_CARDS = os.environ.get("GHOSTIT_CARDS", "on").lower() != "off"
+USE_CARDS = os.environ.get("GHOSTIT_CARDS", "off").lower() == "on"   # off: ASI:One showed cards as blank bubbles (3 Nov)
 
 # "You said, we changed" pairs. Add one each time you ship a fix from feedback.
 CHANGES = [
@@ -77,9 +78,8 @@ CHANGES = [
 ]
 
 # v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
-PURPOSE = ("👻 **I'm Ghost It, a specialised AI agent.** I hunt the money leaks your bank statement can't show you, "
-           "with a Ghost Pack for each kind: streaming, music, AI tools, food, gym and gaming. "
-           "Every number is real maths and every cancel link is checked. Your first pack is free. "
+PURPOSE = ("👻 **I'm Ghost It. I find subscriptions you pay for twice, and help you cancel them.**\n"
+           "Streaming, music, AI tools, food, gym and gaming. Real maths, checked cancel links, first pack free. "
            "Tell me what you pay for below.")
 
 
@@ -388,8 +388,8 @@ def add_to_list(ctx, sender, items):
 def help_reply(full=False):
     """v8: vague or first messages get one purpose line and the form card. The full
     command list is for `commands`, and for text-only mode (no cards)."""
-    if not full and USE_CARDS:
-        return PURPOSE.replace("Tell me what you pay for below.", "Tap one below to try it, or tell me what you pay for.") + "\n\n" + quick_start_text(), quick_start_card()
+    if not full:
+        return PURPOSE.replace(" Tell me what you pay for below.", "") + "\n\n" + quick_start_text(), quick_start_card()
     text = (
         PURPOSE + "\n\n**I'm Ghost It.** I add up what your subscriptions really cost, find the doubles, "
         "give you the real cancel steps, and track that they actually stopped.\n\n"
@@ -441,10 +441,17 @@ QUICK_STARTS = [
 ]
 
 
+MENU = [example for _, example, _ in QUICK_STARTS] + ["How does it work?", "packs"]
+MENU_LABELS = [title for title, _, _ in QUICK_STARTS] + ["❓ How does it work?", "👻 See all six Ghost Packs"]
+
+
 def quick_start_text():
-    """The same tap-to-try prompts as text, in case a chat window doesn't show cards."""
-    return "\n".join(["**Try one (copy and send):**"] + [f"{i}. `{example}`" for i, (_, example, _) in enumerate(QUICK_STARTS, 1)]
-                     + [f"{len(QUICK_STARTS) + 1}. `How does it work?`"])
+    """The preloaded prompts as a numbered menu. Reply with just the number (works without cards)."""
+    lines = ["**Reply with a number to try one:**"]
+    lines += [f"**{i}.** {label}  `{example}`" if example != "packs" and not example.startswith("How") else f"**{i}.** {label}"
+              for i, (label, example) in enumerate(zip(MENU_LABELS, MENU), 1)]
+    lines.append("Or type what you pay for, e.g. `Netflix $19, gym $25 a week`.")
+    return "\n".join(lines)
 
 
 def quick_start_card():
@@ -1338,6 +1345,9 @@ KEEP_Q = re.compile(r"which (?:one |ones )?(?:should i|to|do i) keep|consolidate
 def route(ctx, sender, raw):
     text = raw.strip()
     text = re.sub(r"^@\S+\s*", "", text)   # strip @ghostit
+    m = re.fullmatch(r"\s*#?(\d{1,2})[.)]?\s*", text)
+    if m and 1 <= int(m.group(1)) <= len(MENU):
+        text = MENU[int(m.group(1)) - 1]
     low = text.lower()
 
     # 1. Card taps arrive as JSON (direct @mention) ...

@@ -51,6 +51,7 @@ def _install_stubs():
 
 def load_agent():
     _install_stubs()
+    os.environ.setdefault("GHOSTIT_CARDS", "on")  # card tests; the live default is off
     spec = importlib.util.spec_from_file_location("ghost_it_agent", HERE / "agent.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
@@ -393,8 +394,8 @@ class V8(unittest.TestCase):
         A.USE_CARDS = False
         try:
             reply, _ = A.route(FakeCtx(), SENDER, "hi")
-            self.assertTrue(reply.startswith(A.PURPOSE))
-            self.assertIn("screen pack", reply)
+            self.assertTrue(reply.startswith(A.PURPOSE.split(" Tell me")[0]))
+            self.assertIn("**1.**", reply)  # v12: the numbered menu, no cards needed
         finally:
             A.USE_CARDS = True
 
@@ -467,8 +468,8 @@ class About(unittest.TestCase):
         reply, _ = A.route(FakeCtx(), SENDER, "hi")
         first, rest = reply.split("\n", 1)
         self.assertIn("I'm Ghost It", first)
-        self.assertIn("**Try one (copy and send):**", rest)
-        self.assertIn("`How does it work?`", rest)
+        self.assertIn("**Reply with a number to try one:**", rest)
+        self.assertIn("How does it work?", rest)
 
 
 class AsiOneGreeting(unittest.TestCase):
@@ -476,10 +477,10 @@ class AsiOneGreeting(unittest.TestCase):
 
     def test_whats_new_with_you_leads_with_the_purpose_and_a_card(self):
         reply, card = A.route(FakeCtx(), SENDER, "What's new with you, Ghost.it?")
-        self.assertIn("I hunt the money leaks", reply.split("\n")[0])
+        self.assertIn("I find subscriptions you pay for twice", reply.split("\n")[0])
         self.assertIn("**New:**", reply)  # a welcome, not the changelog
         self.assertNotIn("We changed", reply)
-        self.assertIn("Try one", reply)
+        self.assertIn("Reply with a number", reply)
         self.assertEqual(card[0], "carousel")
 
 
@@ -770,3 +771,28 @@ class KeepQuestion(unittest.TestCase):
         item = next(i for i in card[1]["items"] if i["title"].startswith("🧩"))
         reply, _ = A.route(FakeCtx(), SENDER, json.dumps(item["primary_cta"]["selection"]))
         self.assertIn("Your consolidate plan", reply)
+
+
+class V12TextFirst(unittest.TestCase):
+    def test_number_runs_the_menu_item(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "hi")
+        reply, _ = A.route(ctx, SENDER, "2")   # 💻 Too many AI tools?
+        self.assertIn("$1,260.00 a year", reply.splitlines()[0])
+        reply, _ = A.route(ctx, SENDER, "5")   # How does it work?
+        self.assertIn("How Ghost It works", reply)
+
+    def test_live_default_is_text_only(self):
+        old = os.environ.pop("GHOSTIT_CARDS", None)
+        try:
+            B = load_agent.__wrapped__() if hasattr(load_agent, "__wrapped__") else None
+            import importlib.util as u
+            spec = u.spec_from_file_location("ghost_it_textonly", HERE / "agent.py")
+            mod = u.module_from_spec(spec); spec.loader.exec_module(mod)
+            self.assertFalse(mod.USE_CARDS)
+            reply, _ = mod.route(FakeCtx(), SENDER, "hi")
+            self.assertIn("I find subscriptions you pay for twice", reply)
+            self.assertIn("**1.**", reply)
+        finally:
+            if old is not None:
+                os.environ["GHOSTIT_CARDS"] = old
