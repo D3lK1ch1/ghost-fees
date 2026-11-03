@@ -14,7 +14,7 @@ const HAUNTED = { gold: '#ffcf73', goldSoft: '#ffe2a0', nodeBorder: '#6b5aa0', t
 const PALETTES = {
   haunted: HAUNTED,
   ex: { ...HAUNTED, gold: '#5ee6c8', goldSoft: '#a8f3e2', nodeBorder: '#5c5668', tree: '#2f2b38', roof: '#3a3444', star: '#d6d1db', wall: '#2f2b38', wall2: '#2a2632', door: '#15131a', sky1: '#2a2530', sky2: '#1d1a22', sky3: '#15131a', moon: '#f3e9f0', hill: '#221f29', hill2: '#2a2632', roadEdge: '#0f0d13', road: '#34303e', dash: '#bdb7c6', ink: '#15131a', card: '#1b1921', current: '#2a1f29', node: '#221f29', nodeText: '#fbf8fa', tomb: '#34303e', tombText: '#ff6f7d', ghost: '#fbf8fa' },
-  christmas: { ...HAUNTED, gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#2d5a48', tree: '#0b1a13', roof: '#7a2e2a', star: '#f5f0e8', wall: '#24433a', wall2: '#1d3b2c', door: '#0d1f17', sky1: '#1d3b2c', sky2: '#13291f', sky3: '#0d1f17', moon: '#f5f0e8', hill: '#13291f', hill2: '#1a3528', roadEdge: '#081510', road: '#24433a', dash: '#b9c9bf', ink: '#15131a', card: '#0d1f17', current: '#1d3b2c', node: '#13291f', nodeText: '#f5f0e8', tomb: '#24433a', tombText: '#f2c14e', ghost: '#f5f0e8' },
+  christmas: { ...HAUNTED, gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3f7a5e', tree: '#1f6b45', roof: '#f5f0e8', star: '#ffe08a', wall: '#a0522d', wall2: '#8b4426', door: '#c0392b', sky1: '#2b4a7a', sky2: '#2f6b5a', sky3: '#245a43', moon: '#ffe08a', hill: '#e9f1ee', hill2: '#cfe2da', roadEdge: '#6b4a2b', road: '#a37a4f', dash: '#fff6df', ink: '#15131a', card: '#1d4a37', current: '#2d6b52', node: '#245a43', nodeText: '#f5f0e8', tomb: '#2d6b52', tombText: '#f2c14e', ghost: '#f5f0e8', cozy: true },
   summer: { gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3b4c80', tree: '#0c1222', roof: '#2c3a63', star: '#f6efe0', wall: '#1a2340', wall2: '#22305a', door: '#10172a', sky1: '#22305a', sky2: '#1a2340', sky3: '#10172a', moon: '#f6efe0', hill: '#1a2340', hill2: '#22305a', roadEdge: '#0a0f1c', road: '#2c3a63', dash: '#b8c0d8', ink: '#15131a', card: '#10172a', current: '#22305a', node: '#1a2340', nodeText: '#f6efe0', tomb: '#2c3a63', tombText: '#f2c14e', ghost: '#f6efe0' },
 };
 
@@ -75,6 +75,51 @@ function House({ lit, P }) {
         <circle key={i} cx={-44 + i * 13} cy={2 - Math.sin((i / 8) * Math.PI) * 10} r="2.2" fill={P.gold} className="animate-window-flicker" style={{ animationDelay: `${(i % 4) * 0.5}s` }} />
       ))}
       {lit && <circle cx="8" cy="20" r="110" fill={P.gold} opacity="0.1" />}
+    </g>
+  );
+}
+
+// 🎄 A cosy log cabin instead of the haunted house: snowy roof, smoking chimney, a
+// wreath, warm windows and pine trees with lights (3 Nov: "less spooky, more Christmassy").
+function Cabin({ lit, P }) {
+  const glow = lit ? '#ffd36b' : '#ffcf73';
+  const Pine = ({ x, s = 1 }) => (
+    <g transform={`translate(${x} 64) scale(${s})`}>
+      <rect x="-4" y="-6" width="8" height="10" fill="#6b4a2b" />
+      <path d="M0 -86 L-30 -36 H-16 L-38 -6 H38 L16 -36 H30 Z" fill={P.tree} />
+      <path d="M0 -86 L-14 -62 H14 Z" fill="#f5f0e8" opacity="0.9" />
+      {[[-12, -44, '#e5484d'], [10, -30, '#f2c14e'], [-20, -14, '#5ee6c8'], [18, -12, '#e5484d'], [2, -56, '#f2c14e']].map(([cx, cy, c]) => (
+        <circle key={`${cx}${cy}`} cx={cx} cy={cy} r="3" fill={c} className="animate-window-flicker" />
+      ))}
+      <path d="M0 -96 l3 7 7 0 -6 5 2 7 -6 -4 -6 4 2 -7 -6 -5 7 0 z" fill="#ffe08a" />
+    </g>
+  );
+  return (
+    <g transform={`translate(${VIEW_W / 2} 150)`}>
+      <Pine x={-150} s={0.9} />
+      <Pine x={150} s={1} />
+      {/* chimney and smoke */}
+      <rect x="34" y="-58" width="18" height="34" fill="#7a3b22" />
+      <rect x="30" y="-64" width="26" height="8" rx="3" fill="#f5f0e8" />
+      <path d="M43 -70 c-10 -12 10 -16 0 -30 c-8 -10 8 -14 2 -24" stroke="#ffffff" strokeOpacity="0.7" strokeWidth="5" fill="none" strokeLinecap="round" />
+      {/* walls */}
+      <rect x="-70" y="-4" width="140" height="68" rx="4" fill={P.wall} />
+      {[6, 20, 34, 48].map((y) => <rect key={y} x="-70" y={y} width="140" height="3" fill="#7a3b22" opacity="0.5" />)}
+      {/* snowy roof */}
+      <path d="M-88 2 L0 -60 L88 2 Z" fill="#7a3b22" />
+      <path d="M-92 4 L0 -62 L92 4 Q70 12 50 4 Q24 14 0 4 Q-24 14 -50 4 Q-70 12 -92 4 Z" fill={P.roof} />
+      {/* windows and door */}
+      <rect x="-54" y="14" width="26" height="22" rx="3" fill={glow} />
+      <rect x="28" y="14" width="26" height="22" rx="3" fill={glow} />
+      <path d="M-41 14 v22 M-54 25 h26 M41 14 v22 M28 25 h26" stroke="#7a3b22" strokeWidth="2" />
+      <rect x="-12" y="24" width="24" height="40" rx="3" fill={P.door} />
+      <circle cx="0" cy="16" r="9" fill="none" stroke="#1f6b45" strokeWidth="5" />
+      <circle cx="0" cy="24" r="2.5" fill="#e5484d" />
+      {/* string of lights under the roof */}
+      {Array.from({ length: 11 }, (_, i) => (
+        <circle key={i} cx={-80 + i * 16} cy={6 + Math.sin((i / 10) * Math.PI) * 6} r="2.6" fill={['#e5484d', '#f2c14e', '#5ee6c8'][i % 3]} className="animate-window-flicker" style={{ animationDelay: `${(i % 4) * 0.4}s` }} />
+      ))}
+      {lit && <circle cx="0" cy="20" r="120" fill="#ffd36b" opacity="0.14" />}
     </g>
   );
 }
@@ -168,7 +213,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             <svg viewBox={`0 0 ${VIEW_W} ${height}`} className="absolute inset-0 h-full w-full" aria-hidden="true">
               <path d={`M 0 ${height} L 0 300 Q ${VIEW_W / 2} 250 ${VIEW_W} 300 L ${VIEW_W} ${height} Z`} fill={P.hill} />
               <path d={`M 0 ${height} L 0 ${height * 0.55} Q ${VIEW_W * 0.3} ${height * 0.5} ${VIEW_W} ${height * 0.6} L ${VIEW_W} ${height} Z`} fill={P.hill2} opacity="0.6" />
-              <House lit={allDone} P={P} />
+              {P.cozy ? <Cabin lit={allDone} P={P} /> : <House lit={allDone} P={P} />}
               <path d={fullPath} stroke={P.roadEdge} strokeWidth="50" fill="none" strokeLinecap="round" />
               <path d={fullPath} stroke={P.road} strokeWidth="40" fill="none" strokeLinecap="round" />
               <path d={fullPath} stroke={P.dash} strokeWidth="2.5" strokeDasharray="7 11" fill="none" strokeLinecap="round" opacity="0.55" />
@@ -181,10 +226,10 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             </svg>
 
             <span
-              className={cn('absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-[13px] font-bold', allDone ? 'border-[var(--gp-gold)] bg-[var(--gp-gold)] text-[var(--gp-ink)]' : 'border-white/10 bg-[var(--gp-card)]/90 text-[var(--gp-gold)]')}
+              className={cn('absolute left-1/2 -translate-x-1/2 whitespace-nowrap rounded-xl border px-3 py-1.5 text-[13px] font-bold', allDone ? 'border-[var(--gp-gold)] bg-[var(--gp-gold)] text-[var(--gp-ink)]' : 'border-white/10 bg-[var(--gp-card)] text-[var(--gp-gold)]')}
               style={{ top: pct(238, height) }}
             >
-              {allDone ? 'Ghost-free house!' : `Ghost-free house · ${money(total)}`}
+              {P.cozy ? (allDone ? 'Home for Christmas!' : `Home for Christmas · ${money(total)}`) : allDone ? 'Ghost-free house!' : `Ghost-free house · ${money(total)}`}
             </span>
 
             {goals.map((goal, i) => {
@@ -218,7 +263,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
                       className={cn(
                         'absolute top-1/2 w-[150px] -translate-y-1/2 rounded-xl border px-3 py-2 text-[12.5px] font-bold leading-snug shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition-colors sm:w-[190px] sm:text-[13.5px]',
                         left ? 'left-full ml-2.5 text-left' : 'right-full mr-2.5 text-right',
-                        isCurrent || isSelected ? 'border-primary/80 bg-[var(--gp-current)]' : 'border-white/10 bg-[var(--gp-card)]/95 group-hover:border-white/25',
+                        isCurrent || isSelected ? 'border-primary/80 bg-[var(--gp-current)]' : 'border-white/10 bg-[var(--gp-card)] shadow-md group-hover:border-white/25',
                       )}
                     >
                       <span className="block text-foreground">{goal.label}</span>
