@@ -1,4 +1,4 @@
-import { GHOST_IT_PROFILE } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -87,11 +87,11 @@ export default function Try() {
   const askGhostIt = async () => {
     try {
       await navigator.clipboard.writeText(ASK_TEXT);
-      toast({ title: 'Copied. Press "Chat with Agent", then paste', description: ASK_TEXT });
+      toast({ title: 'Copied. Paste it in the Ghost It chat and send', description: ASK_TEXT });
     } catch {
-      toast({ title: 'Press "Chat with Agent", then type this', description: ASK_TEXT });
+      toast({ title: 'Type this in the Ghost It chat', description: ASK_TEXT });
     }
-    window.open(GHOST_IT_PROFILE, '_blank', 'noopener');
+    window.open(GHOST_IT_CHAT, '_blank', 'noopener');
     if (!isLocal()) base44.functions.invoke('logEvent', { session_id: getSessionId(), event_type: 'ask_ghostit_click' }).catch(() => {});
     markTry('agent');
     setDone(loadTry());
@@ -145,7 +145,7 @@ export default function Try() {
 
           <Step n={2} title="Ask Ghost It (agent)" isDone={done.agent}>
             <AsiSignInFirst className="mb-3" />
-            <p className="text-[14px] text-muted-foreground">Ghost It is our chat agent on ASI:One. It shows the maths and the cancel steps. On its page, press <b className="text-foreground">Chat with Agent</b>, then paste.</p>
+            <p className="text-[14px] text-muted-foreground">Ghost It is our chat agent on ASI:One. It shows the maths and the cancel steps. On its page, paste and send. Keep <b className="text-foreground">@ghostit</b> at the start so Ghost It answers.</p>
             <p className="mt-2 rounded-xl bg-background/60 px-3 py-2 font-mono text-[13.5px] text-foreground">{ASK_TEXT}</p>
             <button type="button" onClick={askGhostIt} className="mt-3 rounded-2xl bg-primary px-5 py-3 text-[15px] font-bold text-primary-foreground">Copy and open Ghost It</button>
           </Step>
