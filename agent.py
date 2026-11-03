@@ -1252,11 +1252,30 @@ def buy_reply(ctx, sender, plan):
             "Your cancel steps arrive the moment it's paid.", None)
 
 
+def stripe_key_problem():
+    """Why the Stripe secret key can't work, or None. 3 Nov: the saved key held the
+    hidden-key dots Stripe shows (•••), so every checkout failed."""
+    key = os.environ.get("STRIPE_SECRET_KEY", "").strip()
+    if not key:
+        return "STRIPE_SECRET_KEY is empty"
+    if not key.isascii() or "•" in key or "*" in key:
+        return "STRIPE_SECRET_KEY looks masked (it has dots or stars). In Stripe press Reveal test key and paste the full sk_test_... value"
+    if not key.startswith(("sk_test_", "sk_live_", "rk_test_", "rk_live_")):
+        return "STRIPE_SECRET_KEY should start with sk_test_ (or sk_live_)"
+    pub = os.environ.get("STRIPE_PUBLISHABLE_KEY", "").strip()
+    if not pub.isascii() or "•" in pub or not pub.startswith(("pk_test_", "pk_live_")):
+        return "STRIPE_PUBLISHABLE_KEY should be the full pk_test_... value, not a masked one"
+    return None
+
+
 def stripe_call(method, path, data=None):
     """Stripe's REST API with the standard library (no extra package on Agentverse)."""
+    problem = stripe_key_problem()
+    if problem:
+        raise ValueError(problem)
     body = urllib.parse.urlencode(data).encode() if data else None
     req = urllib.request.Request(f"https://api.stripe.com/v1/{path}", data=body, method=method,
-                                 headers={"Authorization": f"Bearer {os.environ.get('STRIPE_SECRET_KEY', '')}"})
+                                 headers={"Authorization": f"Bearer {os.environ.get('STRIPE_SECRET_KEY', '').strip()}"})
     with urllib.request.urlopen(req, timeout=15) as resp:
         return json.loads(resp.read().decode())
 
