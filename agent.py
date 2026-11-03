@@ -441,7 +441,8 @@ QUICK_STARTS = [
 ]
 
 
-MENU = [example for _, example, _ in QUICK_STARTS] + ["How does it work?", "packs"]
+MENU = [example for _, example, _ in QUICK_STARTS] + ["How does it work?", "packs",
+        "Is it free?", "Is my data safe?", "How do you calculate it?", "what's new"]
 # Short, plain menu lines. ASI:One joins single line breaks and shows backticks, so
 # each line is its own paragraph and examples are plain text (3 Nov).
 MENU_LABELS = [
@@ -452,12 +453,16 @@ MENU_LABELS = [
     "❓ How does it work?",
     "👻 See all six Ghost Packs",
 ]
+# Common questions, numbered on from the menu (3 Nov: "list the common questions under hi").
+QUESTION_LABELS = ["💳 Is it free?", "🔒 Is my data safe?", "🧮 How do you work out the numbers?", "🆕 What's new?"]
 
 
 def quick_start_text():
     """The preloaded prompts as a numbered menu. Reply with just the number."""
     lines = ["**Reply with a number to try one:**"]
     lines += [f"**{i}.** {label}" for i, label in enumerate(MENU_LABELS, 1)]
+    lines.append("**Common questions:**")
+    lines += [f"**{i}.** {label}" for i, label in enumerate(QUESTION_LABELS, len(MENU_LABELS) + 1)]
     lines.append("Or just tell me what you pay for, like: Netflix $19, gym $25 a week")
     return "\n\n".join(lines)
 
@@ -1539,9 +1544,25 @@ agent = Agent()
 protocol = Protocol(spec=chat_protocol_spec)
 
 
+def for_asi(text):
+    """ASI:One shows `inline code` with the backticks and joins single line breaks, so
+    inline code becomes "quoted" and lines that aren't list items get a blank line."""
+    parts = re.split(r"(```.*?```)", text, flags=re.S)
+    out = []
+    for i, part in enumerate(parts):
+        if i % 2:              # fenced block (the cancel email): keep as is
+            out.append(part)
+            continue
+        part = re.sub(r"`([^`\n]+)`", r'"\1"', part)
+        part = re.sub(r"\n(?!\n|\s*[-*] |\s*\d+\. )", "\n\n", part)
+        out.append(part)
+    return re.sub(r"\n{3,}", "\n\n", "".join(out))
+
+
 def make_msg(text, card=None):
     """A plain text reply. Cards go in their own message (card_msg), so if a chat window
     rejects a card the text still arrives (3 Nov: replies were sent but not shown)."""
+    text = for_asi(text)
     return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=[TextContent(type="text", text=text)])
 
 

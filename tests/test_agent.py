@@ -796,3 +796,12 @@ class V12TextFirst(unittest.TestCase):
         finally:
             if old is not None:
                 os.environ["GHOSTIT_CARDS"] = old
+
+
+class V12Questions(unittest.TestCase):
+    def test_common_questions_by_number(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "hi")
+        self.assertIn("**Common questions:**", reply)
+        for n, expect in [("7", "What does it cost"), ("8", "What I keep"), ("9", "How I do the maths"), ("10", "What's new")]:
+            r, _ = A.route(FakeCtx(), SENDER, n)
+            self.assertIn(expect, r, n)
