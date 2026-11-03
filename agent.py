@@ -547,11 +547,14 @@ def check_reply(ctx, sender, text, subs, missing):
     ov = overlaps(subs)
     n = len(subs)
 
-    saving = sum(sum(yearly(x) for x in g) - yearly(min(g, key=yearly)) for g in ov.values())
-    if ov and saving > 0:
-        g, items_ = max(ov.items(), key=lambda kv: len(kv[1]))
-        head = (f"👻 **{money(total_y)} a year, and {len(items_)} {OVERLAP_NAMES[g]} do the same job.** "
-                f"Keep {'one' if len(ov) == 1 else 'one of each'} and save up to **{money(saving)} a year**.")
+    # Same groups and keep-one rule as the consolidate plan, so the numbers always match.
+    groups = plan_groups([x for x in subs if x.get("known") and x.get("price")])
+    saving = sum(sum(yearly(x) for x in grp) - yearly(min(grp, key=yearly)) for _, _, grp in groups)
+    if groups and saving > 0:
+        _, label, items_ = max(groups, key=lambda t: len(t[2]))
+        head = (f"👻 **{money(total_y)} a year, and {len(items_)} {label} do the same job.** "
+                f"Keep {'one' if len(groups) == 1 else 'one of each'} and save up to **{money(saving)} a year**. "
+                "Type `consolidate` for the plan.")
     else:
         head = f"👻 **{money(total_y)} a year** across {n} regular payment{'s' if n != 1 else ''}. No doubles."
     lines = [head, "", f"**What I did:** added up your {n} payment{'s' if n != 1 else ''} "

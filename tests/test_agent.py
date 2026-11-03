@@ -728,3 +728,12 @@ class V11Consolidate(unittest.TestCase):
         A.route(ctx, SENDER, "Netflix $19, gym $25 a week")
         reply, _ = A.route(ctx, SENDER, "consolidate")
         self.assertIn("Nothing to consolidate", reply)
+
+
+class V11Headline(unittest.TestCase):
+    def test_headline_matches_consolidate_plan(self):
+        ctx = FakeCtx()
+        reply, _ = A.route(ctx, SENDER, "ChatGPT $30, Claude $30, Cursor $30, Copilot $15")
+        self.assertIn("Keep one of each and save up to **$720.00 a year**", reply.splitlines()[0])
+        plan, _ = A.route(ctx, SENDER, "consolidate")
+        self.assertIn("Total you could save: $720.00 a year", plan)
