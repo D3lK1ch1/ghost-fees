@@ -48,12 +48,12 @@ except ImportError:  # pragma: no cover - depends on the hosted runtime
 # ---------------------------------------------------------------- settings
 APP_URL = "https://hunt-ghost-fees.base44.app/"
 HOURLY_RATE = 30          # used for the "hours of work" nudge, stated in the reply
-# Paid Ghost Packs: first pack free, then $2 a pack or $5 for every pack (AUD), paid
+# Paid Ghost Packs: first pack free, then $5 once unlocks every pack (AUD), paid
 # with Stripe inside ASI:One. Off until you set these Agentverse secrets:
 #   PAYMENTS_ENABLED=true, STRIPE_SECRET_KEY=sk_test_..., STRIPE_PUBLISHABLE_KEY=pk_test_...
 # Never put the secret key in the code, the chat or a card.
 PAYMENTS_ENABLED = os.environ.get("PAYMENTS_ENABLED", "").lower() == "true"
-PACK_PRICE_CENTS = 200
+PACK_PRICE_CENTS = 500   # 3 Nov: one price. First pack free, then $5 once for all
 ALL_PRICE_CENTS = 500
 STRIPE_SUCCESS_URL = os.environ.get("STRIPE_SUCCESS_URL", "https://agentverse.ai/payment-success")
 # Set the secret GHOSTIT_ADMIN_CODE in Agentverse (or change the word here), then type: evidence <your code>
@@ -504,8 +504,7 @@ EXPLAINERS = {
         ("See all packs", {"action": "packs"}), "price"),
     "price": ("💳 What does it cost?", [
         ("Your first pack", "Free"),
-        ("Each pack after that", "$2 AUD, paid once"),
-        ("Every pack", "$5 AUD, paid once, forever"),
+        ("Every other pack", "$5 AUD once, unlocks them all forever"),
         ("Subscription", "Never. Ghost It won't become another subscription"),
         ("How you pay", "Card checkout by Stripe, right inside the chat"),
         ("Always free", "Adding up your subscriptions, doubles and your ghost list"),
@@ -965,7 +964,7 @@ def pack_report(ctx, sender, items, pack):
     if overlaps(priced):
         lines.append("\n🧩 **Consolidate:** type `consolidate` for a plan: keep one, cancel the rest or rotate, with the saving.")
     lines.append("\n**Next:** tap **Cancel steps** for the steps and a ready email, or type `cancel steps`.")
-    lines.append("\n" + ("Your first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in the chat."
+    lines.append("\n" + ("Your first Ghost Pack is free. After that, $5 once unlocks every pack, paid in the chat."
                          if paying() else "Ghost Packs are free during beta."))
     lines.append(try_next("cancel steps", f"{items[0]['name']} stopped" if items else None, "packs"))
     lines.append("\n" + DISCLAIMER)
@@ -1017,7 +1016,7 @@ def ghost_reply(ctx, sender, items, title, browse=False, steps_only=False):
     parts.append("\n**Next:** once a charge stops, type `<name> stopped`. In 7 days I'll ask if it really stopped. "
                  "Type `my ghost list` any time.")
     if paying():
-        parts.append("\nYour first Ghost Pack is free. After that, $2 a pack or $5 for every pack, paid once in the chat.")
+        parts.append("\nYour first Ghost Pack is free. After that, $5 once unlocks every pack, paid in the chat.")
     else:
         parts.append("\nGhost Packs are free during beta.")
     parts.append("\n" + DISCLAIMER)
@@ -1202,8 +1201,8 @@ def pack_access(ctx, sender, items, title, everything=False):
         ctx.storage.set(f"free_used:{sender}", True)
         ctx.storage.set(f"unlocked:{sender}", unlocked + packs)
         bump(ctx, "free_packs")
-        return True, f"🎁 **The {packs[0]} pack is your free one.** More packs are $2 each, or $5 for all."
-    cents = ALL_PRICE_CENTS if everything or len(packs) > 1 else PACK_PRICE_CENTS
+        return True, f"🎁 **The {packs[0]} pack is your free one.** Every other pack: $5 once, forever."
+    cents = ALL_PRICE_CENTS   # one price: $5 unlocks every pack
     ctx.storage.set(f"pending_pay:{sender}", {"items": items, "title": title,
                                               "packs": ["all"] if cents == ALL_PRICE_CENTS else packs, "cents": cents})
     return False, paywall_reply(packs, cents)
@@ -1212,8 +1211,8 @@ def pack_access(ctx, sender, items, title, everything=False):
 def paywall_reply(packs, cents):
     """v10: the price, explained on a card, with a choice of one pack or every pack.
     Stripe's checkout arrives as its own message straight after this one."""
-    one = cents == PACK_PRICE_CENTS
-    what = f"the {packs[0]} pack" if one else "every Ghost Pack"
+    one = False   # 3 Nov: one price only, $5 unlocks every pack
+    what = "every Ghost Pack"
     text = (f"🔓 **Unlock {what}: ${cents / 100:.2f} once.**\n\n"
             "You've used your free pack. Here's what you get:\n"
             "- The official cancel link and steps for each one\n"
@@ -1241,7 +1240,7 @@ def buy_reply(ctx, sender, plan):
         return "Ghost Packs are free while we're in beta, so there's nothing to pay. Type `packs` to run one.", None
     if not isinstance(pending, dict):
         pending = {"items": last_subs(ctx, sender), "title": "Cancel steps for everything", "packs": [], "cents": 0}
-    if plan == "all":
+    if plan in ("all", "pack"):   # one price: always every pack
         pending.update(packs=["all"], cents=ALL_PRICE_CENTS)
     elif not pending.get("packs"):
         return "Pick a pack first, e.g. `sound pack`, or tap **$5 for every pack**.", None

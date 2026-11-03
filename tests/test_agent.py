@@ -314,13 +314,12 @@ class PaidPacks(unittest.TestCase):
         self.assertIn("your free one", reply)
         self.assertIn("https://www.netflix.com/cancelplan", reply)
         reply, card = self.P.route(self.ctx, SENDER, "sound pack")
-        self.assertIn("$2.00 once", reply)
+        self.assertIn("$5.00 once", reply)
         self.assertEqual(card[0], "detail")  # v10: the price explained on a card
-        self.assertEqual([c["selection"] for c in card[1]["ctas"]][:2],
-                         [{"action": "buy", "plan": "pack"}, {"action": "buy", "plan": "all"}])
+        self.assertEqual(card[1]["ctas"][0]["selection"], {"action": "buy", "plan": "all"})
         self.assertNotIn("spotify.com", reply)  # steps only after paying
         pending = self.P.get(self.ctx, f"pending_pay:{SENDER}", None)
-        self.assertEqual((pending["cents"], pending["packs"]), (200, ["Sound"]))
+        self.assertEqual((pending["cents"], pending["packs"]), (500, ["all"]))  # 3 Nov: one price
 
     def test_ghost_everything_is_five(self):
         self.P.route(self.ctx, SENDER, "screen pack")
@@ -333,7 +332,7 @@ class PaidPacks(unittest.TestCase):
         asyncio.run(self.P.send_payment_request(self.ctx, SENDER))
         req = self.ctx.sent[-1]
         self.assertEqual(type(req).__name__, "RequestPayment")
-        self.assertEqual((req.accepted_funds[0].amount, req.accepted_funds[0].currency, req.accepted_funds[0].payment_method), ("2.00", "AUD", "stripe"))
+        self.assertEqual((req.accepted_funds[0].amount, req.accepted_funds[0].currency, req.accepted_funds[0].payment_method), ("5.00", "AUD", "stripe"))
         self.assertEqual(req.metadata["stripe"]["checkout_session_id"], "cs_test_123")
         self.assertNotIn("sk_test", json.dumps(req.metadata))  # secret key never leaves the agent
         self.assertTrue(all(isinstance(v, str) for v in req.metadata["stripe"].values()))
@@ -344,13 +343,13 @@ class PaidPacks(unittest.TestCase):
         delivered = next(m.content[0].text for m in reversed(self.ctx.sent) if hasattr(m, "content") and hasattr(m.content[0], "text"))
         self.assertIn("Paid, thank you", delivered)
         self.assertIn("spotify", delivered.lower())
-        self.assertIn("Sound", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
+        self.assertIn("all", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
         self.P.ADMIN_CODE = "s3cret"
         ev, _ = self.P.route(self.ctx, SENDER, "evidence s3cret")
-        self.assertIn("Paid Ghost Packs: 1 ($2.00 taken)", ev)
+        self.assertIn("Paid Ghost Packs: 1 ($5.00 taken)", ev)
         self.assertIn("Free Ghost Packs used: 1", ev)
         reply, _ = self.P.route(self.ctx, SENDER, "sound pack")  # unlocked now: no price
-        self.assertNotIn("$2.00 once", reply)
+        self.assertNotIn("$5.00 once", reply)
 
     def test_unpaid_commit_is_cancelled(self):
         self.P.route(self.ctx, SENDER, "screen pack")
@@ -360,7 +359,7 @@ class PaidPacks(unittest.TestCase):
         commit = types.SimpleNamespace(funds=types.SimpleNamespace(payment_method="stripe"), transaction_id="cs_test_123")
         asyncio.run(self.P.on_commit(self.ctx, SENDER, commit))
         self.assertEqual(type(self.ctx.sent[-1]).__name__, "CancelPayment")
-        self.assertNotIn("Sound", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
+        self.assertNotIn("all", self.P.get(self.ctx, f"unlocked:{SENDER}", []))
 
     def test_wrong_session_is_cancelled(self):
         self.P.route(self.ctx, SENDER, "screen pack")
@@ -628,7 +627,7 @@ class V10(unittest.TestCase):
         self.assertEqual(card[0], "carousel")
         self.assertEqual(len(card[1]["items"]), len(A.EXPLAINERS))
         reply, card = A.route(FakeCtx(), SENDER, json.dumps({"action": "explain", "topic": "price"}))
-        self.assertIn("$2 AUD", reply)
+        self.assertIn("$5 AUD", reply)
         self.assertIn("free while we're in beta", reply)  # no keys in tests
 
     def test_list_with_how_much_is_still_maths(self):
@@ -689,7 +688,7 @@ class V10Useful(unittest.TestCase):
     def test_our_price_still_answers(self):
         for msg in ["is it free?", "how much does it cost?", "how much is a pack?"]:
             reply, _ = A.route(FakeCtx(), SENDER, msg)
-            self.assertIn("$2 AUD", reply, msg)
+            self.assertIn("$5 AUD", reply, msg)
 
 
 class V11Consolidate(unittest.TestCase):

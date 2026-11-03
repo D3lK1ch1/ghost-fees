@@ -31,7 +31,7 @@ Every pack shows the maths line by line, the pack total, the leaks with what you
 
 ## Pricing
 - **Free:** adding up your subscriptions, finding doubles, your ghost list, and your **first Ghost Pack**.
-- **$2 AUD a pack** after that, or **$5 AUD for every pack, forever**. Paid once, never a subscription.
+- **$5 AUD once** after that unlocks every pack, forever. Never a subscription.
 - Secure Stripe card checkout inside ASI:One. Ghost It never sees your card.
 
 ## New here? Ask me
