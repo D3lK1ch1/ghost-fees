@@ -92,7 +92,7 @@ export function Spirit({ src, name, alt = '', width = 140, X, className = '', ab
     <div className={`relative flex flex-none flex-col items-center ${className}`}>
       <img src={src} alt={alt} width={width} className="x-breathe block h-auto" style={{ width }} />
       <div className="x-fredoka mt-1 rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
-      {about && <p className="mt-1 max-w-[170px] text-center text-[12.5px] leading-snug" style={{ color: X.muted }}>{about}</p>}
+      {about && <p className="mt-2.5 max-w-[170px] text-center text-[12.5px] leading-snug" style={{ color: X.muted }}>{about}</p>}
     </div>
   );
 }
@@ -155,7 +155,7 @@ export function SpiritSays({ src, name, alt = '', width = 130, ratio = 1.3, mout
       <div className="flex flex-none flex-col items-center" style={{ width }}>
         <img src={src} alt={alt} width={width} height={height} className="x-breathe block h-auto" style={{ width }} />
         <div className="x-fredoka mt-1 w-fit rounded-full px-2.5 py-1 text-center text-[13px] font-semibold leading-tight" style={{ background: 'rgba(0,0,0,.45)', border: `1px solid ${X.gold}`, color: X.gold }}>{name}</div>
-        {about && <p className="mt-1 text-center text-[12.5px] leading-snug" style={{ color: X.muted, width: Math.max(width, 150) }}>{about}</p>}
+        {about && <p className="mt-2.5 text-center text-[12.5px] leading-snug" style={{ color: X.muted, width: Math.max(width, 150) }}>{about}</p>}
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-1" style={{ paddingTop: top }}>
         {lines.filter(Boolean).map((line, index) => (
