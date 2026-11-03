@@ -1,7 +1,6 @@
-import { SpeechBubble } from '@/components/site/Bubbles';
 import { statFor } from '@/data/stats';
 import { money } from '@/lib/ghostFees/format';
-import { XMAS, xmasGhost } from '@/lib/ghostFees/christmasArt';
+import { XMAS, xmasAvatar, xmasGhost } from '@/lib/ghostFees/christmasArt';
 import ChangedMyWays from './ChangedMyWays';
 import { Disclaimer, Kicker, Spirit, SpiritSays, Stocking, Title, XScreen, XmasGhostButton, useSeason } from './XmasKit';
 import CancelSiteLink from '@/components/results/CancelSiteLink';
@@ -94,27 +93,28 @@ function Present({ subscriptions, X, season }) {
     <XScreen X={X} season={season}>
       <Kicker X={X}>STAVE TWO · THE PRESENT</Kicker>
       <Title size={24}>Jolly, the Ghost of Subscriptions Present</Title>
-      <div className="relative flex items-end gap-2">
-        <div className="flex flex-col gap-2 pb-8">
-          <SpeechBubble>Come in, and know me better, friend! Every dish is something you pay for.</SpeechBubble>
-        </div>
-        <Spirit src={XMAS.jolly} name="Jolly" alt="Jolly the cheerful ghost in a patchwork robe holding a torch" width={130} X={X} className="ml-auto" />
-      </div>
+      {/* Asset bubbles from Jolly's mouth, as in every stave. */}
+      <SpiritSays src={XMAS.jolly} name="Jolly" alt="Jolly the cheerful ghost in a patchwork robe holding a torch" width={140} ratio={294 / 320} mouth={[52, 37]} bubbleWidth={190}
+        about="The Ghost of Subscriptions Present. Shows what you pay for right now."
+        lines={['Come in! Know me better.', 'Every dish is something you pay for.']} X={X} />
       <ul className="relative m-0 grid list-none grid-cols-3 gap-2 rounded-2xl border-t-4 border-dashed p-3" style={{ borderColor: '#c0392b', background: '#5a3a24' }}>
         {subscriptions.slice(0, 9).map((item, index) => (
           <li key={item.id} className="x-dish flex flex-col items-center text-center" style={{ animationDelay: `${0.4 + index * 0.35}s` }}>
-            <span className="relative h-5 w-14 rounded-[50%] shadow-inner" style={{ background: '#efe6d8' }} aria-hidden="true">
-              <span className="x-steam absolute -top-3 left-1/2 h-3 w-1.5 -translate-x-1/2 rounded-full bg-white/60" style={{ animationDelay: `${index * 0.3}s` }} />
+            {/* Each dish is served by its festive ghost. */}
+            <span className="relative flex h-12 w-16 items-end justify-center" aria-hidden="true">
+              <img src={xmasAvatar(item.merchant, season)} alt="" width={40} height={40} className="x-bob relative z-10 mb-1 h-10 w-10 object-contain" style={{ animationDelay: `${index * 0.3}s` }} />
+              <span className="absolute bottom-0 h-4 w-16 rounded-[50%] shadow-inner" style={{ background: '#efe6d8' }} />
             </span>
-            <span className="mt-1 rounded px-1.5 py-0.5 text-[12px] font-bold" style={{ background: X.cream, color: '#14301f' }}>
-              {item.merchant} <span style={{ color: '#c0392b' }}>{money(item.monthly)}</span>
+            <span className="mt-1 flex w-full flex-col rounded-lg px-1.5 py-1 text-[12px] font-bold leading-tight" style={{ background: X.cream, color: '#14301f' }}>
+              <span className="truncate">{item.merchant}</span>
+              <span style={{ color: '#c0392b' }}>{money(item.monthly)}</span>
             </span>
           </li>
         ))}
       </ul>
       <div className="relative text-center">
         <div className="x-fredoka text-[26px] font-bold" style={{ color: X.gold }}>{money(monthly)} a month</div>
-        <div className="text-[14px]" style={{ color: X.muted }}>on the table right now. The letters below clear it, one dish at a time.</div>
+        <div className="text-[14px]" style={{ color: X.muted }}>on the table right now. The letters below clear it. One dish at a time.</div>
       </div>
     </XScreen>
   );
