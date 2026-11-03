@@ -400,7 +400,8 @@ def help_reply(full=False):
         f"Want the ones you forgot? Scan your bank statement free in the Ghost Fees app: {app_link()}\n\n"
         + DISCLAIMER
     )
-    return text, help_card()
+    # The tap-to-try cards go with every opener, including the full command list.
+    return text, (quick_start_card() if USE_CARDS else help_card())
 
 
 def about_reply():

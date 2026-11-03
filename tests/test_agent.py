@@ -738,3 +738,14 @@ class V11Headline(unittest.TestCase):
         self.assertIn("Keep one of each and save up to **$720.00 a year**", reply.splitlines()[0])
         plan, _ = A.route(ctx, SENDER, "consolidate")
         self.assertIn("Total you could save: $720.00 a year", plan)
+
+
+class OpenersGetCards(unittest.TestCase):
+    """Whatever someone sends first, they get the tap-to-try cards (3 Nov)."""
+
+    def test_every_opener_has_the_cards(self):
+        for msg in ["hi", "hello", "help", "start", "what can you do?", "menu", "?",
+                    "Tell me what you were created to do", "What's new with you, Ghost.it?"]:
+            _, card = A.route(FakeCtx(), SENDER, msg)
+            self.assertEqual(card[0], "carousel", msg)
+            self.assertIn("qs-how", [item["id"] for item in card[1]["items"]], msg)
