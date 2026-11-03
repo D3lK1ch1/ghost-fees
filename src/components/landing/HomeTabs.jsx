@@ -5,7 +5,11 @@ import { cn } from '@/lib/utils';
 // The home page below the stats, as tabs instead of one long scroll. A tester said
 // "it took a lot of scrolling to digest the content on each page" (2 Nov).
 export default function HomeTabs({ tabs }) {
-  const [active, setActive] = useState(tabs[0]?.key);
+  const fromHash = typeof window !== 'undefined' ? window.location.hash.slice(1) : '';
+  const [active, setActive] = useState(tabs.some((tab) => tab.key === fromHash) ? fromHash : tabs[0]?.key);
+  useEffect(() => {
+    if (tabs.some((tab) => tab.key === fromHash)) document.querySelector('[data-tour="hometabs"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   // Other parts of the page can open a tab (e.g. "Check typical prices").
   useEffect(() => {
     const open = (event) => {
