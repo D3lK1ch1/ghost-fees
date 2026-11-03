@@ -281,9 +281,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
         <div
           role="dialog"
           aria-label={`Ask ${guide.name}, your ghost guide`}
-          className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85vh] animate-rise flex-col rounded-t-3xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-h-[640px] sm:w-[380px] sm:rounded-3xl"
+          className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] animate-rise flex-col overflow-hidden rounded-t-3xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-h-[min(640px,calc(100dvh-2.5rem))] sm:w-[380px] sm:rounded-3xl"
         >
-          <div className="flex items-center gap-3 border-b border-border px-4 pb-3 pt-4">
+          <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 pb-3 pt-4">
             <span className="flex h-12 w-11 shrink-0 items-end justify-center overflow-visible pt-2" style={{ color: guide.color }}>
               <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />
             </span>
@@ -318,12 +318,12 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <X className="h-5 w-5" />
             </button>
           </div>
-          <div className="border-b border-border px-4 py-2.5">
+          <div className="shrink-0 border-b border-border px-4 py-2.5">
             <p className="text-[14px] leading-relaxed text-foreground">{guide.does}</p>
             <p className="mt-0.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
           </div>
 
-          <div ref={listRef} aria-live="polite" className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
+          <div ref={listRef} aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {messages.map((message, index) => (
               <div key={index} className={cn('flex flex-col', message.role === 'user' ? 'items-end' : 'items-start')}>
                 <p
@@ -380,7 +380,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
           <form
             onSubmit={(event) => { event.preventDefault(); ask(input); }}
-            className="flex items-center gap-2 border-t border-border px-3 py-3"
+            className="flex shrink-0 items-center gap-2 border-t border-border px-3 py-3"
           >
             <label htmlFor="guide-input" className="sr-only">Ask your ghost guide</label>
             <input
