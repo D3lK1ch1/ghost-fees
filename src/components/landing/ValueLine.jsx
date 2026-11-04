@@ -1,47 +1,57 @@
-import { BadgeDollarSign, MailCheck, Upload } from 'lucide-react';
-import { useAllowance } from '@/lib/AllowanceContext';
+import { Check } from 'lucide-react';
+import { openTypicalPrices } from '@/components/site/DataSafety';
 
-// The first thing on the home page in every theme, before any art: the promise
-// (UVP), what it does and who it's for, kept short on purpose. The rest of the
-// detail (Is this you?, Free vs Pro) lives in the home tabs.
-// Testers: "make the value statement clear from the start and more concise",
-// "information overload".
-const STEPS = [
-  { title: 'Upload', line: 'a bank statement (CSV or PDF)', Icon: Upload },
-  { title: 'See', line: 'every leak, in dollars', Icon: BadgeDollarSign },
-  { title: 'Cancel', line: 'with ready-made steps and emails', Icon: MailCheck },
-];
+// The first thing on the home page in every theme (design A, 4 Nov: "less chunky,
+// more streamlined"). One kicker, one headline, one sentence, three steps in a line,
+// one button and quiet trust ticks. No box around it, so it reads open, not like a form.
+const STEPS = ['Upload', 'See every leak', 'Cancel'];
 
-export default function ValueLine({ onSample }) {
-  const { charging } = useAllowance();
+export default function ValueLine({ onSample, onUpload }) {
   return (
-    <section data-tour="uvp" aria-label="What Ghost Fees does and who it's for" className="mx-auto mt-4 w-full max-w-2xl rounded-3xl border border-primary/40 bg-primary/[0.07] px-5 py-5 text-center">
-      <p className="font-heading text-[26px] font-bold leading-tight text-foreground sm:text-[30px]">
+    <section data-tour="uvp" aria-label="What Ghost Fees does" className="relative mx-auto mt-6 w-full max-w-2xl px-5 py-4 text-center">
+      {/* Soft glow behind the headline instead of a border. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-10 top-2 -z-10 h-32 rounded-full bg-primary/15 blur-3xl" />
+      <p className="text-[12px] font-semibold uppercase tracking-[0.22em] text-primary">Find · Cancel · Pay once</p>
+      <h2 className="mt-2 font-heading text-[30px] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-[38px]">
         Ghost them once. <span className="text-primary">Pay once.</span>
+      </h2>
+      <p className="mx-auto mt-3 max-w-md text-[16px] leading-relaxed text-muted-foreground">
+        Find the subscriptions you forgot and cancel them in one click. No bank login.
       </p>
-      <p className="mx-auto mt-1.5 max-w-lg text-[15px] leading-snug text-muted-foreground">
-        Ghost Fees finds the subscriptions and bank fees you forgot you&apos;re paying, then helps you cancel them. No bank login.
-      </p>
-      <p className="mt-2 text-[14px] text-muted-foreground">For Australians juggling subscriptions: students, sharehouses, couples and families.</p>
 
-      {/* How it works: a clean list, top to bottom. Number, icon, then one line. */}
-      <ol className="mx-auto mt-4 flex max-w-md flex-col gap-2 text-left" aria-label="How it works">
-        {STEPS.map(({ title, line, Icon }, index) => (
-          <li key={title} className="flex items-center gap-3 rounded-2xl border border-border bg-card/60 px-3.5 py-2.5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary font-heading text-[16px] font-bold text-primary-foreground">{index + 1}</span>
-            <Icon className="h-5 w-5 shrink-0 text-primary" strokeWidth={2.2} aria-hidden="true" />
-            <span className="min-w-0 text-[15.5px] leading-snug text-muted-foreground"><b className="font-bold text-foreground">{title}</b> {line}</span>
+      <ol className="mx-auto mt-5 flex max-w-md items-center justify-center gap-2 text-[14px] text-foreground/90" aria-label="How it works">
+        {STEPS.map((step, index) => (
+          <li key={step} className="flex items-center gap-2">
+            {index > 0 && <span aria-hidden="true" className="h-px w-6 bg-white/20 sm:w-10" />}
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-primary/60 text-[12px] font-semibold text-primary">{index + 1}</span>
+            <span className="whitespace-nowrap">{step}</span>
           </li>
         ))}
       </ol>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+
+      <div className="mt-6 flex flex-col items-center gap-2">
         {onSample && (
-          <button type="button" data-tour="try" onClick={onSample} className="rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground shadow-[0_8px_30px_hsl(var(--primary)/0.3)]">
-            See it on a sample in 10 seconds
+          <button type="button" data-tour="try" onClick={onSample} className="rounded-full bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground shadow-[0_10px_34px_hsl(var(--primary)/0.32)] transition-transform hover:-translate-y-0.5">
+            See it on a sample · 10 sec
+          </button>
+        )}
+        {onUpload && (
+          <button type="button" onClick={onUpload} className="text-[14px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+            or upload a statement
           </button>
         )}
       </div>
-      <p className="mt-2 text-[12.5px] text-muted-foreground">Free to start. Pro is $10 once, never a subscription.{!charging && <> Free while we&apos;re in beta.</>}</p>
+
+      <ul className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[13px] text-muted-foreground">
+        <li className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />$10 once</li>
+        <li className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />No bank login</li>
+        <li>
+          <button type="button" onClick={openTypicalPrices} className="inline-flex items-center gap-1 hover:text-foreground">
+            <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />No upload needed
+          </button>
+        </li>
+      </ul>
+      <p className="mt-1.5 text-[12.5px] text-muted-foreground/80">🔒 We never touch your bank, cards or accounts.</p>
     </section>
   );
 }

@@ -21,6 +21,8 @@ export default function UvpLine({ align = 'center', className = '' }) {
           </button>
         </li>
       </ul>
+      {/* Kingan (Tool Offer agent), 4 Nov: say plainly we never touch money. People decide. */}
+      <p className="mt-2.5 text-[13px] leading-snug text-muted-foreground">🔒 We never touch your bank, cards or accounts. We only show you what to cancel. You decide.</p>
     </div>
   );
 }
