@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, Play } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import { duration } from '@/data/videos';
 import { cn } from '@/lib/utils';
 
 // One video: a cover (the frame a few seconds in, since the videos fade in from dark)
-// with a ghost play button, title and length. Nothing plays until you tap it; then the
+// with a small play button, title and length. Nothing plays until you tap it; then the
 // normal controls take over. No autoplay. preload="metadata" so pages stay light.
 export default function VideoCard({ video, compact = false, className = '' }) {
   const ref = useRef(null);
@@ -51,12 +51,13 @@ export default function VideoCard({ video, compact = false, className = '' }) {
             type="button"
             onClick={start}
             aria-label={`Play ${video.title} (${duration(video.seconds)})`}
-            className="group absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/70 via-black/20 to-black/10"
+            className="group absolute inset-0 flex items-end justify-between bg-gradient-to-t from-black/55 via-transparent to-transparent p-2.5"
           >
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary shadow-[0_10px_40px_hsl(var(--primary)/0.5)] transition-transform group-hover:scale-110">
-              <GhostMark className="h-9 w-9 text-primary-foreground motion-safe:animate-float" eyeColor="hsl(var(--primary))" />
+            {/* A small play button in the corner, so the frame itself stays readable (4 Nov). */}
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 ring-1 ring-white/25 backdrop-blur-sm transition-transform group-hover:scale-110 group-hover:bg-primary">
+              <Play className="ml-0.5 h-4 w-4 fill-white text-white" aria-hidden="true" />
             </span>
-            <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[12px] font-semibold text-white">
+            <span className="inline-flex items-center gap-1 rounded-full bg-black/70 px-2 py-0.5 text-[12px] font-semibold text-white">
               <Clock className="h-3 w-3" aria-hidden="true" /> {duration(video.seconds)}
             </span>
           </button>
