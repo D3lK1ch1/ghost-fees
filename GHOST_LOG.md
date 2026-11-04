@@ -658,3 +658,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/ghostItAgent.js, src/pages/GhostIt.jsx
 - How to test: On a phone, /ghostit > Open Ghost It: the browser opens asi1.ai/chat, paste and send.
 - User feedback that drove this: Raj (Fetch.ai), 4 Nov: "currently the link 'copy and open ghost it' is taking to mobile app, I would suggest you to point it to our web app"
+
+### Home card: clean and open (design A)
+- What: The first home card loses its box and the three boxed steps. Now: a small kicker (Find · Cancel · Pay once), one semibold headline, one sentence, three steps in a line, one button with "or upload a statement" under it, quiet ticks and the trust line. A soft glow instead of a border. About half the height.
+- Files: src/components/landing/ValueLine.jsx, src/pages/Landing.jsx
+- How to test: Home page, top card, in all three themes.
+- User feedback that drove this: team review ("less chunky writing ... more streamlined and clean design"; picked design A of four)

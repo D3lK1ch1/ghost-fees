@@ -152,7 +152,7 @@ export default function Landing() {
       ) : (
         <>
           {ghostIt.subs.length > 0 && <FromGhostIt subs={ghostIt.subs} onScan={() => inputRef.current?.click()} />}
-          <ValueLine onSample={() => scan([], true)} />
+          <ValueLine onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
           <GhostTeam />
