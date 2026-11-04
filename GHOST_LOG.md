@@ -813,3 +813,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/ghostItAgent.js
 - How to test: after Publish, /ghostit, tap Open Ghost It: ASI:One opens the ghost-it agent; send "Netflix $18.99, Stan $16" and the card with buttons comes back.
 - User feedback that drove this: team review ("how do we get cards and buttons working for everyone")
+
+### Ghost It v13.3 and one agent with the full profile
+- What: the agent sends its receipt first, then the reply (the chat protocol's order, as in Fetch's example). The self-run agent now has the name Ghost.it, the @ghostit handle, the ghost picture, banner, description, readme and three starter prompts; the old hosted agent is stopped (renamed @ghostit-hosted, restartable). Default local name is Ghost.it so a restart never renames it.
+- Files: agent/agent.py, agent/tests/test_agent.py, agent/deploy/ghost-it.env.example
+- How to test: `cd agent && python3 -m unittest discover -s tests` (98 pass); in ASI:One message @ghostit "Netflix $18.99, Stan $16, Disney+ $15.99".
+- User feedback that drove this: team review ("why two ghost_its", "make one with the ghost and description")
