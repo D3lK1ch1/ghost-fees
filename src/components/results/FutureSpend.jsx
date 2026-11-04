@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 
 // Future spend (4 Nov: "can I have future prediction through some graphs"). Plain maths
 // from the subscriptions on the statement: monthly cost x months, nothing guessed. Two
-// lines: if nothing changes, and if you cancel what you picked (or your double ups).
+// lines: if nothing changes and if you cancel what you picked (or your double ups).
 // Colours checked with the dataviz validator on the dark surfaces of all three themes.
 const KEEP = '#d0692a';   // if nothing changes
 const CUT = '#24a68a';    // after cancelling

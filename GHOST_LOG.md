@@ -691,3 +691,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/site/BrandHeader.jsx, src/components/site/WatchVideos.jsx
 - How to test: Any page: scroll, the bar stays; tap Videos: /progress opens at the Demo video.
 - User feedback that drove this: team review ("Our progress, Privacy and videos should be above the theme bar, more formalised like a pro web page")
+
+### Softer type everywhere, the feedback cards fixed, Raj round 2 and Kingan added
+- What: Bold reads as semibold and semibold as medium across the app (Inter as a variable font); headings slightly tighter with balanced line breaks; body text a touch more line spacing and Inter's cleaner letter shapes. The "You said, we changed" cards on /progress showed empty quotes (the data used said/changed, the page read quote/change): fixed. Raj's 4 Nov feedback and Kingan's are added. No comma before "and" in the new copy (testers' own words left as they wrote them).
+- Files: index.html, src/index.css, src/pages/Progress.jsx, src/data/changelog.json, src/data/videos.js, src/data/shipped.json, src/components/results/FutureSpend.jsx
+- How to test: /progress: the feedback cards show the quotes, Raj and Kingan at the top; text looks lighter.
+- User feedback that drove this: team review ("make text less chunky and better formatted"; "what commas in text")
