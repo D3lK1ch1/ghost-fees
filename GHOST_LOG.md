@@ -819,3 +819,9 @@ One entry per change. Newest at the bottom.
 - Files: agent/agent.py, agent/tests/test_agent.py, agent/deploy/ghost-it.env.example
 - How to test: `cd agent && python3 -m unittest discover -s tests` (98 pass); in ASI:One message @ghostit "Netflix $18.99, Stan $16, Disney+ $15.99".
 - User feedback that drove this: team review ("why two ghost_its", "make one with the ghost and description")
+
+### Journey videos v3 (complete last line)
+- What: the 60-second (0:58) and full (3:09) journey videos are replaced with v3, which ends on the complete line "Try Ghost Fees today." Same file names, so every shared link keeps working; the app adds ?v=3 so browsers fetch the new copy. Both are faststart.
+- Files: public/videos/ghost-fees-journey-60s.mp4, public/videos/ghost-fees-journey-full.mp4, src/data/videos.js
+- How to test: /media and /progress, play each to the end.
+- User feedback that drove this: Update Pack 8 ("Swap in v3 videos")
