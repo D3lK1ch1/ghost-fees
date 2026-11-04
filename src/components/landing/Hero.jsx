@@ -5,6 +5,7 @@ import GhostItOffer from '@/components/landing/GhostItOffer';
 import ExHero from '@/components/landing/ExHero';
 import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
 import UvpLine from '@/components/landing/UvpLine';
+import PromoButton from '@/components/site/PromoButton';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
@@ -59,6 +60,7 @@ export default function Hero({ onSample, onUpload }) {
           Upload my CSV or PDF
         </button>
       </div>
+      <PromoButton className="mt-4" />
       <GhostItOffer className="mx-auto mt-4" />
 
       <p className="mt-6 flex items-center gap-2 text-[14px] text-muted-foreground">

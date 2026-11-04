@@ -8,6 +8,8 @@ import { GHOST_IT_MASCOT } from "@/lib/ghostFees/ghostItAgent";
 import ThemeChooser from "@/components/auth/ThemeChooser";
 import DataSafety from "@/components/site/DataSafety";
 import UvpLine from "@/components/landing/UvpLine";
+import VideoCard from "@/components/site/VideoCard";
+import { PROMO } from "@/data/videos";
 
 // Sign in, sign up and password pages. Beside the form (below it on phones, so the
 // form is first): the purpose, the ghost team and what each does and what's on offer
@@ -90,6 +92,9 @@ function BrandPanel() {
         Ghost them once. <span className="text-primary">Pay once.</span>
       </p>
       <UvpLine className="mt-3 lg:mx-0" align="left" />
+
+      <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-primary">See it in 90 seconds</p>
+      <VideoCard video={PROMO} compact className="mt-3 max-w-md lg:max-w-none mx-auto lg:mx-0" />
 
       <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Pick your theme</p>
       <ThemeChooser variant="cards" />
