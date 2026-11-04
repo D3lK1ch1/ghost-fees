@@ -762,6 +762,11 @@ One entry per change. Newest at the bottom.
 - How to test: Home, scroll to the end: the link opens /progress at the Feedback board; the form submits.
 - User feedback that drove this: team review ("on the home page a link to our progress with a feedback form under it so people can leave feedback")
 
+### Ghost It agent copy brought up to date (agent/)
+- What: agent/ now matches the deployed Ghost It: v13.1 (update pack 6: Consolidate button, evidence line, Mark ghosted approval, trust line), v13.2 (reply sent before the receipt, timing logs) and Plan B (GHOSTIT_LOCAL_SEED runs the same agent locally with a mailbox). Adds the example card payloads in agent/cards/. No secrets in the copy.
+- Files: agent/ (git subtree pull from the agent repo)
+- How to test: `cd agent && python3 -m unittest discover -s tests` (98 tests).
+- User feedback that drove this: team review ("update all changes through pull requests"); Raj (buttons, replies not showing) and Kingan (evidence, human approval)
 ### Tap what you pay (no upload, no agent) and Please leave a review on /progress
 - What: "Do you have any of these?" now lets you tap what you pay (cheapest, middle or dearest plan, or type your own) and adds it up for a year, names the dearest one and flags streaming double ups. Taps stay on the page and are never mixed into a scan. No cancel links are guessed. On /progress, a "Please leave a review" box under the Feedback board uses the same feedback form as home (one form, not two); the board button jumps to it.
 - Files: src/components/landing/CommonSubsChecker.jsx, src/components/site/FeedbackBoard.jsx

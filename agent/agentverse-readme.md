@@ -3,7 +3,9 @@
 
 The Ghost Fees app reads your statement. Ghost It fills the gap: doubles across services, subscriptions hidden in Apple or Google bundles or on another card, and what weekly habits really cost a year.
 
-Shows its working: every cost is broken down line by line, with tap-to-act cards in ASI:One.
+**Free to find. Optional $5 Cancel Pack. Human in the loop: Ghost It never touches your bank, cards or money. You decide.**
+
+Shows its working: every cost is broken down line by line next to exactly what you told it, with tap buttons in ASI:One (tap to consolidate, subscription buttons, Mark ghosted). Nothing counts as cancelled until you tap Mark ghosted.
 
 ## Ghost Packs: each one hunts a different leak
 | Pack | Hunts |

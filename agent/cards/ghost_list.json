@@ -1,0 +1,38 @@
+{
+ "card_kind": "detail",
+ "card_payload": {
+  "title": "Your ghost list",
+  "summary_rows": [
+   {
+    "label": "Stan",
+    "value": "Requested, $192.00/yr"
+   },
+   {
+    "label": "Confirmed stopped",
+    "value": "$0.00 a year"
+   }
+  ],
+  "ctas": [
+   {
+    "label": "✅ Stan stopped",
+    "selection": {
+     "action": "stopped",
+     "merchant": "stan"
+    },
+    "primary": true
+   },
+   {
+    "label": "🔍 Scan my statement",
+    "selection": {
+     "action": "scan"
+    }
+   },
+   {
+    "label": "➕ Add more",
+    "selection": {
+     "action": "help"
+    }
+   }
+  ]
+ }
+}
