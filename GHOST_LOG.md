@@ -820,6 +820,16 @@ One entry per change. Newest at the bottom.
 - How to test: `cd agent && python3 -m unittest discover -s tests` (98 pass); in ASI:One message @ghostit "Netflix $18.99, Stan $16, Disney+ $15.99".
 - User feedback that drove this: team review ("why two ghost_its", "make one with the ghost and description")
 
+### Journey videos v3 (complete last line)
+- What: the 60-second (0:58) and full (3:09) journey videos are replaced with v3, which ends on the complete line "Try Ghost Fees today." Same file names, so every shared link keeps working; the app adds ?v=3 so browsers fetch the new copy. Both are faststart.
+- Files: public/videos/ghost-fees-journey-60s.mp4, public/videos/ghost-fees-journey-full.mp4, src/data/videos.js
+- How to test: /media and /progress, play each to the end.
+- User feedback that drove this: Update Pack 8 ("Swap in v3 videos")
+### Money patterns: a behavioural-finance line on leak cards and a "Where your ghost money went" chart
+- What: leak cards backed by statement lines now show the common money pattern behind them, with the research: Trial converted = Present Bias (O'Donoghue & Rabin, 1999), Bank fee = Denomination Effect (Raghubir & Srivastava, 2009), Still using this? = Status Quo Bias (Samuelson & Zeckhauser, 1988; the analyser doesn't make that card yet, so it won't show). Worded "a common pattern", never "you have". In the Ghosts tab, above the filter chips, a horizontal bar chart (recharts) shows dollars per pattern from this statement, largest first, in the theme colour; tap a bar to filter, "See the numbers" opens a table (pattern, ghost, paid charges, total, dates). Hidden with fewer than 2 patterns. Footer: "Common money patterns from behavioural finance research. Not a judgement, and not financial advice." Never attached to Future spend or predictions. Bar colours pass 3:1 contrast on all three dark themes (dataviz validator).
+- Files: src/lib/ghostFees/leaks.js (BADGE_BIAS, biasFor, biasGroups), src/components/results/BiasLine.jsx, src/components/results/BiasChart.jsx, src/components/results/LeakCard.jsx, src/components/ex/ExLeakCard.jsx, src/components/xmas/XmasLeakCard.jsx, src/components/results/ResultsView.jsx
+- How to test: Scan a sample on each theme, Ghosts tab: two bars (Denomination Effect $117, Present Bias $114); tap Present Bias to filter; See the numbers shows 6 paid charges, 12 Apr to 12 Sept, matching the Streammax card.
+- User feedback that drove this: Update Pack 8 ("Bias layer + graph"). Idea from Sanjay's earlier behavioural-finance project; all code written new this week.
 ### README: the 8 feedback rounds and the current Ghost It setup
 - What: README now has the feedback table (who said what, what changed, proof PR for each of 8 rounds) and an up-to-date Ghost It section (self-hosted with a mailbox, @ghostit address, 98 tests, link to the self-hosting guide).
 - Files: README.md
