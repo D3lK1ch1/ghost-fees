@@ -796,3 +796,9 @@ One entry per change. Newest at the bottom.
 - How to test: Christmas theme, Scan a sample, Email templates (Jolly's letters): the ghosts bob, each price is on a tag, the list below shows who is eating what.
 - User feedback that drove this: team review ("implement this, the Christmas ghosts bobbing up and down", with the new table picture)
 - Not deleted: the old table.webp, the old seated-*.webp (seated-gym is still used in the list) and jollysTable.json are no longer used by the table. Left in place; delete only when you say so.
+
+### Link preview: no more "Free, no sign-in"
+- What: the share card (Slack, iMessage, WhatsApp) said "Free, no sign-in, private", which isn't true now that scans need a sign-in and Pro is paid. The badge now says "Try it free · Pro $10 once", and the page description says "No bank login. Try it free, Pro is $10 once." The image link has ?v=2 so apps fetch the new picture instead of a cached one.
+- Files: public/og-image.png, index.html
+- How to test: after publishing, paste https://hunt-ghost-fees.base44.app into a new Slack message (old posts keep the old card), or check it at opengraph.xyz.
+- User feedback that drove this: team review ("why is the preview showing that it's not fully free and there is sign in for Pro")
