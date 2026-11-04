@@ -679,3 +679,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/FutureSpend.jsx (new), src/components/results/ResultsView.jsx
 - How to test: Sample > Calendar & reminders: $1,733 over 12 months, $1,302 after cancelling 2 double ups; switch to 5 years: $8,667 and $6,508.
 - User feedback that drove this: team review ("can i have future prediction through some graphs for future spend")
+
+### A proper nav bar at the top
+- What: About us · Our progress · Ghost It · Pricing sit in a nav bar next to the Ghost Fees logo (the current page is highlighted), with Log in and Upgrade on the right and the theme picker centred under it. Phones: the links are one swipeable row. The footer keeps only Privacy and the legal text.
+- Files: src/components/site/BrandHeader.jsx, src/components/site/SiteFooter.jsx
+- How to test: Any page: the links are at the top; tap Our progress, it highlights.
+- User feedback that drove this: team review ("put this in a better spot, on top of the themes as a proper nav bar")
