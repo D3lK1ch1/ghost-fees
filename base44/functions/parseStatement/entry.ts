@@ -57,6 +57,37 @@ async function takeAnonymous(base44, kind) {
 }
 // ---- end free-tier block ----
 
+// ---- Daily AI ceiling (same block in parseStatement, askGhostGuide, findCancelInfo) ----
+// Circuit breaker for AI credits: one ceiling per kind per UTC day. Free users
+// (signed in or not) share one pool, people who paid share a bigger *_paid pool,
+// admins skip it. Paying doesn't buy Base44 credits, so paid can't be unlimited.
+// Not isUnlimited(): during the beta that is true for everyone.
+const DAILY_AI = { scan: 100, guide_all: 1000, cass_all: 100, scan_paid: 300, guide_all_paid: 3000, cass_all_paid: 300 };
+
+async function dailyTier(base44) {
+  const user = await currentUser(base44);
+  if (!user) return 'free';
+  if (user.role === 'admin') return 'admin';
+  if (user.paid) return 'paid';
+  const rows = await base44.asServiceRole.entities.Allowance.filter({ user_id: user.id });
+  return rows?.some((row) => row.paid) ? 'paid' : 'free';
+}
+
+async function takeDaily(base44, baseKind) {
+  const tier = await dailyTier(base44);
+  if (tier === 'admin') return true;
+  const kind = tier === 'paid' ? `${baseKind}_paid` : baseKind;
+  const date = new Date().toISOString().slice(0, 10);
+  const rows = await base44.asServiceRole.entities.UsageDay.filter({ date, kind });
+  const row = rows?.[0];
+  const count = Number(row?.count) || 0;
+  if (count >= DAILY_AI[kind]) return false;
+  if (row) await base44.asServiceRole.entities.UsageDay.update(row.id, { count: count + 1 });
+  else await base44.asServiceRole.entities.UsageDay.create({ date, kind, count: 1 });
+  return true;
+}
+// ---- end daily AI ceiling ----
+
 // A scan ticket comes from allowance (action claimScan) and lasts 15 minutes.
 async function validTicket(base44, ticket) {
   const user = await currentUser(base44);
@@ -159,6 +190,10 @@ export default async function (req) {
       const rows = Array.isArray(json?.transactions) ? json.transactions.map(normalise).filter(Boolean) : [];
       if (!rows.length) return Response.json({ error: `No transactions found in this ${bankName} statement.` });
       return Response.json({ transactions: rows });
+    }
+
+    if (!(await takeDaily(base44, 'scan'))) {
+      return Response.json({ error: 'Lots of scans today. Try again tomorrow, or upload a CSV instead.' });
     }
 
     const extracted = await base44.asServiceRole.integrations.Core.InvokeLLM({

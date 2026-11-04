@@ -1,12 +1,13 @@
-// Daily totals of AI calls from people who are not signed in (sample statement
-// visitors). No ids, no IPs: just a date and a count, so a runaway script can't
-// spend the whole AI budget. One row per day per kind.
+// Daily totals of AI calls. guide and cass: people who are not signed in (sample
+// statement visitors). scan, guide_all, cass_all: free users; *_paid: people who paid.
+// No ids, no IPs: just a date and a count, so a runaway script can't spend the
+// whole AI budget. One row per day per kind.
 {
   "name": "UsageDay",
   "type": "object",
   "properties": {
     "date": { "type": "string", "format": "date", "description": "UTC day" },
-    "kind": { "type": "string", "enum": ["guide", "cass"] },
+    "kind": { "type": "string", "enum": ["guide", "cass", "scan", "guide_all", "cass_all", "scan_paid", "guide_all_paid", "cass_all_paid"] },
     "count": { "type": "number", "default": 0 }
   },
   "required": ["date", "kind"],

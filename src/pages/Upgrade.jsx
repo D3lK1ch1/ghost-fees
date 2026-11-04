@@ -15,7 +15,7 @@ import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 // /upgrade (B8): a standard app pricing page, mobile first, theme-aware. Pay once,
 // never a subscription. Founding ($5) only shows while real spots are left.
 const FEATURES = [
-  { full: 'Unlimited uploads', body: 'Every bank and card, every month', free: '3 uploads' },
+  { full: 'Uploads every month', body: 'Every bank and card, fair daily limit', free: '3 uploads' },
   { full: 'All 4 ghost guides', body: 'Penny, Spooksworth, Gus and Cassy', free: '1 try of one ghost' },
   { full: 'Cassy for every subscription', body: 'Real cancel page, steps, AU phone and hours', free: 'Cassy looks up 1 subscription' },
   { full: 'Ready cancel emails', body: 'Copy, paste, send', free: 'Ready cancel emails' },
