@@ -761,3 +761,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/HomeFeedback.jsx (new), src/components/results/FeedbackPanel.jsx, src/pages/Landing.jsx
 - How to test: Home, scroll to the end: the link opens /progress at the Feedback board; the form submits.
 - User feedback that drove this: team review ("on the home page a link to our progress with a feedback form under it so people can leave feedback")
+
+### The journey videos: 60 seconds and the full 3 minutes
+- What: Two new videos from Claude web: the 60-second journey (Stranger Builds hackathon feedback, with the gradient cover) and the full 3:09 journey. Both are at the top of /progress; the 60-second one leads /media, then the promo, the demo and the full journey. The old 1:56 feedback video is retired. Home and sign in keep the demo walkthrough.
+- Files: public/videos/ghost-fees-journey-60s.mp4, ghost-fees-journey-full.mp4 (new), src/data/videos.js, src/pages/Progress.jsx, src/pages/Media.jsx
+- How to test: /progress: 60 s then 3:09 above the Feedback board. /media: 60 s first.
+- User feedback that drove this: team review ("embed this, Claude web chose the best one")
