@@ -49,7 +49,7 @@ export default function Media() {
         <h1 className="mt-1 font-heading text-[2rem] font-bold leading-tight text-foreground">Videos, press kit and build diary</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Everything you need to share or write about Ghost Fees.</p>
 
-        <WatchVideos keys={['promo', 'demo', 'progress']} line="The promo to share, the demo to see it work, and how far we've come." />
+        <WatchVideos share keys={['journey', 'promo', 'demo', 'journeyFull']} line="The 60-second journey, the promo, the demo to see it work and the full story. Each one has a link to share." />
 
         <section className="mt-10" aria-labelledby="press-kit">
           <h2 id="press-kit" className="text-[18px] font-semibold text-foreground">Press kit</h2>

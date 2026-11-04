@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Clock, Play } from 'lucide-react';
+import { Check, Clock, ExternalLink, Link2, Play } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import { duration } from '@/data/videos';
 import { cn } from '@/lib/utils';
@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 // One video: a cover (the frame a few seconds in, since the videos fade in from dark)
 // with a small play button, title and length. Nothing plays until you tap it; then the
 // normal controls take over. No autoplay. preload="metadata" so pages stay light.
-export default function VideoCard({ video, compact = false, className = '' }) {
+export default function VideoCard({ video, compact = false, share = false, className = '' }) {
   const ref = useRef(null);
   const [playing, setPlaying] = useState(false);
 
@@ -35,7 +35,7 @@ export default function VideoCard({ video, compact = false, className = '' }) {
   };
 
   return (
-    <div className={cn('flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/60', className)}>
+    <div id={share ? `video-${video.key}` : undefined} className={cn('flex scroll-mt-24 flex-col overflow-hidden rounded-2xl border border-white/10 bg-card/60', className)}>
       <div className="relative aspect-video bg-black">
         <video
           ref={ref}
@@ -75,6 +75,28 @@ export default function VideoCard({ video, compact = false, className = '' }) {
         )}
       </div>
       <Caption video={video} compact={compact} />
+      {share && <ShareRow video={video} />}
+    </div>
+  );
+}
+
+// /media (4 Nov): a link to share for each video. "Copy link" opens /media at that
+// video; "Video file" is the mp4 itself, which plays in any browser or chat app.
+function ShareRow({ video }) {
+  const [copied, setCopied] = useState(false);
+  const pageLink = `${window.location.origin}/media#video-${video.key}`;
+  const fileLink = `${window.location.origin}${video.src}`;
+  const copy = () => navigator.clipboard?.writeText(pageLink).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1800); }).catch(() => {});
+  const chip = 'inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-[13px] font-semibold text-foreground hover:border-primary/60';
+  return (
+    <div className="flex flex-wrap gap-2 px-4 pb-3">
+      <button type="button" onClick={copy} className={chip} aria-label={`Copy a link to the ${video.title} video`}>
+        {copied ? <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" /> : <Link2 className="h-3.5 w-3.5" aria-hidden="true" />}
+        {copied ? 'Link copied' : 'Copy link'}
+      </button>
+      <a href={fileLink} target="_blank" rel="noopener noreferrer" className={chip}>
+        <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /> Video file
+      </a>
     </div>
   );
 }

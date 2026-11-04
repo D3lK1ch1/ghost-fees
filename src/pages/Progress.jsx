@@ -72,7 +72,7 @@ export default function Progress() {
         <h1 className="mt-1 font-heading text-[2rem] font-bold leading-tight text-foreground">Our progress in public</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us and what we changed because of it.</p>
 
-        <WatchVideos keys={['progress']} id="how-far" title="Stranger Builds hackathon feedback" subtitle="Ghost Fees" line="Three days of feedback in two minutes: what testers and Fetch.ai told us and how it shaped the themes and features. Every review is on the board below." />
+        <WatchVideos keys={['journey', 'journeyFull']} id="how-far" title="Stranger Builds hackathon feedback" subtitle="Ghost Fees" line="The 60-second version first, then the full journey. Every review is on the board below." />
         <FeedbackBoard />
 
         <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
