@@ -6,10 +6,11 @@ import { useSeason } from './XmasKit';
 // Stave Two: Jolly's feast. The table and Jolly are one background (jollys-table-assets.zip);
 // each subscription is its own festive ghost from Image Assets, seated at its dish with the
 // price on the plate's tag. Seats come from layout.json (1600x1000 scene).
-// SEATED: the new sitting-and-eating art (made from the originals, 4 Nov). A seat without
-// one yet shows the original avatar, so the table is never empty.
+// SEATED: the sitting-and-eating art for all six (4 Nov): Sweaty Holly with a drumstick,
+// Cool Yule with pudding, Frosty with soup, Popcorn Pete with popcorn, Tangled Tinsel with
+// gingerbread, Mystery Parcel with a cracker.
 const ART = '/themes/christmas/table';
-const SEATED = { gym: `${ART}/seated-gym.webp` };
+const SEATED = Object.fromEntries(['gym', 'design', 'trial', 'netflix', 'music', 'stan'].map((seat) => [seat, `${ART}/seated-${seat}.webp`]));
 const SEATS = ['gym', 'design', 'trial', 'netflix', 'music', 'stan'];
 const MATCH = [
   ['gym', /GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45/i],
