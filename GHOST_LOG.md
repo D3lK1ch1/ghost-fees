@@ -721,3 +721,8 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Unlocked.jsx, src/lib/AllowanceContext.jsx
 - How to test: Signed in as the owner, /unlocked shows Owner account. Signed in as anyone else after paying: You're in, $10 once.
 - User feedback that drove this: team review ("it did not charge me"; "could do this UI better")
+### Feedback video: Stranger Builds hackathon feedback, with a designed cover
+- What: On /progress the video is titled "Stranger Builds hackathon feedback" with "Ghost Fees" as the subtitle. Before it plays it shows a purple-to-black gradient cover with the title, the event line and four feature tags (3 themes, Cancel in one click, Grouped subscriptions, Ghost It agent) instead of a dark frame. The line under it mentions the themes and features.
+- Files: src/data/videos.js, src/components/site/VideoCard.jsx, src/components/site/WatchVideos.jsx, src/pages/Progress.jsx
+- How to test: /progress: the gradient cover; press play and it plays with controls.
+- User feedback that drove this: team review ("title this video Stranger Builds hackathon feedback with Ghost Fees as the subtitle; purple and black gradient; talk more themes and features")
