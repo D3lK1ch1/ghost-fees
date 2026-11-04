@@ -819,3 +819,9 @@ One entry per change. Newest at the bottom.
 - Files: agent/agent.py, agent/tests/test_agent.py, agent/deploy/ghost-it.env.example
 - How to test: `cd agent && python3 -m unittest discover -s tests` (98 pass); in ASI:One message @ghostit "Netflix $18.99, Stan $16, Disney+ $15.99".
 - User feedback that drove this: team review ("why two ghost_its", "make one with the ghost and description")
+
+### README: the 8 feedback rounds and the current Ghost It setup
+- What: README now has the feedback table (who said what, what changed, proof PR for each of 8 rounds) and an up-to-date Ghost It section (self-hosted with a mailbox, @ghostit address, 98 tests, link to the self-hosting guide).
+- Files: README.md
+- How to test: open the repo on GitHub and read the README.
+- User feedback that drove this: Update Pack 8 ("Feedback log: this is what scores")
