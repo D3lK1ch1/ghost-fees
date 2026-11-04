@@ -3,6 +3,7 @@ import { Check, Copy } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
 import WatchVideos from '@/components/site/WatchVideos';
+import FeedbackBoard from '@/components/site/FeedbackBoard';
 import { base44 } from '@/api/base44Client';
 import { money } from '@/lib/ghostFees/format';
 import changelog from '@/data/changelog.json';
@@ -72,6 +73,7 @@ export default function Progress() {
         <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us and what we changed because of it.</p>
 
         <WatchVideos />
+        <FeedbackBoard />
 
         <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
           <Stat label="statements scanned" value={stats ? stats.scans : '...'} />

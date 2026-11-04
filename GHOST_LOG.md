@@ -703,3 +703,9 @@ One entry per change. Newest at the bottom.
 - Files: src/data/videos.js, src/components/site/PromoButton.jsx
 - How to test: Home: Watch the demo (2:05) opens the demo. /login: the demo under the UVP. /progress: Demo, Promo, How far we've come.
 - User feedback that drove this: team review ("does the demo video belong on home and login and the others in our progress")
+
+### Feedback board on /progress, with Leave feedback
+- What: Every Stranger Builds "Trick or Feedback" review (7) in the tester's own words (spelling fixed only): One change, Trick, Treat, the star rating, and What we changed. Summary: 7 testers · 3.3 of 5 · 7 of 7 acted on. Leave feedback opens the /try form at step 3.
+- Files: src/data/testerFeedback.json (new), src/components/site/FeedbackBoard.jsx (new), src/pages/Progress.jsx, src/pages/Try.jsx
+- How to test: /progress#feedback; tap Leave feedback: /try scrolls to Tell us one thing.
+- User feedback that drove this: team review ("put all feedback and what I implemented from Stranger Builds under our progress"; "add a leave feedback message board")
