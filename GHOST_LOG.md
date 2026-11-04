@@ -835,3 +835,9 @@ One entry per change. Newest at the bottom.
 - Files: README.md
 - How to test: open the repo on GitHub and read the README.
 - User feedback that drove this: Update Pack 8 ("Feedback log: this is what scores")
+
+### Try it opens Ghost It, not another page
+- What: on the home page Ghost It card (every theme), "Try it in ASI:One" now opens Ghost It itself in ASI:One in a new tab, and shows on phones too (it was hidden there). "How it works" opens our /ghostit page. Before, the whole card and "Try it" went to /ghostit, which felt like a dead end.
+- Files: src/components/landing/GhostItOffer.jsx
+- How to test: home, Ghost It card, tap Try it in ASI:One: ASI:One opens on Ghost.it.
+- User feedback that drove this: team review ("try it links open Ghost Fees, not working; try it should lead to ASI:One")
