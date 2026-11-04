@@ -9,5 +9,7 @@ export const VIDEOS = [
 ];
 
 export const PROMO = VIDEOS.find((video) => video.key === 'promo');
+// Sign-in pages show the 60-second demo once its file is added, the promo until then.
+export const LOGIN_VIDEO = VIDEOS.find((video) => video.key === 'demo' && video.src) || PROMO;
 
 export const duration = (seconds) => `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, '0')}`;
