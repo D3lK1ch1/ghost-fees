@@ -5,7 +5,8 @@
 export const VIDEOS = [
   { key: 'demo', emoji: '🧭', title: 'Demo', line: 'The app from start to finish: upload, every leak, cancel and Ghost It in ASI:One.', src: '/videos/ghost-fees-2-walkthrough.mp4', seconds: 125 },
   { key: 'promo', emoji: '👻', title: 'Promo', line: 'Why your bank statement is haunted and what we do about it.', src: '/videos/ghost-fees-1-promo.mp4', seconds: 92 },
-  { key: 'progress', emoji: '📈', title: "How far we've come", line: 'Three days of feedback from testers and Fetch.ai and what we changed.', src: '/videos/ghost-fees-3-progress.mp4', seconds: 116 },
+  { key: 'progress', emoji: '📈', title: 'Stranger Builds hackathon feedback', subtitle: 'Ghost Fees', line: 'Three days of tester and Fetch.ai feedback and what it changed: the three themes, cancel in one click, grouped subscriptions and Ghost It.', src: '/videos/ghost-fees-3-progress.mp4', seconds: 116,
+    cover: { kicker: 'Stranger Builds · NerdConf · Melbourne', title: 'Hackathon feedback', subtitle: 'Ghost Fees', tags: ['3 themes', 'Cancel in one click', 'Grouped subscriptions', 'Ghost It agent'] } },
 ];
 
 export const PROMO = VIDEOS.find((video) => video.key === 'promo');

@@ -715,3 +715,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Media.jsx (new), src/components/site/WatchVideos.jsx, src/components/site/BrandHeader.jsx, src/pages/Progress.jsx, src/App.jsx, src/data/videos.js
 - How to test: Nav > Media: three videos, press kit, build diary. /progress: one video, then the Feedback board.
 - User feedback that drove this: team review ("the promo doesn't belong in our feedback, maybe have media and blog tabs; think how the videos can be logically integrated")
+
+### Feedback video: Stranger Builds hackathon feedback, with a designed cover
+- What: On /progress the video is titled "Stranger Builds hackathon feedback" with "Ghost Fees" as the subtitle. Before it plays it shows a purple-to-black gradient cover with the title, the event line and four feature tags (3 themes, Cancel in one click, Grouped subscriptions, Ghost It agent) instead of a dark frame. The line under it mentions the themes and features.
+- Files: src/data/videos.js, src/components/site/VideoCard.jsx, src/components/site/WatchVideos.jsx, src/pages/Progress.jsx
+- How to test: /progress: the gradient cover; press play and it plays with controls.
+- User feedback that drove this: team review ("title this video Stranger Builds hackathon feedback with Ghost Fees as the subtitle; purple and black gradient; talk more themes and features")
