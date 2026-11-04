@@ -761,3 +761,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/HomeFeedback.jsx (new), src/components/results/FeedbackPanel.jsx, src/pages/Landing.jsx
 - How to test: Home, scroll to the end: the link opens /progress at the Feedback board; the form submits.
 - User feedback that drove this: team review ("on the home page a link to our progress with a feedback form under it so people can leave feedback")
+
+### Tap what you pay (no upload, no agent) and Please leave a review on /progress
+- What: "Do you have any of these?" now lets you tap what you pay (cheapest, middle or dearest plan, or type your own) and adds it up for a year, names the dearest one and flags streaming double ups. Taps stay on the page and are never mixed into a scan. No cancel links are guessed. On /progress, a "Please leave a review" box under the Feedback board uses the same feedback form as home (one form, not two); the board button jumps to it.
+- Files: src/components/landing/CommonSubsChecker.jsx, src/components/site/FeedbackBoard.jsx
+- How to test: On each theme (haunted, ex, christmas) tap "Don't want to upload? Tap what you pay instead" under Upload, pick Netflix, Stan and Disney+, tap an amount for each: a yearly total and a double up note show. /progress: "Leave a review" jumps to the form.
+- User feedback that drove this: team review ("make sure the cards where you can tap the amount you spend... in case people do not want to upload or try agent"; "under progression please leave a review")
