@@ -75,6 +75,37 @@ async function takeAnonymous(base44, kind) {
 }
 // ---- end free-tier block ----
 
+// ---- Daily AI ceiling (same block in parseStatement, askGhostGuide, findCancelInfo) ----
+// Circuit breaker for AI credits: one ceiling per kind per UTC day. Free users
+// (signed in or not) share one pool, people who paid share a bigger *_paid pool,
+// admins skip it. Paying doesn't buy Base44 credits, so paid can't be unlimited.
+// Not isUnlimited(): during the beta that is true for everyone.
+const DAILY_AI = { scan: 100, guide_all: 1000, cass_all: 100, scan_paid: 300, guide_all_paid: 3000, cass_all_paid: 300 };
+
+async function dailyTier(base44) {
+  const user = await currentUser(base44);
+  if (!user) return 'free';
+  if (user.role === 'admin') return 'admin';
+  if (user.paid) return 'paid';
+  const rows = await base44.asServiceRole.entities.Allowance.filter({ user_id: user.id });
+  return rows?.some((row) => row.paid) ? 'paid' : 'free';
+}
+
+async function takeDaily(base44, baseKind) {
+  const tier = await dailyTier(base44);
+  if (tier === 'admin') return true;
+  const kind = tier === 'paid' ? `${baseKind}_paid` : baseKind;
+  const date = new Date().toISOString().slice(0, 10);
+  const rows = await base44.asServiceRole.entities.UsageDay.filter({ date, kind });
+  const row = rows?.[0];
+  const count = Number(row?.count) || 0;
+  if (count >= DAILY_AI[kind]) return false;
+  if (row) await base44.asServiceRole.entities.UsageDay.update(row.id, { count: count + 1 });
+  else await base44.asServiceRole.entities.UsageDay.create({ date, kind, count: 1 });
+  return true;
+}
+// ---- end daily AI ceiling ----
+
 // One free ghost guide try in total, on whichever ghost the person picks (Penny,
 // Spooksworth, Gus or Cassy); unlimited once paid. Usage is still recorded during
 // the free beta, so we have real numbers. Visitors who aren't signed in share a
@@ -106,6 +137,7 @@ export default async function (req) {
     const guide = GUIDES[guideKey];
     const gate = await guideGate(base44, guideKey);
     if (!gate.ok) return Response.json({ locked: true, reason: gate.reason });
+    if (!(await takeDaily(base44, 'guide_all'))) return Response.json({ locked: true, reason: 'busy' });
     const history = (Array.isArray(body.history) ? body.history : [])
       .slice(-6)
       .map((item) => `${item?.role === 'user' ? 'User' : 'Guide'}: ${clean(item?.text, 500)}`)

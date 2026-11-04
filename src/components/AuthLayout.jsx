@@ -15,8 +15,8 @@ import { LOGIN_VIDEO, duration } from "@/data/videos";
 // form is first): the purpose, the ghost team and what each does and what's on offer
 // (Free, Pro, Ghost It packs), then the privacy line. "Better design of the front page
 // with the agents and what's on offer and the purpose" (3 Nov).
-const FREE = ["3 statement scans, your full total", "Cancel steps, emails and the Ghost List", "1 ghost guide chat and 1 Cassy lookup"];
-const PRO = ["Unlimited scans", "All 4 ghost guides, as much as you like", "Cassy for every subscription and the PDF report"];
+const FREE = ["3 statement scans, your full total", "Cancel steps, emails and the Ghost List", "1 ghost guide answer and 1 Cassy lookup"];
+const PRO = ["Scans every month, fair daily limit", "All 4 ghost guides, fair daily limit", "Cassy for every subscription and the PDF report"];
 
 function TeamGrid() {
   return (
