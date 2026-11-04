@@ -744,3 +744,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/Hero.jsx, src/components/landing/ExHero.jsx
 - How to test: Home page: the demo card under the two buttons; tap play.
 - User feedback that drove this: team review ("embed the whole demo video, do not hide that beautiful demo")
+
+### Don't want to upload? goes to the existing card; UVP text reformatted
+- What: A "Don't want to upload? Tap what you pay instead" button under Upload my CSV or PDF opens the existing "Do you have any of these?" card (no new popup, so no double up; describing it to Ghost It is the Ghost It box just below). Fixed: the No upload needed links changed the address to /#have but didn't switch the tab on the home page; now they open it. The UVP block is reformatted: each sentence on its own line (Cancel them in one click in the accent colour), a shorter example, three equal ticks and a one-line trust note, with no word left alone on a line.
+- Files: src/components/landing/NoUploadButton.jsx (new), Hero.jsx, ExHero.jsx, UvpLine.jsx, src/components/site/DataSafety.jsx
+- How to test: Home: tap Don't want to upload? or the No upload needed tick: the Have any of these? tab opens and scrolls into view.
+- User feedback that drove this: team review ("a button under upload CSV for people who don't want to upload; make sure no double up"; "format all this text better")

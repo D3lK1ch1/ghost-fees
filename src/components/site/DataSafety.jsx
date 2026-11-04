@@ -15,7 +15,12 @@ const SAFE = [
 ];
 
 export function openTypicalPrices() {
-  // Home page tab "Have any of these?" (no upload). Works from any page.
+  // Home page tab "Have any of these?" (no upload). Works from any page. 4 Nov: on the
+  // home page itself, changing the hash didn't switch the tab, so open it directly.
+  if (window.location.pathname === '/') {
+    window.dispatchEvent(new CustomEvent('ghostFees:hometab', { detail: 'have' }));
+    return;
+  }
   window.location.href = '/#have';
 }
 
