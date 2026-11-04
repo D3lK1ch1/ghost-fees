@@ -1,7 +1,9 @@
 // Ghost It, our chat agent on Fetch.ai's ASI:One. Its Agentverse profile has a
 // "Chat with Agent" button that opens ASI:One already talking to Ghost It, so we
 // send people there instead of the ASI:One home page (no hunting for @ghostit).
-export const GHOST_IT_ADDRESS = 'agent1qvxxy97rjf9axql2xpn7d0rp8g6fxe39v7csh0ha60ud3qqghw9f7t7av43';
+// 5 Nov: the self-run Ghost It (mailbox). The hosted one held replies ~40 s, past
+// ASI:One's ~30 s wait, so it showed nothing; this one replies in seconds with buttons.
+export const GHOST_IT_ADDRESS = 'agent1qdaylwvrj073a2hxxjsqvm26k2cpk8sakqypncmy4e2eewn7t2wwy23w2t0';
 export const GHOST_IT_PROFILE = `https://agentverse.ai/agents/details/${GHOST_IT_ADDRESS}/profile`;
 // Ghost It's own chat page on ASI:One. The "Open Ghost It" buttons go here, so people
 // land on Ghost It, not on a blank New Chat with their personal AI (3 Nov).
