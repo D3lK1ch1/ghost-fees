@@ -57,7 +57,7 @@ export default function Landing() {
     window.history.replaceState(null, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`);
     if (checkout === 'cancelled') return;
     refresh().then((next) => {
-      if (next?.paid) toast({ title: 'Unlocked. Thank you, ghost hunter!', description: 'Unlimited scans, ghosts and Cassy are yours, forever.' });
+      if (next?.paid) toast({ title: 'Unlocked. Thank you, ghost hunter!', description: 'Scans, all 4 ghosts and Cassy are yours, forever, within a fair daily limit.' });
       else toast({ title: 'Payment still processing', description: 'Refresh in a minute. If it doesn’t unlock, email us and we’ll sort it.' });
     });
   }, [refresh, toast]);

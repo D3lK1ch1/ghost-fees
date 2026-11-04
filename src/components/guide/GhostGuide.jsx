@@ -222,7 +222,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
     // Free tier: one AI answer per ghost. The quick answers above are always free.
     const lockedReply = () => reply({
-      text: `That was my free answer. Unlock Ghost Fees once and all four of us will answer as much as you like. The quick questions below still work.`,
+      text: `That was my free answer. Unlock Ghost Fees once and all four of us will answer, within a fair daily limit. The quick questions below still work.`,
       unlock: 'guide',
       chips: nextChips,
     });

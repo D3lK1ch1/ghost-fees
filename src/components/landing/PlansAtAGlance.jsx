@@ -15,12 +15,12 @@ const FREE = [
   '3 statement scans, your full total every time',
   'Cancel links, steps and ready-to-send emails',
   'Ghost List, reminders, the tracker and badges',
-  '1 chat with a ghost guide and Cassy looks up 1 subscription',
+  '1 answer from a ghost guide and Cassy looks up 1 subscription',
 ];
 
 const PRO = [
-  'Unlimited scans, every bank and card, every month',
-  'Chat with all 4 ghost guides, as much as you like',
+  'Scans for every bank and card, every month, with a fair daily limit',
+  'Chat with all 4 ghost guides, with a fair daily limit',
   'Cassy looks up every subscription: the real cancel page, steps and phone number',
   'A PDF report of your results to keep or share',
 ];

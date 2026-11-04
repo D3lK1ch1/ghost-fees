@@ -127,7 +127,7 @@ export default function Paywall({ open, reason = 'scan', onClose }) {
           <p className="text-[12.5px] font-bold uppercase tracking-[0.12em]" style={{ color: P.muted }}>Your free trial</p>
           <div className="mt-2 flex items-center gap-3">
             <img src={art} alt="" className="h-10 w-10 shrink-0 object-contain" />
-            <p><b style={{ color: '#FFFFFF' }}>Ghost Fees:</b> 3 statement scans, 1 ghost guide chat, 1 Cassy lookup.</p>
+            <p><b style={{ color: '#FFFFFF' }}>Ghost Fees:</b> 3 statement scans, 1 ghost guide answer, 1 Cassy lookup.</p>
           </div>
           <div className="mt-2 flex items-center gap-3 border-t pt-2" style={{ borderColor: P.line }}>
             <img src={GHOST_IT_SNIP} alt="" className="h-11 w-11 shrink-0 object-contain" />
