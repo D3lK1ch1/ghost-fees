@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v13.2 (4 Nov 2026): reply sent before the receipt (ASI:One timeout).
 # v13 (4 Nov 2026): tap buttons (Fetch.ai feedback), evidence line, Mark ghosted approval, trust line. Text and card in one message, cards on; suggested commands become buttons.
 # v12 (3 Nov 2026): text-first. Cards off by default (blank in ASI:One); numbered menu, reply with a number; one-line purpose.
 # v11.4 (3 Nov 2026): text and cards sent as separate messages; GHOSTIT_CARDS=off for text only.
@@ -1708,10 +1709,13 @@ async def send_reply(ctx, sender, text, card=None):
 
 @protocol.on_message(ChatMessage)
 async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
-    await ctx.send(sender, ChatAcknowledgement(timestamp=datetime.now(timezone.utc),
-                                               acknowledged_msg_id=msg.msg_id))
     raw = " ".join(c.text for c in msg.content if isinstance(c, TextContent)).strip()
+    # v13.2 (4 Nov): the reply goes out BEFORE the receipt. Logs showed the first envelope
+    # leaves in ~2 s and the second 30 to 45 s later, so with the receipt first the real
+    # reply arrived after ASI:One had stopped waiting ("Reasoning..." forever).
+    ack = ChatAcknowledgement(timestamp=datetime.now(timezone.utc), acknowledged_msg_id=msg.msg_id)
     if not raw:
+        await ctx.send(sender, ack)
         return
     import time as _t
     t0 = _t.monotonic()
@@ -1724,6 +1728,7 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     # Reply first: ASI:One stops waiting after about 30 seconds, and the counters
     # below are extra storage writes, so they happen after the person has their answer.
     await send_reply(ctx, sender, text, card)
+    await ctx.send(sender, ack)
     # Timings (3 Nov): replies left ~30 s after the message. Which part is slow?
     ctx.logger.info(f"TIMING route={t1 - t0:.1f}s send={_t.monotonic() - t1:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
     try:

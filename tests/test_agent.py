@@ -592,8 +592,9 @@ class OldStorage(unittest.TestCase):
         msg.msg_id = "x"
         msg.content = [A.TextContent(type="text", text="@ghostit netflix $8.99 espn plus 11.99 paramount 13.99")]
         asyncio.run(A.handle_message(ctx, SENDER, msg))
-        self.assertEqual(len(ctx.sent), 2)  # the acknowledgement, then the reply (text and card together, v13)
-        reply = ctx.sent[1].content[0].text
+        self.assertEqual(len(ctx.sent), 2)  # v13.2: the reply first (text and card together), then the receipt
+        self.assertEqual(type(ctx.sent[1]).__name__, "ChatAcknowledgement")
+        reply = ctx.sent[0].content[0].text
         self.assertIn("$419.64", reply)
 
 
