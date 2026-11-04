@@ -10,6 +10,7 @@ import SeanceScreen from '@/components/scan/SeanceScreen';
 import { CrtOverlay } from '@/components/GhostAnimations';
 import ResultsView from '@/components/results/ResultsView';
 import ValueLine from '@/components/landing/ValueLine';
+import HomeFeedback from '@/components/landing/HomeFeedback';
 import HomeTabs from '@/components/landing/HomeTabs';
 import IsThisYou from '@/components/landing/IsThisYou';
 import PlansAtAGlance from '@/components/landing/PlansAtAGlance';
@@ -167,6 +168,7 @@ export default function Landing() {
             { key: 'finds', label: 'What it finds', content: <UseCases onUpload={() => inputRef.current?.click()} /> },
             { key: 'who', label: 'Who made it', content: <FoundersSection /> },
           ]} />
+          <HomeFeedback />
           <SiteFooter />
         </>
       )}

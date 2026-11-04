@@ -755,3 +755,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/NoUploadButton.jsx (new), Hero.jsx, ExHero.jsx, UvpLine.jsx, src/components/site/DataSafety.jsx
 - How to test: Home: tap Don't want to upload? or the No upload needed tick: the Have any of these? tab opens and scrolls into view.
 - User feedback that drove this: team review ("a button under upload CSV for people who don't want to upload; make sure no double up"; "format all this text better")
+
+### Home page: Our progress link and a feedback form
+- What: Near the end of the home page, "Built with your feedback · Tell us what to fix next": a link to Our progress (stars, "7 testers told us what to change") and the same feedback form the results page uses, with a first question that fits people who haven't scanned ("Is it clear what Ghost Fees does?"). Answers go to the same Feedback list.
+- Files: src/components/landing/HomeFeedback.jsx (new), src/components/results/FeedbackPanel.jsx, src/pages/Landing.jsx
+- How to test: Home, scroll to the end: the link opens /progress at the Feedback board; the form submits.
+- User feedback that drove this: team review ("on the home page a link to our progress with a feedback form under it so people can leave feedback")
