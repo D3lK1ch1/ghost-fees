@@ -761,3 +761,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/HomeFeedback.jsx (new), src/components/results/FeedbackPanel.jsx, src/pages/Landing.jsx
 - How to test: Home, scroll to the end: the link opens /progress at the Feedback board; the form submits.
 - User feedback that drove this: team review ("on the home page a link to our progress with a feedback form under it so people can leave feedback")
+
+### Ghost It agent copy brought up to date (agent/)
+- What: agent/ now matches the deployed Ghost It: v13.1 (update pack 6: Consolidate button, evidence line, Mark ghosted approval, trust line), v13.2 (reply sent before the receipt, timing logs) and Plan B (GHOSTIT_LOCAL_SEED runs the same agent locally with a mailbox). Adds the example card payloads in agent/cards/. No secrets in the copy.
+- Files: agent/ (git subtree pull from the agent repo)
+- How to test: `cd agent && python3 -m unittest discover -s tests` (98 tests).
+- User feedback that drove this: team review ("update all changes through pull requests"); Raj (buttons, replies not showing) and Kingan (evidence, human approval)
