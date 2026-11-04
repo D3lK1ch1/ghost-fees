@@ -4,6 +4,7 @@ import GhostMark from '@/components/site/GhostMark';
 import GhostItOffer from '@/components/landing/GhostItOffer';
 import ExHero from '@/components/landing/ExHero';
 import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
+import UvpLine from '@/components/landing/UvpLine';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
@@ -38,9 +39,7 @@ export default function Hero({ onSample, onUpload }) {
       <h1 className="mt-6 text-[2.6rem] font-bold leading-[1.05] text-foreground sm:text-[4rem]">
         {theme.headline}
       </h1>
-      <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-muted-foreground">
-        {theme.subhead}
-      </p>
+      <UvpLine className="mt-5" />
 
       <div className="mt-8 flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
         <button
@@ -49,7 +48,7 @@ export default function Hero({ onSample, onUpload }) {
           className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-4 text-[17px] font-bold text-primary-foreground shadow-[0_8px_40px_hsl(var(--primary)/0.35)] transition-transform hover:-translate-y-0.5"
         >
           <GhostMark className="h-5 w-5 text-primary-foreground" eyeColor="hsl(30 100% 62%)" />
-          Try a sample statement
+          Scan a sample free
         </button>
         <button
           type="button"
