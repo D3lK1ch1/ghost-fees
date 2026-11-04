@@ -38,6 +38,7 @@ import FileErrors from './FileErrors';
 import HauntedHouse from './HauntedHouse';
 import PossessedReceipt from './PossessedReceipt';
 import HauntedCalendar from './HauntedCalendar';
+import FutureSpend from './FutureSpend';
 import SubscriptionTracker from './SubscriptionTracker';
 import TrialTracker from './TrialTracker';
 import GoalPath from './GoalPath';
@@ -460,6 +461,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                 <>
                   <GoalTasks leaks={leaks} subscriptions={subscriptions} cancelSubs={cancelSubs} cleared={cleared} onClearedChange={setCleared} remindersDone={remindersDone} onRemindersDone={setRemindersDone} onOpenPath={() => setTab('path')} />
                   <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
+                  <FutureSpend subscriptions={subscriptions} cancelSubs={cancelSubs} />
                   <SubscriptionTracker subscriptions={subscriptions} answers={subAnswers} onAnswer={setSubAnswers} />
                   <TrialTracker leaks={leaks} />
                   <CancelAssistant subscriptions={subscriptions} onDraft={openEmail} />

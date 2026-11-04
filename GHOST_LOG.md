@@ -664,3 +664,8 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/ValueLine.jsx, src/pages/Landing.jsx
 - How to test: Home page, top card, in all three themes.
 - User feedback that drove this: team review ("less chunky writing ... more streamlined and clean design"; picked design A of four)
+### Future spend chart (Calendar tab)
+- What: A line chart of what your subscriptions cost over the next 12 months or 5 years if nothing changes, against after cancelling the ones you picked (or every double up but the cheapest). Plain maths (monthly x months), a "See the numbers" table and the working shown. Colours checked for colour-blind safety on all three theme backgrounds.
+- Files: src/components/results/FutureSpend.jsx (new), src/components/results/ResultsView.jsx
+- How to test: Sample > Calendar & reminders: $1,733 over 12 months, $1,302 after cancelling 2 double ups; switch to 5 years: $8,667 and $6,508.
+- User feedback that drove this: team review ("can i have future prediction through some graphs for future spend")
