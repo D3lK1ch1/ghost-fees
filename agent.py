@@ -1172,7 +1172,8 @@ def evidence_reply(ctx):
              f"- Card taps: {st.get('card_taps', 0)}",
              f"- Free Ghost Packs used: {st.get('free_packs', 0)}",
              f"- Paid Ghost Packs: {st.get('paid_packs', 0)} ({money(st.get('paid_cents', 0) / 100)} taken)",
-             f"- Feedback received: {len(fb)}", "", "**Feedback log**"]
+             f"- Feedback received: {len(fb)}",
+             f"- Billing: {billing_status()}", "", "**Feedback log**"]
     for f in fb[-30:]:
         lines.append(f"#{f['n']} {f['date']} ({f['who']}): {f['text']}")
     lines.append("\n**You said, we changed**")
@@ -1216,26 +1217,18 @@ def pack_access(ctx, sender, items, title, everything=False):
 def paywall_reply(packs, cents):
     """v10: the price, explained on a card, with a choice of one pack or every pack.
     Stripe's checkout arrives as its own message straight after this one."""
-    one = False   # 3 Nov: one price only, $5 unlocks every pack
-    what = "every Ghost Pack"
-    text = (f"🔓 **Unlock {what}: ${cents / 100:.2f} once.**\n\n"
-            "You've used your free pack. Here's what you get:\n"
-            "- The official cancel link and steps for each one\n"
-            "- A ready-to-send cancel email\n"
-            "- A check after 7 days that the charge really stopped\n\n"
-            "Paid once, never a subscription. Stripe's secure checkout opens below; I never see your card.\n"
-            + (f"Or get **every pack for $5.00**, forever.\n" if one else "")
-            + try_next("$5 for every pack" if one else None, "explain price") + "\n\n" + DISCLAIMER)
-    rows = [{"label": "Unlocks", "value": what[0].upper() + what[1:]},
-            {"label": "Price", "value": f"${cents / 100:.2f} AUD once"},
-            {"label": "You get", "value": "Cancel links, steps, a ready email, and a did-it-stop check"},
-            {"label": "Payment", "value": "Stripe card checkout in this chat"}]
-    ctas = [{"label": f"Pay ${cents / 100:.2f}", "primary": True,
-             "selection": {"action": "buy", "plan": "pack" if one else "all"}}]
-    if one:
-        ctas.append({"label": "$5 for every pack", "selection": {"action": "buy", "plan": "all"}})
-    ctas.append({"label": "Not now", "selection": {"action": "list"}})
-    return text, ("detail", {"title": f"🔓 Unlock {what}", "summary_rows": rows, "ctas": ctas})
+    price = f"${cents / 100:.2f}"
+    text = (f"🔓 **You've used your free pack. Every Ghost Pack is {price} once.**\n\n"
+            "You get the official cancel steps, a ready cancel email and a check after 7 days that it stopped.\n\n"
+            f"Tap **Pay {price}** below. Stripe's checkout opens in this chat and I never see your card. "
+            "Never a subscription.\n\n" + DISCLAIMER)
+    rows = [{"label": "Unlocks", "value": "Every Ghost Pack, forever"},
+            {"label": "Price", "value": f"{price} AUD once"},
+            {"label": "You get", "value": "Cancel steps, a ready email and a did-it-stop check"},
+            {"label": "Payment", "value": "Stripe checkout in this chat"}]
+    ctas = [{"label": f"💳 Pay {price}", "primary": True, "selection": {"action": "buy", "plan": "all"}},
+            {"label": "👻 Not now", "selection": {"action": "list"}}]
+    return text, ("detail", {"title": "🔓 Unlock every Ghost Pack", "summary_rows": rows, "ctas": ctas})
 
 
 def buy_reply(ctx, sender, plan):
@@ -1254,6 +1247,21 @@ def buy_reply(ctx, sender, plan):
     label = "every Ghost Pack" if pending["packs"] == ["all"] else f"the {pending['packs'][0]} pack"
     return (f"💳 Opening Stripe checkout for {label} (${pending['cents'] / 100:.2f} AUD, once). "
             "Your cancel steps arrive the moment it's paid.", None)
+
+
+def billing_status():
+    """One line for `evidence <code>` and `billing <code>`: is Ghost It charging? Never shows the key."""
+    if not PAYMENTS_ENABLED:
+        return "OFF (PAYMENTS_ENABLED is not true in Agentverse Secrets)"
+    if not HAVE_PAYMENTS:
+        return "OFF (this uAgents version has no payment protocol)"
+    problem = stripe_key_problem()
+    if problem:
+        return f"OFF ({problem})"
+    if not os.environ.get("STRIPE_PUBLISHABLE_KEY"):
+        return "OFF (STRIPE_PUBLISHABLE_KEY is missing)"
+    mode = "TEST mode" if os.environ.get("STRIPE_SECRET_KEY", "").startswith(("sk_test_", "rk_test_")) else "LIVE mode"
+    return f"ON, {mode}, ${ALL_PRICE_CENTS / 100:.2f} once unlocks every pack"
 
 
 def stripe_key_problem():
@@ -1320,7 +1328,14 @@ async def send_payment_request(ctx, sender):
         checkout = create_checkout(sender, pending["cents"], label)
     except Exception as e:  # Stripe down or keys wrong: say so, never crash
         ctx.logger.error(f"stripe checkout failed: {e}")
-        await ctx.send(sender, make_msg("Payments aren't working right now. Try again in a minute.", None))
+        # 4 Nov: never leave someone stuck at a checkout that can't open. This pack is free,
+        # and the log line above says why, so the team can fix the key.
+        ctx.storage.set(f"unlocked:{sender}", get(ctx, f"unlocked:{sender}", []) + pending["packs"])
+        ctx.storage.set(f"pending_pay:{sender}", None)
+        bump(ctx, "stripe_down_free")
+        ctx.logger.info(f"STRIPE_DOWN gave ...{sender[-6:]} {pending['packs']} free")
+        text, card = ghost_reply(ctx, sender, pending["items"], pending["title"])
+        await send_reply(ctx, sender, "💳 Checkout isn't available right now, so this one's on us. 👻\n\n" + text, card)
         return
     pending["session"] = checkout["id"]
     ctx.storage.set(f"pending_pay:{sender}", pending)
@@ -1470,6 +1485,11 @@ def route(ctx, sender, raw):
                 "Start again any time by listing what you pay, e.g. `Netflix $19, Stan $16`.", None)
     if low.startswith("feedback"):
         return feedback_reply(ctx, sender, text.split(":", 1)[-1].strip() if ":" in text else text[8:].strip())
+    if low.startswith("billing"):
+        code = text[7:].strip()
+        if ADMIN_CODE != "change-me" and code == ADMIN_CODE:
+            return f"💳 **Billing:** {billing_status()}", None
+        return ("Billing is for the Ghost It team only.", None)
     if low.startswith("evidence"):
         code = text[8:].strip()
         if ADMIN_CODE != "change-me" and code == ADMIN_CODE:

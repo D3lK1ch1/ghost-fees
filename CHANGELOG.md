@@ -36,3 +36,6 @@ All on 2 Nov 2026 (Melbourne). Each line is a commit; see the history for the co
 - Tap buttons instead of typing (Fetch.ai feedback): every suggested command (`consolidate`, Try next) becomes a button.
 - Cards fixed: text and card now travel in one message with requires_card_interaction "true" (they showed blank when sent alone).
 - Kill switch: GHOSTIT_CARDS=off.
+- Billing: `billing <admin code>` (and `evidence`) says if charging is ON, TEST or LIVE mode, or exactly why it is OFF. Never shows the key.
+- Shorter paywall: one line, Pay $5.00 button.
+- If Stripe checkout fails, that pack is free this time (logged as STRIPE_DOWN) so nobody is stuck.

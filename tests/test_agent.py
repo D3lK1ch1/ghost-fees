@@ -262,6 +262,30 @@ class EdgeCases(unittest.TestCase):
         tapped, _ = A.route(ctx, SENDER, '{"action": "say", "text": "my ghost list"}')
         self.assertEqual(typed, tapped)
 
+class V13Billing(unittest.TestCase):
+    def test_billing_status_never_shows_the_key(self):
+        old = dict(os.environ)
+        try:
+            os.environ["STRIPE_SECRET_KEY"] = "sk_test_" + "a" * 90
+            os.environ["STRIPE_PUBLISHABLE_KEY"] = "pk_test_" + "b" * 90
+            line = A.billing_status() if A.PAYMENTS_ENABLED else "OFF"
+            self.assertNotIn("a" * 20, line)
+            os.environ["STRIPE_SECRET_KEY"] = "sk_test_\u2022\u2022\u2022\u2022"
+            if A.PAYMENTS_ENABLED and A.HAVE_PAYMENTS:
+                self.assertTrue(A.billing_status().startswith("OFF"))
+        finally:
+            os.environ.clear(); os.environ.update(old)
+
+    def test_billing_command_needs_the_code(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "billing wrong-code")
+        self.assertIn("team only", reply)
+
+    def test_paywall_is_short_with_a_pay_button(self):
+        text, (kind, card) = A.paywall_reply(["all"], 500)
+        self.assertIn("Tap **Pay $5.00**", text)
+        self.assertEqual(card["ctas"][0]["selection"], {"action": "buy", "plan": "all"})
+
+
 if __name__ == "__main__":
     unittest.main()
 
