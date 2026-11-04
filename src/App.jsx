@@ -13,6 +13,7 @@ import Landing from '@/pages/Landing';
 import FeedbackAdmin from '@/pages/FeedbackAdmin';
 import Evidence from '@/pages/Evidence';
 import Progress from '@/pages/Progress';
+import Media from '@/pages/Media';
 import About from '@/pages/About';
 import Privacy from '@/pages/Privacy';
 import Upgrade from './pages/Upgrade';
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/progress" element={<Progress />} />
+        <Route path="/media" element={<Media />} />
         <Route path="/about" element={<About />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/upgrade" element={<Upgrade />} />

@@ -1,5 +1,6 @@
-// The Ghost Fees videos (4 Nov). Files live in public/videos. Three videos, stacked in
-// this order on /progress: the demo, the promo, then how far we've come.
+// The Ghost Fees videos (4 Nov). Files live in public/videos. Where each goes: the demo
+// on home and sign in; all three on /media (promo first); "How far we've come" on
+// /progress next to the feedback board.
 // seconds: real lengths read from the files.
 export const VIDEOS = [
   { key: 'demo', emoji: '🧭', title: 'Demo', line: 'The app from start to finish: upload, every leak, cancel and Ghost It in ASI:One.', src: '/videos/ghost-fees-2-walkthrough.mp4', seconds: 125 },

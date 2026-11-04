@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 const LINKS = [
   { to: '/about', label: 'About us' },
   { to: '/progress', label: 'Our progress' },
-  { to: '/progress#videos', label: 'Videos' },
+  { to: '/media', label: 'Media' },
   { to: '/ghostit', label: 'Ghost It' },
   { to: '/upgrade', label: 'Pricing' },
   { to: '/privacy', label: 'Privacy' },

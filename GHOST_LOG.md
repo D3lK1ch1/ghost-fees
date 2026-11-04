@@ -709,3 +709,9 @@ One entry per change. Newest at the bottom.
 - Files: src/data/testerFeedback.json (new), src/components/site/FeedbackBoard.jsx (new), src/pages/Progress.jsx, src/pages/Try.jsx
 - How to test: /progress#feedback; tap Leave feedback: /try scrolls to Tell us one thing.
 - User feedback that drove this: team review ("put all feedback and what I implemented from Stranger Builds under our progress"; "add a leave feedback message board")
+
+### Media page, and each video where its job is
+- What: New /media page (Media in the nav, replacing Videos): the three videos (Promo first, then Demo and How far we've come), a press kit (the one-line pitch with Copy, the facts, the founders line, logo and share image downloads) and a build diary (what shipped each day, from shipped.json). /progress now shows only How far we've come, right above the Feedback board it is about. The demo stays on home and sign in.
+- Files: src/pages/Media.jsx (new), src/components/site/WatchVideos.jsx, src/components/site/BrandHeader.jsx, src/pages/Progress.jsx, src/App.jsx, src/data/videos.js
+- How to test: Nav > Media: three videos, press kit, build diary. /progress: one video, then the Feedback board.
+- User feedback that drove this: team review ("the promo doesn't belong in our feedback, maybe have media and blog tabs; think how the videos can be logically integrated")
