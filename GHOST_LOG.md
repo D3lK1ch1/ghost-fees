@@ -739,6 +739,11 @@ One entry per change. Newest at the bottom.
 - How to test: /ghostit: the Ghost Fees card first; nav: Ghost Fees · Ghost It AI · Pricing · Our progress · Media · About us · Privacy.
 - User feedback that drove this: team review ("move this above, Ghost Fees over Ghost It, as Ghost Fees is the main one; make it easiest to use")
 
+### Jolly's table: the bubble fits, ghosts stay off the food and prices
+- What: Jolly's speech bubble sits inside the picture with padding that keeps the words inside the oval: "Come in!" then "Every dish is something you pay for." on balanced lines (no word left alone). The six seated ghosts are a touch smaller and nudged out from the table so a bobbing ghost never covers its dish or price tag, and the price tags sit on top.
+- Files: src/components/xmas/JollysTable.jsx
+- How to test: Christmas theme > sample > Email templates: the bubble and every dish and price are clear.
+- User feedback that drove this: team review ("make text fit in the speech bubble"; "make the bouncing animated ghosts not overlap the food and their price")
 ### The full demo on the home page
 - What: The demo video is embedded right under Scan a sample free and Upload, in every theme, instead of a small Watch the demo link.
 - Files: src/components/landing/Hero.jsx, src/components/landing/ExHero.jsx
