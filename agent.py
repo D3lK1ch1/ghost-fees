@@ -1180,7 +1180,9 @@ def whats_new_reply():
     """Also the answer to ASI:One's pre-filled "What's new with you, Ghost.it?", so it
     starts with what Ghost It is for, then the latest changes, one thing to try and the card."""
     lines = [PURPOSE.replace(" Tell me what you pay for below.", ""), "", "**What's new (from your feedback)**"]
-    for who, said, changed in CHANGES[-4:]:
+    # Outside people first (Raj round 1 and 2, Kingan): the you-said-we-changed story.
+    outside = [c for c in CHANGES if not c[0].startswith(("The founders", "The team", "A Fetch.ai mentor"))]
+    for who, said, changed in outside[-4:]:
         lines.append(f"- {who} said: \"{said}\" We changed: {changed}.")
     lines.append("\n**Try it:** tap a card below, or send `ChatGPT $30, Claude $30, Cursor $30, Copilot $15`.")
     lines.append("Something unclear? `feedback: ...` and I'll change it.")
