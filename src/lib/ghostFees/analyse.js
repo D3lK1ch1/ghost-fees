@@ -5,7 +5,7 @@ const FEE_RE = /\bFEES?\b|\bATM\b|INTERNATIONAL TRANSACTION|LATE PAYMENT|OVERDRA
 const TRIAL_RE = /TRIAL/;
 // Never a subscription or a price rise: money moved, not spent on a plan.
 const HARD_EXCLUDE_RE = /\bTRANSFER\b|\bSALARY\b|\bWITHDRAWAL\b|TOP ?UP|\bMYKI\b|PUBLIC TRANSPORT/;
-const RENT_RE = /\bRESIDENTIAL\b|\bRENT\b/;
+const RENT_RE = /\bRESIDENTIAL\b|\bRENT\b|\bRNT\b|\bRENTAL\b/;
 const MAX_SUBSCRIPTION = 500;
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -196,10 +196,11 @@ function merchantLeak(key, list) {
   const dupAmount = sumValues(extras);
 
   // Price creep: exactly two prices among the non-duplicate charges, the higher replacing the lower.
+  // Only for subscriptions (repeat spending like a daily coffee counts), so rent and big bills never do.
   const regular = list.filter((_, index) => !extraIndexes.has(index));
   const regularAmounts = distinctAmounts(regular);
   let creep = null;
-  if (distinctMonths(regular).length >= 3 && regularAmounts.length === 2) {
+  if (isSubscription && distinctMonths(regular).length >= 3 && regularAmounts.length === 2) {
     const [oldPrice, newPrice] = regularAmounts;
     const firstNewIndex = regular.findIndex((item) => item.value === newPrice);
     const oldAfterNew = regular.slice(firstNewIndex + 1).some((item) => item.value === oldPrice);
