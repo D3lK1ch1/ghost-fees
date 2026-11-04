@@ -697,3 +697,9 @@ One entry per change. Newest at the bottom.
 - Files: index.html, src/index.css, src/pages/Progress.jsx, src/data/changelog.json, src/data/videos.js, src/data/shipped.json, src/components/results/FutureSpend.jsx
 - How to test: /progress: the feedback cards show the quotes, Raj and Kingan at the top; text looks lighter.
 - User feedback that drove this: team review ("make text less chunky and better formatted"; "what commas in text")
+
+### Each video where it works best
+- What: The demo is on the home page (Watch the demo, a popup) and the sign-in pages (See it in 2:05), because people deciding to sign up want to see it working. /progress keeps all three, demo first for judges, then the promo and how far we've come.
+- Files: src/data/videos.js, src/components/site/PromoButton.jsx
+- How to test: Home: Watch the demo (2:05) opens the demo. /login: the demo under the UVP. /progress: Demo, Promo, How far we've come.
+- User feedback that drove this: team review ("does the demo video belong on home and login and the others in our progress")

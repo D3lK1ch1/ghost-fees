@@ -8,7 +8,10 @@ export const VIDEOS = [
 ];
 
 export const PROMO = VIDEOS.find((video) => video.key === 'promo');
-// Sign-in pages show the promo (short and made for first-time visitors).
-export const LOGIN_VIDEO = PROMO;
+export const DEMO = VIDEOS.find((video) => video.key === 'demo');
+// Where each one goes (4 Nov): the demo on the home and sign-in pages, because people
+// deciding to sign up want to see it working; the promo and how far we've come on
+// /progress (the demo leads there too, for judges).
+export const LOGIN_VIDEO = DEMO;
 
 export const duration = (seconds) => `${Math.floor(seconds / 60)}:${String(Math.round(seconds % 60)).padStart(2, '0')}`;
