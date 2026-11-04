@@ -17,7 +17,7 @@ import { Screen } from './ExKit';
 // scanning chat > Unread messages > Moving on > Blocked chat per ex > Inbox zero,
 // then Act 2: the ex comes back > glow-up plan > weekend away > monthly check-in.
 // Same features as the other themes underneath: blocking an ex adds it to the Ghost
-// List (this browser only), cancel steps and links are the official ones, and every
+// List (this browser only), cancel steps and links are the official ones and every
 // number comes from the scan. The full results stay below under See everything.
 export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeAll, onUpload }) {
   const { subscriptions, leaks } = analysis;

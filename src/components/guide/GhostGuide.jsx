@@ -40,7 +40,7 @@ function answer(question, analysis) {
   const mentioned = findLeak(text, leaks);
 
   if (/\b(bank should|switch|invest|loan|credit card|which (bank|card|account)|super(annuation)?|tax|debt|mortgage|advice|should i (invest|buy|switch|get|open|take|borrow|pay off))\b/.test(text)) {
-    return { reply: "I can't give financial advice, and I never recommend banks, cards or products. For that, moneysmart.gov.au is a good free place to start, or a licensed financial adviser." };
+    return { reply: "I can't give financial advice and I never recommend banks, cards or products. For that, moneysmart.gov.au is a good free place to start, or a licensed financial adviser." };
   }
   if (/next year|future|will i|predict|per year|a year|yearly|annual/.test(text)) {
     return { reply: `I only show money already lost in your statement: ${money(total)} in ${months}. I don't guess or project future amounts.` };

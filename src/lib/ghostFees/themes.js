@@ -57,7 +57,7 @@ export const THEMES = {
     label: 'Ghosts of Christmas',
     emoji: '🎄',
     headline: 'The Ghosts of Subscriptions Past, Present and Future.',
-    subhead: 'Three ghosts will visit you tonight. They will show you what you have lost, what you pay now, and what is coming if nothing changes.',
+    subhead: 'Three ghosts will visit you tonight. They will show you what you have lost, what you pay now and what is coming if nothing changes.',
     storyTitle: 'Three ghosts visit',
     ghosts: [
       { key: 'past', name: 'Ghost of Fees Past', emoji: '🕯️', caption: 'already lost to the leaks in your statement' },

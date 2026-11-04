@@ -14,7 +14,7 @@ const SIGN_OFF = `Kind regards,
 [Account or member number]`;
 
 // Ready-to-send emails. Each one says what happened, why a refund is fair, exactly
-// what we're asking for with a deadline, and the polite next step if they say no.
+// what we're asking for with a deadline and the polite next step if they say no.
 // Every amount and date comes from the statement; the person can edit anything.
 function buildEmail(leak) {
   if (!leak) return { title: '', subject: '', body: '' };
@@ -144,8 +144,8 @@ ${SIGN_OFF}`,
   const why = trial
     ? `I signed up for a free trial and did not mean for it to turn into a paid subscription. Since the trial ended I've been charged ${money(leak.amount)}.`
     : rise
-      ? `The price went up from ${money(rise.oldPrice)} to ${money(rise.newPrice)} a month, and I don't want to keep paying the higher price.`
-      : `I no longer use it, and at ${money(leak.monthly || leak.amount)} a month it isn't worth keeping.`;
+      ? `The price went up from ${money(rise.oldPrice)} to ${money(rise.newPrice)} a month and I don't want to keep paying the higher price.`
+      : `I no longer use it and at ${money(leak.monthly || leak.amount)} a month it isn't worth keeping.`;
   return {
     title: `Cancel ${leak.merchant}`,
     subject: trial ? `Cancel and refund: ${leak.merchant} free trial` : `Please cancel my ${leak.merchant} subscription`,
@@ -157,7 +157,7 @@ Why: ${why}
 
 Please:
 1. Cancel it today so there are no further charges.
-2. ${trial ? `Refund the ${money(leak.amount)} charged since the trial ended.` : 'Refund any charge taken after today, and any unused part of the current period if your policy allows.'}
+2. ${trial ? `Refund the ${money(leak.amount)} charged since the trial ended.` : 'Refund any charge taken after today and any unused part of the current period if your policy allows.'}
 3. Confirm the cancellation by email.
 
 ${SIGN_OFF}`,

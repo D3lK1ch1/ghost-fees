@@ -76,7 +76,7 @@ export default function CancelAssistant({ subscriptions = [], onDraft }) {
     <section className="mt-6 rounded-3xl border border-border bg-card p-4 sm:p-5" aria-label="Cancellation assistant">
       <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Cancellation assistant</p>
       <h3 className="mt-1 font-heading text-[20px] font-bold text-foreground">Meet Cassy, your cancellation assistant</h3>
-      <p className="mt-1 text-[14px] text-muted-foreground">Pick a subscription. Cassy finds the official cancel page, the steps and the phone number, and walks you through it.</p>
+      <p className="mt-1 text-[14px] text-muted-foreground">Pick a subscription. Cassy finds the official cancel page, the steps and the phone number and walks you through it.</p>
       <StatNote statKey={/GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45/i.test(sub.merchant) ? 'gym' : 'cancel'} className="mt-1.5" />
 
       <div className="mt-3 flex flex-wrap gap-1.5" role="radiogroup" aria-label="Subscription to cancel">

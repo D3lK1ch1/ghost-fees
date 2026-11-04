@@ -16,7 +16,7 @@ const ALL = 'all';
 
 // The printed charges of one leak, on paper that has clearly seen things.
 // All ghosts: tap a ghost to see its charges, "Dispute this" drafts the email to
-// that company, and ticked ghosts become one claim to your own bank.
+// that company and ticked ghosts become one claim to your own bank.
 export default function PossessedReceipt({ leaks, onDraft }) {
   const receipts = leaks.filter((leak) => (leak.rows || []).length > 1);
   const [open, setOpen] = useState(false);

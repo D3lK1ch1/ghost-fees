@@ -13,7 +13,7 @@ const BADGES = {
   charging: { label: 'Still texting', note: () => 'Charged you again. Message them.', style: { background: C.coral, color: C.bg } },
 };
 
-// Scene 3, design screen Ex4Subs: the Glow-up fund, double-ups, and every ex still
+// Scene 3, design screen Ex4Subs: the Glow-up fund, double-ups and every ex still
 // charging with their line, the official cancel steps and Block and delete.
 // Blocking adds the ex to the Ghost List, the same list as the Subscriptions tab.
 export default function ExMovingOn({ theme, pick, pickKey, subscriptions, glow, blocked, ghostList, avatarFor, priceRiseIds, onBlock, onDone }) {

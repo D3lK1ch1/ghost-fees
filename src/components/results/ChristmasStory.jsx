@@ -106,7 +106,7 @@ export default function ChristmasStory({ subscriptions = [], leaks = [], leaksTo
           <h3 className={title}>Jolly, the Ghost of Subscriptions Present</h3>
           <div className="mt-3 flex items-start gap-3">
             <div className="space-y-2">
-              <SpeechBubble>Come in, and know me better, friend! Every dish is something you pay for.</SpeechBubble>
+              <SpeechBubble>Come in and know me better, friend! Every dish is something you pay for.</SpeechBubble>
             </div>
             <img src={XMAS.jolly} alt="Jolly, a cheerful ghost in a patchwork robe holding a torch" width={320} className={`${art} ml-auto`} />
           </div>

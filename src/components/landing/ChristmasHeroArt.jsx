@@ -4,7 +4,7 @@ import { ThoughtBubble } from '@/components/site/Bubbles';
 import { XMAS } from '@/lib/ghostFees/christmasArt';
 
 // Ghosts of Christmas hero: the living room at 11:59 on Christmas Eve, the Sleeper
-// dozing off, and a Winter / Summer toggle.
+// dozing off and a Winter / Summer toggle.
 export default function ChristmasHeroArt({ season, setSeason }) {
   return (
     <div className="flex w-full max-w-md flex-col items-center">

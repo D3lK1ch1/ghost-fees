@@ -2,7 +2,7 @@ import BrandHeader from '@/components/site/BrandHeader';
 import DeleteServerData from '@/components/site/DeleteServerData';
 import SiteFooter from '@/components/site/SiteFooter';
 
-// Exactly what is kept, where, and for how long. Keep this true: update it with every data change.
+// Exactly what is kept, where and for how long. Keep this true: update it with every data change.
 const STORED = [
   { what: 'Your results, Ghost List and theme', where: 'Your browser only', how: 'Until you press Clear my data or clear your browser' },
   { what: 'Proof of cancelling (how and when, references, screenshots you add)', where: 'Your browser only, with your Ghost List. Never uploaded', how: 'Until you press Clear my data, remove it, or clear your browser' },
@@ -13,7 +13,7 @@ const STORED = [
   { what: 'Feedback older than 30 days', where: 'Ghost Fees database', how: 'Anonymised: your name, your written comments and the leak you picked are cleared. Only the counts and Yes / Kinda / No answers stay' },
   { what: 'Calendar sync, only if you turn it on', where: 'Ghost Fees database, behind a private link', how: 'Reminder titles, amounts and dates you chose to sync, until you press Stop syncing' },
   { what: 'Cassy cancel lookups', where: 'Sent to our AI provider to search the web', how: 'Only the company name; nothing is stored' },
-  { what: 'Visits from the Ghost It agent', where: 'Ghost Fees database', how: 'Date, where you came from, and how many subscriptions were passed (no names or prices)' },
+  { what: 'Visits from the Ghost It agent', where: 'Ghost Fees database', how: 'Date, where you came from and how many subscriptions were passed (no names or prices)' },
   { what: 'Your account, if you sign in', where: 'Base44 sign-in', how: 'Email and name, until you delete your account' },
   { what: 'Free tier used and whether you paid', where: 'Ghost Fees database, only our server can read it', how: 'Counts, plus scrambled one-way codes for the files you scanned (from file name, size and date, never the contents) and the one subscription Cassy looked up. No statement, transactions, merchants or results. Kept until you delete it or your account. Download it any time from this page.' },
   { what: 'Payment, if you unlock', where: 'Stripe', how: 'Stripe holds your card. We keep the Stripe session id, the amount and the date.' },

@@ -120,7 +120,7 @@ export default function TaskDialog({ target, onClose }) {
           ))}
         </div>
         <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-          The first button saves a calendar file for Apple Calendar or any app. Google and Outlook open with the task filled in, and only then is the task text sent to them.
+          The first button saves a calendar file for Apple Calendar or any app. Google and Outlook open with the task filled in and only then is the task text sent to them.
         </p>
       </DialogContent>
     </Dialog>

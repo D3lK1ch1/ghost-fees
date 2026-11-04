@@ -11,7 +11,7 @@ import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 import { GHOST_IT_SNIP } from '@/lib/ghostFees/ghostItAgent';
 
 // The limit-reached sheet (B7) and the sign-in screen (B8), styled to the Claude
-// Design canvas "Ghost Fees upgrade flow" (screens 1A, 1B, 2, and the 💔 / 🎄 variants).
+// Design canvas "Ghost Fees upgrade flow" (screens 1A, 1B, 2 and the 💔 / 🎄 variants).
 
 // The theme's own ghost floats at the top of the sheet.
 const SHEET_ART = {

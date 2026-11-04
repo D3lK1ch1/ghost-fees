@@ -13,7 +13,7 @@ const stepsFor = (setTab) => [
   { target: 'tabs', title: 'Every section, one tap away', body: 'Each tab is one job. We’ll open the three that save you the most money.', block: 'start' },
   { target: 'panel', title: 'Ghosts: every leak', body: 'Each card is one money leak, biggest first, with the transactions behind it and what to do about it.', onEnter: () => setTab('ghosts'), block: 'start' },
   { target: 'panel', title: 'Subscriptions: keep or cancel', body: 'Answer Yes or No for each one. Cancelled ones go on your Ghost List, which checks your next statement to be sure they stopped.', onEnter: () => setTab('subscriptions'), block: 'start' },
-  { target: 'panel', title: 'Calendar: reminders and Cassy', body: 'Reminders before each charge, a checklist of every subscription, and Cassy, who finds the cancel page and phone number for you.', onEnter: () => setTab('calendar'), block: 'start' },
+  { target: 'panel', title: 'Calendar: reminders and Cassy', body: 'Reminders before each charge, a checklist of every subscription and Cassy, who finds the cancel page and phone number for you.', onEnter: () => setTab('calendar'), block: 'start' },
   { target: 'ask', title: 'Stuck? Ask a ghost', body: 'Our ghost guides answer questions about your own results, any time.' },
 ];
 

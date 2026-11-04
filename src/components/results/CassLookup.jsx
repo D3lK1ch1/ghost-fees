@@ -26,7 +26,7 @@ Kind regards,
 }
 
 // Cassy's answer card: official cancel page, steps, phone, support email or page,
-// a ready email to that address, and where it came from. Works in every theme.
+// a ready email to that address and where it came from. Works in every theme.
 export default function CassLookup({ merchant, monthly, auto = false, plain = false, className = '' }) {
   const [info, setInfo] = useState(() => cachedLookup(merchant));
   const [state, setState] = useState(info ? 'done' : 'idle');

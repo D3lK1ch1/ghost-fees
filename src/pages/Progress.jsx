@@ -33,7 +33,7 @@ function Stat({ label, value }) {
   );
 }
 
-// Public "Ghost Log": real numbers, what users told us, and what shipped each day.
+// Public "Ghost Log": real numbers, what users told us and what shipped each day.
 export default function Progress() {
   const [stats, setStats] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -68,7 +68,7 @@ export default function Progress() {
       <main className="mx-auto w-full max-w-3xl px-5 pb-6 sm:px-8">
         <p className="text-[13px] font-bold uppercase tracking-wide text-primary">Ghost Log · Day {dayNumber()}</p>
         <h1 className="mt-1 font-heading text-[2rem] font-bold leading-tight text-foreground">Our progress, in public</h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us, and what we changed because of it.</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us and what we changed because of it.</p>
 
         <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
           <Stat label="statements scanned" value={stats ? stats.scans : '...'} />

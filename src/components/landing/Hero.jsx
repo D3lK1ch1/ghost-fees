@@ -10,7 +10,7 @@ import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
 
 // The three kinds of ghost, as bright tappable chips (testers: "make the buttons pop").
-// Each has its own colour and icon, and opens the sample so you can see one.
+// Each has its own colour and icon and opens the sample so you can see one.
 const TAGS = [
   { label: 'Forgotten subscriptions', Icon: Ghost, colour: '#6EF0C2' },
   { label: 'Sneaky fees', Icon: Receipt, colour: '#FFB86B' },

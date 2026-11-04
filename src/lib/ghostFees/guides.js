@@ -9,7 +9,7 @@ export const GUIDES = {
     color: '#5ee6c8',
     job: 'Fees and totals',
     short: 'Explains fees',
-    does: 'Tallies every charge and bank fee, and shows how each total was worked out.',
+    does: 'Tallies every charge and bank fee and shows how each total was worked out.',
     chips: ['Which ghost costs the most?', 'What is price creep?', 'Is my data stored?'],
     intro: (count, total) => `${count} ${count === 1 ? 'ghost' : 'ghosts'} on file, ${money(total)} all up. Let's tidy the books, one room at a time.`,
     pick: (leak) => `${leak.title || leak.merchant}: ${money(leak.amount)}, filed under ${leak.badge.toLowerCase()}.`,

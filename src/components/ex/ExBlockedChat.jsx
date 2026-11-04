@@ -32,7 +32,7 @@ export default function ExBlockedChat({ theme, pick, pickKey, ex, glow, avatarFo
         <div className="ex-in max-w-[82%] self-start px-4 py-3 text-[16px]" style={{ background: C.card, borderRadius: '20px 20px 20px 6px', animationDelay: '.6s' }}>{line}</div>
         {chip('Today')}
         <div className="ex-in flex max-w-[78%] flex-col items-end gap-1 self-end" style={{ animationDelay: '1.2s' }}>
-          <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>I cancelled. We&apos;re done, and that&apos;s okay.</div>
+          <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>I cancelled. We&apos;re done and that&apos;s okay.</div>
           <div className="text-[13px] font-bold" style={{ color: C.mint }}>✓✓ Left on read</div>
         </div>
 

@@ -179,7 +179,7 @@ function merchantLeak(key, list) {
     }
   }
 
-  // Duplicate: the same amount charged twice within 2 days, and only for a
+  // Duplicate: the same amount charged twice within 2 days and only for a
   // subscription. A shop that charges whatever you spent is never a duplicate.
   // Only the extras count.
   const extraIndexes = new Set();

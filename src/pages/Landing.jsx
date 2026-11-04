@@ -100,7 +100,7 @@ export default function Landing() {
       claim = null;
     }
     // Free beta: if the free-scan check can't be reached, scan anyway. CSVs never
-    // need the server, and parseStatement skips the ticket while charging is off.
+    // need the server and parseStatement skips the ticket while charging is off.
     if (!charging && (!claim || claim.reason === 'error')) {
       scan(picked, false, '');
       return;
@@ -117,7 +117,7 @@ export default function Landing() {
   };
 
   const analysisReady = Boolean(status === 'done' && results);
-  // Came from /try (step 1): tick it off once results show, and offer the way back.
+  // Came from /try (step 1): tick it off once results show and offer the way back.
   const [fromTry] = useState(() => {
     try {
       return window.sessionStorage.getItem(TRY_RETURN) === '1';

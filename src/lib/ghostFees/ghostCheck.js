@@ -4,7 +4,7 @@ import { cleanMerchant } from './cleanMerchant';
 // item still "Requested" and see whether that merchant charged again after the
 // day it was ghosted. All in the browser; nothing is sent anywhere.
 //   charged after the request date             -> "charging" (Still charging)
-//   no charge, and the statement runs 35+ days past the request date -> "confirmed"
+//   no charge and the statement runs 35+ days past the request date -> "confirmed"
 //   otherwise (statement too short to tell)    -> unchanged
 const CONFIRM_DAYS = 35;
 const DAY = 86400000;

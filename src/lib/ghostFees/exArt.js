@@ -122,7 +122,7 @@ export function exAvatar(merchant = '') {
 // Avatars for the exes: cut-out ghosts, no circle behind them. Known exes (Netflix,
 // Stan, gym, Adobe, Streammax) keep their own character from the design. Everyone
 // else first gets an ex character nobody is using yet, then a full-body ghost from
-// the pick's art. No doubles until the set runs out, and the same merchant keeps
+// the pick's art. No doubles until the set runs out and the same merchant keeps
 // the same face on every screen because the map is built once per results page.
 const EX_KEYS = ['more', 'streammax', 'stan', 'adobe', 'netflix'];
 const BODY_SETS = {

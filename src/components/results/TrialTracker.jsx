@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import CollapseCard from '@/components/site/CollapseCard';
 
 // Trial tracker (Calendar & reminders): free trials you've started, the day each one
-// turns paid, a countdown, and a reminder 2 days before in your own calendar. Trials
+// turns paid, a countdown and a reminder 2 days before in your own calendar. Trials
 // your statement shows already turned paid are listed too. Saved in this browser only.
 const KEY = 'ghostFees.trials.v1';
 const DAY = 864e5;

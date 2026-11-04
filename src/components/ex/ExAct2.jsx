@@ -187,7 +187,7 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
         </>
         )}
         {/* Bubble tail at his mouth. The art is a square cropped to fill this 330px-high
-            card (object-cover, 30% from the top), and his mouth sits at 44% across and
+            card (object-cover, 30% from the top) and his mouth sits at 44% across and
             37.5% down the art, so the mouth's spot is worked out from the card's width
             (cqw). The tail tip is at 9% across, 94% down the bubble, hence the translate. */}
         {pick?.weekendArt && (
@@ -257,7 +257,7 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
         <div className="self-center rounded-full px-3 py-1 text-[13px] font-bold" style={{ color: C.muted, background: C.card }}>Next month</div>
         <div className="ex-in max-w-[82%] self-start px-4 py-3 text-[16px]" style={{ ...them, animationDelay: '.3s' }}>Monthly check-in. Send me your new statement and I&apos;ll read it.</div>
         <div className="ex-in max-w-[82%] self-start px-4 py-3 text-[16px]" style={{ ...them, animationDelay: '.9s' }}>
-          I&apos;ll check your {blockedCount} {blockedCount === 1 ? 'ex is' : 'exes are'} still blocked, and catch anyone new sliding in.
+          I&apos;ll check your {blockedCount} {blockedCount === 1 ? 'ex is' : 'exes are'} still blocked and catch anyone new sliding in.
         </div>
         <div className="ex-in flex max-w-[78%] flex-col items-end gap-1 self-end" style={{ animationDelay: '1.5s' }}>
           <div className="px-4 py-3 text-[16px] font-bold" style={{ background: C.coral, color: C.bg, borderRadius: '20px 20px 6px 20px' }}>Deal.</div>
@@ -275,7 +275,7 @@ export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
 }
 
 // Design screen FineSplurge: what your exes paid for. The F**k-ex jar fills as you
-// block exes; each treat unlocks when its ex is blocked, and when the jar is full
+// block exes; each treat unlocks when its ex is blocked and when the jar is full
 // the party ghost says "Feel it" and Party mode opens: your ghosts dance on the
 // exes' gravestones. Real yearly prices only.
 export function ExSplurge({ pick, subscriptions, avatarFor }) {

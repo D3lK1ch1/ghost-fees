@@ -173,7 +173,7 @@ function YetToCome({ subscriptions, X, season }) {
       <div className="relative rounded-2xl px-3.5 py-4" style={{ background: 'linear-gradient(135deg, rgba(220,235,255,.18), rgba(220,235,255,.05))', border: '2px solid rgba(220,235,255,.35)' }}>
         <div className="x-frost x-fredoka text-[22px] font-semibold leading-snug" style={{ color: X.frost, textShadow: '0 0 10px rgba(200,225,255,.8)', animationDelay: '4s' }}>{money(monthly * 12)} over the next 12 months if nothing changes.</div>
       </div>
-      <div className="relative text-[13.5px]" style={{ color: X.muted }}>Below: the days you were charged, and reminders for the next charge in your own calendar.</div>
+      <div className="relative text-[13.5px]" style={{ color: X.muted }}>Below: the days you were charged and reminders for the next charge in your own calendar.</div>
     </XScreen>
   );
 }

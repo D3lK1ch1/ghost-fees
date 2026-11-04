@@ -8,9 +8,9 @@ import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 // Each agent: their colour ghost, a role icon, their job and what they actually do.
 const ICONS = { penny: Calculator, sir: Mail, gus: Trophy, cass: Scissors };
 const BLURBS = {
-  penny: 'Adds up every charge and fee, and shows the maths.',
+  penny: 'Adds up every charge and fee and shows the maths.',
   sir: 'Writes your cancel, refund and fee-waiver emails.',
-  gus: 'Keeps score as you bust ghosts, and sets goals.',
+  gus: 'Keeps score as you bust ghosts and sets goals.',
   cass: 'Finds the real cancel page, steps and phone number.',
 };
 export const TEAM = [

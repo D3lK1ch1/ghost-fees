@@ -6,7 +6,7 @@ import { useAllowance } from '@/lib/AllowanceContext';
 import BadgesExplainer from '@/components/results/BadgesExplainer';
 
 // The "Free vs Pro" home tab, laid out like a pro app's plan picker: Free and Pro
-// side by side, a big price, one button each, then what you get, and the savings
+// side by side, a big price, one button each, then what you get and the savings
 // maths. Same plan facts as /upgrade. The ghost team has its own section (GhostTeam).
 // Only what Pro really unlocks goes in the Pro list. Everything else is free for
 // everyone (the server only limits scans, ghost guide chats, Cassy lookups and the PDF).
@@ -15,7 +15,7 @@ const FREE = [
   '3 statement scans, your full total every time',
   'Cancel links, steps and ready-to-send emails',
   'Ghost List, reminders, the tracker and badges',
-  '1 chat with a ghost guide, and Cassy looks up 1 subscription',
+  '1 chat with a ghost guide and Cassy looks up 1 subscription',
 ];
 
 const PRO = [

@@ -12,10 +12,10 @@ import { getSessionId } from '@/lib/session';
 const STEPS = [
   { title: 'Copy the test message', line: 'Or type your own: what you pay for, in plain words.' },
   { title: 'Open Ghost It', line: 'Its ASI:One page opens. Tap its bubble, or paste the message and send. Keep @ghostit at the start so Ghost It answers, not your own assistant.' },
-  { title: 'Paste and send', line: 'You get the yearly cost line by line, any double-ups, and the cancel steps.' },
+  { title: 'Paste and send', line: 'You get the yearly cost line by line, any double-ups and the cancel steps.' },
 ];
 
-// What Ghost It does, and what you get from it (v11, 3 Nov: consolidate plan added).
+// What Ghost It does and what you get from it (v11, 3 Nov: consolidate plan added).
 const BENEFITS = [
   { emoji: '🧮', title: 'The real yearly cost', line: 'Every line worked out: $19 a month x 12 = $228 a year. Weekly, quarterly and yearly prices too.' },
   { emoji: '👯', title: 'Double-ups and triple-ups', line: 'Three streaming apps, two music apps, four AI tools: it groups the ones doing the same job.' },
@@ -46,7 +46,7 @@ export default function GhostIt() {
           <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={170} height={170} className="motion-safe:animate-float mx-auto h-[170px] w-[170px] object-contain drop-shadow-[0_0_30px_rgba(143,184,255,0.35)]" />
           <h1 className="mt-4 font-heading text-[32px] font-bold leading-tight text-foreground">Try Ghost It</h1>
           <p className="mt-2 text-[16px] leading-snug text-muted-foreground">
-            Our AI agent on Fetch.ai&apos;s ASI:One. Tell it what you pay for and it shows the yearly cost, spots double-ups, plans which to keep, cancel or rotate, and gives you the official cancel steps. 1 minute, nothing to install.
+            Our AI agent on Fetch.ai&apos;s ASI:One. Tell it what you pay for and it shows the yearly cost, spots double-ups, plans which to keep, cancel or rotate and gives you the official cancel steps. 1 minute, nothing to install.
           </p>
         </div>
 

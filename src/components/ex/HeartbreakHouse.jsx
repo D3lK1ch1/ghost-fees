@@ -194,7 +194,7 @@ export default function HeartbreakHouse({ theme, pick, subscriptions, avatarFor 
           <div className="mx-auto mt-3 h-10 w-14 rounded-t-full border-2 border-white/10 bg-black/40" aria-hidden="true" />
         </div>
 
-        {/* Under the house: the F**k-ex jar, your ghost, and the Dinner or BBQ sign. */}
+        {/* Under the house: the F**k-ex jar, your ghost and the Dinner or BBQ sign. */}
         <div className="relative mt-[-2px] h-[250px] w-full overflow-hidden rounded-[10px]" style={{ background: 'linear-gradient(180deg, #111016 0%, #15131a 100%)' }}>
           {allClear && Array.from({ length: 18 }, (_, i) => (
             <span key={i} aria-hidden="true" className="hh-conf pointer-events-none absolute" style={{ left: `${(i * 23 + 9) % 96}%`, top: 30, width: i % 2 ? 6 : 8, height: i % 3 ? 10 : 6, borderRadius: i % 4 ? 2 : '50%', background: ['#ff6f7d', '#5ee6c8', '#f2c14e', '#fbf8fa', '#ffb8bf', '#8fb8ff'][i % 6], animationDelay: `${((i * 0.19) % 2.6).toFixed(2)}s` }} />

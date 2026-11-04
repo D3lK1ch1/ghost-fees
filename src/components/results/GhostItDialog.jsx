@@ -2,7 +2,7 @@ import { Calculator, Copy, ListChecks, MessageCircle, Scissors, Sparkles } from 
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_PROFILE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 
-// "Meet Ghost It": what makes our chat agent special, what it does, and the free
+// "Meet Ghost It": what makes our chat agent special, what it does and the free
 // try, in one pop-up. Opened from "What is Ghost It?" on the Ghost It card and strips.
 const FEATURES = [
   { Icon: Sparkles, title: 'Ghost Packs hunt one kind of leak each', line: 'Screen, Sound, Tech Stack, Food, Gym and Play: doubles and overlaps a statement can’t show.' },

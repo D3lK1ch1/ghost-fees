@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { money } from './format';
 
 // One plan, three views (3 Nov): the goal path makes the goals, the Calendar tab lists
-// them as a checklist with dates, and the ghost guide's "Make my goals" points there.
+// them as a checklist with dates and the ghost guide's "Make my goals" points there.
 // Ticks and dates live in this browser only (localStorage), cleared by Clear my data.
 const KEY = 'ghostFees.goalTasks.v1';
 const EVENT = 'ghostFees:goalTasks';
