@@ -1732,10 +1732,12 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
         ctx.logger.error(f"route error: {type(e).__name__}: {e}")
         text, card = help_reply()
     t1 = _t.monotonic()
-    # Reply first: ASI:One stops waiting after about 30 seconds, and the counters
-    # below are extra storage writes, so they happen after the person has their answer.
-    await send_reply(ctx, sender, text, card)
+    # v13.3 (5 Nov): acknowledge FIRST, as the Agent Chat Protocol requires, then reply.
+    # uagents sends one envelope at a time, so with the reply first it waited ~30 s for
+    # ASI:One, which was waiting for our acknowledgement (logs: send=30.5s, then a
+    # "Timeout waiting for dispense response" and nothing shown). Counters come after.
     await ctx.send(sender, ack)
+    await send_reply(ctx, sender, text, card)
     # Timings (3 Nov): replies left ~30 s after the message. Which part is slow?
     ctx.logger.info(f"TIMING route={t1 - t0:.1f}s send={_t.monotonic() - t1:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
     try:
