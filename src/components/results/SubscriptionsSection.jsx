@@ -10,7 +10,8 @@ import GhostList from './GhostList';
 import BadgesExplainer from './BadgesExplainer';
 import { useCancelProof } from './ProofDialog';
 import PickTimeDialog from './PickTimeDialog';
-import { LIFE_STAGES, TYPE_LABELS, findOverlaps, tipFor, typeOf } from '@/lib/ghostFees/overlaps';
+import { LIFE_STAGES, TYPE_ICONS, TYPE_LABELS, findOverlaps, tipFor } from '@/lib/ghostFees/overlaps';
+import { useCategories } from '@/hooks/use-categories';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import StatNote from '@/components/stats/StatNote';
 
@@ -37,7 +38,9 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
   // "When will you do it?" (pick a time to cancel, B3).
   const [planFor, setPlanFor] = useState(null);
   const [typeFilter, setTypeFilter] = useState('all');
-  const [sortBy, setSortBy] = useState('cost');
+  const [sortBy, setSortBy] = useState('group');
+  const { categoryOf, setCategory } = useCategories();
+  const typeOf = categoryOf;
   const [view, setView] = useState('open');
   const [stage, setStage] = useSavedChoice('ghostFees.lifeStage', LIFE_STAGES.map((item) => item.key), 'solo');
 
@@ -55,11 +58,14 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
       : { title: `${subscription.merchant} is on your goal path`, description: 'Its cancel link and email are in the Cancelling tab.' });
   };
   const undo = (id) => onAnswer?.((current) => ({ ...current, [id]: undefined }));
-  const types = [...new Set(subscriptions.map((item) => typeOf(item.merchant)))];
+  const undecided = subscriptions.filter((item) => !answers[item.id]);
+  // Categories biggest spend first, so the chips and groups lead with where the money goes.
+  const spend = (key) => subscriptions.filter((item) => typeOf(item.merchant) === key).reduce((sum, item) => sum + (Number(item.monthly) || 0), 0);
+  const types = [...new Set(subscriptions.map((item) => typeOf(item.merchant)))].sort((a, b) => (a === 'other') - (b === 'other') || spend(b) - spend(a));
   const sorters = {
     cost: (a, b) => b.monthly - a.monthly,
     name: (a, b) => a.merchant.localeCompare(b.merchant),
-    type: (a, b) => typeOf(a.merchant).localeCompare(typeOf(b.merchant)) || b.monthly - a.monthly,
+    group: (a, b) => b.monthly - a.monthly,
   };
   const open = subscriptions
     .filter((item) => !answers[item.id])
@@ -140,17 +146,25 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
       {view === 'open' && (types.length > 1 || subscriptions.length > 3) && (
         <div className="mt-2 flex flex-wrap items-center gap-2" aria-label="Filter and sort subscriptions">
-          <label className="flex items-center gap-1.5 text-[13px] text-muted-foreground">
-            Show
-            <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="rounded-full border border-border bg-card px-2.5 py-1 text-[13px] text-foreground">
-              {['all', ...types].map((key) => <option key={key} value={key}>{key === 'all' ? 'All types' : TYPE_LABELS[key]}</option>)}
-            </select>
-          </label>
+          {/* Category chips with counts: one tap filters (4 Nov, replaces the drop-down). */}
+          <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label="Show one category">
+            {['all', ...types].map((key) => {
+              const count = undecided.filter((item) => key === 'all' || typeOf(item.merchant) === key).length;
+              if (key !== 'all' && !count) return null;
+              const on = typeFilter === key;
+              return (
+                <button key={key} type="button" role="radio" aria-checked={on} onClick={() => setTypeFilter(key)}
+                  className={cn('rounded-full border px-2.5 py-1 text-[13px] font-semibold', on ? 'border-primary bg-primary text-primary-foreground' : 'border-border text-muted-foreground hover:text-foreground')}>
+                  {key === 'all' ? 'All' : `${TYPE_ICONS[key]} ${TYPE_LABELS[key]}`} <span className="opacity-70">{count}</span>
+                </button>
+              );
+            })}
+          </div>
           <label className="ml-auto flex items-center gap-1.5 text-[13px] text-muted-foreground">
             Sort
             <select value={sortBy} onChange={(event) => setSortBy(event.target.value)} className="rounded-full border border-border bg-card px-2.5 py-1 text-[13px] text-foreground">
+              <option value="group">Grouped by type</option>
               <option value="cost">Highest cost</option>
-              <option value="type">By type</option>
               <option value="name">A to Z</option>
             </select>
           </label>
@@ -166,11 +180,11 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
             </p>
           );
         }
-        return (
-          <ul className="mt-2 divide-y divide-white/[0.06] overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025]">
-            {list.map((subscription) => (
+        const row = (subscription) => (
               <SubRow
                 key={subscription.id}
+                category={typeOf(subscription.merchant)}
+                onCategory={(key) => setCategory(subscription.merchant, key)}
                 subscription={subscription}
                 view={view}
                 ghosted={isGhosted(subscription.id)}
@@ -182,8 +196,30 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
                 onDraftCancel={onDraftCancel}
                 onOpenPath={onOpenPath}
               />
-            ))}
-          </ul>
+        );
+        const box = 'divide-y divide-white/[0.06] overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.025]';
+        if (view !== 'open' || sortBy !== 'group' || typeFilter !== 'all') return <ul className={`mt-2 ${box}`}>{list.map(row)}</ul>;
+        // Grouped: one collapsible block per category with its count and yearly cost.
+        return (
+          <div className="mt-2 space-y-2">
+            {types.map((key) => {
+              const items = list.filter((item) => typeOf(item.merchant) === key);
+              if (!items.length) return null;
+              const yearly = items.reduce((sum, item) => sum + (Number(item.monthly) || 0) * 12, 0);
+              return (
+                <details key={key} open className="group">
+                  <summary className="flex cursor-pointer list-none items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-white/[0.03]">
+                    <span aria-hidden="true">{TYPE_ICONS[key]}</span>
+                    <span className="text-[14.5px] font-semibold text-foreground">{TYPE_LABELS[key]}</span>
+                    <span className="text-[13px] text-muted-foreground">{items.length}</span>
+                    <span className="ml-auto text-[13.5px] font-semibold tabular-nums text-foreground">{money(yearly)}<span className="font-normal text-muted-foreground">/yr</span></span>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden="true" />
+                  </summary>
+                  <ul className={`mt-1 ${box}`}>{items.map(row)}</ul>
+                </details>
+              );
+            })}
+          </div>
         );
       })()}
 
@@ -212,7 +248,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
 
 // One subscription as a drop-down row: closed shows name, price and status; open shows
 // the cancel help, the actions and the "would you sign up today?" question.
-function SubRow({ subscription, view, ghosted, answer, onAnswer, onUndo, onGhost, onPlan, onDraftCancel, onOpenPath }) {
+function SubRow({ subscription, category, onCategory, view, ghosted, answer, onAnswer, onUndo, onGhost, onPlan, onDraftCancel, onOpenPath }) {
   const [open, setOpen] = useState(false);
   const status = ghosted ? { text: 'On your Ghost List', cls: 'bg-[#5ee6c8]/15 text-[#5ee6c8]' }
     : view === 'cancel' ? { text: 'To cancel', cls: 'bg-primary/15 text-primary' }
@@ -232,6 +268,14 @@ function SubRow({ subscription, view, ghosted, answer, onAnswer, onUndo, onGhost
         <div className="px-4 pb-4 sm:px-5">
           {bundleHint(subscription.merchant) && <p className="mb-2 text-[13px] leading-snug text-[#ffc27a]">{bundleHint(subscription.merchant)}</p>}
           <CancelHelp subscription={subscription} ghosted={ghosted} onGhost={onGhost} onPlan={onPlan} />
+          {onCategory && (
+            <label className="mt-2.5 flex items-center gap-2 text-[13px] text-muted-foreground">
+              Category
+              <select value={category} onChange={(event) => onCategory(event.target.value)} className="rounded-full border border-border bg-card px-2.5 py-1 text-[13px] text-foreground">
+                {Object.keys(TYPE_LABELS).map((key) => <option key={key} value={key}>{TYPE_ICONS[key]} {TYPE_LABELS[key]}</option>)}
+              </select>
+            </label>
+          )}
           {view === 'open' && (
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <span className="text-[13.5px] text-muted-foreground">Would you sign up for it today?</span>

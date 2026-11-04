@@ -10,6 +10,7 @@ import { lastRealTotal } from '@/lib/ghostFees/payback';
 import { money } from '@/lib/ghostFees/format';
 import { cn } from '@/lib/utils';
 import './upgrade.css';
+import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 
 // /upgrade (B8): a standard app pricing page, mobile first, theme-aware. Pay once,
 // never a subscription. Founding ($5) only shows while real spots are left.
@@ -191,8 +192,8 @@ export default function Upgrade() {
         </section>
 
         <div className="mt-6 flex items-center justify-between gap-3 rounded-2xl px-4 py-3.5" style={{ background: P.card }}>
-          <span className="flex flex-col gap-0.5"><span className="text-[15px] font-semibold">Prefer chat?</span><span className="text-[14px]" style={{ color: P.muted }}>Ghost It on ASI:One, packs from $2</span></span>
-          <a href="https://asi1.ai" target="_blank" rel="noreferrer" className="flex min-h-[44px] items-center rounded-xl border px-3.5 text-[14px] font-semibold" style={{ borderColor: P.handle }}>Try it</a>
+          <span className="flex flex-col gap-0.5"><span className="text-[15px] font-semibold">Prefer chat?</span><span className="text-[14px]" style={{ color: P.muted }}>Ghost It on ASI:One. First pack free, then $5 once</span></span>
+          <a href={GHOST_IT_CHAT} target="_blank" rel="noopener noreferrer" className="flex min-h-[44px] items-center rounded-xl border px-3.5 text-[14px] font-semibold" style={{ borderColor: P.handle }}>Try it</a>
         </div>
         <p className="mt-6 text-center text-[13px]" style={{ color: P.faint }}>General information, not financial advice. <Link to="/privacy" className="underline">How we handle your data</Link></p>
       </main>

@@ -3,6 +3,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import { money } from '@/lib/ghostFees/format';
 import { groupSubs, rotationPlan } from '@/lib/ghostFees/ghostItLink';
 import { cn } from '@/lib/utils';
+import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 
 const ORANGE = '#ffb37c';
 
@@ -112,7 +113,7 @@ export default function FromGhostIt({ subs, onScan }) {
               Scan my statement to find the rest
             </button>
           )}
-          <a href="https://asi1.ai" target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-border px-5 py-3 text-center text-[14.5px] font-bold text-foreground hover:border-primary/60">
+          <a href={GHOST_IT_CHAT} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-border px-5 py-3 text-center text-[14.5px] font-bold text-foreground hover:border-primary/60">
             Track your ghosts in ASI:One: @ghostit
           </a>
         </div>

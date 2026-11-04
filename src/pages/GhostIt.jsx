@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Check, Copy, ExternalLink, MessageCircle } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_PHONE_NOTE, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
 
@@ -96,12 +96,14 @@ export default function GhostIt() {
           href={GHOST_IT_CHAT}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => count('ghostit_page_open')}
+          onClick={() => { count('ghostit_page_open'); navigator.clipboard?.writeText(GHOST_IT_SAMPLE).catch(() => {}); }}
           className="mt-5 flex min-h-[56px] items-center justify-center gap-2 rounded-2xl bg-primary text-[17px] font-bold text-primary-foreground shadow-[0_10px_30px_hsl(var(--primary)/0.35)]"
         >
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
-        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens Ghost It&apos;s page on ASI:One. Start your message with <b className="text-foreground">@ghostit</b>.</p>
+        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens ASI:One in your browser and copies a sample message. Paste it and send. Keep <b className="text-foreground">@ghostit</b> at the start.</p>
+        <p className="mt-1 text-center text-[13px] text-muted-foreground md:hidden">{GHOST_IT_PHONE_NOTE}</p>
+        <p className="mt-1 text-center text-[13.5px] text-muted-foreground">Then tap the buttons under each reply, like <b className="text-foreground">Consolidate plan</b>. No typing.</p>
 
         <div className="mt-8 rounded-2xl border border-border bg-card/50 px-4 py-3.5 text-[14.5px] text-muted-foreground">
           <b className="text-foreground">Want to find the ones you forgot?</b> Ghost It works from what you tell it. Our web app, Ghost Fees, reads a bank statement instead (no bank login).{' '}

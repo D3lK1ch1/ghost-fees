@@ -560,3 +560,101 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/HauntedHouse.jsx, src/components/results/ResultsView.jsx, src/components/results/GhostItPacks.jsx
 - How to test: Sample > Mark as sorted: four guides on the porch; the Ghost It box below the house.
 - User feedback that drove this: "keep Ghost It separate because that will be charged with API; it should sit under the house for fee analysis and offer deeper analysis of the fees; it should have its own box"
+
+## Mon 2 Nov to Wed 4 Nov 2026 (PRs #91 to #118, logged 4 Nov)
+
+### Sign-in pages explain the product first (#91, #92)
+- What: Log in, create account and password pages show the purpose, the ghost team and what each does, Free vs Pro vs Ghost It packs, and a theme picker before you sign in.
+- Files: src/components/AuthLayout.jsx, src/components/landing/GhostTeam.jsx
+- How to test: Open /login: purpose line, theme cards, ghost team and the offer sit beside the form (under it on phones).
+- User feedback that drove this: team review
+
+### Free vs Pro above the home tabs (#93)
+- What: The plan card moved out of the fifth home tab to sit above the tab bar, so people see the price without hunting.
+- Files: src/pages/Landing.jsx
+- How to test: Home page, scroll past the ghost team.
+- User feedback that drove this: team review
+
+### Ghost It consolidate plan on the site (#94)
+- What: /ghostit and the offer box explain the consolidate plan: keep one, cancel or rotate the rest, with the saving.
+- Files: GhostItOffer.jsx, GhostTeam.jsx, src/pages/GhostIt.jsx, AuthLayout.jsx
+- How to test: /ghostit: "What it does for you" list.
+- User feedback that drove this: team review
+
+### Christmas: named ghosts with popups, Jacob's poses, bubbles from the mouth (#95, #96, #99, #107)
+- What: Every festive ghost has a name and a tap popup (Popcorn Pete, Tangled Tinsel, Sweaty Holly, Cool Yule, Frosty, Mystery Parcel). Speech bubbles come from the mouth using the asset template. Copy rewritten as short sentences. Full names never cut off. Second tab renamed Cancel and track.
+- Files: christmasArt.js, XmasTabScreens.jsx, XmasKit.jsx, JacobsChain.jsx, XmasLeakCard.jsx, ResultsView.jsx
+- How to test: Christmas theme > sample: tap any ghost for its popup.
+- User feedback that drove this: team review
+
+### Collapsible trackers, cleaner type, one cancel card layout (#97, #98, #100)
+- What: CollapseCard folds results sections. Inter replaces Lato Black, headings semibold. Changed my ways cards look the same in every state.
+- Files: CollapseCard.jsx, TrialTracker.jsx, SubscriptionTracker.jsx, index.html, ChangedMyWays.jsx
+- How to test: Sample > Trial tracker opens and closes; Cancel and track cards all match.
+- User feedback that drove this: team review
+
+### Subscriptions as tabs and drop-down rows (#101)
+- What: To decide / Cancelling / Keeping tabs with counts; each subscription is one row that opens to its cancel link, steps and actions.
+- Files: SubscriptionsSection.jsx
+- How to test: Sample > Subscriptions.
+- User feedback that drove this: team review
+
+### Ask a ghost panel fits the window (#102)
+- What: The panel is never taller than the window, so the guide tabs stay on screen in short windows.
+- Files: GhostGuide.jsx
+- How to test: Shrink the window, open Ask a ghost: tabs visible.
+- User feedback that drove this: team review
+
+### Ghost It links land on Ghost It (#103, #104, #105, #106)
+- What: Open Ghost It goes to Ghost It's ASI:One page instead of a blank chat; the sign-in box was tried and removed; the price line is current and the free first pack sits in the explainer.
+- Files: ghostItAgent.js, GhostIt.jsx, Try.jsx, AskGhostIt.jsx
+- How to test: /ghostit > Open Ghost It.
+- User feedback that drove this: team review
+
+### Christmas pictures and goal path (#108, #109, #113)
+- What: Sharper Christmas morning art, a cosy cabin goal path, a different ghost per goal and the Sleeper as You are here.
+- Files: xc-morning-*.webp, GoalPath.jsx, XmasKit.jsx
+- How to test: Christmas theme > Goal path.
+- User feedback that drove this: team review
+
+### Calendar bells and the data-safety popup (#110, #111)
+- What: Red bells on every subscription day in every month. A "How we keep your data safe" popup on sign in and in the app, with the no-upload option (tap price ranges, less exact).
+- Files: HauntedCalendar.jsx, DataSafety.jsx, AuthLayout.jsx, HomeTabs.jsx
+- How to test: Sample > Calendar; sign-in page > How we keep your data safe.
+- User feedback that drove this: team review
+
+### Jolly's table with the real ghosts (#112, #115)
+- What: The feast uses the Image Assets ghosts seated at their dishes with prices on the plates, plus a list of every guest. Sweaty Holly has new seated art; the other five switch over as their art arrives.
+- Files: JollysTable.jsx, jollysTable.json, public/themes/christmas/table/
+- How to test: Christmas theme > sample > Email templates.
+- User feedback that drove this: team review
+
+### Calendar task list from your goals (#114)
+- What: A checklist under the calendar built from your goals, with a "Do it on" date per goal. New Overlap Buster icon.
+- Files: goalTasks.js, GoalTasks.jsx, GoalPath.jsx, HauntedCalendar.jsx
+- How to test: Sample > Goal path: pick a day; Calendar shows the task.
+- User feedback that drove this: team review
+
+### Pro is $10 once for everyone (#116)
+- What: The $5 founding tier is off. Upgrade copy and the checkout price are $10 once.
+- Files: base44/functions/allowance/entry.ts, base44/functions/createCheckout/entry.ts, allowance.js, Upgrade.jsx
+- How to test: Live allowance status shows priceCents 1000 and foundingLeft 0 (checked 4 Nov).
+- User feedback that drove this: team review
+
+### One clear UVP, tidier tour, no comma before "and" (#118)
+- What: "Find the subscriptions you forgot. Cancel them in one click." with a double-up example and three ticks ($10 once, no bank login, no upload needed) on every theme and sign in. Tour popups tuck inside tall sections instead of hanging over the border. ", and" becomes " and" across the copy.
+- Files: UvpLine.jsx, Hero.jsx, ExHero.jsx, AuthLayout.jsx, Tour.jsx, 56 copy files
+- How to test: Home and /login show the line; Tour on the sample results.
+- User feedback that drove this: team review
+
+### Subscriptions grouped by category, tap chips, change a category
+- What: Subscriptions group by category with a count and yearly total, biggest first. Chips with counts replace the type drop-down. Each row has a Category picker saved in the browser. New Food, Gaming and News categories.
+- Files: SubscriptionsSection.jsx, src/hooks/use-categories.js, src/lib/ghostFees/overlaps.js
+- How to test: Sample > Subscriptions: 📺 Streaming 3 · $599.76/yr first; open Fitlife Gym, set Category to Other, it moves.
+- User feedback that drove this: team review
+
+### Ghost It opens in the ASI:One web app on phones
+- What: asi1.ai/ai/* is a universal link, so phones opened the ASI:One app, where outside agents need verification. Phones now open asi1.ai/chat in the browser with the @ghostit sample copied. Computers keep Ghost It's own page.
+- Files: src/lib/ghostFees/ghostItAgent.js, src/pages/GhostIt.jsx
+- How to test: On a phone, /ghostit > Open Ghost It: the browser opens asi1.ai/chat, paste and send.
+- User feedback that drove this: Raj (Fetch.ai), 4 Nov: "currently the link 'copy and open ghost it' is taking to mobile app, I would suggest you to point it to our web app"

@@ -7,6 +7,9 @@ const GROUPS = [
   { key: 'ai', label: 'AI assistants', match: /OPENAI|CHATGPT|CLAUDE|ANTHROPIC|GEMINI|COPILOT|PERPLEXITY/i },
   { key: 'design', label: 'design tools', match: /ADOBE|CANVA/i },
   { key: 'fitness', label: 'gym or fitness memberships', match: /GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45|PILATES|YOGA/i },
+  { key: 'food', label: 'food delivery passes', match: /UBER\s*ONE|DOORDASH|DASHPASS|MENULOG|DELIVEROO|HELLOFRESH|MARLEY\s*SPOON|YOUFOODZ/i },
+  { key: 'gaming', label: 'gaming subscriptions', match: /XBOX|GAME\s*PASS|PLAYSTATION|PS\s*PLUS|NINTENDO|STEAM|EA\s*PLAY/i },
+  { key: 'news', label: 'news subscriptions', match: /NYTIMES|NEW\s*YORK\s*TIMES|GUARDIAN|NEWS\s*CORP|MEDIUM|SUBSTACK|\bTHE\s*AUSTRALIAN\b/i },
 ];
 
 export const OVERLAP_TIPS = 'People in this spot often keep one, rotate one per month, or move to a shared family plan.';
@@ -22,7 +25,8 @@ export function findOverlaps(subscriptions = []) {
 }
 
 // Short type names for filter and sort on the Subscriptions tab.
-export const TYPE_LABELS = { video: 'Streaming', music: 'Music', storage: 'Cloud', ai: 'AI', design: 'Design', fitness: 'Fitness', other: 'Other' };
+export const TYPE_LABELS = { video: 'Streaming', music: 'Music', storage: 'Cloud', ai: 'AI', design: 'Design', fitness: 'Fitness', food: 'Food', gaming: 'Gaming', news: 'News', other: 'Other' };
+export const TYPE_ICONS = { video: '📺', music: '🎵', storage: '☁️', ai: '🤖', design: '🎨', fitness: '🏋️', food: '🍔', gaming: '🎮', news: '📰', other: '📦' };
 
 export function typeOf(merchant = '') {
   return GROUPS.find((group) => group.match.test(merchant))?.key || 'other';

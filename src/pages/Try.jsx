@@ -1,4 +1,4 @@
-import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_CHAT, GHOST_IT_PHONE_NOTE } from '@/lib/ghostFees/ghostItAgent';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -146,6 +146,7 @@ export default function Try() {
             <p className="text-[14px] text-muted-foreground">Ghost It is our chat agent on ASI:One. It shows the maths and the cancel steps. On its page, paste and send. Keep <b className="text-foreground">@ghostit</b> at the start so Ghost It answers.</p>
             <p className="mt-2 rounded-xl bg-background/60 px-3 py-2 font-mono text-[13.5px] text-foreground">{ASK_TEXT}</p>
             <button type="button" onClick={askGhostIt} className="mt-3 rounded-2xl bg-primary px-5 py-3 text-[15px] font-bold text-primary-foreground">Copy and open Ghost It</button>
+            <p className="mt-2 text-[13px] text-muted-foreground md:hidden">{GHOST_IT_PHONE_NOTE}</p>
           </Step>
 
           <Step n={3} title="Tell us one thing" isDone={done.feedback}>

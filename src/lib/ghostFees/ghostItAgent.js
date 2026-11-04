@@ -5,7 +5,15 @@ export const GHOST_IT_ADDRESS = 'agent1qvxxy97rjf9axql2xpn7d0rp8g6fxe39v7csh0ha6
 export const GHOST_IT_PROFILE = `https://agentverse.ai/agents/details/${GHOST_IT_ADDRESS}/profile`;
 // Ghost It's own chat page on ASI:One. The "Open Ghost It" buttons go here, so people
 // land on Ghost It, not on a blank New Chat with their personal AI (3 Nov).
-export const GHOST_IT_CHAT = `https://asi1.ai/ai/${GHOST_IT_ADDRESS}`;
+// Phones: asi1.ai/ai/* is a universal link (asi1.ai/.well-known/apple-app-site-association),
+// so it opens the ASI:One mobile app, where outside agents like Ghost It need extra
+// verification (Fetch.ai feedback, 4 Nov). /chat stays in the web app, so phones go there
+// and paste the copied @ghostit message. Computers keep Ghost It's own page.
+export const GHOST_IT_PROFILE_CHAT = `https://asi1.ai/ai/${GHOST_IT_ADDRESS}`;
+export const GHOST_IT_WEB_CHAT = 'https://asi1.ai/chat';
+const isPhone = typeof navigator !== 'undefined' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent || '');
+export const GHOST_IT_CHAT = isPhone ? GHOST_IT_WEB_CHAT : GHOST_IT_PROFILE_CHAT;
+export const GHOST_IT_PHONE_NOTE = 'Opens in your browser. The ASI:One phone app only shows Fetch\'s own agents for now.';
 export const GHOST_IT_PAGE = 'https://hunt-ghost-fees.base44.app/ghostit';
 // A message anyone can try without their own data.
 export const GHOST_IT_SAMPLE = '@ghostit netflix $18.99 stan $16 disney+ $15.99 spotify $14.99 gym $25 a week';
