@@ -1,0 +1,19 @@
+[Unit]
+Description=Ghost It (Fetch.ai uAgent, mailbox mode)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__USER__
+# The agent saves Ghost Lists and stats in its working folder, so keep it on a real disk.
+WorkingDirectory=__DATA__
+EnvironmentFile=__ENV__
+ExecStart=__VENV__/bin/python -u __AGENT__
+Restart=always
+RestartSec=5
+# Quiet, safe defaults
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

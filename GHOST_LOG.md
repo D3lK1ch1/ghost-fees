@@ -797,6 +797,11 @@ One entry per change. Newest at the bottom.
 - User feedback that drove this: team review ("implement this, the Christmas ghosts bobbing up and down", with the new table picture)
 - Not deleted: the old table.webp, the old seated-*.webp (seated-gym is still used in the list) and jollysTable.json are no longer used by the table. Left in place; delete only when you say so.
 
+### Ghost It runs itself, so it works in ASI:One (and after the competition)
+- What: on Agentverse hosting, Ghost It's replies were held about 40 seconds before sending and ASI:One gives up at about 30, so it showed nothing. The same agent.py run on our own machine with an Agentverse mailbox replied in under 8 seconds with the card and tap buttons, and Consolidate worked (tested in ASI:One, 5 Nov 8:31 AM). agent/deploy/ is a kit to run it for good: a systemd service that starts on boot and restarts on crash, a private settings file for the seed (never in git), pinned requirements and a one-page guide.
+- Files: agent/deploy/ (setup.sh, ghost-it.service, ghost-it.env.example, requirements.txt, SELF_HOSTING.md)
+- How to test: on the GB10, `cd ghost-fees/agent/deploy && bash setup.sh`, then message the agent in ASI:One.
+- User feedback that drove this: team review ("why can't we do it properly so I have it after the competition"); Raj (replies not showing)
 ### Link preview: no more "Free, no sign-in"
 - What: the share card (Slack, iMessage, WhatsApp) said "Free, no sign-in, private", which isn't true now that scans need a sign-in and Pro is paid. The badge now says "Try it free · Pro $10 once", and the page description says "No bank login. Try it free, Pro is $10 once." The image link has ?v=2 so apps fetch the new picture instead of a cached one.
 - Files: public/og-image.png, index.html
