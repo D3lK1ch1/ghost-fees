@@ -664,3 +664,13 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/UvpLine.jsx
 - How to test: Home page and /login, under the three ticks.
 - User feedback that drove this: Kingan (Tool Offer agent builder), 4 Nov: his agent never spends money on its own and the buyer approves every payment; show proof, don't ask people to trust the AI.
+### Home card: clean and open (design A)
+- What: The first home card loses its box and the three boxed steps. Now: a small kicker (Find · Cancel · Pay once), one semibold headline, one sentence, three steps in a line, one button with "or upload a statement" under it, quiet ticks and the trust line. A soft glow instead of a border. About half the height.
+- Files: src/components/landing/ValueLine.jsx, src/pages/Landing.jsx
+- How to test: Home page, top card, in all three themes.
+- User feedback that drove this: team review ("less chunky writing ... more streamlined and clean design"; picked design A of four)
+### Future spend chart (Calendar tab)
+- What: A line chart of what your subscriptions cost over the next 12 months or 5 years if nothing changes, against after cancelling the ones you picked (or every double up but the cheapest). Plain maths (monthly x months), a "See the numbers" table and the working shown. Colours checked for colour-blind safety on all three theme backgrounds.
+- Files: src/components/results/FutureSpend.jsx (new), src/components/results/ResultsView.jsx
+- How to test: Sample > Calendar & reminders: $1,733 over 12 months, $1,302 after cancelling 2 double ups; switch to 5 years: $8,667 and $6,508.
+- User feedback that drove this: team review ("can i have future prediction through some graphs for future spend")
