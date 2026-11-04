@@ -715,3 +715,9 @@ One entry per change. Newest at the bottom.
 - Files: src/pages/Media.jsx (new), src/components/site/WatchVideos.jsx, src/components/site/BrandHeader.jsx, src/pages/Progress.jsx, src/App.jsx, src/data/videos.js
 - How to test: Nav > Media: three videos, press kit, build diary. /progress: one video, then the Feedback board.
 - User feedback that drove this: team review ("the promo doesn't belong in our feedback, maybe have media and blog tabs; think how the videos can be logically integrated")
+
+### Unlocked page: honest for the owner, clearer for everyone
+- What: The app never charges admin (owner) accounts, so the owner landed on "You're in · Paid" without paying. Now the owner sees "Owner account: Pro is always on and you are never charged. To test the real $10 checkout, sign out or use another account." Everyone sees a checklist of what Pro unlocks and "You paid $10 once"; the button says Scan a statement until there's a total.
+- Files: src/pages/Unlocked.jsx, src/lib/AllowanceContext.jsx
+- How to test: Signed in as the owner, /unlocked shows Owner account. Signed in as anyone else after paying: You're in, $10 once.
+- User feedback that drove this: team review ("it did not charge me"; "could do this UI better")

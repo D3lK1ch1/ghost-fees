@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Check } from 'lucide-react';
 import { useAllowance } from '@/lib/AllowanceContext';
 import { useTheme } from '@/lib/ThemeContext';
 import { lastRealTotal } from '@/lib/ghostFees/payback';
@@ -8,13 +9,15 @@ import './upgrade.css';
 import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 
 // /unlocked: where Stripe sends people after paying. The server confirms the
-// payment with Stripe; only then the confetti. Founders see their real number.
+// payment with Stripe; only then the confetti. Owner (admin) accounts are never charged,
+// so they see that plainly instead of "Paid" (4 Nov: "it did not charge me").
+const PERKS = ['Unlimited scans, within a fair daily limit', 'All 4 ghost guides', 'Cassy for every subscription', 'The PDF report'];
 const ART = { haunted: '/themes/haunted/card-ghost.webp', ex: '/themes/ex/tilly.webp', christmas: '/themes/christmas/xc-festive.webp' };
 
 export default function Unlocked() {
   const { theme } = useTheme();
   const P = useUpgradePalette();
-  const { refresh, status } = useAllowance();
+  const { refresh, status, isOwner } = useAllowance();
   const [state, setState] = useState('checking');
 
   useEffect(() => {
@@ -45,10 +48,21 @@ export default function Unlocked() {
       {state === 'paid' ? (
         <div className="mt-5 flex w-full max-w-sm flex-col items-center gap-5">
           {status?.foundingNumber && <p className="up-fade rounded-full px-3.5 py-1.5 text-[14px] font-semibold" style={{ background: P.accent, color: P.ink }}>Founding member #{status.foundingNumber}</p>}
-          <h1 className="font-heading text-[34px] font-bold leading-tight">You&apos;re in.</h1>
-          <p className="text-[17px] leading-snug" style={{ color: P.soft }}>Scans and all 4 ghosts are unlocked, within a fair daily limit. Time to clear the house.</p>
+          <h1 className="font-heading text-[34px] font-bold leading-tight">{isOwner && !status?.paidCents ? 'Owner account' : "You're in."}</h1>
+          <p className="text-[17px] leading-snug" style={{ color: P.soft }}>
+            {isOwner && !status?.paidCents
+              ? 'You own Ghost Fees, so Pro is always on and you are never charged. To test the real $10 checkout, sign out or use another account.'
+              : 'Pro is unlocked, once and forever. Time to clear the house.'}
+          </p>
+          <ul className="up-fade w-full space-y-2 rounded-[18px] p-4 text-left" style={{ background: P.sheet, animationDelay: '0.4s' }}>
+            {PERKS.map((perk) => (
+              <li key={perk} className="flex items-center gap-2.5 text-[15px]">
+                <Check className="h-4 w-4 shrink-0" style={{ color: P.accent }} aria-hidden="true" /> {perk}
+              </li>
+            ))}
+          </ul>
           <div className="up-fade grid w-full grid-cols-2 gap-3 rounded-[18px] p-4 text-left" style={{ background: P.sheet, animationDelay: '0.6s' }}>
-            <div className="flex flex-col gap-1"><span className="text-[14px]" style={{ color: P.muted }}>Paid</span><span className="font-heading text-[24px] font-bold">{paidCents ? money(paidCents / 100) : 'Paid'}</span></div>
+            <div className="flex flex-col gap-1"><span className="text-[14px]" style={{ color: P.muted }}>{isOwner && !paidCents ? 'Plan' : 'You paid'}</span><span className="font-heading text-[24px] font-bold">{paidCents ? `${money(paidCents / 100)} once` : isOwner ? 'Owner, free' : '$10 once'}</span></div>
             <div className="flex flex-col gap-1"><span className="text-[14px]" style={{ color: P.muted }}>Found so far</span><span className="font-heading text-[24px] font-bold" style={{ color: P.accent }}>{found > 0 ? money(found) : 'Scan to see'}</span></div>
           </div>
         </div>
@@ -61,7 +75,7 @@ export default function Unlocked() {
         </>
       )}
       <div className="flex-1" />
-      <Link to="/" className="mt-8 flex min-h-[54px] w-full max-w-sm items-center justify-center rounded-2xl text-[17px] font-semibold" style={{ background: P.accent, color: P.ink }}>Back to my ghosts</Link>
+      <Link to="/" className="mt-8 flex min-h-[54px] w-full max-w-sm items-center justify-center rounded-2xl text-[17px] font-semibold" style={{ background: P.accent, color: P.ink }}>{found > 0 ? 'Back to my ghosts' : 'Scan a statement'}</Link>
     </div>
   );
 }
