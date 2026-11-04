@@ -1,7 +1,7 @@
 // Ghost List: subscriptions the user has asked to cancel.
 // Kept in this browser only (localStorage). Only merchant name, monthly price,
 // status, date and the proof the person gave (how and when they cancelled, a
-// reference, and optionally a shrunk screenshot) are kept, never statement rows.
+// reference and optionally a shrunk screenshot) are kept, never statement rows.
 // Cleared by "Clear my data".
 const KEY = 'ghostFees.ghostList.v1';
 export const CHANGED = 'ghostfees:ghostlist';

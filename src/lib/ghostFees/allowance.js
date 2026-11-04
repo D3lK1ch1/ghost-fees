@@ -2,7 +2,7 @@ import { base44 } from '@/api/base44Client';
 
 // Talks to the backend function `allowance`, which counts the free tier on the
 // server. Only a hash of each file's name, size and date leaves the browser,
-// never the file. People who aren't signed in get the sample statement, and one
+// never the file. People who aren't signed in get the sample statement and one
 // AI message per ghost and one Cassy lookup counted in this browser.
 
 export const FREE_SCANS = 1;

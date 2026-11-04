@@ -37,7 +37,7 @@ const COMPARE = [
 const QUESTIONS = [
   ['Is it really one payment?', 'Yes. $10 once. No subscription, no renewals, nothing to cancel.'],
   ['Do you store my bank statement?', 'No. CSV statements are read in your browser and never leave it. PDFs are uploaded privately so they can be read (the Privacy page says how long). We keep your email, your scan count and your payment record.'],
-  ['What do I keep on Free?', '3 scans, 1 ghost try, your full total every time, and all three themes.'],
+  ['What do I keep on Free?', '3 scans, 1 ghost try, your full total every time and all three themes.'],
 ];
 
 export default function Upgrade() {

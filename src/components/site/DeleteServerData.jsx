@@ -57,7 +57,7 @@ export default function DeleteServerData() {
         <p className="font-bold text-[#5ee6c8]">Deleted. We no longer hold any counters for your account.</p>
       ) : state === 'confirm' ? (
         <>
-          <p className="text-foreground">You paid to unlock. Deleting removes that too, and you would need to pay again. Delete anyway?</p>
+          <p className="text-foreground">You paid to unlock. Deleting removes that too and you would need to pay again. Delete anyway?</p>
           <button type="button" onClick={() => run(true)} className="mt-2 rounded-full bg-[#ff6fa3] px-3 py-1 text-[13.5px] font-bold text-[#1b1233]">Yes, delete everything</button>
         </>
       ) : (

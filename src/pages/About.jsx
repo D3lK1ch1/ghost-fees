@@ -18,13 +18,13 @@ export default function About() {
         </p>
 
         <p className="mt-4 text-[16px] leading-relaxed text-foreground">
-          Half of Australians pay for subscriptions they don't use, and most don't notice for months.
+          Half of Australians pay for subscriptions they don't use and most don't notice for months.
           <span className="block text-[13px] text-muted-foreground">(Compare the Market, 2026)</span>
         </p>
 
         <p className="mt-4 text-[16px] leading-relaxed text-foreground">
-          Ghost Fees finds them, helps you cancel, and checks they actually stopped. No bank login.
-          CSV statements never leave your browser, and we never sell your data and keep only what we need.
+          Ghost Fees finds them, helps you cancel and checks they actually stopped. No bank login.
+          CSV statements never leave your browser and we never sell your data and keep only what we need.
         </p>
 
         <h2 className="mt-8 font-heading text-[20px] font-semibold text-foreground">The founders</h2>

@@ -23,7 +23,7 @@ const longDay = (date) => new Date(`${date}T00:00:00Z`).toLocaleDateString('en-A
 
 // Month grid: ghosts on the days a leak charged you, bells on upcoming subscription
 // charges. Like the Haunted House, each ghost shows its name, hovering says what it
-// is, and the biggest ghost glows orange. Scheduling opens a task popup.
+// is and the biggest ghost glows orange. Scheduling opens a task popup.
 export default function HauntedCalendar({ leaks, subscriptions: allSubscriptions, avatarFor }) {
   const { theme } = useTheme();
   // Cancelled ones (on the Ghost List as Requested or Confirmed) come off the

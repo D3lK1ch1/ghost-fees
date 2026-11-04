@@ -1,7 +1,7 @@
 import { CalendarRange, CreditCard, ExternalLink, FileSpreadsheet, MessageCircle, Receipt, Smartphone, Wallet, Zap } from 'lucide-react';
 import { GHOST_IT_PAGE } from '@/lib/ghostFees/ghostItAgent';
 
-// "What it finds" tab, part 2: what Ghost Fees can't see yet, and exactly how to
+// "What it finds" tab, part 2: what Ghost Fees can't see yet and exactly how to
 // catch it anyway. Group 1 we can still help with (each has a button that does it);
 // group 2 is left out on purpose, with the right free place to look instead.
 // "Lay this out and make clear how we can compensate and find things the app can't" (2 Nov)
@@ -37,7 +37,7 @@ export default function CatchTheRest({ onUpload }) {
     {
       Icon: CalendarRange,
       title: 'Subscriptions in a short statement',
-      why: 'A charge only counts as a subscription once it shows up in 3 or more months, and price rises and doubles are checked on those.',
+      why: 'A charge only counts as a subscription once it shows up in 3 or more months and price rises and doubles are checked on those.',
       how: 'Upload 3 to 12 months. You can add several statements in one go (up to 6 files).',
       action: onUpload && { label: 'Upload more months', onClick: onUpload },
     },
@@ -89,7 +89,7 @@ export default function CatchTheRest({ onUpload }) {
 
   return (
     <div className="mx-auto mt-12 max-w-3xl">
-      <h3 className="text-center text-[1.4rem] font-semibold leading-tight text-foreground sm:text-[1.7rem]">What it can&apos;t see yet, and how to catch it anyway</h3>
+      <h3 className="text-center text-[1.4rem] font-semibold leading-tight text-foreground sm:text-[1.7rem]">What it can&apos;t see yet and how to catch it anyway</h3>
       <p className="mx-auto mt-2 max-w-lg text-center text-[15px] leading-relaxed text-muted-foreground">
         Ghost Fees only flags leaks it can prove from your statement. For everything else, here&apos;s exactly what to do.
       </p>
@@ -97,7 +97,7 @@ export default function CatchTheRest({ onUpload }) {
       <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-primary">We can still help you catch these</p>
       <ul className="mt-2 flex flex-col gap-2.5">{canHelp.map((item) => <CatchCard key={item.title} {...item} />)}</ul>
 
-      <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Left out on purpose, and where to look instead</p>
+      <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-muted-foreground">Left out on purpose and where to look instead</p>
       <ul className="mt-2 flex flex-col gap-2.5">{elsewhere.map((item) => <CatchCard key={item.title} {...item} />)}</ul>
 
       <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-[14px] text-muted-foreground">

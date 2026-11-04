@@ -10,7 +10,7 @@ import { useGhostName } from '@/hooks/use-ghost-name';
 import GhostNameField from './GhostNameField';
 import { ProofSummary } from './ProofDialog';
 
-// Tracks what the user has ghosted, the proof they kept, and whether it actually
+// Tracks what the user has ghosted, the proof they kept and whether it actually
 // stopped charging. Still charging? The proof is what gets the money back.
 export default function GhostList({ items, onStatus, onRemove, onAddProof, overlapIds, priceRiseIds }) {
   const [shared, setShared] = useState(false);
@@ -128,7 +128,7 @@ export default function GhostList({ items, onStatus, onRemove, onAddProof, overl
               <ProofSummary proof={item.proof} className="mt-1" onAdd={onAddProof ? () => onAddProof(item) : undefined} />
               {item.status === 'charging' && (
                 <p className="mt-1 rounded-lg bg-[#ffc27a]/10 px-2.5 py-1.5 text-[13px] leading-relaxed text-foreground">
-                  <span className="font-bold">Charged again?</span> {item.proof ? 'Send' : 'Find your cancel email or screenshot and send'} {item.merchant} your proof, and ask for a refund. If they say no, call your bank and ask to dispute the charge.
+                  <span className="font-bold">Charged again?</span> {item.proof ? 'Send' : 'Find your cancel email or screenshot and send'} {item.merchant} your proof and ask for a refund. If they say no, call your bank and ask to dispute the charge.
                 </p>
               )}
               {item.checkNote && (

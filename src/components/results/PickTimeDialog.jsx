@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 
 // "When will you do it?" People who pick a time and place are far more likely to
 // follow through (implementation intentions; Gollwitzer and Sheeran, 2006). The
-// event holds Cassy's steps, the official link, a ready cancel email, and a link
+// event holds Cassy's steps, the official link, a ready cancel email and a link
 // back (/?done=<id>) that opens "I cancelled it" for this subscription.
 export function cancelTask(subscription, at) {
   const info = cancelInfo(subscription.merchant);

@@ -7,13 +7,14 @@ import { TEAM } from "@/components/landing/GhostTeam";
 import { GHOST_IT_MASCOT } from "@/lib/ghostFees/ghostItAgent";
 import ThemeChooser from "@/components/auth/ThemeChooser";
 import DataSafety from "@/components/site/DataSafety";
+import UvpLine from "@/components/landing/UvpLine";
 
 // Sign in, sign up and password pages. Beside the form (below it on phones, so the
-// form is first): the purpose, the ghost team and what each does, and what's on offer
+// form is first): the purpose, the ghost team and what each does and what's on offer
 // (Free, Pro, Ghost It packs), then the privacy line. "Better design of the front page
 // with the agents and what's on offer and the purpose" (3 Nov).
 const FREE = ["3 statement scans, your full total", "Cancel steps, emails and the Ghost List", "1 ghost guide chat and 1 Cassy lookup"];
-const PRO = ["Unlimited scans", "All 4 ghost guides, as much as you like", "Cassy for every subscription, and the PDF report"];
+const PRO = ["Unlimited scans", "All 4 ghost guides, as much as you like", "Cassy for every subscription and the PDF report"];
 
 function TeamGrid() {
   return (
@@ -68,7 +69,7 @@ function Offer() {
         <span>
           <span className="block text-[15px] font-bold text-foreground">Ghost It in ASI:One · first Ghost Pack free</span>
           <span className="mt-0.5 block text-[14px] leading-snug text-muted-foreground">
-            Then $5 once unlocks every pack, paid in the chat. Finds what you pay for twice, like YouTube Premium and Spotify, and plans which to keep, cancel or rotate.
+            Then $5 once unlocks every pack, paid in the chat. Finds what you pay for twice, like YouTube Premium and Spotify and plans which to keep, cancel or rotate.
           </span>
         </span>
       </Link>
@@ -88,10 +89,7 @@ function BrandPanel() {
       <p className="mt-5 font-heading text-[30px] font-bold leading-tight text-foreground lg:text-[38px]">
         Ghost them once. <span className="text-primary">Pay once.</span>
       </p>
-      <p className="mx-auto mt-2 max-w-md text-[16px] leading-snug text-muted-foreground lg:mx-0">
-        <span className="font-semibold text-foreground">Our purpose:</span> find the subscriptions and bank fees you forgot
-        you&apos;re paying, and help you cancel them. Upload a statement. No bank login.
-      </p>
+      <UvpLine className="mt-3 lg:mx-0" align="left" />
 
       <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em] text-primary">Pick your theme</p>
       <ThemeChooser variant="cards" />

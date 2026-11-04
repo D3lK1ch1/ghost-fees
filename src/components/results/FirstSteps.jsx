@@ -30,7 +30,7 @@ export default function FirstSteps({ setTab, answers = {}, firstLeakTitle }) {
   const steps = [
     {
       title: firstLeakTitle ? `See your biggest ghost: ${firstLeakTitle}` : 'See your biggest ghost',
-      line: 'What it is, and the charges behind it.',
+      line: 'What it is and the charges behind it.',
       done: seenBiggest,
       go: () => {
         setSeenBiggest(true);

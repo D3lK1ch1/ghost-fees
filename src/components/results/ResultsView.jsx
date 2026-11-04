@@ -62,7 +62,7 @@ const TABS = [
   { key: 'ghosts', label: 'Ghosts', Icon: Ghost, title: 'Your ghosts, biggest first', blurb: 'Each card is one money leak, with the transactions behind it. Tap a card to mark it most useful.' },
   { key: 'house', label: 'Cancel & track', themed: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
   { key: 'path', label: 'Goal path', Icon: Route, title: 'Goal path', blurb: 'One stop per ghost. Walk your lantern up the hill to the ghost-free house.' },
-  { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged, and add reminders for the next charges to your own calendar.' },
+  { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged and add reminders for the next charges to your own calendar.' },
   { key: 'emails', label: 'Email templates', Icon: Mail, title: 'Email templates', blurb: 'Cancel, refund and fee-waiver emails, ready to edit and send.' },
   { key: 'subscriptions', label: 'Subscriptions', Icon: Repeat, title: 'Still using these?', blurb: 'Your regular subscriptions. Not counted in the total.' },
   { key: 'receipt', label: 'Receipt', themed: 'Possessed receipt', Icon: Receipt, title: 'Possessed receipt', blurb: 'Every ghost charge printed on one spooky receipt.' },
@@ -74,7 +74,7 @@ const EX_TAB_TEXT = {
   ghosts: { title: 'Your exes, biggest first', blurb: 'Every ex still charging you, with the transactions behind it. Tap a card to mark it most useful.' },
   house: { label: 'Heartbreak House', title: 'Heartbreak House', blurb: 'Every ex has a window. Block one once you have cancelled and its window lights up.' },
   path: { label: 'Glow-up plan', title: 'Your glow-up plan', blurb: 'What blocking your exes pays for, month by month. Tick them off one by one below.' },
-  calendar: { label: 'Check-ins & reminders', title: 'Check-ins and reminders', blurb: 'The days your exes charged you, and reminders for their next charge in your own calendar.' },
+  calendar: { label: 'Check-ins & reminders', title: 'Check-ins and reminders', blurb: 'The days your exes charged you and reminders for their next charge in your own calendar.' },
   emails: { label: 'Messages to exes', title: 'Messages to your exes', blurb: 'Cancel, refund and fee-waiver messages, ready to edit and send.' },
   subscriptions: { title: 'Still seeing these?', blurb: 'Your regular subscriptions. Keep the ones you love, block the rest.' },
   receipt: { label: 'What they cost you', title: 'What your exes paid for', blurb: 'What your exes could pay for instead, then every charge on one receipt.' },
@@ -85,7 +85,7 @@ const XMAS_TAB_TEXT = {
   ghosts: { label: 'Fees Past', title: 'The Ghost of Fees Past', blurb: 'Every leak on your statement, biggest first, with the transactions behind it.' },
   house: { label: "Jacob's chain", title: "Jacob's chain", blurb: 'Every leak is a link. Draft the email, then break the link once it is sorted.' },
   path: { label: 'Christmas morning', title: 'Christmas morning', blurb: 'Break links to bring the dawn. Tick off each step below.' },
-  calendar: { label: 'Yet to come', title: 'Subscriptions yet to come', blurb: 'Next year if nothing changes, the days you were charged, and reminders for the next charge.' },
+  calendar: { label: 'Yet to come', title: 'Subscriptions yet to come', blurb: 'Next year if nothing changes, the days you were charged and reminders for the next charge.' },
   emails: { label: "Jolly's letters", title: "Jolly's letters", blurb: 'Cancel, refund and fee-waiver emails for every dish on the table, ready to edit and send.' },
   subscriptions: { label: 'Changed my ways', title: 'Changed my ways', blurb: 'Cancel, then check next month that it really stopped.' },
   receipt: { label: 'Gift to yourself', title: 'One more gift to yourself', blurb: 'What this statement cost you, then every charge on one receipt.' },
@@ -432,7 +432,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   className="mt-6"
                   kicker="Ghost It · specialised AI agent"
                   title="Want a deeper fee analysis?"
-                  intro="Here you sort each ghost. Ghost It's Ghost Packs dig deeper in chat: which ones double up, what's hidden in Apple or Google bundles, what weekly costs add up to, and what you'd save keeping just one."
+                  intro="Here you sort each ghost. Ghost It's Ghost Packs dig deeper in chat: which ones double up, what's hidden in Apple or Google bundles, what weekly costs add up to and what you'd save keeping just one."
                 />
               )}
               {theme.key === 'ex' && ['path', 'calendar', 'emails', 'receipt'].includes(tab) && (

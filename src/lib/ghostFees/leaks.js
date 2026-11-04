@@ -8,15 +8,15 @@ export const BADGE_TONES = {
   Surcharge: 'bg-[#e0eeff] text-[#22557f]',
   'Still using this?': 'bg-[#d8f5e6] text-[#17734a]',
 };
-// What each kind of ghost means, in plain words, and what to do. Shown under the
+// What each kind of ghost means, in plain words and what to do. Shown under the
 // filter chips and on each card's badge. "What's trial converted?" (2 Nov)
 export const BADGE_MEANING = {
   Duplicate: { what: 'Charged twice for the same thing, on the same day or close together.', todo: 'Ask for the extra charge back.' },
   'Price creep': { what: 'A regular charge that quietly went up.', todo: 'Check it’s still worth it, or ask for the old price.' },
-  'Trial converted': { what: 'A free trial that turned into a paid subscription.', todo: 'Cancel it if you don’t use it, and ask for a refund of the first charge.' },
+  'Trial converted': { what: 'A free trial that turned into a paid subscription.', todo: 'Cancel it if you don’t use it and ask for a refund of the first charge.' },
   'Bank fee': { what: 'Fees your bank charged, like a monthly account fee or an overdrawn fee.', todo: 'Ask for a waiver, or move to a no-fee account.' },
   Overlap: { what: 'Two or more services doing the same job.', todo: 'Keep one, or rotate them month to month.' },
-  'Borrowing cost': { what: 'Interest or fees for borrowing, like a cash advance or late payment.', todo: 'Pay it off first, and ask about a hardship plan if needed.' },
+  'Borrowing cost': { what: 'Interest or fees for borrowing, like a cash advance or late payment.', todo: 'Pay it off first and ask about a hardship plan if needed.' },
   Surcharge: { what: 'An extra fee for paying a certain way, like a card surcharge.', todo: 'Pay another way next time, like bank transfer.' },
   'Still using this?': { what: 'A regular charge you might have forgotten.', todo: 'Cancel it if you don’t use it.' },
 };

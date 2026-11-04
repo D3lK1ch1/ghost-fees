@@ -1,7 +1,7 @@
 import { badgesFor, LEVELS } from '@/lib/ghostFees/levels';
 import { money } from '@/lib/ghostFees/format';
 
-// "Badges you can earn": what each badge is and how to get it, and the levels,
+// "Badges you can earn": what each badge is and how to get it and the levels,
 // before you've cancelled anything (the Ghost List only appears after that).
 // Fun only: badges and levels never change any numbers. "Explain badges better" (2 Nov)
 const ALL = badgesFor([]);
@@ -11,7 +11,7 @@ export default function BadgesExplainer({ className = '', compact = false }) {
     <section aria-label="Badges you can earn" className={`rounded-3xl border border-border bg-card/60 p-4 sm:p-5 ${className}`}>
       <p className="font-heading text-[18px] font-bold text-foreground">🏅 Badges you can earn</p>
       <p className="mt-0.5 text-[14.5px] leading-snug text-muted-foreground">
-        A bit of fun as you cancel. Each cancelled subscription goes on your Ghost List, and these unlock along the way. They never change your numbers, and you can share them.
+        A bit of fun as you cancel. Each cancelled subscription goes on your Ghost List and these unlock along the way. They never change your numbers and you can share them.
       </p>
       <ul className="mt-3 grid gap-2 sm:grid-cols-2">
         {ALL.map((badge) => (

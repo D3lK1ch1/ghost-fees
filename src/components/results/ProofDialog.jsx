@@ -89,7 +89,7 @@ export function ProofSummary({ proof, className, onAdd }) {
   );
 }
 
-// Before anything goes on the Ghost List: how did you cancel, and what's the proof?
+// Before anything goes on the Ghost List: how did you cancel and what's the proof?
 // Online, email or a phone call, with the time, a reference, a note and an optional
 // screenshot, so there's proof if they charge again. Saving needs at least one piece
 // of proof; "Add proof later" adds it without. Kept in this browser only.
@@ -204,13 +204,13 @@ export default function ProofDialog({ target, onSave, onClose, saveLabel = '👻
             {laterLabel}
           </button>
         )}
-        <p className="text-[12.5px] text-muted-foreground">Saved in this browser only, with your Ghost List. Nothing is uploaded. Cover card numbers in screenshots, and don&apos;t type passwords.</p>
+        <p className="text-[12.5px] text-muted-foreground">Saved in this browser only, with your Ghost List. Nothing is uploaded. Cover card numbers in screenshots and don&apos;t type passwords.</p>
       </DialogContent>
     </Dialog>
   );
 }
 
-// "I cancelled it" anywhere: ask(subscription) opens the proof dialog, and saving
+// "I cancelled it" anywhere: ask(subscription) opens the proof dialog and saving
 // puts it on the Ghost List with its proof. addProof(entry) is for something
 // already on the list: it only adds the proof and keeps its status. If the browser
 // is too full to keep the screenshot, it keeps the rest and says so.

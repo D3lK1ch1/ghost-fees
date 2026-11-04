@@ -35,7 +35,7 @@ export default function GhostItPacks({ items = [], className = '', kicker = 'Gho
           <p className="text-[12.5px] font-bold uppercase tracking-[0.14em]" style={{ color: BLUE }}>{kicker}</p>
           <h3 className="mt-1 font-heading text-[24px] font-bold leading-tight text-white">{title}</h3>
           <p className="mt-1 text-[15px] leading-snug text-white/75">
-            {intro || <>Cassy helps you cancel each one here. Ghost It hunts across them in chat: doubles, things hidden in Apple or Google bundles or on another card, and what weekly costs add up to.</>}
+            {intro || <>Cassy helps you cancel each one here. Ghost It hunts across them in chat: doubles, things hidden in Apple or Google bundles or on another card and what weekly costs add up to.</>}
           </p>
         </div>
       </div>

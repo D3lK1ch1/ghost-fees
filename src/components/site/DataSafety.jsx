@@ -30,7 +30,7 @@ export default function DataSafety({ className = '', label = 'How we keep your d
         <DialogContent className="max-w-md rounded-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-[20px]"><ShieldCheck className="h-5 w-5 text-primary" aria-hidden="true" /> Your data, kept safe</DialogTitle>
-            <DialogDescription className="text-[14px]">What we keep, and what never leaves you.</DialogDescription>
+            <DialogDescription className="text-[14px]">What we keep and what never leaves you.</DialogDescription>
           </DialogHeader>
           <ul className="space-y-2">
             {SAFE.map(([icon, line]) => (

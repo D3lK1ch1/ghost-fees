@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
-// Next to the upload button: Ghost It, our specialised AI agent, and what it's for,
+// Next to the upload button: Ghost It, our specialised AI agent and what it's for,
 // short and to the point. Opens /ghostit.
 const POINTS = ['Subscriptions you pay for twice (or three times)', 'A plan to consolidate: keep one, cancel or rotate the rest', 'Apps hidden in Apple or Google bundles', 'What weekly costs add up to a year'];
 const PACKS = ['📺 Screen', '🎧 Sound', '💻 Tech Stack', '🍔 Food', '💪 Gym', '🎮 Play'];

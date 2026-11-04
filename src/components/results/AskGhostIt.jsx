@@ -75,7 +75,7 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
   );
   const dialog = <GhostItDialog open={about} onClose={() => setAbout(false)} onMessage={go} />;
 
-  // Attached under a ghost card: what Ghost It does for this one, and one button.
+  // Attached under a ghost card: what Ghost It does for this one and one button.
   if (variant === 'strip' && benefit) {
     return (
       <div className={cn('flex flex-col gap-3 rounded-b-3xl border-2 border-t-0 px-4 pb-4 pt-6 sm:flex-row sm:items-center', className)} style={{ borderColor: `${BLUE}55`, background: `linear-gradient(180deg, transparent, ${BLUE}14)` }}>
@@ -106,7 +106,7 @@ export default function AskGhostIt({ items, label, small = false, variant, leak,
             Ghost It <span className="rounded-full px-2 py-0.5 text-[12.5px] font-bold" style={{ background: `${BLUE}26`, color: BLUE }}>AI agent on ASI:One</span>
           </p>
           <p className="mt-0.5 text-[14.5px] leading-snug text-muted-foreground">
-            Keep going in chat, any time, without coming back here. Message it what you pay for: it does the yearly maths line by line, spots double-ups, gives the official cancel steps and a ready email, and keeps your Ghost List.
+            Keep going in chat, any time, without coming back here. Message it what you pay for: it does the yearly maths line by line, spots double-ups, gives the official cancel steps and a ready email and keeps your Ghost List.
           </p>
           <p className="mt-1 text-[13.5px] text-muted-foreground"><b className="text-foreground">Free trial: 1 try.</b> {GHOST_IT_PRICE} {whatIs}</p>
         </div>

@@ -1,5 +1,5 @@
 // The haunted night behind the results page: moon, stars and a couple of bats.
-// Decorative only, and still when reduce motion is on.
+// Decorative only and still when reduce motion is on.
 
 const STARS = [[6, 40], [14, 120], [22, 70], [31, 180], [40, 30], [52, 140], [61, 60], [70, 200], [83, 90], [92, 160]];
 

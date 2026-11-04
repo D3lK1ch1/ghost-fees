@@ -1,4 +1,5 @@
 import { Lock, Upload } from 'lucide-react';
+import UvpLine from '@/components/landing/UvpLine';
 import GhostItOffer from '@/components/landing/GhostItOffer';
 import { useAllowance } from '@/lib/AllowanceContext';
 import { ThoughtBubble } from '@/components/site/Bubbles';
@@ -91,7 +92,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
           <span className={BLEND}>{highlight}</span>{' '}
           <span className="text-primary">{rest}</span>
         </h1>
-        <p className="mt-2 text-[16px] leading-relaxed text-muted-foreground">{theme.subhead}</p>
+        <UvpLine align="left" className="mt-3" />
 
         <button
           type="button"

@@ -28,7 +28,7 @@ export default function DetectionInfo({ className }) {
           <div className="max-h-[80vh] overflow-y-auto p-5 sm:p-6">
             <DialogTitle className="pr-8 font-heading text-lg font-semibold text-foreground">What Ghost Fees doesn&apos;t detect</DialogTitle>
             <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">
-              It finds bank fees, free trials that turned paid, duplicate charges and price rises. Here is what it leaves out, and why.
+              It finds bank fees, free trials that turned paid, duplicate charges and price rises. Here is what it leaves out and why.
             </p>
             <ul className="mt-4 space-y-3">
               {NOT_DETECTED.map((item) => (
