@@ -108,3 +108,19 @@
 .font-heading.font-bold, .font-heading.font-extrabold, .font-heading.font-black,
 .x-fredoka, .ex-fredoka { font-weight: 600; letter-spacing: -0.01em; }
 .font-black, .font-extrabold { font-weight: 700; }
+
+/* Softer type (4 Nov: "make text less chunky and better formatted"). The app uses
+   font-bold in hundreds of places, so the weights step down here once, everywhere:
+   bold reads as semibold, semibold as a medium 550 (Inter is loaded as a variable font).
+   The Baloo 2 logo keeps its full weight. */
+.font-bold { font-weight: 600; }
+.font-semibold { font-weight: 550; }
+.font-black, .font-extrabold { font-weight: 650; }
+[style*="Baloo"] { font-weight: 800; }
+body {
+  font-feature-settings: "cv11", "ss01";   /* Inter's cleaner single-storey a and open digits */
+  letter-spacing: -0.003em;
+  line-height: 1.55;
+}
+h1, h2, h3, .font-heading { letter-spacing: -0.015em; text-wrap: balance; }
+p, li { text-wrap: pretty; }

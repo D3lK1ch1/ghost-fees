@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { GHOST_IT_CHAT, GHOST_IT_PHONE_NOTE } from '@/lib/ghostFees/ghostItAgent';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -51,7 +52,7 @@ function Scale({ label, value, onChange }) {
 // (and the text box keeps focus) when the page re-renders.
 function Step({ n, title, children, isDone }) {
   return (
-    <section className={cn('rounded-3xl border p-5', isDone ? 'border-[#5ee6c8]/60 bg-[#5ee6c8]/[0.05]' : 'border-border bg-card')}>
+    <section id={`step-${n}`} className={cn('scroll-mt-24 rounded-3xl border p-5', isDone ? 'border-[#5ee6c8]/60 bg-[#5ee6c8]/[0.05]' : 'border-border bg-card')}>
       <div className="flex items-center gap-3">
         <span className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-heading text-[16px] font-bold', isDone ? 'bg-[#5ee6c8] text-[#0f2a24]' : 'bg-primary text-primary-foreground')}>{isDone ? '✓' : n}</span>
         <h2 className="font-heading text-[19px] font-bold text-foreground">{title}</h2>
@@ -63,6 +64,11 @@ function Step({ n, title, children, isDone }) {
 
 export default function Try() {
   const [done, setDone] = useState(loadTry);
+  // Leave feedback on /progress links to /try#step-3: jump straight to the form.
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash) setTimeout(() => document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+  }, [hash]);
   const [form, setForm] = useState({ clarity_app: null, clarity_agent: null, confusion_text: '', would_pay: '', quote_ok: false, builder_name: '' });
   const [sending, setSending] = useState(false);
   const count = ['app', 'agent', 'feedback'].filter((key) => done[key]).length;

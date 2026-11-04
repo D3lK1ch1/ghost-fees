@@ -691,3 +691,21 @@ One entry per change. Newest at the bottom.
 - Files: src/components/site/BrandHeader.jsx, src/components/site/WatchVideos.jsx
 - How to test: Any page: scroll, the bar stays; tap Videos: /progress opens at the Demo video.
 - User feedback that drove this: team review ("Our progress, Privacy and videos should be above the theme bar, more formalised like a pro web page")
+
+### Softer type everywhere, the feedback cards fixed, Raj round 2 and Kingan added
+- What: Bold reads as semibold and semibold as medium across the app (Inter as a variable font); headings slightly tighter with balanced line breaks; body text a touch more line spacing and Inter's cleaner letter shapes. The "You said, we changed" cards on /progress showed empty quotes (the data used said/changed, the page read quote/change): fixed. Raj's 4 Nov feedback and Kingan's are added. No comma before "and" in the new copy (testers' own words left as they wrote them).
+- Files: index.html, src/index.css, src/pages/Progress.jsx, src/data/changelog.json, src/data/videos.js, src/data/shipped.json, src/components/results/FutureSpend.jsx
+- How to test: /progress: the feedback cards show the quotes, Raj and Kingan at the top; text looks lighter.
+- User feedback that drove this: team review ("make text less chunky and better formatted"; "what commas in text")
+
+### Each video where it works best
+- What: The demo is on the home page (Watch the demo, a popup) and the sign-in pages (See it in 2:05), because people deciding to sign up want to see it working. /progress keeps all three, demo first for judges, then the promo and how far we've come.
+- Files: src/data/videos.js, src/components/site/PromoButton.jsx
+- How to test: Home: Watch the demo (2:05) opens the demo. /login: the demo under the UVP. /progress: Demo, Promo, How far we've come.
+- User feedback that drove this: team review ("does the demo video belong on home and login and the others in our progress")
+
+### Feedback board on /progress, with Leave feedback
+- What: Every Stranger Builds "Trick or Feedback" review (7) in the tester's own words (spelling fixed only): One change, Trick, Treat, the star rating, and What we changed. Summary: 7 testers · 3.3 of 5 · 7 of 7 acted on. Leave feedback opens the /try form at step 3.
+- Files: src/data/testerFeedback.json (new), src/components/site/FeedbackBoard.jsx (new), src/pages/Progress.jsx, src/pages/Try.jsx
+- How to test: /progress#feedback; tap Leave feedback: /try scrolls to Tell us one thing.
+- User feedback that drove this: team review ("put all feedback and what I implemented from Stranger Builds under our progress"; "add a leave feedback message board")

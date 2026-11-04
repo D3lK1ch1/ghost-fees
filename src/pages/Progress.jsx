@@ -3,6 +3,7 @@ import { Check, Copy } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
 import WatchVideos from '@/components/site/WatchVideos';
+import FeedbackBoard from '@/components/site/FeedbackBoard';
 import { base44 } from '@/api/base44Client';
 import { money } from '@/lib/ghostFees/format';
 import changelog from '@/data/changelog.json';
@@ -49,7 +50,7 @@ export default function Progress() {
   }, []);
 
   const realChanges = changelog.filter((item) => !item.example);
-  const latestChange = realChanges[realChanges.length - 1]?.change || shipped[shipped.length - 1]?.title || '';
+  const latestChange = (realChanges[realChanges.length - 1]?.changed || realChanges[realChanges.length - 1]?.change) || shipped[shipped.length - 1]?.title || '';
   const byDay = shipped.reduce((days, item) => ({ ...days, [item.date]: [...(days[item.date] || []), item] }), {});
 
   const update = `Day ${dayNumber()} of Stranger Builds: ${stats?.scans ?? 0} scans, ${stats?.feedback ?? 0} feedback. Changed: ${latestChange}. hunt-ghost-fees.base44.app`;
@@ -72,6 +73,7 @@ export default function Progress() {
         <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us and what we changed because of it.</p>
 
         <WatchVideos />
+        <FeedbackBoard />
 
         <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
           <Stat label="statements scanned" value={stats ? stats.scans : '...'} />
@@ -113,8 +115,8 @@ export default function Progress() {
             {changelog.map((item, index) => (
               <li key={`${item.date}-${index}`} className={`rounded-2xl border px-4 py-3 ${item.example ? 'border-dashed border-[#ffc27a]/60 bg-[#ffc27a]/[0.06]' : 'border-border bg-card/70'}`}>
                 <div className="text-[12.5px] font-bold text-muted-foreground">{niceDate(item.date)}{item.who ? ` · ${item.who}` : ''}</div>
-                <p className="mt-1 text-[14px] italic text-foreground">&ldquo;{item.quote}&rdquo;</p>
-                <p className="mt-1 text-[14px] text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.change}</p>
+                <p className="mt-1 text-[14px] italic text-foreground">&ldquo;{item.said || item.quote}&rdquo;</p>
+                <p className="mt-1 text-[14px] text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.changed || item.change}</p>
                 {(item.beforeImg || item.afterImg) && (
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     {item.beforeImg && <img src={item.beforeImg} alt="Before" className="rounded-xl border border-border" />}
