@@ -802,3 +802,8 @@ One entry per change. Newest at the bottom.
 - Files: agent/deploy/ (setup.sh, ghost-it.service, ghost-it.env.example, requirements.txt, SELF_HOSTING.md)
 - How to test: on the GB10, `cd ghost-fees/agent/deploy && bash setup.sh`, then message the agent in ASI:One.
 - User feedback that drove this: team review ("why can't we do it properly so I have it after the competition"); Raj (replies not showing)
+### Link preview: no more "Free, no sign-in"
+- What: the share card (Slack, iMessage, WhatsApp) said "Free, no sign-in, private", which isn't true now that scans need a sign-in and Pro is paid. The badge now says "Try it free · Pro $10 once", and the page description says "No bank login. Try it free, Pro is $10 once." The image link has ?v=2 so apps fetch the new picture instead of a cached one.
+- Files: public/og-image.png, index.html
+- How to test: after publishing, paste https://hunt-ghost-fees.base44.app into a new Slack message (old posts keep the old card), or check it at opengraph.xyz.
+- User feedback that drove this: team review ("why is the preview showing that it's not fully free and there is sign in for Pro")
