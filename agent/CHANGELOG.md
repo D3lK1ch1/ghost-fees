@@ -1,0 +1,41 @@
+# Ghost It changelog
+
+All on 2 Nov 2026 (Melbourne). Each line is a commit; see the history for the code.
+
+| Version | What changed | Why |
+|---|---|---|
+| baseline | Ghost It as deployed on Agentverse; tests added | Start of the hackathon log |
+| v6 | One free Ghost Pack, then the price; `stats` for evidence | Free trial, then charge |
+| **v7** | Every reply: **What I did → The maths (line by line) → Next**; ASI:One cards (form, review, carousel, detail); app links; `evidence` | **Raj (Fetch.ai):** "not very clear on what it's trying to do… why $276 a year?" |
+| v7 fix | Lists typed without commas, prices without `$`, "Paramount" no longer read as "per annum"; ESPN+ added | Raj's exact message still misread |
+| v7 | Paid Ghost Packs: $2 a pack or $5 for all, Stripe inside ASI:One (Agent Payment Protocol), off until secrets are set | Path to charging |
+| **v8** | **Purpose first** ("I find subscriptions you're paying for twice and help you cancel them"); AI tools (Cursor, Windsurf, Midjourney, Lovable, Replit, Bolt, v0); results card buttons *Get pack* / *Scan my statement*; remembers everything you've listed; README keywords | Raj: purpose not clear; builders pay for AI tools twice |
+| v8 fix | `screen pack` with nothing listed no longer adds 8 services to your ghost list | Found in testing |
+| v8.1 | "Tell me what you were created to do" (ASI:One's suggested prompt) gets the purpose, 4 things it does and one to try | Profile suggestion gave a bare reply |
+| v8.2 | ASI:One's pre-filled "What's new with you?" starts with the purpose and a card | First impression |
+| v8.3 / v8.4 | Never crash on data saved by an older version (`'str' object has no attribute 'get'`) | Live crash found while testing on asi1.ai |
+| **v9** | **Ghost Packs are the main job:** each pack hunts its own kind of leak (e.g. Sound: YouTube Premium already includes YouTube Music; Tech Stack: AI tools and storage paid twice, with the saving if you keep the cheapest); `packs` lists them; purpose line and profile now say Ghost It fills the gap the bank scan can't see | Team: Ghost It shouldn't repeat the app |
+| v9.1 | Pack replies show the maths line by line, the pack total, the leaks with the saving, and the cancel links, on a review card (*Cancel steps* / *Scan my statement*); `packs` is a tap-to-run card | Make packs clean and match the original description: shows its working, tap-to-act cards |
+| v9.2 | Replies before saving counters, so slow storage can't make ASI:One give up waiting | Some replies took 30 s and never showed |
+| v9.3 | Names without prices get typical Australian prices (same checked list as the app, with sources) and the doubles; "what should I cancel" is advice, not a company; "$13.99/month ... per year" no longer read as yearly; honest reply for email/bank requests | Rating 2.2: tested the messages ASI:One actually sends |
+| v9.4 | First replies ("hi", "Tell me what you were created to do", "What's new with you?") come with tap-to-try cards: paying twice for music, too many AI tools, three streaming apps, what my gym really costs, or use my own | ASI:One's profile page only has one default bubble and a blank box |
+| v9.5 | Clear opening (I'm Ghost It, a specialised AI agent… every number is real maths, every cancel link checked, first pack free) and a "Try next" line after every result, pack and typical-price reply | More prompts and explanations, clearer UVP |
+| **v10** (3 Nov) | **Explanation cards:** "how does it work?", "is it free?", "is my data safe?", "how do you calculate it?" and `explain` each get a detail card with a Try button and a Next button that walks to the next explainer. **Tap-to-try:** first replies add a "❓ How does it work?" card. **Stripe paywall card:** after the free pack, a card explains what you get and offers *Pay $2*, *$5 for every pack* or *Not now*; tapping $5 opens a fresh Stripe checkout | Make it friendlier for first-time users and ready to charge |
+| v10.1 (3 Nov) | Answer first: "$612 a year, and 3 video streaming apps do the same job. Keep one and save up to $420 a year." "How much am I spending?" gets a form, not Ghost It's price; pay-per-use billing gets the maths; Gmail bills requests get "copy the amounts here"; music double named on the first reply | Agentverse Discovery showed what ASI:One actually sends (credit billing, Gmail bills, "is that too much?") |
+| **v11** (3 Nov) | **Consolidate:** after a double-up or triple-up, `consolidate` (or the *Consolidate plan* button on a pack) gives a plan per group: keep one (the cheapest, or `keep Netflix`), cancel the rest, save $X; or rotate one a month with the schedule and its yearly cost; plus bundle and sharing tips. AI tools split into general chat and coding (keep one of each). *Cancel the others* gets the steps for just the ones you're dropping | Founders: "help you consolidate if you have double-ups and triple-ups" |
+| v11.1 (3 Nov) | ASI:One's own pre-filled "What's new with you, Ghost.it?" gets a welcome (what Ghost It does, the new consolidate plan, tap-to-try cards) instead of the feedback changelog; typing `what's new` still shows the log | Founder: "why is the default prompt…" (ASI:One sets that text, we can only change the answer) |
+| v11.2 (3 Nov) | Tap-to-try cards lead with the new feature: "🧩 Which one should I keep?" runs the consolidate plan; any list with "which should I keep?" goes straight to the plan; every opener (hi, help, menu, what can you do?) gets the cards | Make the newest, most useful thing the default |
+| v11.3 (3 Nov) | First replies (hi, "Tell me what you were created to do", "What's new with you?") also list the prompts as text to copy, in case a chat window doesn't show the cards | ASI:One's agent page shows only its own bubble |
+| v11.4 (3 Nov) | Reply text and its card are sent as two messages, so a chat window that rejects a card still shows the text. Agentverse secret `GHOSTIT_CARDS=off` sends text only | Live test: Ghost It logged "Envelope sent" for every message but ASI:One showed no replies |
+| **v12** (3 Nov) | **Text-first.** ASI:One showed cards as blank bubbles, so cards are off by default (`GHOSTIT_CARDS=on` to try them). One-line purpose: "I find subscriptions you pay for twice, and help you cancel them." Every opener ends with a numbered menu: reply `1` to `6` to run a preloaded prompt, the explainer or the packs | Founder: "preloaded prompts and cards… you have not done for me" (never visible in ASI:One) |
+| v12.1 (3 Nov) | Menu cleaned for ASI:One: each scenario on its own line, plain examples (no backticks), blank line after the purpose. Timing log showed replies leave in 0.0 s with cards off | First live reply showed the menu as one run-on paragraph |
+| v12.2 (3 Nov) | Hi menu adds **Common questions** 7 to 10 (Is it free? · Is my data safe? · How do you work out the numbers? · What's new?). Every reply is cleaned for ASI:One: no visible backticks, proper line breaks | Founder: list the common questions under hi |
+| v12.3 (3 Nov) | **One price:** first Ghost Pack free, then $5 once unlocks every pack (no $2 per pack). Stripe key problems (masked dots) now named plainly in the logs | Founder: "screen free then buy the rest $5" |
+
+## v13 (4 Nov 2026)
+- Tap buttons instead of typing (Fetch.ai feedback): every suggested command (`consolidate`, Try next) becomes a button.
+- Cards fixed: text and card now travel in one message with requires_card_interaction "true" (they showed blank when sent alone).
+- Kill switch: GHOSTIT_CARDS=off.
+- Billing: `billing <admin code>` (and `evidence`) says if charging is ON, TEST or LIVE mode, or exactly why it is OFF. Never shows the key.
+- Shorter paywall: one line, Pay $5.00 button.
+- If Stripe checkout fails, that pack is free this time (logged as STRIPE_DOWN) so nobody is stuck.
