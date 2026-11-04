@@ -1,5 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
-# v13 (4 Nov 2026): tap buttons (Fetch.ai feedback). Text and card in one message, cards on; suggested commands become buttons.
+# v13 (4 Nov 2026): tap buttons (Fetch.ai feedback), evidence line, Mark ghosted approval, trust line. Text and card in one message, cards on; suggested commands become buttons.
 # v12 (3 Nov 2026): text-first. Cards off by default (blank in ASI:One); numbered menu, reply with a number; one-line purpose.
 # v11.4 (3 Nov 2026): text and cards sent as separate messages; GHOSTIT_CARDS=off for text only.
 # v11.3 (3 Nov 2026): first replies also list the tap-to-try prompts as text (in case cards don't show).
@@ -80,12 +80,18 @@ CHANGES = [
      "`consolidate` gives a plan: keep one, cancel the rest or rotate month by month, with bundle and sharing tips"),
     ("The team", "Ghost It shouldn't repeat the app",
      "Ghost It now fills the gap the bank scan can't see, with a Ghost Pack for each kind of money leak"),
+    ("Raj (Fetch.ai), 4 Nov", "tap buttons instead of typing; the link opened the mobile app",
+     "every reply has buttons (Consolidate, Get pack, Ghost one, Scan, Mark ghosted, It stopped) and links open the web chat"),
+    ("Kingan (Tool Offer agent), 4 Nov", "show the evidence; the person approves; never touch money",
+     "each total shows what you typed and the maths, nothing counts until you tap Mark ghosted, and a trust line up front"),
 ]
 
+# v13 (Kingan, 4 Nov): say plainly that Ghost It never touches money. People decide.
+TRUST = "🔒 Ghost It never touches your bank, cards or accounts. It only shows you what to cancel. You decide."
 # v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
 PURPOSE = ("👻 **I'm Ghost It. I find subscriptions you pay for twice, and help you cancel them.**\n\n"
            "Streaming, music, AI tools, food, gym and gaming. Real maths, checked cancel links, first pack free. "
-           "Tell me what you pay for below.")
+           "Tell me what you pay for below.\n\n" + TRUST)
 
 
 def try_next(*ideas):
@@ -266,7 +272,7 @@ def parse_subs(text):
                 per, times = label, n
                 break
         subs.append(dict(key=key or name.lower().replace(" ", ""), known=bool(key), name=name,
-                         price=price, per=per, times=times))
+                         price=price, per=per, times=times, said=ch.strip()[:60]))
     return subs, missing
 
 
@@ -590,7 +596,7 @@ def check_reply(ctx, sender, text, subs, missing):
         _, label, items_ = max(groups, key=lambda t: len(t[2]))
         head = (f"👻 **{money(total_y)} a year, and {len(items_)} {label} do the same job.** "
                 f"Keep {'one' if len(groups) == 1 else 'one of each'} and save up to **{money(saving)} a year**. "
-                "Type `consolidate` for the plan.")
+                "Tap **🧩 Consolidate** below for the plan.")
     else:
         head = f"👻 **{money(total_y)} a year** across {n} regular payment{'s' if n != 1 else ''}. No doubles."
     lines = [head, "", f"**What I did:** added up your {n} payment{'s' if n != 1 else ''} "
@@ -600,6 +606,11 @@ def check_reply(ctx, sender, text, subs, missing):
         y = yearly(s)
         lines.append(f"- {s['name']}: {money(s['price'])}/{s['per']} x {s['times']} = **{money(y)}/yr**")
         rows.append({"label": s["name"], "value": f"{money(s['price'])}/{s['per']} x {s['times']} = {money(y)}/yr"})
+    # v13 (Kingan's evidence idea): show exactly what each number came from.
+    said = [f"\"{x['said']}\"" for x in subs if x.get("said")]
+    if said:
+        lines.append("**From your message:** " + " · ".join(said[:10]))
+    lines.append("Every number is what you told me times how often it's charged. Nothing guessed.")
     lines.append(f"\n**Total: {money(total_y)} a year** (about {money(total_m)} a month)")
     hours = total_y / HOURLY_RATE
     lines.append(f"That's about {hours:.0f} hours of work a year at ${HOURLY_RATE}/hr.")
@@ -631,8 +642,8 @@ def check_reply(ctx, sender, text, subs, missing):
     if packs:
         lines.append("\n**Your Ghost Packs:** " + ", ".join(f"{PACK_EMOJI.get(p, '')} {p}" for p in packs) +
                      ". Each one hunts its own kind of leak.")
-        lines.append("**Next:** type `" + packs[0].split()[0].lower() + " pack` for its leaks and cancel steps, "
-                     "or `ghost everything` for all of them.")
+        lines.append("**Next:** tap a button below, or type `" + packs[0].split()[0].lower() + " pack` for its leaks "
+                     "and cancel steps, or `ghost everything` for all of them.")
         first = next((s["name"] for s in subs if s["known"]), subs[0]["name"])
         lines.append(f"Cancel one: type `cancel {first}`.")
     lines.append(f"\nMost people have more than they remember. Scan your statement free: {app_link([s['key'] for s in subs if s['known']])}")
@@ -648,14 +659,15 @@ def check_reply(ctx, sender, text, subs, missing):
     bump(ctx, "checks")
     bump(ctx, "found_yearly_cents", int(round(total_y * 100)))
 
-    card = ("review", {
-        "title": f"Your subscriptions: {money(total_y)} a year",
-        "summary_rows": rows[:12],
-        # Review cards take two buttons: the pack for the first group, and the app.
-        "approve_cta": ({"label": f"Get {packs[0]} pack", "primary": True, "selection": {"action": "pack", "pack": packs[0]}}
-                        if packs else {"label": "Show cancel steps", "primary": True, "selection": {"action": "ghost_all"}}),
-        "reject_cta": {"label": "Scan my statement", "selection": {"action": "scan"}},
-    })
+    first_known = next((x for x in subs if x["known"]), subs[0])
+    ctas = []
+    if ov:
+        ctas.append({"label": "🧩 Consolidate", "primary": True, "selection": {"action": "consolidate"}})
+    if packs:
+        ctas.append(dict({"label": f"🎒 Get {packs[0]} pack", "selection": {"action": "pack", "pack": packs[0]}}, **({} if ov else {"primary": True})))
+    ctas.append({"label": f"✂️ Ghost {first_known['name']}", "selection": {"action": "say", "text": f"cancel {first_known['name']}"}})
+    ctas.append({"label": "🔍 Scan my statement", "selection": {"action": "scan"}})
+    card = ("detail", {"title": f"Your subscriptions: {money(total_y)} a year", "summary_rows": rows[:12], "ctas": ctas[:4]})
     return "\n".join(lines), card
 
 
@@ -1009,16 +1021,16 @@ def ghost_reply(ctx, sender, items, title, browse=False, steps_only=False):
         parts = hunt + [f"**What I did:** got the cancel steps for the {title}. You haven't told me which of these you have, "
                  "so I haven't added any to your ghost list. Type `cancel Netflix` (or any name) to add one.\n"]
     else:
-        add_to_list(ctx, sender, items)
+        # v13 (Kingan, 4 Nov): nothing counts as ghosted until the person taps Mark ghosted.
         parts = hunt + [f"**What I did:** got the cancel steps for {len(items)} subscription"
-                 f"{'s' if len(items) != 1 else ''} and added {'them' if len(items) != 1 else 'it'} "
-                 "to your ghost list as Requested.\n"]
+                 f"{'s' if len(items) != 1 else ''}. Nothing is marked yet: once you've sent the cancel request, "
+                 "tap **👻 Mark ghosted** and I'll add it to your ghost list.\n"]
     for s in items:
         parts.append(cancel_block(s["key"] if s.get("known") else s["name"]))
         parts.append("")
     first = items[0]["name"]
     parts.append("**Ready-to-send cancel email** (change the name for each):\n```\n" + cancel_email(first) + "\n```")
-    parts.append("\n**Next:** once a charge stops, type `<name> stopped`. In 7 days I'll ask if it really stopped. "
+    parts.append(f"\n**Next:** tap **👻 Mark ghosted** (or type `{first} ghosted`). In 7 days I'll ask if it really stopped. "
                  "Type `my ghost list` any time.")
     if paying():
         parts.append("\nYour first Ghost Pack is free. After that, $5 once unlocks every pack, paid in the chat.")
@@ -1037,19 +1049,18 @@ def ghost_reply(ctx, sender, items, title, browse=False, steps_only=False):
         card = ("detail", {
             "title": f"Cancel {s['name']}",
             "summary_rows": rows,
-            "ctas": [{"label": "I've cancelled it", "primary": True, "selection": {"action": "stopped", "merchant": s["key"]}},
-                     {"label": "My ghost list", "selection": {"action": "list"}}],
+            "ctas": [{"label": "👻 Mark ghosted", "primary": True, "selection": {"action": "mark", "merchant": s["key"]}},
+                     {"label": "👻 My ghost list", "selection": {"action": "list"}}],
         })
     else:
         card = ("carousel", {
             "title": title,
-            "subtitle": "Tap one when you've cancelled it",
+            "subtitle": "Tap Mark ghosted once you've sent the cancel request",
             "items": [{
                 "id": s["key"], "title": s["name"],
                 "subtitle": (money(yearly(s)) + " a year") if s.get("price") else "Price not given",
                 "secondary_text": ((C.get(s["key"]) or {}).get("steps") or "Search their site for the cancel page")[:120],
-                "badges": [{"label": "Requested", "variant": "warning"}],
-                "primary_cta": {"label": "I've cancelled it", "selection": {"action": "stopped", "merchant": s["key"]}},
+                "primary_cta": {"label": "👻 Mark ghosted", "selection": {"action": "mark", "merchant": s["key"]}},
             } for s in items[:10]],
         })
     return "\n".join(parts), card
@@ -1081,13 +1092,30 @@ def list_reply(ctx, sender):
     lines.append(f"\n**Confirmed stopped: {money(confirmed)} a year**")
     lines.append("\nUpdate one: `Stan stopped` or `Stan still charging`.")
     rows.append({"label": "Confirmed stopped", "value": f"{money(confirmed)} a year"})
-    card = ("review", {
-        "title": "Your ghost list",
-        "summary_rows": rows[:12],
-        "approve_cta": {"label": "Check a new statement", "primary": True, "selection": {"action": "scan"}},
-        "reject_cta": {"label": "Add more subscriptions", "selection": {"action": "help"}},
-    })
+    waiting = [k for k, g in gl.items() if g["status"] in ("Requested", "Still charging")]
+    ctas = [dict({"label": f"✅ {gl[k]['name']} stopped", "selection": {"action": "stopped", "merchant": k}}, **({"primary": True} if i == 0 else {}))
+            for i, k in enumerate(waiting[:2])]
+    ctas.append(dict({"label": "🔍 Scan my statement", "selection": {"action": "scan"}}, **({} if ctas else {"primary": True})))
+    ctas.append({"label": "➕ Add more", "selection": {"action": "help"}})
+    card = ("detail", {"title": "Your ghost list", "summary_rows": rows[:12], "ctas": ctas[:4]})
     return "\n".join(lines), card
+
+
+def mark_reply(ctx, sender, key):
+    """Mark ghosted: the person says they've sent the cancel request (v13, human approval)."""
+    known = {x["key"]: x for x in last_subs(ctx, sender) if isinstance(x, dict) and "key" in x}
+    item = known.get(key) or (dict(key=key, known=True, name=C[key]["name"], price=None) if key in C else None)
+    if not item:
+        name = str(key).strip().title()
+        item = dict(key=name.lower(), known=False, name=name, price=None)
+    gl = ghost_list(ctx, sender)
+    if item["key"] in gl and gl[item["key"]]["status"] in ("Requested", "Stopped"):
+        text, card = list_reply(ctx, sender)
+        return f"{item['name']} is already on your ghost list.\n\n" + text, card
+    add_to_list(ctx, sender, [item])
+    text, card = list_reply(ctx, sender)
+    return (f"👻 **Marked {item['name']} as ghosted.** Your savings count it once the charge really stops: "
+            f"tap **✅ It stopped** or type `{item['name']} stopped`.\n\n" + text, card)
 
 
 def status_reply(ctx, sender, key, status):
@@ -1459,6 +1487,8 @@ def route(ctx, sender, raw):
                     "It finds the subscriptions you forgot, trials that turned paid, and price rises.", None)
         if a == "stopped":
             return status_reply(ctx, sender, sel.get("merchant", ""), "Stopped")
+        if a == "mark":
+            return mark_reply(ctx, sender, sel.get("merchant", ""))
         if a == "list":
             return list_reply(ctx, sender)
         if a == "help":
@@ -1536,6 +1566,9 @@ def route(ctx, sender, raw):
     m = re.search(r"from \$?\s*(\d+(?:\.\d{1,2})?) to \$?\s*(\d+(?:\.\d{1,2})?)", low)
     if m:
         return price_rise_reply(text, m)
+    mk = re.fullmatch(r"\s*(?:mark\s+)?(.+?)\s+(?:as\s+)?ghosted\s*[.!]?\s*", low)
+    if mk and "$" not in low:
+        return mark_reply(ctx, sender, find_merchant(mk.group(1)) or mk.group(1).strip())
     m = re.search(r"(.+?)\s+(stopped|still charging)\b", low)
     if m and "$" not in low:
         key = find_merchant(m.group(1)) or m.group(1).strip()

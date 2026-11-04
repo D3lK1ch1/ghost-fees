@@ -238,6 +238,8 @@ class EdgeCases(unittest.TestCase):
         # "ghost everything" must not wipe anything
         A.route(ctx, SENDER, "Netflix $19")
         A.route(ctx, SENDER, "ghost everything")
+        self.assertEqual(A.ghost_list(ctx, SENDER), {})   # v13: nothing counts until Mark ghosted
+        A.route(ctx, SENDER, "Netflix ghosted")
         self.assertTrue(A.ghost_list(ctx, SENDER))
 
     def test_text_and_card_travel_together(self):
@@ -261,6 +263,50 @@ class EdgeCases(unittest.TestCase):
         typed, _ = A.route(ctx, SENDER, "my ghost list")
         tapped, _ = A.route(ctx, SENDER, '{"action": "say", "text": "my ghost list"}')
         self.assertEqual(typed, tapped)
+
+class V13Pack6(unittest.TestCase):
+    """Update pack 6: Raj and Kingan, 4 Nov."""
+    def test_trust_line_in_first_message(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "hi")
+        self.assertIn("never touches your bank, cards or accounts", reply)
+
+    def test_evidence_shows_what_they_said(self):
+        reply, _ = A.route(FakeCtx(), SENDER, "Netflix $19, gym $25 a week")
+        self.assertIn('**From your message:** "Netflix $19"', reply)
+        self.assertIn("$25.00/wk x 52", reply)
+
+    def test_nothing_ghosted_until_marked(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19, Stan $16")
+        reply, card = A.route(ctx, SENDER, "cancel Stan")
+        self.assertEqual(A.ghost_list(ctx, SENDER), {})
+        self.assertEqual(card[1]["ctas"][0]["selection"], {"action": "mark", "merchant": "stan"})
+        reply, card = A.route(ctx, SENDER, '{"action": "mark", "merchant": "stan"}')
+        self.assertIn("Marked Stan as ghosted", reply)
+        self.assertEqual(A.ghost_list(ctx, SENDER)["stan"]["status"], "Requested")
+        self.assertIn("Confirmed stopped: $0.00", reply)        # savings only after it stops
+        reply, _ = A.route(ctx, SENDER, "Stan stopped")
+        self.assertIn("Confirmed stopped: $192.00", reply)
+
+    def test_typed_mark_still_works(self):
+        ctx = FakeCtx()
+        A.route(ctx, SENDER, "Netflix $19")
+        A.route(ctx, SENDER, "mark Netflix as ghosted")
+        self.assertIn("netflix", A.ghost_list(ctx, SENDER))
+
+    def test_every_card_is_valid(self):
+        ctx = FakeCtx()
+        for prompt in ["hi", "Netflix $18.99, Stan $16, Disney+ $15.99", "consolidate", "cancel Stan", "Stan ghosted", "my ghost list", "packs"]:
+            _, card = A.route(ctx, SENDER, prompt)
+            if not card:
+                continue
+            meta = A.card_meta(card).metadata
+            self.assertTrue(all(isinstance(v, str) for v in meta.values()))
+            self.assertEqual(meta["card_protocol_version"], "1")
+            self.assertNotIn("is_terminal", meta)
+            import json as _j
+            self.assertIsInstance(_j.loads(meta["card_payload"]), dict)
+
 
 class V13Billing(unittest.TestCase):
     def test_billing_status_never_shows_the_key(self):
@@ -450,10 +496,13 @@ class V8(unittest.TestCase):
     def test_results_card_buttons(self):
         _, card = A.route(FakeCtx(), SENDER, "Netflix $19, Stan $16")
         kind, payload = card
-        self.assertEqual(kind, "review")
-        self.assertEqual(payload["approve_cta"]["label"], "Get Screen pack")
-        self.assertEqual(payload["approve_cta"]["selection"], {"action": "pack", "pack": "Screen"})
-        self.assertEqual(payload["reject_cta"]["label"], "Scan my statement")
+        # v13 (Raj, 4 Nov): one detail card with every next step as a button.
+        self.assertEqual(kind, "detail")
+        labels = [c["label"] for c in payload["ctas"]]
+        self.assertEqual(labels[0], "🧩 Consolidate")
+        self.assertIn("🎒 Get Screen pack", labels)
+        self.assertIn("🔍 Scan my statement", labels)
+        self.assertTrue(any(l.startswith("✂️ Ghost") for l in labels))
 
     def test_get_pack_button_gives_their_pack(self):
         ctx = FakeCtx()
