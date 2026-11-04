@@ -1,3 +1,4 @@
+import BiasLine from '@/components/results/BiasLine';
 import CancelSiteLink from '@/components/results/CancelSiteLink';
 import { BADGE_MEANING } from '@/lib/ghostFees/leaks';
 import { useState } from 'react';
@@ -38,6 +39,7 @@ export default function XmasLeakCard({ leak, onDraft, primary = false }) {
         </div>
       </div>
       <p className="m-0 text-[14px] leading-snug">{leak.reason}</p>
+      <BiasLine leak={leak} className="m-0" style={{ color: X.muted }} />
       <div className="-mt-2"><LeakSource dates={leak.dates} sources={leak.sources} dark /></div>
       {rows.length > 0 && (
         <button type="button" onClick={() => setOpen((v) => !v)} className="inline-flex min-h-[32px] items-center gap-1.5 self-start text-[14px] font-extrabold underline" style={{ color: X.gold }}>

@@ -22,6 +22,7 @@ import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
 import LeakFilter, { filterLeaks } from './LeakFilter';
+import BiasChart from './BiasChart';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
 import XmasLeakCard from '@/components/xmas/XmasLeakCard';
@@ -384,6 +385,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
               {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
 
+              {tab === 'ghosts' && <BiasChart leaks={leaks} activeType={activeLeakType} onType={setLeakType} />}
               {tab === 'ghosts' && (
                 <LeakFilter leaks={leaks} type={activeLeakType} sort={leakSort} onType={setLeakType} onSort={setLeakSort} />
               )}
