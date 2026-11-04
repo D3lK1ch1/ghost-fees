@@ -773,3 +773,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/ValueLine.jsx, Hero.jsx, ExHero.jsx, src/components/site/PromoButton.jsx
 - How to test: Home: one video (the promo) in the top card; Watch the full demo opens the demo.
 - User feedback that drove this: team review ("embed the promo one too"; "do promo and demo overlap too much"; "pick the best one and put it in")
+
+### Media: a link to share for each video
+- What: On /media every video has "Copy link" (opens /media at that video, e.g. /media#video-promo) and "Video file" (the mp4 itself, which plays in any browser or chat app). The videos themselves are unchanged.
+- Files: src/components/site/VideoCard.jsx, src/components/site/WatchVideos.jsx, src/pages/Media.jsx
+- How to test: /media, tap Copy link under Promo, open it in a new tab: it scrolls to the Promo. Video file opens the mp4.
+- User feedback that drove this: team review ("I want the videos as they are but shareable links for media")
