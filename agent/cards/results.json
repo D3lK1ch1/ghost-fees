@@ -1,0 +1,57 @@
+{
+ "card_kind": "detail",
+ "card_payload": {
+  "title": "Your subscriptions: $611.76 a year",
+  "summary_rows": [
+   {
+    "label": "Netflix",
+    "value": "$18.99/mo x 12 = $227.88/yr"
+   },
+   {
+    "label": "Stan",
+    "value": "$16.00/mo x 12 = $192.00/yr"
+   },
+   {
+    "label": "Disney+",
+    "value": "$15.99/mo x 12 = $191.88/yr"
+   },
+   {
+    "label": "Total a year",
+    "value": "$611.76"
+   },
+   {
+    "label": "Double-up: video streaming apps",
+    "value": "Netflix, Stan, Disney+ ($611.76/yr)"
+   }
+  ],
+  "ctas": [
+   {
+    "label": "🧩 Consolidate",
+    "primary": true,
+    "selection": {
+     "action": "consolidate"
+    }
+   },
+   {
+    "label": "🎒 Get Screen pack",
+    "selection": {
+     "action": "pack",
+     "pack": "Screen"
+    }
+   },
+   {
+    "label": "✂️ Ghost Netflix",
+    "selection": {
+     "action": "say",
+     "text": "cancel Netflix"
+    }
+   },
+   {
+    "label": "🔍 Scan my statement",
+    "selection": {
+     "action": "scan"
+    }
+   }
+  ]
+ }
+}
