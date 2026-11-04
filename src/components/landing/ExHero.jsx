@@ -1,6 +1,8 @@
 import { Lock, Upload } from 'lucide-react';
 import UvpLine from '@/components/landing/UvpLine';
 import GhostItOffer from '@/components/landing/GhostItOffer';
+import VideoCard from '@/components/site/VideoCard';
+import { DEMO } from '@/data/videos';
 import { useAllowance } from '@/lib/AllowanceContext';
 import { ThoughtBubble } from '@/components/site/Bubbles';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
@@ -109,6 +111,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
           <Upload className="h-4 w-4" strokeWidth={2.4} />
           Upload my CSV or PDF
         </button>
+        <div className="mt-5"><VideoCard video={DEMO} /></div>
         <GhostItOffer className="mx-auto mt-3" />
 
         <p className="mt-4 flex items-start justify-center gap-2 text-center text-[13.5px] text-muted-foreground">

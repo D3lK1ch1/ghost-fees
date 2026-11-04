@@ -5,7 +5,8 @@ import GhostItOffer from '@/components/landing/GhostItOffer';
 import ExHero from '@/components/landing/ExHero';
 import ChristmasHeroArt from '@/components/landing/ChristmasHeroArt';
 import UvpLine from '@/components/landing/UvpLine';
-import PromoButton from '@/components/site/PromoButton';
+import VideoCard from '@/components/site/VideoCard';
+import { DEMO } from '@/data/videos';
 import { useTheme } from '@/lib/ThemeContext';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { SEASON_KEY, SEASONS } from '@/lib/ghostFees/christmasArt';
@@ -60,7 +61,10 @@ export default function Hero({ onSample, onUpload }) {
           Upload my CSV or PDF
         </button>
       </div>
-      <PromoButton className="mt-4" />
+      {/* The full demo, right under the buttons (4 Nov: "embed the whole demo, don't hide it"). */}
+      <div className="mt-6 w-full max-w-2xl text-left">
+        <VideoCard video={DEMO} />
+      </div>
       <GhostItOffer className="mx-auto mt-4" />
 
       <p className="mt-6 flex items-center gap-2 text-[14px] text-muted-foreground">

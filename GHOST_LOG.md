@@ -738,3 +738,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/site/BrandHeader.jsx, src/pages/GhostIt.jsx
 - How to test: /ghostit: the Ghost Fees card first; nav: Ghost Fees · Ghost It AI · Pricing · Our progress · Media · About us · Privacy.
 - User feedback that drove this: team review ("move this above, Ghost Fees over Ghost It, as Ghost Fees is the main one; make it easiest to use")
+
+### The full demo on the home page
+- What: The demo video is embedded right under Scan a sample free and Upload, in every theme, instead of a small Watch the demo link.
+- Files: src/components/landing/Hero.jsx, src/components/landing/ExHero.jsx
+- How to test: Home page: the demo card under the two buttons; tap play.
+- User feedback that drove this: team review ("embed the whole demo video, do not hide that beautiful demo")
