@@ -28,6 +28,72 @@ function runGhostCheck(transactions) {
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 
+// A PDF that takes longer than this shows an error instead of spinning forever.
+// The server may still finish (and still uses its credits); that late result is ignored.
+const PDF_TIMEOUT_MS = 120 * 1000;
+const PDF_TIMEOUT_MESSAGE = 'This statement took too long to read. Try again, export a shorter date range, or upload a CSV instead.';
+// PDFs read at the same time. Each one is a separate AI call, so keep it small.
+const PARALLEL_FILES = 3;
+
+function withTimeout(promise, ms, message) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+// Runs fn on every item, at most `limit` at once. Results keep the items' order.
+async function mapLimit(items, limit, fn) {
+  const results = new Array(items.length);
+  let next = 0;
+  const worker = async () => {
+    while (next < items.length) {
+      const index = next;
+      next += 1;
+      results[index] = await fn(items[index]);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+async function readPdf(file, ticket) {
+  const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
+  const response = await base44.functions.invoke('parseStatement', { file_uri, ticket });
+  return response?.data || {};
+}
+
+// One file -> { rows, label } or { error }. Never throws.
+async function readFile(file, ticket) {
+  try {
+    // Same limit is checked again on the server for PDFs.
+    if (file.size > MAX_FILE_BYTES) throw new Error('This file is over 5 MB. Try exporting a shorter date range.');
+    if (/\.csv$/i.test(file.name)) {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      if (!rows.length) throw new Error('No transactions found in this file.');
+      return { rows, label: sourceLabel(file.name, text) };
+    }
+    if (/\.pdf$/i.test(file.name)) {
+      const data = await withTimeout(readPdf(file, ticket), PDF_TIMEOUT_MS, PDF_TIMEOUT_MESSAGE);
+      if (data.error) return { error: { name: file.name, message: data.error } };
+      if (Array.isArray(data.transactions) && data.transactions.length) {
+        return { rows: data.transactions, label: sourceLabel(file.name) };
+      }
+      return { error: { name: file.name, message: 'No transactions found in this PDF.' } };
+    }
+    throw new Error("This isn't a CSV or PDF.");
+  } catch (error) {
+    return {
+      error: {
+        name: file.name,
+        message: error?.response?.data?.error || error?.message || 'Could not read this file.',
+      },
+    };
+  }
+}
+
 const STEP_COUNT = 4;
 
 function initialSteps() {
@@ -90,37 +156,15 @@ export function ScanProvider({ children }) {
       lists.push(parseCsv(SAMPLE_CSV).map((row) => ({ ...row, source: 'Sample statement' })));
       names.push('Sample statement');
     } else {
-      for (const file of files) {
-        try {
-          // Same limit is checked again on the server for PDFs.
-          if (file.size > MAX_FILE_BYTES) throw new Error('This file is over 5 MB. Try exporting a shorter date range.');
-          if (/\.csv$/i.test(file.name)) {
-            const text = await file.text();
-            const rows = parseCsv(text);
-            if (!rows.length) throw new Error('No transactions found in this file.');
-            const label = sourceLabel(file.name, text);
-            lists.push(rows.map((row) => ({ ...row, source: label })));
-            names.push(label);
-          } else if (/\.pdf$/i.test(file.name)) {
-            const { file_uri } = await base44.integrations.Core.UploadPrivateFile({ file });
-            const response = await base44.functions.invoke('parseStatement', { file_uri, ticket });
-            const data = response?.data || {};
-            if (data.error) errors.push({ name: file.name, message: data.error });
-            else if (Array.isArray(data.transactions) && data.transactions.length) {
-              const label = sourceLabel(file.name);
-              lists.push(data.transactions.map((row) => ({ ...row, source: label })));
-              names.push(label);
-            } else errors.push({ name: file.name, message: 'No transactions found in this PDF.' });
-          } else {
-            throw new Error("This isn't a CSV or PDF.");
-          }
-        } catch (error) {
-          errors.push({
-            name: file.name,
-            message: error?.response?.data?.error || error?.message || 'Could not read this file.',
-          });
+      const results = await mapLimit(files, PARALLEL_FILES, (file) => readFile(file, ticket));
+      results.forEach((result) => {
+        if (result.error) {
+          errors.push(result.error);
+          return;
         }
-      }
+        lists.push(result.rows.map((row) => ({ ...row, source: result.label })));
+        names.push(result.label);
+      });
     }
 
     const transactions = mergeTransactions(lists);
