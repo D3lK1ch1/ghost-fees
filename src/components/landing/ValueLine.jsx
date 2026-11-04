@@ -1,4 +1,6 @@
-import { Check } from 'lucide-react';
+import { Check, Lock } from 'lucide-react';
+import VideoCard from '@/components/site/VideoCard';
+import { PROMO } from '@/data/videos';
 import { openTypicalPrices } from '@/components/site/DataSafety';
 
 // The first thing on the home page in every theme (design A, 4 Nov: "less chunky,
@@ -51,7 +53,18 @@ export default function ValueLine({ onSample, onUpload }) {
           </button>
         </li>
       </ul>
-      <p className="mt-1.5 text-[12.5px] text-muted-foreground/80">🔒 We never touch your bank, cards or accounts.</p>
+      {/* Same pattern as the UVP block under the theme headline: a lock icon, one line. */}
+      <p className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
+        <Lock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+        We never touch your bank, cards or accounts. You decide.
+      </p>
+
+      {/* The promo, our story in 90 seconds (4 Nov: "embed the promo one too"). The demo
+          sits further down, under Scan a sample free. */}
+      <div className="mx-auto mt-6 max-w-xl text-left">
+        <p className="mb-2 text-center text-[12.5px] font-semibold uppercase tracking-[0.14em] text-primary">Our story in 90 seconds</p>
+        <VideoCard video={PROMO} />
+      </div>
     </section>
   );
 }
