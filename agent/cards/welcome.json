@@ -1,0 +1,85 @@
+{
+ "card_kind": "carousel",
+ "card_payload": {
+  "title": "Tap one to try a Ghost Pack",
+  "subtitle": "Or type what you pay for, e.g. Netflix $19, gym $25 a week",
+  "items": [
+   {
+    "id": "qs0",
+    "title": "🎧 Paying twice for music?",
+    "subtitle": "Sound pack",
+    "secondary_text": "Spotify $14, YouTube Premium $17",
+    "primary_cta": {
+     "label": "Try this",
+     "selection": {
+      "action": "check",
+      "subs": "Spotify $14, YouTube Premium $17"
+     }
+    }
+   },
+   {
+    "id": "qs1",
+    "title": "💻 Too many AI tools?",
+    "subtitle": "Tech Stack pack",
+    "secondary_text": "ChatGPT $30, Claude $30, Cursor $30, Copilot $15",
+    "primary_cta": {
+     "label": "Try this",
+     "selection": {
+      "action": "check",
+      "subs": "ChatGPT $30, Claude $30, Cursor $30, Copilot $15"
+     }
+    }
+   },
+   {
+    "id": "qs2",
+    "title": "🧩 Which one should I keep?",
+    "subtitle": "Consolidate plan",
+    "secondary_text": "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?",
+    "primary_cta": {
+     "label": "Try this",
+     "selection": {
+      "action": "check",
+      "subs": "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?"
+     }
+    }
+   },
+   {
+    "id": "qs3",
+    "title": "💪 What does my gym really cost?",
+    "subtitle": "Gym pack",
+    "secondary_text": "gym $25 a week",
+    "primary_cta": {
+     "label": "Try this",
+     "selection": {
+      "action": "check",
+      "subs": "gym $25 a week"
+     }
+    }
+   },
+   {
+    "id": "qs-own",
+    "title": "✍️ Use my own",
+    "subtitle": "Add what you pay for",
+    "secondary_text": "Name and price, weekly or monthly",
+    "primary_cta": {
+     "label": "Add mine",
+     "selection": {
+      "action": "form"
+     }
+    }
+   },
+   {
+    "id": "qs-how",
+    "title": "❓ How does it work?",
+    "subtitle": "30-second explainer",
+    "secondary_text": "What I do, what's free, what I keep about you",
+    "primary_cta": {
+     "label": "Explain",
+     "selection": {
+      "action": "explain"
+     }
+    }
+   }
+  ]
+ }
+}

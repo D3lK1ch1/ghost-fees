@@ -39,3 +39,11 @@ All on 2 Nov 2026 (Melbourne). Each line is a commit; see the history for the co
 - Billing: `billing <admin code>` (and `evidence`) says if charging is ON, TEST or LIVE mode, or exactly why it is OFF. Never shows the key.
 - Shorter paywall: one line, Pay $5.00 button.
 - If Stripe checkout fails, that pack is free this time (logged as STRIPE_DOWN) so nobody is stuck.
+
+## v13.1 (4 Nov 2026): update pack 6 (Raj and Kingan)
+- Results card: Consolidate, Get pack, Ghost one, Scan my statement buttons (was 2 buttons, no Consolidate).
+- Trust line in the first message: never touches your bank, cards or accounts.
+- Evidence: "From your message" line under the maths.
+- Mark ghosted: cancel steps no longer add to the ghost list on their own; the person taps Mark ghosted (or types "Stan ghosted"). Savings count only once it stopped.
+- Ghost list card: It stopped buttons.
+- Card payloads saved in cards/ for the card playground.

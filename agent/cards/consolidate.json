@@ -1,0 +1,39 @@
+{
+ "card_kind": "detail",
+ "card_payload": {
+  "title": "🧩 Save $419.88 a year",
+  "summary_rows": [
+   {
+    "label": "Keep (video streaming apps)",
+    "value": "Disney+, $191.88/yr"
+   },
+   {
+    "label": "Cancel",
+    "value": "Netflix, Stan"
+   },
+   {
+    "label": "Save",
+    "value": "$419.88 a year"
+   },
+   {
+    "label": "Total saving",
+    "value": "$419.88 a year"
+   }
+  ],
+  "ctas": [
+   {
+    "label": "Cancel the others",
+    "primary": true,
+    "selection": {
+     "action": "cancel_others"
+    }
+   },
+   {
+    "label": "My ghost list",
+    "selection": {
+     "action": "list"
+    }
+   }
+  ]
+ }
+}

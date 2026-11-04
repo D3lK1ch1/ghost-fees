@@ -1,0 +1,40 @@
+{
+ "card_kind": "detail",
+ "card_payload": {
+  "title": "Cancel Stan",
+  "summary_rows": [
+   {
+    "label": "You'd save",
+    "value": "$192.00 a year"
+   },
+   {
+    "label": "Cancel link",
+    "value": "https://my.stan.com.au"
+   },
+   {
+    "label": "Steps",
+    "value": "Manage Account > Subscription Information > Cancel your subscription (web browser only)"
+   },
+   {
+    "label": "Bought on a phone?",
+    "value": "Cancel in Apple or Google Play"
+   }
+  ],
+  "ctas": [
+   {
+    "label": "👻 Mark ghosted",
+    "primary": true,
+    "selection": {
+     "action": "mark",
+     "merchant": "stan"
+    }
+   },
+   {
+    "label": "👻 My ghost list",
+    "selection": {
+     "action": "list"
+    }
+   }
+  ]
+ }
+}
