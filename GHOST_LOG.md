@@ -767,6 +767,11 @@ One entry per change. Newest at the bottom.
 - Files: agent/ (git subtree pull from the agent repo)
 - How to test: `cd agent && python3 -m unittest discover -s tests` (98 tests).
 - User feedback that drove this: team review ("update all changes through pull requests"); Raj (buttons, replies not showing) and Kingan (evidence, human approval)
+### Tap what you pay (no upload, no agent) and Please leave a review on /progress
+- What: "Do you have any of these?" now lets you tap what you pay (cheapest, middle or dearest plan, or type your own) and adds it up for a year, names the dearest one and flags streaming double ups. Taps stay on the page and are never mixed into a scan. No cancel links are guessed. On /progress, a "Please leave a review" box under the Feedback board uses the same feedback form as home (one form, not two); the board button jumps to it.
+- Files: src/components/landing/CommonSubsChecker.jsx, src/components/site/FeedbackBoard.jsx
+- How to test: On each theme (haunted, ex, christmas) tap "Don't want to upload? Tap what you pay instead" under Upload, pick Netflix, Stan and Disney+, tap an amount for each: a yearly total and a double up note show. /progress: "Leave a review" jumps to the form.
+- User feedback that drove this: team review ("make sure the cards where you can tap the amount you spend... in case people do not want to upload or try agent"; "under progression please leave a review")
 ### The journey videos: 60 seconds and the full 3 minutes
 - What: Two new videos from Claude web: the 60-second journey (Stranger Builds hackathon feedback, with the gradient cover) and the full 3:09 journey. Both are at the top of /progress; the 60-second one leads /media, then the promo, the demo and the full journey. The old 1:56 feedback video is retired. Home and sign in keep the demo walkthrough.
 - Files: public/videos/ghost-fees-journey-60s.mp4, ghost-fees-journey-full.mp4 (new), src/data/videos.js, src/pages/Progress.jsx, src/pages/Media.jsx

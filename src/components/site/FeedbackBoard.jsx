@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
 import { MessageSquarePlus, Star } from 'lucide-react';
+import FeedbackPanel from '@/components/results/FeedbackPanel';
 import feedback from '@/data/testerFeedback.json';
 
 // /progress: every Stranger Builds "Trick or Feedback" review, in the tester's own words
 // (spelling fixed only), with what we changed because of it (4 Nov). Testers are
-// anonymous on Stranger Builds, so each one is just "A tester". Ends with Leave feedback.
+// anonymous on Stranger Builds, so each one is just "A tester". Ends with "Please leave a
+// review": the same feedback form as home and results, so there is one form, not two.
 const fmt = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
 
 function Stars({ n }) {
@@ -36,9 +37,9 @@ export default function FeedbackBoard() {
             Every review from Stranger Builds testers, in their words. {feedback.length} testers · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
           </p>
         </div>
-        <Link to="/try#step-3" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground">
-          <MessageSquarePlus className="h-4 w-4" aria-hidden="true" /> Leave feedback
-        </Link>
+        <a href="#leave-review" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground">
+          <MessageSquarePlus className="h-4 w-4" aria-hidden="true" /> Leave a review
+        </a>
       </div>
 
       <ul className="mt-3 space-y-3">
@@ -61,6 +62,12 @@ export default function FeedbackBoard() {
           </li>
         ))}
       </ul>
+
+      <div id="leave-review" className="mt-8 scroll-mt-24 rounded-3xl border border-primary/30 bg-primary/[0.04] p-5">
+        <h3 className="text-[18px] font-semibold text-foreground">Please leave a review</h3>
+        <p className="mt-1 text-[14px] text-muted-foreground">Tried Ghost Fees? Tell us what worked and what to change. We read every one and it shows up here when we act on it.</p>
+        <FeedbackPanel onHome />
+      </div>
     </section>
   );
 }
