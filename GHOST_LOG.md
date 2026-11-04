@@ -685,3 +685,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/site/BrandHeader.jsx, src/components/site/SiteFooter.jsx
 - How to test: Any page: the links are at the top; tap Our progress, it highlights.
 - User feedback that drove this: team review ("put this in a better spot, on top of the themes as a proper nav bar")
+
+### Nav bar like a pro web app: sticky, with Videos and Privacy
+- What: The top bar stays put as you scroll (blurred background, thin bottom line). Links: About us · Our progress · Videos · Ghost It · Pricing · Privacy. Videos jumps to the three stacked videos on /progress. The theme picker sits centred under the bar.
+- Files: src/components/site/BrandHeader.jsx, src/components/site/WatchVideos.jsx
+- How to test: Any page: scroll, the bar stays; tap Videos: /progress opens at the Demo video.
+- User feedback that drove this: team review ("Our progress, Privacy and videos should be above the theme bar, more formalised like a pro web page")
