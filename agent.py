@@ -1621,7 +1621,14 @@ def route(ctx, sender, raw):
 
 
 # ---------------------------------------------------------------- chat protocol
-agent = Agent()
+# Hosted on Agentverse: Agent() with no arguments. Plan B (4 Nov, Raj's mailbox tip): set
+# GHOSTIT_LOCAL_SEED to run the same code on a computer, connected through a mailbox.
+if os.environ.get("GHOSTIT_LOCAL_SEED"):
+    agent = Agent(name=os.environ.get("GHOSTIT_LOCAL_NAME", "ghost-it-mailbox"),
+                  seed=os.environ["GHOSTIT_LOCAL_SEED"], port=int(os.environ.get("GHOSTIT_LOCAL_PORT", "8001")),
+                  mailbox=True, publish_agent_details=True)
+else:
+    agent = Agent()
 protocol = Protocol(spec=chat_protocol_spec)
 
 
