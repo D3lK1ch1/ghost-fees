@@ -1,17 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_CHAT, GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
 // Next to the upload button: Ghost It, our specialised AI agent and what it's for,
-// short and to the point. Opens /ghostit.
+// short and to the point. 5 Nov: "Try it" opens Ghost It itself in ASI:One (it went to
+// our /ghostit page, so it felt like a dead end); "How it works" still opens /ghostit.
 const POINTS = ['Subscriptions you pay for twice (or three times)', 'A plan to consolidate: keep one, cancel or rotate the rest', 'Apps hidden in Apple or Google bundles', 'What weekly costs add up to a year'];
 const PACKS = ['📺 Screen', '🎧 Sound', '💻 Tech Stack', '🍔 Food', '💪 Gym', '🎮 Play'];
 
 export default function GhostItOffer({ className = '' }) {
   return (
-    <Link
-      to="/ghostit"
-      className={`group flex w-full max-w-xl items-center gap-4 rounded-3xl border-2 px-5 py-4 text-left transition-colors hover:bg-[#8FB8FF]/10 ${className}`}
+    <div
+      className={`flex w-full max-w-xl items-center gap-4 rounded-3xl border-2 px-5 py-4 text-left ${className}`}
       style={{ borderColor: '#8FB8FF88', background: 'linear-gradient(90deg, #8FB8FF26, transparent 75%)' }}
     >
       <img src={GHOST_IT_MASCOT} alt="" width={72} height={72} className="h-[72px] w-[72px] shrink-0 object-contain motion-safe:animate-float" />
@@ -28,10 +28,18 @@ export default function GhostItOffer({ className = '' }) {
         <span className="mt-2.5 block text-[14px] leading-snug text-foreground/75">
           <b className="text-foreground">Not a general chatbot:</b> every number is real maths you can check and every cancel link is checked and never guessed.
         </span>
+        <span className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <a
+            href={GHOST_IT_CHAT}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-1 rounded-full bg-[#8FB8FF] px-4 py-2 text-[14.5px] font-bold text-[#0f1730] transition-transform hover:-translate-y-0.5"
+          >
+            Try it in ASI:One <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+          </a>
+          <Link to="/ghostit" className="text-[14px] font-semibold text-foreground/80 underline-offset-4 hover:text-foreground hover:underline">How it works</Link>
+        </span>
       </span>
-      <span className="hidden shrink-0 items-center gap-1 rounded-full bg-[#8FB8FF] px-4 py-2 text-[14.5px] font-bold text-[#0f1730] sm:inline-flex">
-        Try it <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
-      </span>
-    </Link>
+    </div>
   );
 }
