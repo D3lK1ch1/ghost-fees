@@ -44,15 +44,20 @@ export default function JollysTable({ subscriptions }) {
     <div className="relative">
       <div className="relative mt-[16%] w-full rounded-2xl" style={{ aspectRatio: `${W} / ${H}`, containerType: 'inline-size' }}>
         <img src={`${ART}/table.webp`} alt="Jolly at the head of a long Christmas table, every dish something you pay for" width={W} height={H} className="absolute inset-0 h-full w-full rounded-2xl object-cover" />
-        <div className="bub-l x-rise absolute z-10 !min-w-0 font-bold leading-tight" style={{ left: '54%', bottom: '70%', width: '44%', fontSize: '3.6cqw', padding: '2.4cqw 3cqw 4.4cqw' }}>
-          Come in! Every dish is something you pay for.
+        {/* Jolly's bubble (4 Nov fix): sits inside the picture, padding keeps the words inside
+            the oval, and short balanced lines so no word sits alone on a line. */}
+        <div className="bub-l x-rise absolute z-10 !min-w-0 font-semibold" style={{ left: '55%', top: '3%', width: '43%', fontSize: '2.75cqw', lineHeight: 1.2, padding: '3.4cqw 5.2cqw 6cqw 6cqw' }}>
+          <span className="block font-bold" style={{ fontSize: '3.3cqw' }}>Come in!</span>
+          <span className="block" style={{ textWrap: 'balance' }}>Every dish is something you pay for.</span>
         </div>
         {seated.map((seat, index) => {
           const g = LAYOUT.guests[seat];
           const item = seats[seat];
           const left = !g.mirror;                 // left side of the table faces right
-          const size = 300 * g.scale * 1.15;      // a little bigger than the seat box
-          const cx = g.x + (260 * g.scale) / 2;   // seat centre
+          // 4 Nov: a touch smaller and nudged out from the table, so a bobbing ghost never
+          // covers its dish or its price tag.
+          const size = 300 * g.scale * 0.98;
+          const cx = g.x + (260 * g.scale) / 2 + (left ? -1 : 1) * size * 0.14;
           const bottom = g.y + 300 * g.scale;     // where the guest meets the table
           return (
             <div key={seat}>
@@ -66,7 +71,7 @@ export default function JollysTable({ subscriptions }) {
               />
               {/* Price on the plate, pushed toward the centre so it never covers a face. */}
               <span
-                className="absolute z-10 whitespace-nowrap rounded-md border border-[#c99a2e] bg-[#fbf6ec] px-[1.2cqw] py-[0.5cqw] font-bold leading-none text-[#c0392b] shadow"
+                className="absolute z-20 whitespace-nowrap rounded-md border border-[#c99a2e] bg-[#fbf6ec] px-[1.2cqw] py-[0.5cqw] font-bold leading-none text-[#c0392b] shadow"
                 style={{ left: pct(g.tag.x + (left ? 40 : -40), W), top: pct(g.tag.y + 10, H), transform: `rotate(${g.tag.rotate}deg)`, fontSize: '2.4cqw' }}
               >
                 {money(item.monthly)}
