@@ -1738,9 +1738,13 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
         bump(ctx, "messages")
     except Exception as e:  # counters must never stop a reply
         ctx.logger.error(f"stats error: {e}")
+    t2 = _t.monotonic()
     pending = get(ctx, f"pending_pay:{sender}", None)
     if paying() and isinstance(pending, dict) and not pending.get("session"):
         await send_payment_request(ctx, sender)
+    # v13.2: how long the work after the reply takes. Agentverse may hold outgoing
+    # messages until the handler ends, so this must stay near zero.
+    ctx.logger.info(f"TIMING after-reply stats={t2 - t1:.1f}s pay={_t.monotonic() - t2:.1f}s")
 
 
 @protocol.on_message(ChatAcknowledgement)
