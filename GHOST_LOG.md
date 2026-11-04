@@ -807,3 +807,9 @@ One entry per change. Newest at the bottom.
 - Files: public/og-image.png, index.html
 - How to test: after publishing, paste https://hunt-ghost-fees.base44.app into a new Slack message (old posts keep the old card), or check it at opengraph.xyz.
 - User feedback that drove this: team review ("why is the preview showing that it's not fully free and there is sign in for Pro")
+
+### The app's Ghost It links go to the working agent
+- What: every "Chat with Ghost It" and profile link now uses the self-run Ghost It (agent1qdaylwvrj...), which replies in ASI:One in seconds with cards and buttons. The hosted one (agent1qvxxy97...) held replies past ASI:One's wait.
+- Files: src/lib/ghostFees/ghostItAgent.js
+- How to test: after Publish, /ghostit, tap Open Ghost It: ASI:One opens the ghost-it agent; send "Netflix $18.99, Stan $16" and the card with buttons comes back.
+- User feedback that drove this: team review ("how do we get cards and buttons working for everyone")
