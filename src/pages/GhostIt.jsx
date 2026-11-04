@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Check, Copy, ExternalLink, MessageCircle } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_PHONE_NOTE, GHOST_IT_SAMPLE, GHOST_IT_THUMBS } from '@/lib/ghostFees/ghostItAgent';
 import { base44 } from '@/api/base44Client';
 import { getSessionId } from '@/lib/session';
 
@@ -102,6 +102,8 @@ export default function GhostIt() {
           <MessageCircle className="h-5 w-5" /> Open Ghost It <ExternalLink className="h-4 w-4" />
         </a>
         <p className="mt-2 text-center text-[13.5px] text-muted-foreground">Opens ASI:One in your browser and copies a sample message. Paste it and send. Keep <b className="text-foreground">@ghostit</b> at the start.</p>
+        <p className="mt-1 text-center text-[13px] text-muted-foreground md:hidden">{GHOST_IT_PHONE_NOTE}</p>
+        <p className="mt-1 text-center text-[13.5px] text-muted-foreground">Then tap the buttons under each reply, like <b className="text-foreground">Consolidate plan</b>. No typing.</p>
 
         <div className="mt-8 rounded-2xl border border-border bg-card/50 px-4 py-3.5 text-[14.5px] text-muted-foreground">
           <b className="text-foreground">Want to find the ones you forgot?</b> Ghost It works from what you tell it. Our web app, Ghost Fees, reads a bank statement instead (no bank login).{' '}

@@ -1,4 +1,5 @@
 import { BadgeDollarSign, MailCheck, Upload } from 'lucide-react';
+import { useAllowance } from '@/lib/AllowanceContext';
 
 // The first thing on the home page in every theme, before any art: the promise
 // (UVP), what it does and who it's for, kept short on purpose. The rest of the
@@ -12,6 +13,7 @@ const STEPS = [
 ];
 
 export default function ValueLine({ onSample }) {
+  const { charging } = useAllowance();
   return (
     <section data-tour="uvp" aria-label="What Ghost Fees does and who it's for" className="mx-auto mt-4 w-full max-w-2xl rounded-3xl border border-primary/40 bg-primary/[0.07] px-5 py-5 text-center">
       <p className="font-heading text-[26px] font-bold leading-tight text-foreground sm:text-[30px]">
@@ -39,7 +41,7 @@ export default function ValueLine({ onSample }) {
           </button>
         )}
       </div>
-      <p className="mt-2 text-[12.5px] text-muted-foreground">Free to start. Pro is $10 once, never a subscription. Free while we&apos;re in beta.</p>
+      <p className="mt-2 text-[12.5px] text-muted-foreground">Free to start. Pro is $10 once, never a subscription.{!charging && <> Free while we&apos;re in beta.</>}</p>
     </section>
   );
 }

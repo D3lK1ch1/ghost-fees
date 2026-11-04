@@ -36,7 +36,7 @@ function Feature({ children, pro }) {
 
 export default function PlansAtAGlance({ onSample }) {
   const { user, isAuthenticated } = useAuth();
-  const { status } = useAllowance();
+  const { status, charging } = useAllowance();
   const pro = Boolean(user?.role === 'admin' || status?.paid);
   const waste = statFor('waste');
 
@@ -77,7 +77,7 @@ export default function PlansAtAGlance({ onSample }) {
         {waste && <><b className="text-primary">{waste.stat}</b> {waste.text} <span className="text-muted-foreground">({waste.source})</span>. </>}
         Cancel one $10-a-month subscription and Pro has paid for itself in a month.
       </p>
-      <p className="mt-1 text-center text-[13px] text-muted-foreground">Everything is free while we&apos;re in beta.</p>
+      {!charging && <p className="mt-1 text-center text-[13px] text-muted-foreground">Everything is free while we&apos;re in beta.</p>}
     </div>
   );
 }
