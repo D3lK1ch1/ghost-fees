@@ -789,3 +789,10 @@ One entry per change. Newest at the bottom.
 - Files: src/components/site/VideoCard.jsx, src/components/site/WatchVideos.jsx, src/pages/Media.jsx
 - How to test: /media, tap Copy link under Promo, open it in a new tab: it scrolls to the Promo. Video file opens the mp4.
 - User feedback that drove this: team review ("I want the videos as they are but shareable links for media")
+
+### Jolly's feast: the new Christmas table, every ghost bobbing
+- What: Stave Two uses the new feast picture (Jolly carving the turkey at the head, five guests around the table). Each ghost and Jolly is cut out along its white sticker outline into its own layer and bobs up and down on its own beat over the table; the space behind each one is filled in so nothing doubles up while they move. Prices sit on the six blank tags by the plates. Bobbing stops for people who turn on reduced motion. About 240 KB of art.
+- Files: src/components/xmas/JollysTable.jsx, src/components/xmas/xmasKit.css, public/themes/christmas/table/feast/ (feast-bg, jolly, coolyule, frosty, popcorn, tinsel, mystery .webp)
+- How to test: Christmas theme, Scan a sample, Email templates (Jolly's letters): the ghosts bob, each price is on a tag, the list below shows who is eating what.
+- User feedback that drove this: team review ("implement this, the Christmas ghosts bobbing up and down", with the new table picture)
+- Not deleted: the old table.webp, the old seated-*.webp (seated-gym is still used in the list) and jollysTable.json are no longer used by the table. Left in place; delete only when you say so.
