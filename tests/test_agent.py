@@ -240,14 +240,27 @@ class EdgeCases(unittest.TestCase):
         A.route(ctx, SENDER, "ghost everything")
         self.assertTrue(A.ghost_list(ctx, SENDER))
 
-    def test_text_and_card_are_separate_messages(self):
-        # v11.4: the text never travels with a card, so a rejected card can't hide it.
+    def test_text_and_card_travel_together(self):
+        # v13: one message, text first then the card, with requires_card_interaction "true".
+        msg = A.make_msg("hi", ("form", {"a": 1}))
+        self.assertEqual([type(c).__name__ for c in msg.content], ["TextContent", "MetadataContent"])
+        self.assertEqual(msg.content[1].metadata["requires_card_interaction"], "true")
         self.assertEqual([type(c).__name__ for c in A.make_msg("hi").content], ["TextContent"])
-        self.assertEqual([type(c).__name__ for c in A.card_msg(("form", {"a": 1})).content], ["MetadataContent"])
-        ctx = PaidCtx()
-        asyncio.run(A.send_reply(ctx, SENDER, "hi", ("form", {"a": 1})))
-        self.assertEqual([type(m.content[0]).__name__ for m in ctx.sent], ["TextContent", "MetadataContent"])
 
+    def test_suggested_commands_become_buttons(self):
+        kind, card = A.next_buttons("Saved. Type `consolidate` for the plan.\n**Try next:** `Sound pack` · `my ghost list`")
+        self.assertEqual(kind, "detail")
+        texts = [c["selection"]["text"] for c in card["ctas"]]
+        self.assertEqual(texts, ["Sound pack", "my ghost list", "consolidate"])
+        self.assertTrue(card["ctas"][0]["primary"])
+        self.assertIsNone(A.next_buttons("No commands here."))
+        self.assertIsNone(A.next_buttons("Type `feedback: ...`"))
+
+    def test_say_button_runs_like_typing(self):
+        ctx = FakeCtx()
+        typed, _ = A.route(ctx, SENDER, "my ghost list")
+        tapped, _ = A.route(ctx, SENDER, '{"action": "say", "text": "my ghost list"}')
+        self.assertEqual(typed, tapped)
 
 if __name__ == "__main__":
     unittest.main()
@@ -506,7 +519,7 @@ class OldStorage(unittest.TestCase):
         msg.msg_id = "x"
         msg.content = [A.TextContent(type="text", text="@ghostit netflix $8.99 espn plus 11.99 paramount 13.99")]
         asyncio.run(A.handle_message(ctx, SENDER, msg))
-        self.assertEqual(len(ctx.sent), 3)  # the acknowledgement, the reply text, then its card
+        self.assertEqual(len(ctx.sent), 2)  # the acknowledgement, then the reply (text and card together, v13)
         reply = ctx.sent[1].content[0].text
         self.assertIn("$419.64", reply)
 
@@ -781,14 +794,14 @@ class V12TextFirst(unittest.TestCase):
         reply, _ = A.route(ctx, SENDER, "5")   # How does it work?
         self.assertIn("How Ghost It works", reply)
 
-    def test_live_default_is_text_only(self):
+    def test_live_default_has_cards_and_text_menu(self):
         old = os.environ.pop("GHOSTIT_CARDS", None)
         try:
             B = load_agent.__wrapped__() if hasattr(load_agent, "__wrapped__") else None
             import importlib.util as u
             spec = u.spec_from_file_location("ghost_it_textonly", HERE / "agent.py")
             mod = u.module_from_spec(spec); spec.loader.exec_module(mod)
-            self.assertFalse(mod.USE_CARDS)
+            self.assertTrue(mod.USE_CARDS)   # v13: cards on by default, text menu still there
             reply, _ = mod.route(FakeCtx(), SENDER, "hi")
             self.assertIn("I find subscriptions you pay for twice", reply)
             self.assertIn("**1.**", reply)

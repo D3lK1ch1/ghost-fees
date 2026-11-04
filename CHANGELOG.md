@@ -31,3 +31,8 @@ All on 2 Nov 2026 (Melbourne). Each line is a commit; see the history for the co
 | v12.1 (3 Nov) | Menu cleaned for ASI:One: each scenario on its own line, plain examples (no backticks), blank line after the purpose. Timing log showed replies leave in 0.0 s with cards off | First live reply showed the menu as one run-on paragraph |
 | v12.2 (3 Nov) | Hi menu adds **Common questions** 7 to 10 (Is it free? · Is my data safe? · How do you work out the numbers? · What's new?). Every reply is cleaned for ASI:One: no visible backticks, proper line breaks | Founder: list the common questions under hi |
 | v12.3 (3 Nov) | **One price:** first Ghost Pack free, then $5 once unlocks every pack (no $2 per pack). Stripe key problems (masked dots) now named plainly in the logs | Founder: "screen free then buy the rest $5" |
+
+## v13 (4 Nov 2026)
+- Tap buttons instead of typing (Fetch.ai feedback): every suggested command (`consolidate`, Try next) becomes a button.
+- Cards fixed: text and card now travel in one message with requires_card_interaction "true" (they showed blank when sent alone).
+- Kill switch: GHOSTIT_CARDS=off.

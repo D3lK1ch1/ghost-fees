@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v13 (4 Nov 2026): tap buttons (Fetch.ai feedback). Text and card in one message, cards on; suggested commands become buttons.
 # v12 (3 Nov 2026): text-first. Cards off by default (blank in ASI:One); numbered menu, reply with a number; one-line purpose.
 # v11.4 (3 Nov 2026): text and cards sent as separate messages; GHOSTIT_CARDS=off for text only.
 # v11.3 (3 Nov 2026): first replies also list the tap-to-try prompts as text (in case cards don't show).
@@ -59,7 +60,11 @@ STRIPE_SUCCESS_URL = os.environ.get("STRIPE_SUCCESS_URL", "https://agentverse.ai
 # Set the secret GHOSTIT_ADMIN_CODE in Agentverse (or change the word here), then type: evidence <your code>
 ADMIN_CODE = os.environ.get("GHOSTIT_ADMIN_CODE") or os.environ.get("GHOST_IT_ADMIN_CODE") or "change-me"
 # Cards on/off without a code change: Agentverse secret GHOSTIT_CARDS=off sends text only.
-USE_CARDS = os.environ.get("GHOSTIT_CARDS", "off").lower() == "on"   # off: ASI:One showed cards as blank bubbles (3 Nov)
+# v13 (4 Nov): cards back on. They showed blank on 3 Nov because each card went in its own
+# message with no text, and requires_card_interaction was "false". The docs want the text and
+# the card in ONE message, and "true" so the buttons work. If a card fails validation ASI:One
+# shows the text alone. GHOSTIT_CARDS=off turns them off again.
+USE_CARDS = os.environ.get("GHOSTIT_CARDS", "on").lower() != "off"
 
 # "You said, we changed" pairs. Add one each time you ship a fix from feedback.
 CHANGES = [
@@ -1408,6 +1413,8 @@ def route(ctx, sender, raw):
     if sel:
         bump(ctx, "card_taps")
         a = sel.get("action")
+        if a == "say" and sel.get("text") and not str(sel["text"]).lstrip().startswith("{"):
+            return route(ctx, sender, str(sel["text"]))
         if a == "check":
             subs_text = str(sel.get("subs", "")) + " " + str(sel.get("who", ""))
             subs, missing = parse_subs(subs_text)
@@ -1579,31 +1586,69 @@ def for_asi(text):
     return text.replace("<name>", "a name").replace("<", "‹").replace(">", "›")
 
 
-def make_msg(text, card=None):
-    """A plain text reply. Cards go in their own message (card_msg), so if a chat window
-    rejects a card the text still arrives (3 Nov: replies were sent but not shown)."""
-    text = for_asi(text)
-    return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=[TextContent(type="text", text=text)])
-
-
-def card_msg(card):
+def card_meta(card):
     kind, payload = card
-    return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=[MetadataContent(type="metadata", metadata={
+    return MetadataContent(type="metadata", metadata={
         "card_protocol_version": "1",
-        "requires_card_interaction": "false",
+        "requires_card_interaction": "true",
         "card_kind": kind,
         "card_payload": json.dumps(payload),
         "preferred_drawer_width_px": "540",
-    })])
+    })
+
+
+def make_msg(text, card=None):
+    """The reply text, plus its card in the same message (Agentverse interactive cards docs)."""
+    content = [TextContent(type="text", text=for_asi(text))]
+    if card:
+        content.append(card_meta(card))
+    return ChatMessage(timestamp=datetime.now(timezone.utc), msg_id=uuid4(), content=content)
+
+
+# v13 (4 Nov, Fetch.ai feedback): "instead of asking people to type consolidate, give a
+# button". Every reply that suggests commands (`consolidate`, the Try next list) gets them
+# as tap buttons. A tap sends {"action": "say", "text": ...}, which runs like typing it.
+CMD_RE = re.compile(r"`([^`\n]{2,48})`")
+BUTTON_EMOJI = [("consolidate", "🧩"), ("ghost list", "👻"), ("cancel", "✂️"), ("pack", "🎒"), ("scan", "🔍"),
+                ("feedback", "💬"), ("explain", "❓"), ("how", "❓"), ("buy", "💳"), ("stopped", "✅"), ("delete", "🗑️")]
+
+
+def button_label(cmd):
+    emoji = next((e for word, e in BUTTON_EMOJI if word in cmd.lower()), "▶️")
+    label = cmd[0].upper() + cmd[1:]
+    return f"{emoji} {label if len(label) <= 34 else label[:33] + '…'}"
+
+
+def next_buttons(text, limit=4):
+    """Tap buttons for the commands a reply suggests, the Try next line first."""
+    tail = text.split("**Try next:**", 1)
+    ordered = CMD_RE.findall(tail[1]) + CMD_RE.findall(tail[0]) if len(tail) == 2 else CMD_RE.findall(text)
+    cmds = []
+    for c in (x.strip() for x in ordered):
+        if "..." in c or "…" in c or "<" in c or c.lower() in {x.lower() for x in cmds}:
+            continue
+        cmds.append(c)
+        if len(cmds) == limit:
+            break
+    if not cmds:
+        return None
+    return ("detail", {
+        "title": "Tap to keep going",
+        "ctas": [dict({"label": button_label(c), "selection": {"action": "say", "text": c}}, **({"primary": True} if i == 0 else {}))
+                 for i, c in enumerate(cmds)],
+    })
 
 
 async def send_reply(ctx, sender, text, card=None):
-    await ctx.send(sender, make_msg(text))
-    if card and USE_CARDS:
-        try:
-            await ctx.send(sender, card_msg(card))
-        except Exception as e:  # a card must never stop the text reply
-            ctx.logger.error(f"card send failed: {e}")
+    if USE_CARDS and card is None:
+        card = next_buttons(text)
+    if not USE_CARDS:
+        card = None
+    try:
+        await ctx.send(sender, make_msg(text, card))
+    except Exception as e:  # a card must never stop the text reply
+        ctx.logger.error(f"card send failed: {e}")
+        await ctx.send(sender, make_msg(text))
 
 
 @protocol.on_message(ChatMessage)
