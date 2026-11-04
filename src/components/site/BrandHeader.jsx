@@ -8,7 +8,8 @@ import { cn } from '@/lib/utils';
 // left, the page links in the middle (Videos and Privacy too), Log in and Upgrade right.
 // The theme picker sits centred under it. Smaller screens: the links are one swipeable row.
 const LINKS = [
-  { to: '/ghostit', label: 'Ghost It', badge: 'AI' },   // the product first (4 Nov)
+  { to: '/', label: 'Ghost Fees', end: true },          // the main product first (4 Nov)
+  { to: '/ghostit', label: 'Ghost It', badge: 'AI' },   // the AI agent, the extra
   { to: '/upgrade', label: 'Pricing' },
   { to: '/progress', label: 'Our progress' },
   { to: '/media', label: 'Media' },
@@ -24,7 +25,7 @@ function NavLinks({ className = '' }) {
           <li key={link.to}>
             <NavLink
               to={link.to}
-              end={link.to.includes('#')}
+              end={link.end || link.to.includes('#')}
               className={({ isActive }) => cn(
                 'whitespace-nowrap rounded-full px-3 py-1.5 text-[14px] font-semibold transition-colors',
                 isActive && !link.to.includes('#') ? 'bg-white/[0.08] text-foreground' : 'text-muted-foreground hover:text-foreground',

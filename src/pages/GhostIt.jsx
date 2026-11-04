@@ -42,6 +42,16 @@ export default function GhostIt() {
     <div className="min-h-screen">
       <BrandHeader />
       <main className="mx-auto w-full max-w-xl px-5 pb-16">
+        {/* Ghost Fees is the main product (4 Nov): it comes first, Ghost It is the extra. */}
+        <a href="/" className="group mt-6 flex items-center gap-3 rounded-2xl border-2 border-primary/70 bg-primary/10 px-4 py-3.5 transition-colors hover:bg-primary/15">
+          <span className="min-w-0 flex-1">
+            <span className="block text-[12px] font-semibold uppercase tracking-[0.14em] text-primary">Start here · the main app</span>
+            <span className="mt-0.5 block text-[16px] font-semibold text-foreground">Ghost Fees finds the subscriptions you forgot</span>
+            <span className="mt-0.5 block text-[14px] leading-snug text-muted-foreground">Scan a statement or just tap the price ranges you pay. No bank login. Then cancel in one click.</span>
+          </span>
+          <span className="shrink-0 rounded-full bg-primary px-3.5 py-2 text-[14px] font-semibold text-primary-foreground transition-transform group-hover:translate-x-0.5">Open Ghost Fees →</span>
+        </a>
+        <p className="mt-6 text-center text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">Then, for double-ups the statement can&apos;t show</p>
         <div className="text-center">
           <img src={GHOST_IT_MASCOT} alt="Ghost It, a friendly ghost waving with a chat bubble" width={170} height={170} className="motion-safe:animate-float mx-auto h-[170px] w-[170px] object-contain drop-shadow-[0_0_30px_rgba(143,184,255,0.35)]" />
           <h1 className="mt-4 font-heading text-[32px] font-bold leading-tight text-foreground">Try Ghost It</h1>
@@ -105,10 +115,6 @@ export default function GhostIt() {
         <p className="mt-1 text-center text-[13px] text-muted-foreground md:hidden">{GHOST_IT_PHONE_NOTE}</p>
         <p className="mt-1 text-center text-[13.5px] text-muted-foreground">Then tap the buttons under each reply, like <b className="text-foreground">Consolidate plan</b>. No typing.</p>
 
-        <div className="mt-8 rounded-2xl border border-border bg-card/50 px-4 py-3.5 text-[14.5px] text-muted-foreground">
-          <b className="text-foreground">Want to find the ones you forgot?</b> Ghost It works from what you tell it. Our web app, Ghost Fees, reads a bank statement instead (no bank login).{' '}
-          <a href="/try" className="font-bold text-primary underline-offset-4 hover:underline">Try the web app</a>
-        </div>
       </main>
       <SiteFooter />
     </div>
