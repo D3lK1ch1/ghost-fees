@@ -60,3 +60,7 @@ GitHub integration: [https://docs.base44.com/developers/app-code/local-developme
 Local development: [https://docs.base44.com/developers/backend/overview/local-dev/local-development-overview](https://docs.base44.com/developers/backend/overview/local-dev/local-development-overview)
 
 Support: [https://app.base44.com/support](https://app.base44.com/support)
+
+## Ghost It agent (Fetch.ai)
+
+The Ghost It uAgent lives in [`agent/`](agent/) with its full history (v1 to v13): `agent/agent.py`, 93 tests in `agent/tests/`, and the changelog in `agent/CHANGELOG.md`. It runs hosted on Agentverse and talks in ASI:One as @ghostit. Deploy with `cd agent && python3 deploy_ghostit.py update` (needs your Agentverse key in the macOS Keychain). Keys live only in Agentverse Secrets, never in this repo.
