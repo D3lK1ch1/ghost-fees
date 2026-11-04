@@ -825,3 +825,8 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/leaks.js (BADGE_BIAS, biasFor, biasGroups), src/components/results/BiasLine.jsx, src/components/results/BiasChart.jsx, src/components/results/LeakCard.jsx, src/components/ex/ExLeakCard.jsx, src/components/xmas/XmasLeakCard.jsx, src/components/results/ResultsView.jsx
 - How to test: Scan a sample on each theme, Ghosts tab: two bars (Denomination Effect $117, Present Bias $114); tap Present Bias to filter; See the numbers shows 6 paid charges, 12 Apr to 12 Sept, matching the Streammax card.
 - User feedback that drove this: Update Pack 8 ("Bias layer + graph"). Idea from Sanjay's earlier behavioural-finance project; all code written new this week.
+### README: the 8 feedback rounds and the current Ghost It setup
+- What: README now has the feedback table (who said what, what changed, proof PR for each of 8 rounds) and an up-to-date Ghost It section (self-hosted with a mailbox, @ghostit address, 98 tests, link to the self-hosting guide).
+- Files: README.md
+- How to test: open the repo on GitHub and read the README.
+- User feedback that drove this: Update Pack 8 ("Feedback log: this is what scores")
