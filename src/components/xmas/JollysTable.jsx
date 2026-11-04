@@ -1,16 +1,24 @@
 import { money } from '@/lib/ghostFees/format';
-import LAYOUT from '@/lib/ghostFees/jollysTable.json';
 import { xmasAvatar, xmasGhost } from '@/lib/ghostFees/christmasArt';
 import { useSeason } from './XmasKit';
 
-// Stave Two: Jolly's feast. The table and Jolly are one background (jollys-table-assets.zip);
-// each subscription is its own festive ghost from Image Assets, seated at its dish with the
-// price on the plate's tag. Seats come from layout.json (1600x1000 scene).
-// SEATED: the sitting-and-eating art for all six (4 Nov): Sweaty Holly with a drumstick,
-// Cool Yule with pudding, Frosty with soup, Popcorn Pete with popcorn, Tangled Tinsel with
-// gingerbread, Mystery Parcel with a cracker.
-const ART = '/themes/christmas/table';
-const SEATED = Object.fromEntries(['gym', 'design', 'trial', 'netflix', 'music', 'stan'].map((seat) => [seat, `${ART}/seated-${seat}.webp`]));
+// Stave Two: Jolly's feast (4 Nov, new scene). One picture of the whole table, with every
+// ghost cut out along its sticker outline so each one bobs on its own over the table
+// (feast-bg.webp has the space behind them filled in). Each subscription's price sits on
+// the blank tag by a plate. Scene is 1585 x 992; positions below are in scene pixels.
+const ART = '/themes/christmas/table/feast';
+const W = 1585;
+const H = 992;
+const JOLLY = { x: 534, y: 85, w: 429, h: 407 };
+// seat: the ghost who sits there (null for the empty plate) and the blank tag's centre.
+const SEAT = {
+  design: { ghost: 'coolyule', box: { x: 258, y: 177, w: 296, h: 300 }, tag: { x: 612, y: 521, r: -3 } },
+  trial: { ghost: 'frosty', box: { x: 55, y: 345, w: 317, h: 360 }, tag: { x: 570, y: 641, r: -3 } },
+  gym: { ghost: null, tag: { x: 527, y: 789, r: -3 } },
+  netflix: { ghost: 'popcorn', box: { x: 1015, y: 162, w: 290, h: 315 }, tag: { x: 1071, y: 528, r: 2 } },
+  music: { ghost: 'tinsel', box: { x: 1246, y: 347, w: 291, h: 339 }, tag: { x: 1158, y: 638, r: 2 } },
+  stan: { ghost: 'mystery', box: { x: 1167, y: 660, w: 349, h: 312 }, tag: { x: 1131, y: 793, r: 3 } },
+};
 const SEATS = ['gym', 'design', 'trial', 'netflix', 'music', 'stan'];
 const MATCH = [
   ['gym', /GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45/i],
@@ -20,7 +28,8 @@ const MATCH = [
   ['music', /SPOTIFY|MUSIC|YOUTUBE|AUDIBLE/i],
   ['stan', /\bSTAN\b/i],
 ];
-const pct = (value, total) => `${(value / total) * 100}%`;
+const px = (value, total) => `${(value / total) * 100}%`;
+const box = (b) => ({ left: px(b.x, W), top: px(b.y, H), width: px(b.w, W), height: px(b.h, H) });
 
 export function seatGuests(subscriptions) {
   const seats = {};
@@ -34,49 +43,45 @@ export function seatGuests(subscriptions) {
   return { seats, extra };
 }
 
+// The art for a row in the list: the seat's ghost from the scene, else the festive avatar.
+const rowArt = (seat, merchant, season) => (seat && SEAT[seat].ghost ? `${ART}/${SEAT[seat].ghost}.webp` : seat === 'gym' ? '/themes/christmas/table/seated-gym.webp' : xmasAvatar(merchant, season));
+
 export default function JollysTable({ subscriptions }) {
   const { season } = useSeason();
-  const { w: W, h: H } = LAYOUT.canvas;
   const { seats, extra } = seatGuests(subscriptions);
   const seated = SEATS.filter((seat) => seats[seat]);
-  const art = (seat, merchant) => SEATED[seat] || xmasAvatar(merchant, season);
+  const guests = SEATS.filter((seat) => SEAT[seat].ghost);
   return (
     <div className="relative">
-      <div className="relative mt-[16%] w-full rounded-2xl" style={{ aspectRatio: `${W} / ${H}`, containerType: 'inline-size' }}>
-        <img src={`${ART}/table.webp`} alt="Jolly at the head of a long Christmas table, every dish something you pay for" width={W} height={H} className="absolute inset-0 h-full w-full rounded-2xl object-cover" />
-        {/* Jolly's bubble (4 Nov fix): sits inside the picture, padding keeps the words inside
-            the oval, and short balanced lines so no word sits alone on a line. */}
-        <div className="bub-l x-rise absolute z-10 !min-w-0 font-semibold" style={{ left: '55%', top: '3%', width: '43%', fontSize: '2.75cqw', lineHeight: 1.2, padding: '3.4cqw 5.2cqw 6cqw 6cqw' }}>
+      <div className="relative mt-[17%] w-full rounded-2xl" style={{ aspectRatio: `${W} / ${H}`, containerType: 'inline-size' }}>
+        <img src={`${ART}/feast-bg.webp`} alt="Jolly at the head of a long Christmas table with five ghost guests, every dish something you pay for" width={W} height={H} className="absolute inset-0 h-full w-full rounded-2xl object-cover" />
+        {/* Every guest bobs on its own beat; Jolly sways gently at the head of the table. */}
+        <img src={`${ART}/jolly.webp`} alt="" aria-hidden="true" className="x-feast absolute" style={{ ...box(JOLLY), animationDuration: '4.4s' }} />
+        {guests.map((seat, index) => (
+          <img
+            key={seat}
+            src={`${ART}/${SEAT[seat].ghost}.webp`}
+            alt=""
+            aria-hidden="true"
+            className="x-feast absolute"
+            style={{ ...box(SEAT[seat].box), animationDelay: `${index * -0.7}s`, animationDuration: `${3.2 + (index % 3) * 0.35}s` }}
+          />
+        ))}
+        {/* Jolly's bubble above the table, tail toward Jolly. */}
+        <div className="bub-l x-rise absolute z-10 !min-w-0 font-semibold" style={{ left: '58%', top: '-21cqw', width: '38%', fontSize: '2.75cqw', lineHeight: 1.2, padding: '3cqw 4.6cqw 5.4cqw 5.6cqw' }}>
           <span className="block font-bold" style={{ fontSize: '3.3cqw' }}>Come in!</span>
           <span className="block" style={{ textWrap: 'balance' }}>Every dish is something you pay for.</span>
         </div>
-        {seated.map((seat, index) => {
-          const g = LAYOUT.guests[seat];
-          const item = seats[seat];
-          const left = !g.mirror;                 // left side of the table faces right
-          // 4 Nov: a touch smaller and nudged out from the table, so a bobbing ghost never
-          // covers its dish or its price tag.
-          const size = 300 * g.scale * 0.98;
-          const cx = g.x + (260 * g.scale) / 2 + (left ? -1 : 1) * size * 0.14;
-          const bottom = g.y + 300 * g.scale;     // where the guest meets the table
+        {seated.map((seat) => {
+          const { tag } = SEAT[seat];
           return (
-            <div key={seat}>
-              <img
-                src={art(seat, item.merchant)}
-                alt={`${xmasGhost(item.merchant).name}, the ${item.merchant} ghost`}
-                width={size}
-                height={size}
-                className="x-bob absolute object-contain drop-shadow-[0_6px_6px_rgba(0,0,0,0.35)]"
-                style={{ left: pct(cx - size / 2, W), top: pct(bottom - size, H), width: pct(size, W), height: pct(size, H), transform: SEATED[seat] && !left ? 'scaleX(-1)' : undefined, animationDelay: `${index * 0.35}s` }}
-              />
-              {/* Price on the plate, pushed toward the centre so it never covers a face. */}
-              <span
-                className="absolute z-20 whitespace-nowrap rounded-md border border-[#c99a2e] bg-[#fbf6ec] px-[1.2cqw] py-[0.5cqw] font-bold leading-none text-[#c0392b] shadow"
-                style={{ left: pct(g.tag.x + (left ? 40 : -40), W), top: pct(g.tag.y + 10, H), transform: `rotate(${g.tag.rotate}deg)`, fontSize: '2.4cqw' }}
-              >
-                {money(item.monthly)}
-              </span>
-            </div>
+            <span
+              key={seat}
+              className="absolute z-20 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-bold leading-none text-[#c0392b]"
+              style={{ left: px(tag.x, W), top: px(tag.y, H), rotate: `${tag.r}deg`, fontSize: '1.75cqw', letterSpacing: '-0.02em' }}
+            >
+              {money(seats[seat].monthly)}
+            </span>
           );
         })}
       </div>
@@ -84,7 +89,7 @@ export default function JollysTable({ subscriptions }) {
       <ul className="relative mt-3 divide-y divide-white/10 rounded-2xl border border-white/10">
         {[...seated.map((seat) => [seat, seats[seat]]), ...extra.map((item) => [null, item])].map(([seat, item]) => (
           <li key={item.id || item.merchant} className="flex items-center gap-3 px-3 py-2">
-            <img src={art(seat, item.merchant)} alt="" width={34} height={34} className="h-[34px] w-[34px] shrink-0 object-contain" />
+            <img src={rowArt(seat, item.merchant, season)} alt="" width={34} height={34} className="h-[34px] w-[34px] shrink-0 object-contain" />
             <span className="min-w-0 flex-1">
               <span className="block text-[14.5px] font-bold leading-tight">{item.merchant}</span>
               <span className="block text-[12.5px] opacity-70">{xmasGhost(item.merchant).name}</span>

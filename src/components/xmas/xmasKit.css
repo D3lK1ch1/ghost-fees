@@ -31,6 +31,9 @@
 .x-rise{animation:xRise .45s ease-out both}
 .x-breathe{animation:xBreathe 4s ease-in-out infinite;transform-origin:50% 100%}
 .x-bob{animation:xBob 3.6s ease-in-out infinite}
+/* Jolly's feast (4 Nov): cut-out stickers bob up and down over the table, gently. */
+@keyframes xFeast{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-1.6%) rotate(-1deg)}70%{transform:translateY(-0.6%) rotate(1deg)}}
+.x-feast{animation:xFeast 3.4s ease-in-out infinite;transform-origin:50% 90%;will-change:transform}
 .x-snap{animation:xSnap .5s ease-in both}
 .x-btn:focus-visible{outline:3px solid #5ee6c8;outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.x-breathe,.x-snow,.x-twinkle,.x-steam,.x-hop,.x-bob{animation:none}.x-snow{display:none}.x-link,.x-flip,.x-dish,.x-tear,.x-coin,.x-frost,.x-dawn,.x-rise,.x-snap{animation:xDawn .3s both}}
+@media (prefers-reduced-motion:reduce){.x-breathe,.x-snow,.x-twinkle,.x-steam,.x-hop,.x-bob,.x-feast{animation:none}.x-snow{display:none}.x-link,.x-flip,.x-dish,.x-tear,.x-coin,.x-frost,.x-dawn,.x-rise,.x-snap{animation:xDawn .3s both}}
