@@ -1,3 +1,4 @@
+import BiasLine from '@/components/results/BiasLine';
 import CancelSiteLink from '@/components/results/CancelSiteLink';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
@@ -60,6 +61,7 @@ export default function ExLeakCard({ leak, onDraft, avatar, primary = false }) {
       )}
 
       <p className="m-0 text-[14px] leading-snug" style={{ color: '#e6e2ea' }}>{leak.reason}</p>
+      <BiasLine leak={leak} className="m-0" style={{ color: '#cfc8d6' }} />
 
       {rise && (
         <p className="m-0 text-[14px] leading-relaxed" style={{ color: C.muted }}>

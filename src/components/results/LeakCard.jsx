@@ -9,6 +9,7 @@ import { BadgePop } from '@/components/GhostAnimations';
 import { useTheme } from '@/lib/ThemeContext';
 import { exAvatar } from '@/lib/ghostFees/exArt';
 import LeakSource from './LeakSource';
+import BiasLine from './BiasLine';
 
 const ACTIONS = {
   cancel: { label: 'Draft cancel email', Icon: Mail },
@@ -73,6 +74,7 @@ export default function LeakCard({ leak, onDraft, avatar }) {
         </div>
       </div>
       <p className={cn('mt-2 text-[14px] leading-relaxed', muted)}>{leak.reason}</p>
+      <BiasLine leak={leak} className={cn('mt-2', muted)} />
 
       <LeakSource dates={leak.dates} sources={leak.sources} dark={dark} />
 
