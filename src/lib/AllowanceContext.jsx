@@ -72,6 +72,7 @@ export function AllowanceProvider({ children }) {
   const value = useMemo(() => ({
     status,
     charging,
+    isOwner: user?.role === 'admin',
     paid,
     signedIn,
     priceCents: status?.priceCents || 500,
@@ -82,7 +83,7 @@ export function AllowanceProvider({ children }) {
     canAskCass,
     markCass,
     openPaywall,
-  }), [status, charging, paid, signedIn, refresh, canAskGuide, markGuide, canAskCass, markCass, openPaywall]);
+  }), [status, charging, user?.role, paid, signedIn, refresh, canAskGuide, markGuide, canAskCass, markCass, openPaywall]);
 
   return (
     <AllowanceContext.Provider value={value}>

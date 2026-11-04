@@ -716,6 +716,11 @@ One entry per change. Newest at the bottom.
 - How to test: Nav > Media: three videos, press kit, build diary. /progress: one video, then the Feedback board.
 - User feedback that drove this: team review ("the promo doesn't belong in our feedback, maybe have media and blog tabs; think how the videos can be logically integrated")
 
+### Unlocked page: honest for the owner, clearer for everyone
+- What: The app never charges admin (owner) accounts, so the owner landed on "You're in · Paid" without paying. Now the owner sees "Owner account: Pro is always on and you are never charged. To test the real $10 checkout, sign out or use another account." Everyone sees a checklist of what Pro unlocks and "You paid $10 once"; the button says Scan a statement until there's a total.
+- Files: src/pages/Unlocked.jsx, src/lib/AllowanceContext.jsx
+- How to test: Signed in as the owner, /unlocked shows Owner account. Signed in as anyone else after paying: You're in, $10 once.
+- User feedback that drove this: team review ("it did not charge me"; "could do this UI better")
 ### Feedback video: Stranger Builds hackathon feedback, with a designed cover
 - What: On /progress the video is titled "Stranger Builds hackathon feedback" with "Ghost Fees" as the subtitle. Before it plays it shows a purple-to-black gradient cover with the title, the event line and four feature tags (3 themes, Cancel in one click, Grouped subscriptions, Ghost It agent) instead of a dark frame. The line under it mentions the themes and features.
 - Files: src/data/videos.js, src/components/site/VideoCard.jsx, src/components/site/WatchVideos.jsx, src/pages/Progress.jsx
