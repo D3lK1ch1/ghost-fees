@@ -7,7 +7,9 @@ import { CapturedJar } from '@/components/GhostAnimations';
 
 const inputClass = 'mt-2 w-full rounded-xl border border-white/[0.1] bg-black/25 px-3.5 py-2.5 text-[14.5px] text-white placeholder:text-muted-foreground/60 focus:border-primary/60 focus:outline-none';
 
-export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mostUseful }) {
+// onHome (4 Nov): the same form on the home page, with a first question that fits
+// people who haven't scanned yet. Same submitFeedback, so every answer lands in one place.
+export default function FeedbackPanel({ usedSample = false, leaksFound = 0, yearlyTotal = 0, mostUseful = null, onHome = false }) {
   const [foundReal, setFoundReal] = useState('');
   const [wouldPay, setWouldPay] = useState('');
   const [confusion, setConfusion] = useState('');
@@ -44,7 +46,7 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mos
 
   return (
     <section className="mt-10 rounded-[1.5rem] border border-white/[0.08] bg-card/70 p-5 sm:p-7">
-      <ChoiceGroup label="Did it find something real?" options={['Yes', 'Kinda', 'No']} value={foundReal} onChange={setFoundReal} />
+      <ChoiceGroup label={onHome ? 'Is it clear what Ghost Fees does?' : 'Did it find something real?'} options={['Yes', 'Kinda', 'No']} value={foundReal} onChange={setFoundReal} />
 
       {leaksFound > 0 && (
         <div className="mt-5">
@@ -73,7 +75,7 @@ export default function FeedbackPanel({ usedSample, leaksFound, yearlyTotal, mos
       </label>
 
       <ChoiceGroup label="Would you pay $10 once for Pro: scans every month, every ghost guide and the full PDF report?" options={['Yes', 'Maybe', 'No']} value={wouldPay} onChange={setWouldPay} />
-      <p className="mt-1.5 text-[13px] text-muted-foreground">The full report is the <b className="text-foreground">Download PDF report</b> button under your total at the top of your results.</p>
+      {!onHome && <p className="mt-1.5 text-[13px] text-muted-foreground">The full report is the <b className="text-foreground">Download PDF report</b> button under your total at the top of your results.</p>}
 
       <label className="mt-5 block">
         <span className="text-[14px] font-medium text-white">Your builder name</span>
