@@ -721,3 +721,9 @@ One entry per change. Newest at the bottom.
 - Files: src/data/videos.js, src/components/site/VideoCard.jsx, src/components/site/WatchVideos.jsx, src/pages/Progress.jsx
 - How to test: /progress: the gradient cover; press play and it plays with controls.
 - User feedback that drove this: team review ("title this video Stranger Builds hackathon feedback with Ghost Fees as the subtitle; purple and black gradient; talk more themes and features")
+
+### Ghost It is the first tab
+- What: The nav bar leads with the product: Ghost It (with a small AI badge) · Pricing · Our progress · Media · About us · Privacy.
+- Files: src/components/site/BrandHeader.jsx
+- How to test: Any page: Ghost It is first; on /ghostit it is highlighted.
+- User feedback that drove this: team review ("make Ghost It the actual product, the first tab")

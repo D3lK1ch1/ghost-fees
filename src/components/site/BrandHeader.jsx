@@ -8,11 +8,11 @@ import { cn } from '@/lib/utils';
 // left, the page links in the middle (Videos and Privacy too), Log in and Upgrade right.
 // The theme picker sits centred under it. Smaller screens: the links are one swipeable row.
 const LINKS = [
-  { to: '/about', label: 'About us' },
+  { to: '/ghostit', label: 'Ghost It', badge: 'AI' },   // the product first (4 Nov)
+  { to: '/upgrade', label: 'Pricing' },
   { to: '/progress', label: 'Our progress' },
   { to: '/media', label: 'Media' },
-  { to: '/ghostit', label: 'Ghost It' },
-  { to: '/upgrade', label: 'Pricing' },
+  { to: '/about', label: 'About us' },
   { to: '/privacy', label: 'Privacy' },
 ];
 
@@ -31,6 +31,7 @@ function NavLinks({ className = '' }) {
               )}
             >
               {link.label}
+              {link.badge && <span className="ml-1.5 rounded-full bg-[#5ee6c8]/15 px-1.5 py-px align-[1px] text-[10.5px] font-semibold tracking-wide text-[#5ee6c8]">{link.badge}</span>}
             </NavLink>
           </li>
         ))}
