@@ -9,7 +9,7 @@ export default function PromoButton({ className = '' }) {
     <Dialog>
       <DialogTrigger asChild>
         <button type="button" className={`inline-flex items-center gap-1.5 text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:text-foreground hover:underline ${className}`}>
-          <PlayCircle className="h-4 w-4 text-primary" aria-hidden="true" /> Watch the demo ({duration(DEMO.seconds)})
+          <PlayCircle className="h-4 w-4 text-primary" aria-hidden="true" /> Watch the full demo ({duration(DEMO.seconds)})
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-3xl border-white/10 bg-card p-3 sm:p-4">

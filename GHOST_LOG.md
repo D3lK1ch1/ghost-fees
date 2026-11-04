@@ -767,3 +767,9 @@ One entry per change. Newest at the bottom.
 - Files: public/videos/ghost-fees-journey-60s.mp4, ghost-fees-journey-full.mp4 (new), src/data/videos.js, src/pages/Progress.jsx, src/pages/Media.jsx
 - How to test: /progress: 60 s then 3:09 above the Feedback board. /media: 60 s first.
 - User feedback that drove this: team review ("embed this, Claude web chose the best one")
+
+### One video on home: the promo; the demo is a link
+- What: The promo (our story in 90 seconds) is embedded in the top home card. The demo, which shows the old home page design, moved to a "Watch the full demo (2:05)" link that opens it in a popup, so the two videos do not repeat each other. The trust line in the top card uses the same lock-icon pattern as the UVP block.
+- Files: src/components/landing/ValueLine.jsx, Hero.jsx, ExHero.jsx, src/components/site/PromoButton.jsx
+- How to test: Home: one video (the promo) in the top card; Watch the full demo opens the demo.
+- User feedback that drove this: team review ("embed the promo one too"; "do promo and demo overlap too much"; "pick the best one and put it in")
