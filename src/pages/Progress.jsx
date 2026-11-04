@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import BrandHeader from '@/components/site/BrandHeader';
 import SiteFooter from '@/components/site/SiteFooter';
+import WatchVideos from '@/components/site/WatchVideos';
 import { base44 } from '@/api/base44Client';
 import { money } from '@/lib/ghostFees/format';
 import changelog from '@/data/changelog.json';
@@ -69,6 +70,8 @@ export default function Progress() {
         <p className="text-[13px] font-bold uppercase tracking-wide text-primary">Ghost Log · Day {dayNumber()}</p>
         <h1 className="mt-1 font-heading text-[2rem] font-bold leading-tight text-foreground">Our progress, in public</h1>
         <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Real numbers, what people told us and what we changed because of it.</p>
+
+        <WatchVideos />
 
         <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
           <Stat label="statements scanned" value={stats ? stats.scans : '...'} />

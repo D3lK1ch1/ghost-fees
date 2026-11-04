@@ -658,3 +658,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/ghostItAgent.js, src/pages/GhostIt.jsx
 - How to test: On a phone, /ghostit > Open Ghost It: the browser opens asi1.ai/chat, paste and send.
 - User feedback that drove this: Raj (Fetch.ai), 4 Nov: "currently the link 'copy and open ghost it' is taking to mobile app, I would suggest you to point it to our web app"
+
+### Watch the videos: /progress, sign in and home
+- What: /progress opens with "Watch the videos": 60-second demo (coming soon until its file is added), Promo (1:32), Full walkthrough (2:05) and 3 days of feedback (1:56). 2 x 2 on desktop, one column on phones. Covers show a frame a few seconds in with a ghost play button and the length; nothing plays until tapped, then normal controls. The promo also sits on the sign-in pages ("See it in 90 seconds") and behind a "Watch the promo" link on the home page that opens it in a popup.
+- Files: src/data/videos.js (new), src/components/site/VideoCard.jsx (new), WatchVideos.jsx (new), PromoButton.jsx (new), src/pages/Progress.jsx, src/components/AuthLayout.jsx, src/components/landing/Hero.jsx, public/videos/
+- How to test: /progress: tap Promo, it plays with controls. /login: promo under the UVP. Home: Watch the promo opens the popup.
+- User feedback that drove this: team review
