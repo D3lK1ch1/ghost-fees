@@ -49,6 +49,8 @@ export function habitPattern(analysis, answers = {}, plan = null) {
   const groups = biasGroups(analysis.leaks);
   return groups.find((g) => answers[g.key] === 'yes')
     || (plan && groups.find((g) => g.key === plan.patternKey))
+    // Then the pattern behind the biggest ghost (the one Mo opens with), then the biggest pattern.
+    || groups.find((g) => g.key === biasFor((analysis.leaks || []).find((leak) => biasFor(leak)) || {})?.key)
     || groups[0]
     || null;
 }
