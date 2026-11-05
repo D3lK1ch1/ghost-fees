@@ -905,3 +905,18 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guides.js
 - How to test: Sample > Ask a ghost > Mo > "Which pattern costs me most?" gives Denomination Effect $117.00 with Open the pattern. Switch to Hattie: she says hello and offers her own habit questions.
 - User feedback that drove this: "mos not asnwewring this why and people dont knwo patterns i thisnk all my aghents need to become more speicliased and need a littleintro to what tehyre doinga dn bceom obvsioud tehyre specila".
+
+### Pack 11 Part A: each ghost does its one job first, then hands you on
+- What: Opening the chat, or switching ghost, gives a fixed opener built from the scan (no AI, so it's free and the numbers are always right). Each ghost says its one job, does it on your biggest ghost, then asks one question with tap chips:
+  - Penny decodes your biggest fee. Next fee, or get Spooksworth to write the ask?
+  - Spooksworth drafts the email (Open the email). Firmer or friendlier? Each adds one line to paste in.
+  - Gus: "5 ghosts, $296.92. Biggest first: Streammax, $113.94. Bust it?"
+  - Cassy gives the official cancel link and steps from the checked list, never a guessed one. With no checked link she offers a live lookup instead. Did it work?
+  - Mo: "Streammax: free trial on 12 Mar, then 6 paid charges. That's a common pattern called Present Bias... (O'Donoghue & Rabin, 1999). Sound like you?" Yes saves the answer and hands you to Hattie.
+  - Hattie (Hank on the Ex "I'm Fine" pick) gives one habit for the pattern you said yes to. When do you want to start?
+- Handoffs: "Ask Spooksworth →" style chips switch ghost, and the ghost you were on comes with you. Penny's fee goes to Spooksworth as a waive request. Off-job quick answers add a chip for the right ghost.
+- Server (askGhostGuide): each ghost has a "one job / never" rule, can return a handoff, and Mo has a backstop. If his AI reply names no pattern, the server swaps in the fixed line for the biggest pattern. Needs Publish.
+- Picker subtitles: What a fee is, Writes emails, Your progress, How to cancel, Why it happened, One habit.
+- Files: src/lib/ghostFees/guideOpeners.js (new), src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guides.js, base44/functions/askGhostGuide/entry.ts
+- How to test: Sample > Ask a ghost. Check each ghost's opener, then Mo > "Yes, sounds like me" lands on Hattie with the Present Bias habit, and Penny > "Ask Spooksworth →" drafts the waive email for the Monthly Account Fee.
+- User feedback that drove this: Update Pack 11 ("Each ghost has one job and does it first").

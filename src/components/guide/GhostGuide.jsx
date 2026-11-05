@@ -6,6 +6,9 @@ import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
 import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
 import { readHabit } from '@/lib/ghostFees/habitPlan';
+import { readExPick } from '@/lib/ghostFees/habitArt';
+import { useTheme } from '@/lib/ThemeContext';
+import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
@@ -57,7 +60,7 @@ function moAnswer(text, analysis) {
   if (/trial/.test(text)) {
     const trial = groups.find((g) => g.key === 'present_bias');
     if (!trial) return { reply: "None of your ghosts are trials that turned paid, so Present Bias isn't one of yours this time." };
-    return { reply: `That's Present Bias. ${trial.what} ${trial.why} It cost you ${money(trial.total)} across ${periodOf(trial)}. The habit: ${trial.beat}`, action: 'open_pattern', biasKey: trial.key };
+    return { reply: `That's a common pattern called Present Bias (${shortCite(trial.cite)}). ${trial.what} ${trial.why} It cost you ${money(trial.total)} across ${periodOf(trial)}. The habit: ${trial.beat}`, action: 'open_pattern', biasKey: trial.key };
   }
   if (/habit|beat|stop|fix|do about/.test(text)) {
     const g = named || top;
@@ -67,10 +70,10 @@ function moAnswer(text, analysis) {
     return { reply: `${named.bias}: ${named.what} ${named.why} In your statement it's ${money(named.total)} across ${periodOf(named)}. Research: ${named.cite}.`, action: 'open_pattern', biasKey: named.key };
   }
   if (/most|biggest|largest|worst|top|costs?/.test(text)) {
-    return { reply: `Your biggest pattern is ${top.bias}: ${money(top.total)} across ${periodOf(top)}. ${top.line}`, action: 'open_pattern', biasKey: top.key };
+    return { reply: `${top.bias} is the biggest common pattern behind your ghosts: ${money(top.total)} across ${periodOf(top)}. ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
   }
   if (/why|pattern|bias|brain|psycholog/.test(text)) {
-    return { reply: `Your ghosts follow ${groups.length} common ${groups.length === 1 ? 'pattern' : 'patterns'}. The biggest is ${top.bias}: ${top.line}`, action: 'open_pattern', biasKey: top.key };
+    return { reply: `Your ghosts follow ${groups.length} common ${groups.length === 1 ? 'pattern' : 'patterns'}. The biggest is ${top.bias}: ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
   }
   return null;
 }
@@ -220,7 +223,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const guide = GUIDES[guideKey];
   const patterns = usePatterns();
   const chips = starterChips(analysis, guide);
-  const { leaks, total, monthSpan } = analysis;
+  const { leaks, monthSpan } = analysis;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -234,24 +237,86 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
+  const { theme } = useTheme();
+  const hank = theme?.key === 'ex' && readExPick() === 'fine';
+  const focusRef = useRef(null);
+  const openerFor = (key) => {
+    const focus = focusRef.current;
+    focusRef.current = null;
+    return { role: 'guide', guide: key, ...opener(key, analysis, { answers: patterns?.answers || {}, plan: readHabit(), hank, focus }) };
+  };
+  const lastWith = (field) => [...messages].reverse().find((m) => m.role === 'guide' && m[field] != null);
+
+  // The openers' own chips are answered here, from the scan, with no AI.
+  const chipReply = (text) => {
+    const to = handoffKey(text);
+    if (to) { focusRef.current = lastWith('leak')?.leak || null; onGuide(to); return true; }
+    const months = `${monthsLabel(monthSpan)} months`;
+    const leak = lastWith('leak')?.leak;
+    if (text === CHIP.nextFee) {
+      const order = feeOrder(leaks);
+      const at = ((lastWith('feeIndex')?.feeIndex ?? -1) + 1) % order.length;
+      reply({ text: `${pennyLine(order[at], months)}\n\nNext fee, or get Spooksworth to write the ask?`, action: 'open_leak', leak: order[at], feeIndex: at, chips: [CHIP.nextFee, handoffChip('sir')] });
+      return true;
+    }
+    if ((text === CHIP.firmer || text === CHIP.friendlier) && leak) {
+      const line = text === CHIP.firmer
+        ? 'Add this line before you sign off: "Please confirm in writing within 5 business days."'
+        : 'Add this line before you sign off: "Thanks so much for your help with this."';
+      reply({ text: `${line} Open the email to paste it in.`, action: 'draft_email', leak, chips: [text === CHIP.firmer ? CHIP.friendlier : CHIP.firmer, handoffChip('cass')] });
+      return true;
+    }
+    if (text === CHIP.bust && leak) {
+      reply({ text: `Let's go! Cancel ${nameOf(leak)}, then mark it done on its card. Every ghost you clear goes on your score.`, action: 'open_leak', leak, chips: [handoffChip('sir'), handoffChip('cass'), CHIP.later] });
+      return true;
+    }
+    if (text === CHIP.later) {
+      const list = leaks.slice(0, 5).map((item, i) => `${i + 1}. ${nameOf(item)} ${money(item.amount)}`).join('\n');
+      reply({ text: `Your score sheet, biggest first:\n${list}\n\nOne at a time. You've got this.`, action: 'open_path', chips: [CHIP.bust] });
+      return true;
+    }
+    if (text === CHIP.worked) {
+      reply({ text: 'Nice work! Check your next statement to be sure the charge stopped. Want one small habit so it doesn\'t sneak back?', chips: [handoffChip('habit'), handoffChip('mind')] });
+      return true;
+    }
+    if (text === CHIP.notYet) {
+      reply({ text: 'No rush. If the steps didn\'t work, Spooksworth can write a cancel email for you to send instead.', chips: [handoffChip('sir')] });
+      return true;
+    }
+    if ([CHIP.yes, CHIP.unsure, CHIP.no].includes(text)) {
+      const biasKey = lastWith('biasKey')?.biasKey;
+      const value = { [CHIP.yes]: 'yes', [CHIP.unsure]: 'unsure', [CHIP.no]: 'no' }[text];
+      if (biasKey) patterns?.setAnswer?.(biasKey, value);
+      if (value === 'yes') {
+        reply({ text: 'Thanks for being honest. Lots of people say yes. Over to Hattie for one small habit.' });
+        setTimeout(() => onGuide('habit'), 400);
+      } else if (value === 'unsure') {
+        reply({ text: 'That\'s fine. Open the pattern to see the research, and decide later.', action: 'open_pattern', biasKey, chips: [handoffChip('habit')] });
+      } else {
+        reply({ text: 'Fair enough, I\'ll leave that one. Ask me about another ghost any time.', chips: guide.chips.slice(0, 3) });
+      }
+      return true;
+    }
+    if (START_CHIPS.includes(text)) {
+      reply({ text: `${text} it is. Open your plan, pick ${text.toLowerCase()} and save: it goes in your calendar with a check-in a week later.`, action: 'open_habit', biasKey: lastWith('biasKey')?.biasKey, chips: ['Make my habit smaller', 'I keep forgetting, help'] });
+      return true;
+    }
+    return false;
+  };
+
   const openPanel = () => {
     setOpen(true);
     trackEvent('guide_opened');
-    if (!messages.length) {
-      const found = leaks.length
-        ? ` You have ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}, ${money(total)} in ${monthsLabel(monthSpan)} months.`
-        : ' No ghosts in this statement.';
-      setMessages([{ role: 'guide', guide: guideKey, text: `${guide.hello}${found}`, chips: chips.slice(0, 4) }]);
-    }
+    if (!messages.length) setMessages([openerFor(guideKey)]);
   };
 
-  // Switching ghost: the new one says hello and offers its own questions.
+  // Switching ghost: the new one introduces itself and does its one job straight away.
   const lastGuide = useRef(guideKey);
   useEffect(() => {
     if (lastGuide.current === guideKey) return;
     lastGuide.current = guideKey;
     if (!messages.length) return;
-    setMessages((current) => [...current, { role: 'guide', guide: guideKey, text: guide.hello, chips: chips.slice(0, 4) }]);
+    setMessages((current) => [...current, openerFor(guideKey)]);
   }, [guideKey]);
 
   // Lets the page's "Ask a ghost" tab open the chat.
@@ -271,6 +336,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     setMessages((current) => [...current, { role: 'user', text }]);
     setInput('');
 
+    if (chipReply(text)) return;
+
     // Cassy: name a subscription (or ask about cancelling one) and she looks it up.
     const subs = [...(analysis.subscriptions || [])].sort((a, b) => b.monthly - a.monthly);
     const named = [...subs, ...leaks].find((item) => {
@@ -287,7 +354,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
     const local = answer(text, analysis, guideKey);
     if (local) {
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, chips: nextChips });
+      const owner = { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'gus', open_pattern: 'mind', open_habit: 'habit' }[local.action];
+      const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -324,7 +393,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const leak = leaks.find((item) => item.id === data.leakId);
       const action = ACTION_LABELS[data.action] && (leak || !['draft_email', 'open_leak', 'show_transactions'].includes(data.action)) ? data.action : null;
       const biasKey = (action === 'open_pattern' || action === 'open_habit') && PATTERN_BY_KEY[data.biasKey] ? data.biasKey : null;
-      reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
+      const serverChips = data.chips?.length ? data.chips.slice(0, 3) : nextChips;
+      const hand = GUIDES[data.handoff] && data.handoff !== guideKey ? [handoffChip(data.handoff)] : [];
+      reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: [...hand, ...serverChips].slice(0, 4) });
     } catch {
       reply({ text: 'The spirits went quiet. Try again, or tap a question below.', chips: nextChips });
     } finally {
@@ -413,7 +484,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 )}
                 <p
                   className={cn(
-                    'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-relaxed',
+                    'max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-relaxed',
                     message.role === 'user'
                       ? 'rounded-br-sm bg-primary font-semibold text-primary-foreground'
                       : 'rounded-tl-sm bg-background text-foreground',
