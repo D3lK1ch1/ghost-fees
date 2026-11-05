@@ -1,6 +1,6 @@
 import { money } from './format';
 
-// Four ghost guides, each with their own colour and job. They change the tone and
+// Five ghost guides, each with their own colour and job. They change the tone and
 // which questions come first, never the facts.
 export const GUIDES = {
   penny: {
@@ -59,6 +59,22 @@ export const GUIDES = {
     room: (label, count, amount) => `${label}: ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)}. Pick one and I'll look it up.`,
     bust: (leak, left) => `${leak.title || leak.merchant}, cancelled. ${left} to go.`,
     done: (total) => `Every one cancelled. ${money(total)} saved. My work here is done.`,
+  },
+  // Pack 9 part 5: Mo, the Money mind ghost. Explains the common money pattern behind each
+  // ghost and one small habit to beat it. Numbers only from the app's maths.
+  mind: {
+    name: 'Mo',
+    role: 'the money mind ghost',
+    color: '#c4f06c',
+    job: 'Why ghosts happen',
+    short: 'Explains patterns',
+    does: 'Explains the common money pattern behind each ghost, with the research, and one small habit to beat it.',
+    chips: ['Why do my trials turn into charges?', 'Which pattern costs me most?', 'One habit for the biggest one?'],
+    intro: (count, total) => `${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(total)}. Most money leaks follow a few common patterns. Want to see which ones are behind yours?`,
+    pick: (leak) => `${leak.title || leak.merchant}: ${money(leak.amount)}. There's usually a common pattern behind a ${leak.badge.toLowerCase()}.`,
+    room: (label, count, amount) => `${label}: ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)}. Same pattern, different faces.`,
+    bust: (leak, left) => `${leak.title || leak.merchant}, sorted. Noticing is half the work. ${left} to go.`,
+    done: (total) => `All ${money(total)} sorted. Notice it, adjust early, no shame.`,
   },
 };
 

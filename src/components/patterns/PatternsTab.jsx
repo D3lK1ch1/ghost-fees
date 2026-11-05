@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import BiasChart from '@/components/results/BiasChart';
 import WhenChart from '@/components/patterns/WhenChart';
+import FutureSpend from '@/components/results/FutureSpend';
 import { biasGroups, PATTERN_FOOTER_REF } from '@/lib/ghostFees/leaks';
 import { money, moneyWhole } from '@/lib/ghostFees/format';
 import { usePatterns } from './PatternContext';
@@ -9,11 +10,28 @@ import { usePatterns } from './PatternContext';
 // biggest first. Totals only from biasGroups (charges on the statement, never forecasts).
 const EVIDENCE = { strong: 'Strong evidence', medium: 'Medium evidence' };
 
-export default function PatternsTab({ leaks, total }) {
+// All the app's charts live in this tab (5 Nov). Future spend sits last, under its own
+// heading: it is a forecast, so no pattern is ever attached to it.
+function LookingAhead({ subscriptions, cancelSubs }) {
+  if (!subscriptions?.length) return null;
+  return (
+    <section aria-labelledby="looking-ahead" className="border-t border-white/[0.08] pt-4">
+      <p id="looking-ahead" className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Looking ahead · a forecast, not a pattern</p>
+      <FutureSpend subscriptions={subscriptions} cancelSubs={cancelSubs} />
+    </section>
+  );
+}
+
+export default function PatternsTab({ leaks, total, subscriptions = [], cancelSubs = [] }) {
   const { openPattern } = usePatterns();
   const groups = biasGroups(leaks);
   if (!groups.length) {
-    return <p className="mt-5 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 text-[15px] text-foreground">No money patterns on this statement. Nice.</p>;
+    return (
+      <div className="mt-4 space-y-4">
+        <p className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4 text-[15px] text-foreground">No money patterns on this statement. Nice.</p>
+        <LookingAhead subscriptions={subscriptions} cancelSubs={cancelSubs} />
+      </div>
+    );
   }
   const top = groups[0];
   return (
@@ -50,6 +68,7 @@ export default function PatternsTab({ leaks, total }) {
       <p className="text-[12.5px] leading-snug text-muted-foreground">
         Common money patterns from behavioural finance research. &lsquo;How to beat it&rsquo; uses implementation intentions (<a href="https://doi.org/10.1037/0003-066X.54.7.493" target="_blank" rel="noopener noreferrer" title={PATTERN_FOOTER_REF} className="underline-offset-2 hover:underline">Gollwitzer, 1999</a>). Not a judgement, and not financial advice.
       </p>
+      <LookingAhead subscriptions={subscriptions} cancelSubs={cancelSubs} />
     </div>
   );
 }

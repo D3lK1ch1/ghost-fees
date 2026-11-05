@@ -27,7 +27,7 @@ const LIMIT_TITLES = {
   report: 'The PDF report comes with the unlock',
 };
 
-// The four ghost guides' colours, as dots on the "ghost try used" sheet.
+// The ghost guides' colours, as dots on the "ghost try used" sheet.
 const GUIDE_DOTS = ['#FFB86B', '#8FB8FF', '#FF9BC2'];
 
 // The person's own total: this scan if it's real, otherwise their last real scan
