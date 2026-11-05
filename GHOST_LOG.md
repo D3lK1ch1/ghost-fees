@@ -854,3 +854,8 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/leaks.js, src/components/patterns/PatternContext.jsx, PatternDialog.jsx, PatternsTab.jsx, WhenChart.jsx (slot), src/components/results/BiasLine.jsx, BiasChart.jsx, ResultsView.jsx
 - How to test: Try the sample on each theme: Money patterns tab shows $117 Denomination Effect, $113.94 Present Bias, $59.98 Ostrich Effect, $6.00 Status Quo Bias (sum $296.92); open Present Bias, tap Yes, Show on Ghosts tab filters to Streammax; open Ostrich Effect from its chip, tap No, its chip goes.
 - User feedback that drove this: Update Pack 9 parts 1 to 3. Idea from an earlier behavioural-finance project; all code and copy written new this week.
+### Copied Ghost It messages mention the working agent by address
+- What: every message the app copies for Ghost It (Ask Ghost It on results, Ghost Packs, Try, the Ghost It page sample) now starts with the working agent's address mention instead of "@ghostit", because ASI:One still sends "@ghostit" to the old stopped agent until its index refreshes. One setting (GHOST_IT_MENTION in ghostItAgent.js) to switch back to "@ghostit" later.
+- Files: src/lib/ghostFees/ghostItAgent.js, src/components/results/AskGhostIt.jsx, src/components/results/GhostItPacks.jsx, src/pages/Try.jsx, src/pages/GhostIt.jsx
+- How to test: copy a Ghost It message in the app and paste it in ASI:One: it goes to Ghost.it (agent1qdaylw...), not your personal assistant.
+- User feedback that drove this: team review ("link the correct ASI in the app")
