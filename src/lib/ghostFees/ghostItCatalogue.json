@@ -1,0 +1,561 @@
+{
+ "source": "agent/agent.py (Ghost It). Regenerate with scripts/sync-ghostit-catalogue.py",
+ "services": [
+  {
+   "key": "netflix",
+   "name": "Netflix",
+   "pack": "Screen",
+   "aliases": [
+    "netflix"
+   ],
+   "link": "https://www.netflix.com/cancelplan",
+   "steps": "Open the link, confirm cancel",
+   "overlap": "video"
+  },
+  {
+   "key": "stan",
+   "name": "Stan",
+   "pack": "Screen",
+   "aliases": [
+    "stan"
+   ],
+   "link": "https://my.stan.com.au",
+   "steps": "Manage Account > Subscription Information > Cancel your subscription (web browser only)",
+   "overlap": "video"
+  },
+  {
+   "key": "disney",
+   "name": "Disney+",
+   "pack": "Screen",
+   "aliases": [
+    "disney+",
+    "disney plus",
+    "disney"
+   ],
+   "link": "https://www.disneyplus.com/account",
+   "steps": "Account > Subscription > Cancel subscription",
+   "overlap": "video"
+  },
+  {
+   "key": "binge",
+   "name": "BINGE",
+   "pack": "Screen",
+   "aliases": [
+    "binge"
+   ],
+   "link": "https://binge.com.au",
+   "steps": "My Account > Cancel Subscription. Billed by Telstra? My Telstra > Your subscriptions",
+   "overlap": "video"
+  },
+  {
+   "key": "kayo",
+   "name": "Kayo",
+   "pack": "Screen",
+   "aliases": [
+    "kayo"
+   ],
+   "link": "https://kayosports.com.au",
+   "steps": "My Account > Cancel Subscription. Billed by Telstra? My Telstra",
+   "overlap": "video"
+  },
+  {
+   "key": "prime",
+   "name": "Amazon Prime",
+   "pack": "Screen",
+   "aliases": [
+    "amazon prime",
+    "prime video",
+    "prime"
+   ],
+   "link": "https://www.amazon.com.au/gp/primecentral",
+   "steps": "Prime Membership > Update, cancel and more > End membership",
+   "overlap": "video"
+  },
+  {
+   "key": "paramount",
+   "name": "Paramount+",
+   "pack": "Screen",
+   "aliases": [
+    "paramount+",
+    "paramount plus",
+    "paramount"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "video"
+  },
+  {
+   "key": "appletv",
+   "name": "Apple TV+",
+   "pack": "Screen",
+   "aliases": [
+    "apple tv+",
+    "apple tv"
+   ],
+   "link": "https://support.apple.com/HT202039",
+   "steps": "Settings > your name > Subscriptions > Cancel",
+   "overlap": "video"
+  },
+  {
+   "key": "foxtel",
+   "name": "Foxtel",
+   "pack": "Screen",
+   "aliases": [
+    "foxtel"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "video"
+  },
+  {
+   "key": "espn",
+   "name": "ESPN+",
+   "pack": "Screen",
+   "aliases": [
+    "espn plus",
+    "espn+",
+    "espn"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "video"
+  },
+  {
+   "key": "spotify",
+   "name": "Spotify",
+   "pack": "Sound",
+   "aliases": [
+    "spotify"
+   ],
+   "link": "https://support.spotify.com/article/cancel-premium/",
+   "steps": "Account > Manage your plan > Cancel subscription",
+   "overlap": "music"
+  },
+  {
+   "key": "applemusic",
+   "name": "Apple Music",
+   "pack": "Sound",
+   "aliases": [
+    "apple music"
+   ],
+   "link": "https://support.apple.com/HT202039",
+   "steps": "Settings > your name > Subscriptions > Cancel",
+   "overlap": "music"
+  },
+  {
+   "key": "youtube",
+   "name": "YouTube Premium",
+   "pack": "Sound",
+   "aliases": [
+    "youtube premium",
+    "youtube music",
+    "youtube"
+   ],
+   "link": "https://www.youtube.com/paid_memberships",
+   "steps": "Manage membership > Deactivate",
+   "overlap": "music"
+  },
+  {
+   "key": "amazonmusic",
+   "name": "Amazon Music",
+   "pack": "Sound",
+   "aliases": [
+    "amazon music"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "music"
+  },
+  {
+   "key": "audible",
+   "name": "Audible",
+   "pack": "Sound",
+   "aliases": [
+    "audible"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": null
+  },
+  {
+   "key": "icloud",
+   "name": "iCloud+",
+   "pack": "Tech Stack",
+   "aliases": [
+    "icloud+",
+    "icloud"
+   ],
+   "link": "https://support.apple.com/HT202039",
+   "steps": "Settings > your name > Subscriptions > Cancel",
+   "overlap": "storage"
+  },
+  {
+   "key": "googleone",
+   "name": "Google One",
+   "pack": "Tech Stack",
+   "aliases": [
+    "google one"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "storage"
+  },
+  {
+   "key": "dropbox",
+   "name": "Dropbox",
+   "pack": "Tech Stack",
+   "aliases": [
+    "dropbox"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "storage"
+  },
+  {
+   "key": "m365",
+   "name": "Microsoft 365",
+   "pack": "Tech Stack",
+   "aliases": [
+    "microsoft 365",
+    "office 365",
+    "m365"
+   ],
+   "link": "https://account.microsoft.com/services",
+   "steps": "Manage > Cancel subscription",
+   "overlap": "storage"
+  },
+  {
+   "key": "adobe",
+   "name": "Adobe",
+   "pack": "Tech Stack",
+   "aliases": [
+    "adobe",
+    "creative cloud"
+   ],
+   "link": "https://account.adobe.com/plans",
+   "steps": "Manage plan > Cancel your plan",
+   "overlap": "design"
+  },
+  {
+   "key": "canva",
+   "name": "Canva",
+   "pack": "Tech Stack",
+   "aliases": [
+    "canva"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "design"
+  },
+  {
+   "key": "chatgpt",
+   "name": "ChatGPT",
+   "pack": "Tech Stack",
+   "aliases": [
+    "chatgpt",
+    "openai"
+   ],
+   "link": "https://help.openai.com/en/articles/7232927",
+   "steps": "Settings > Billing > Cancel plan",
+   "overlap": "ai"
+  },
+  {
+   "key": "claude",
+   "name": "Claude",
+   "pack": "Tech Stack",
+   "aliases": [
+    "claude"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "gemini",
+   "name": "Gemini",
+   "pack": "Tech Stack",
+   "aliases": [
+    "gemini"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "perplexity",
+   "name": "Perplexity",
+   "pack": "Tech Stack",
+   "aliases": [
+    "perplexity"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "copilot",
+   "name": "Copilot",
+   "pack": "Tech Stack",
+   "aliases": [
+    "copilot"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "cursor",
+   "name": "Cursor",
+   "pack": "Tech Stack",
+   "aliases": [
+    "cursor"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "windsurf",
+   "name": "Windsurf",
+   "pack": "Tech Stack",
+   "aliases": [
+    "windsurf",
+    "codeium"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "midjourney",
+   "name": "Midjourney",
+   "pack": "Tech Stack",
+   "aliases": [
+    "midjourney"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "lovable",
+   "name": "Lovable",
+   "pack": "Tech Stack",
+   "aliases": [
+    "lovable"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "replit",
+   "name": "Replit",
+   "pack": "Tech Stack",
+   "aliases": [
+    "replit"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "bolt",
+   "name": "Bolt",
+   "pack": "Tech Stack",
+   "aliases": [
+    "bolt.new",
+    "bolt"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "v0",
+   "name": "v0",
+   "pack": "Tech Stack",
+   "aliases": [
+    "v0.dev",
+    "v0"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "ai"
+  },
+  {
+   "key": "gym",
+   "name": "Gym",
+   "pack": "Gym and Fitness",
+   "aliases": [
+    "anytime fitness",
+    "fitness first",
+    "goodlife",
+    "jetts",
+    "f45",
+    "snap fitness",
+    "plus fitness",
+    "virgin active",
+    "gym"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": null
+  },
+  {
+   "key": "uberone",
+   "name": "Uber One",
+   "pack": "Food",
+   "aliases": [
+    "uber one",
+    "uber eats"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "delivery"
+  },
+  {
+   "key": "dashpass",
+   "name": "DashPass",
+   "pack": "Food",
+   "aliases": [
+    "dashpass",
+    "doordash"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "delivery"
+  },
+  {
+   "key": "hellofresh",
+   "name": "HelloFresh",
+   "pack": "Food",
+   "aliases": [
+    "hellofresh",
+    "hello fresh"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "mealkit"
+  },
+  {
+   "key": "marleyspoon",
+   "name": "Marley Spoon",
+   "pack": "Food",
+   "aliases": [
+    "marley spoon"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "mealkit"
+  },
+  {
+   "key": "dinnerly",
+   "name": "Dinnerly",
+   "pack": "Food",
+   "aliases": [
+    "dinnerly"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "mealkit"
+  },
+  {
+   "key": "youfoodz",
+   "name": "Youfoodz",
+   "pack": "Food",
+   "aliases": [
+    "youfoodz"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "mealkit"
+  },
+  {
+   "key": "gamepass",
+   "name": "Xbox Game Pass",
+   "pack": "Play",
+   "aliases": [
+    "game pass",
+    "xbox"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "gaming"
+  },
+  {
+   "key": "psplus",
+   "name": "PlayStation Plus",
+   "pack": "Play",
+   "aliases": [
+    "playstation plus",
+    "ps plus",
+    "psplus",
+    "playstation"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "gaming"
+  },
+  {
+   "key": "switch",
+   "name": "Nintendo Switch Online",
+   "pack": "Play",
+   "aliases": [
+    "nintendo switch online",
+    "switch online",
+    "nintendo"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": "gaming"
+  },
+  {
+   "key": "nitro",
+   "name": "Discord Nitro",
+   "pack": "Play",
+   "aliases": [
+    "discord nitro",
+    "nitro",
+    "discord"
+   ],
+   "link": null,
+   "steps": null,
+   "overlap": null
+  }
+ ],
+ "overlapNames": {
+  "video": "video streaming apps",
+  "music": "music apps",
+  "storage": "cloud storage plans",
+  "ai": "AI tools",
+  "design": "design tools",
+  "delivery": "food delivery passes",
+  "mealkit": "meal kits",
+  "gaming": "gaming passes"
+ },
+ "packs": [
+  "Screen",
+  "Sound",
+  "Gym and Fitness",
+  "Food",
+  "Tech Stack",
+  "Play"
+ ],
+ "packEmoji": {
+  "Screen": "📺",
+  "Sound": "🎧",
+  "Tech Stack": "💻",
+  "Food": "🍔",
+  "Gym and Fitness": "💪",
+  "Play": "🎮"
+ },
+ "packHunts": {
+  "Screen": "streaming services doing the same job; keep one and rotate the rest month to month",
+  "Sound": "two music apps at once (YouTube Premium already includes YouTube Music); duo and family plans",
+  "Tech Stack": "AI tools that do the same job, and cloud storage paid twice (Microsoft 365 includes 1 TB of OneDrive)",
+  "Food": "two delivery passes at once, and a meal kit on top of a delivery pass",
+  "Gym and Fitness": "what a weekly membership really costs a year, and a gym plus fitness apps",
+  "Play": "two or three gaming passes at once"
+ }
+}

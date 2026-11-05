@@ -4,6 +4,7 @@
 // Savings are per month only: no forecasts, no yearly totals.
 import { money } from './format';
 import { cancelInfo } from './cancelLinks';
+import CATALOGUE from './ghostItCatalogue.json';
 
 // What each AI tool mainly does, from its own product pages (Nov 2026). Coarse on purpose:
 // "covers" means the tool's main paid plan is known for it. Kit says to check your plan.
@@ -24,6 +25,7 @@ export const AI_TOOLS = [
   { name: 'Gemini', match: /GEMINI|GOOGLE\s*(AI|ONE\s*AI)/i, covers: ['writing', 'docs', 'images', 'video', 'research'] },
   { name: 'Microsoft Copilot', match: /COPILOT\s*PRO|MICROSOFT\s*COPILOT|M365\s*COPILOT/i, covers: ['writing', 'docs', 'images'] },
   { name: 'GitHub Copilot', match: /GITHUB/i, covers: ['coding'] },
+  { name: 'Copilot', match: /COPILOT/i, covers: ['writing', 'docs', 'coding'] },
   { name: 'Perplexity', match: /PERPLEXITY/i, covers: ['research', 'writing'] },
   { name: 'Midjourney', match: /MIDJOURNEY/i, covers: ['images', 'video'] },
   { name: 'Runway', match: /RUNWAY/i, covers: ['video', 'images'] },
@@ -39,36 +41,109 @@ export const AI_TOOLS = [
   { name: 'v0', match: /\bV0\b/i, covers: ['coding', 'design'] },
 ];
 
+// Double-ups are spotted with Ghost It's own catalogue (agent/agent.py, copied in by
+// scripts/sync-ghostit-catalogue.py), so the app and the agent agree on every pack.
+const ALIASES = CATALOGUE.services
+  .flatMap((s) => s.aliases.map((alias) => ({ alias: alias.toLowerCase(), s })))
+  .sort((a, b) => b.alias.length - a.alias.length);
+const escape = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const ALIAS_RE = ALIASES.map(({ alias, s }) => ({ re: new RegExp(`(^|[^a-z0-9])${escape(alias)}([^a-z0-9]|$)`), s }));
+
+// Kit's groups: Ghost It's overlap groups, with Kit's question for each.
+const KIT_GROUPS = {
+  video: { ask: 'Which do you watch most?', rotate: true, fallback: /STREAM/i },
+  music: { ask: 'Which do you listen to most?', rotate: false },
+  storage: { ask: 'Where are most of your files?', rotate: false },
+  design: { ask: 'Which do you design in most?', rotate: false },
+  delivery: { ask: 'Which do you order from most?', rotate: true },
+  mealkit: { ask: 'Which meal kit do you cook most?', rotate: true },
+  gaming: { ask: 'Which do you play most?', rotate: true },
+};
 export const BUNDLE_GROUPS = [
-  { key: 'video', label: 'streaming services', emoji: '📺', ask: 'Which do you watch most?', match: /NETFLIX|\bSTAN\b|BINGE|DISNEY|PRIME\s*VIDEO|AMAZON\s*PRIME|PARAMOUNT|APPLE\s*TV|KAYO|FOXTEL|STREAM/i, rotate: true },
-  { key: 'music', label: 'music apps', emoji: '🎵', ask: 'Which do you listen to most?', match: /SPOTIFY|APPLE\s*MUSIC|YOUTUBE|AMAZON\s*MUSIC|TIDAL|DEEZER/i, rotate: false },
-  { key: 'ai', label: 'AI tools', emoji: '🤖', ask: 'What do you use AI for?', match: null, rotate: false },
-  { key: 'storage', label: 'cloud storage plans', emoji: '☁️', ask: 'Where are most of your files?', match: /ICLOUD|GOOGLE\s*ONE|DROPBOX|ONEDRIVE|MICROSOFT\s*365/i, rotate: false },
-  { key: 'food', label: 'food delivery passes', emoji: '🍔', ask: 'Which do you order from most?', match: /UBER\s*ONE|DOORDASH|DASHPASS|MENULOG|DELIVEROO|HELLOFRESH|MARLEY\s*SPOON|YOUFOODZ/i, rotate: true },
-  { key: 'gaming', label: 'gaming passes', emoji: '🎮', ask: 'Which do you play most?', match: /XBOX|GAME\s*PASS|PLAYSTATION|PS\s*PLUS|NINTENDO|EA\s*PLAY|DISCORD/i, rotate: true },
+  ...Object.entries(KIT_GROUPS).map(([key, g]) => {
+    const pack = CATALOGUE.services.find((s) => s.overlap === key)?.pack;
+    return { key, ...g, label: CATALOGUE.overlapNames[key] || key, pack, emoji: CATALOGUE.packEmoji[pack] || '📦' };
+  }),
+  { key: 'ai', label: 'AI tools', pack: 'Tech Stack', emoji: '🤖', ask: 'What do you use AI for?', rotate: false },
 ];
 export const GROUP_BY_KEY = Object.fromEntries(BUNDLE_GROUPS.map((g) => [g.key, g]));
 
+// Ghost It's six Ghost Packs, each with what it hunts and the groups Kit sorts inside it.
+export const GHOST_PACKS = CATALOGUE.packs.map((pack) => ({
+  key: pack,
+  name: pack === 'Gym and Fitness' ? 'Gym & Fitness' : pack,
+  emoji: CATALOGUE.packEmoji[pack] || '📦',
+  hunts: CATALOGUE.packHunts[pack] || '',
+  groups: pack === 'Tech Stack' ? ['ai', 'storage', 'design'] : BUNDLE_GROUPS.filter((g) => g.pack === pack && g.key !== 'ai').map((g) => g.key),
+}));
+
+// The Ghost It service a merchant is (e.g. "NETFLIX.COM 866..." -> Netflix), or null.
+export function serviceFor(merchant = '') {
+  // Statements add symbols (UBER *EATS, NETFLIX.COM): treat them as spaces, keep + for Disney+.
+  const text = String(merchant).toLowerCase().replace(/[^a-z0-9+.]+/g, ' ');
+  return ALIAS_RE.find(({ re }) => re.test(text))?.s || null;
+}
 export const aiToolFor = (merchant = '') => AI_TOOLS.find((tool) => tool.match.test(merchant)) || null;
-const short = (merchant = '') => aiToolFor(merchant)?.name || cancelInfo(merchant).name || merchant;
+const short = (merchant = '') => serviceFor(merchant)?.name || aiToolFor(merchant)?.name || cancelInfo(merchant).name || merchant;
 export const sumMonthly = (items) => Math.round(items.reduce((s, i) => s + (Number(i.monthly) || 0), 0) * 100) / 100;
 
-// Groups of 2+ subscriptions doing the same job. AI tools also count design tools
-// (Canva, Adobe), since "images" or "design" may already be covered there.
+// Ghost It's bundle tips (agent.py bundle_tips), shown under each group. General facts.
+export function bundleTips(groupKey, items) {
+  const keys = new Set(items.map((i) => serviceFor(i.merchant)?.key).filter(Boolean));
+  const tips = [];
+  if (groupKey === 'music') {
+    if (keys.has('youtube')) tips.push('YouTube Premium already includes YouTube Music, so you may not need another music app.');
+    tips.push('Live with someone who also pays? Spotify Duo and Family put 2 to 6 people at one address on one plan.');
+    if (['applemusic', 'icloud', 'appletv'].some((k) => keys.has(k))) tips.push('Apple One bundles Apple Music, Apple TV+ and iCloud+ in one bill. Compare it with what you pay now.');
+  } else if (groupKey === 'storage') {
+    if (keys.has('m365')) tips.push('Microsoft 365 already includes 1 TB of OneDrive storage.');
+    tips.push('Most storage plans can be shared with family (Google One with up to 5 others, iCloud+ through Family Sharing).');
+  } else if (groupKey === 'video') {
+    tips.push('Most streaming apps let you cancel and come back any month, so rotating loses nothing but the wait.');
+    if (keys.has('prime')) tips.push("Prime Video comes with Amazon Prime, so if you keep Prime for delivery, that's your free one.");
+  } else if (groupKey === 'ai') {
+    tips.push('Most people need one general AI chat (ChatGPT, Claude or Gemini) and at most one coding tool.');
+  } else if (groupKey === 'delivery') {
+    tips.push('Check your bank card and phone plan perks first: some include a delivery membership.');
+  } else if (groupKey === 'mealkit') {
+    tips.push('One meal kit at a time is plenty. Most let you skip weeks for free instead of cancelling.');
+  } else if (groupKey === 'gaming') {
+    tips.push('Keep the pass for the console you play most, and rotate the others month to month.');
+  }
+  return tips;
+}
+
+const overlapOf = (s) => {
+  const svc = serviceFor(s.merchant);
+  if (svc?.overlap) return svc.overlap;
+  if (svc) return null;
+  return Object.entries(KIT_GROUPS).find(([, g]) => g.fallback?.test(s.merchant))?.[0] || null;
+};
+
+// Groups of 2+ subscriptions doing the same job (Ghost It's overlap groups). AI tools
+// also count design tools (Canva, Adobe), since "images" or "design" may be covered there.
 export function bundleGroups(subscriptions = []) {
   const subs = subscriptions.filter((s) => Number(s.monthly) > 0).map((s) => ({ ...s, name: short(s.merchant) }));
   const out = [];
   BUNDLE_GROUPS.forEach((group) => {
-    const items = group.key === 'ai' ? subs.filter((s) => aiToolFor(s.merchant)) : subs.filter((s) => group.match.test(s.merchant) && !aiToolFor(s.merchant));
-    const realAi = group.key === 'ai' ? items.filter((s) => !/CANVA|ADOBE/i.test(s.merchant)) : items;
+    const items = group.key === 'ai'
+      ? subs.filter((s) => aiToolFor(s.merchant) || ['ai', 'design'].includes(overlapOf(s)))
+      : subs.filter((s) => overlapOf(s) === group.key);
+    const realAi = group.key === 'ai' ? items.filter((s) => overlapOf(s) === 'ai' || (aiToolFor(s.merchant) && overlapOf(s) !== 'design')) : items;
     if (items.length >= 2 && realAi.length >= (group.key === 'ai' ? 1 : 2)) {
-      out.push({ ...group, items: [...items].sort((a, b) => b.monthly - a.monthly), monthly: sumMonthly(items) });
+      out.push({ ...group, items: [...items].sort((a, b) => b.monthly - a.monthly), monthly: sumMonthly(items), tips: bundleTips(group.key, items) });
     }
   });
   return out;
 }
 
-// Typed list, e.g. "ChatGPT $30, Claude $30, Midjourney $15". Weekly amounts become monthly.
+// Merge typed subscriptions into the statement's (a typed one replaces the same service).
+export function mergeSubs(statement = [], typed = []) {
+  const typedNames = new Set(typed.map((t) => t.name));
+  return [...statement.filter((s) => !typedNames.has(short(s.merchant))), ...typed];
+}
+
+// Typed list, e.g. "Netflix $19, Stan $16, ChatGPT $30". Weekly amounts become monthly.
 export function parseTyped(text = '') {
   const found = [];
   const re = /([A-Za-z][A-Za-z0-9+ .&'-]{1,30}?)\s*(?:[:-]\s*)?\$\s*(\d+(?:\.\d{1,2})?)\s*(a week|per week|\/\s*w(?:ee)?k|weekly)?/gi;
@@ -81,6 +156,7 @@ export function parseTyped(text = '') {
   }
   return found;
 }
+
 
 export function keepPlan(group, keepName) {
   const keep = group.items.find((i) => i.name === keepName) || group.items[0];

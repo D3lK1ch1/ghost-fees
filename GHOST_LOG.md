@@ -973,3 +973,20 @@ One entry per change. Newest at the bottom.
 - Files: base44/functions/kitResearch/entry.ts (new), base44/entities/Allowance.jsonc, src/lib/ghostFees/bundles.js, src/components/guide/KitPlanner.jsx, src/components/results/SubscriptionsSection.jsx
 - How to test (after Publish): Sample > Subscriptions > Kit > Romcom + "Bridgerton, Love Island Australia, Emily in Paris" > Find where my shows are. Tested locally with a faked search reply: the table, rotate plan (Dec Netflix, Jan Stan, about $15.50 a month vs $49.98) and Add to my Cancelling list (Stan moved to Cancelling).
 - User feedback that drove this: "before you keep and rotate what about researching to assist you... I like romcom or these shows then the agent should research", "can it give a comparison costs benefit analysis table", "then help you implement and cancel the other ghosts through cancellation and rotation strategy".
+
+### Kit uses Ghost It's packs: every category, the same double-up rules as the agent
+- What: Kit now spots double-ups with Ghost It's own catalogue: 44 services in 6 packs (Screen, Sound, Tech Stack, Food, Gym and Fitness, Play) and 8 overlap groups (video, music, storage, AI, design, delivery, meal kits, gaming). The agent and the app agree on every service.
+  - scripts/sync-ghostit-catalogue.py reads agent/agent.py as code (never runs it) and writes src/lib/ghostFees/ghostItCatalogue.json. Re-run it after the agent learns a new service.
+  - Statement names are matched to services by Ghost It's aliases (NETFLIX.COM, UBER *EATS, PRIME VIDEO AU), longest first, as whole words (so STANLEY is not Stan).
+  - One "type what else you pay" box for every pack (e.g. "YouTube Premium $17, Uber One $9.99, Game Pass $15, ChatGPT $30"). Typed services join the statement's, and weekly prices become monthly.
+  - Ghost It's bundle tips show under each group (YouTube Premium includes YouTube Music, Microsoft 365 includes 1 TB of OneDrive, Prime Video comes with Prime, one meal kit at a time...).
+  - In chat, a typed list opens Kit on the right pack (AI tools, gaming, music...).
+- Files: scripts/sync-ghostit-catalogue.py (new), src/lib/ghostFees/ghostItCatalogue.json (new, generated), src/lib/ghostFees/bundles.js, src/components/guide/KitPlanner.jsx, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Subscriptions > Kit > type "YouTube Premium $17, Google One $4.49, Uber One $9.99, DashPass $9.99, Game Pass $15, PS Plus $12, ChatGPT $30, Claude $30": tabs for 3 streaming, 2 music, 2 storage, 2 delivery, 2 gaming and 3 AI tools. Music shows the YouTube Music tip.
+- User feedback that drove this: "also assess broader types... and train it to identify overlaps based on the packages of the ... agent ghost.it".
+
+### Kit shows Ghost It's six Ghost Packs
+- What: Kit's tabs are now the six Ghost Pack cards from Ghost It (Screen, Sound, Gym & Fitness, Food, Tech Stack, Play). Each card says what Kit found ("3 doubled · $49.98 a month" or "Nothing doubled yet"), and the selected pack shows what it hunts in Ghost It's words. Packs with more than one group (Tech Stack: AI tools, cloud storage, design; Food: delivery, meal kits) get small sub-tabs. Gym & Fitness points to Ghost It for weekly costs.
+- Files: src/lib/ghostFees/bundles.js (GHOST_PACKS), src/components/guide/KitPlanner.jsx
+- How to test: Sample > Subscriptions > Kit, type "YouTube Premium $17, Google One $4.49, Uber One $9.99, DashPass $9.99, Game Pass $15, PS Plus $12, ChatGPT $30, Claude $30". The pack cards read Screen 3, Sound 2, Food 2, Tech Stack 5 and Play 2 doubled.
+- User feedback that drove this: "do the packages like ghost it".

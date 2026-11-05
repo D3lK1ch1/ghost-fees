@@ -11,7 +11,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
-import { parseTyped } from '@/lib/ghostFees/bundles';
+import { aiToolFor, bundleGroups, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
@@ -130,7 +130,13 @@ function answer(question, analysis, guideKey) {
   const doubles = /consolidat|double|doubling|paying twice|rotat|which (one )?(should i|to) keep|too many|bundle|pick one|same thing|streaming|ai tools?|chatgpt|claude|midjourney|gemini|copilot|cursor/;
   if (guideKey === 'bundle') {
     const typed = parseTyped(question);
-    if (typed.length >= 2) return { reply: `Got ${typed.length} tools. Tick what you use AI for and pick a budget, and I'll keep the 2 or 3 that cover it.`, kit: 'ai', typed: question };
+    if (typed.length >= 2) {
+      const ai = typed.filter((t) => aiToolFor(t.merchant)).length >= 2;
+      const first = bundleGroups([...(analysis.subscriptions || []), ...typed]).find((g) => g.key !== 'ai' && g.items.some((i) => i.typed));
+      return ai
+        ? { reply: `Got ${typed.length} tools. Tick what you use AI for and pick a budget, and I'll keep the 2 or 3 that cover it.`, kit: 'ai', typed: question }
+        : { reply: first ? `Got it. ${first.items.length} ${first.label} doing the same job. ${first.key === 'video' ? 'Tell me what you watch and I\'ll research where it is, or just pick your favourite.' : 'Pick your favourite and I\'ll show what to keep, or how to rotate.'}` : 'Got it. None of those double up with each other or your statement.', kit: first?.key || 'video', typed: question };
+    }
     if (/\bai\b|chatgpt|claude|midjourney|gemini|copilot|cursor|tools?/.test(text)) return { reply: 'Tick what you use AI for and pick a budget. I only choose from tools you already pay for.', kit: 'ai' };
     if (/rotat/.test(text)) return { reply: 'Rotating means one service a month: start one, cancel the last. Pick your favourite and tap Rotate, one a month. I can put every switch in your calendar.', kit: 'video' };
     if (doubles.test(text)) return { reply: 'Here are your double-ups. Pick the one you use most and I\'ll show what to keep and cancel.', kit: 'video' };

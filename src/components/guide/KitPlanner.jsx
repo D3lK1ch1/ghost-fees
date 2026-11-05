@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { trackEvent } from '@/lib/session';
 import {
-  AI_NEEDS, GENRES, aiPlan, bundleGroups, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
+  AI_NEEDS, GENRES, GHOST_PACKS, aiPlan, aiToolFor, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
 } from '@/lib/ghostFees/bundles';
 
 const KIT = '#7fd1ff';
@@ -179,11 +179,12 @@ function KitResearch({ group, onDecide, onCancelHelp }) {
 // Kit's planner: pick a group of double-ups, then keep one or rotate (streaming, food,
 // gaming), or tick what you use AI for and a budget (AI tools). Rules only, no AI.
 export default function KitPlanner({ subscriptions = [], compact = false, initialTab, initialTyped = '', onCancelHelp, onDecide, className = '' }) {
-  const groups = useMemo(() => bundleGroups(subscriptions), [subscriptions]);
+  // Anything typed ("Netflix $19, ChatGPT $30") joins the statement's subscriptions, so
+  // Kit can sort every Ghost It pack, not only what the statement shows.
   const [typed, setTyped] = useState(initialTyped);
-  const typedTools = useMemo(() => parseTyped(typed), [typed]);
-  const statementAi = groups.find((g) => g.key === 'ai')?.items || [];
-  const aiTools = typedTools.length ? typedTools : statementAi;
+  const typedSubs = useMemo(() => parseTyped(typed), [typed]);
+  const groups = useMemo(() => bundleGroups(mergeSubs(subscriptions, typedSubs)), [subscriptions, typedSubs]);
+  const aiTools = groups.find((g) => g.key === 'ai')?.items || typedSubs.filter((t) => aiToolFor(t.merchant));
   const tabs = [...groups.filter((g) => g.key !== 'ai'), { key: 'ai', label: 'AI tools', emoji: '🤖' }];
   const [tab, setTab] = useState(tabs.some((t) => t.key === initialTab) ? initialTab : (tabs[0]?.key || 'ai'));
   const group = groups.find((g) => g.key === tab);
@@ -207,13 +208,53 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
           <span style={{ color: KIT }}>Kit</span> · keep one, rotate the rest
         </p>
       )}
-      <div className={cn('flex flex-wrap gap-1.5', !compact && 'mt-2')} role="tablist" aria-label="Which double-ups">
-        {tabs.map((t) => (
-          <Pill key={t.key} on={tab === t.key} onClick={() => setTab(t.key)}>
-            {t.emoji} {t.key === 'ai' ? 'AI tools' : `${t.items.length} ${t.label}`}
-          </Pill>
-        ))}
+      {/* Ghost It's six Ghost Packs: each card says what it hunts and what Kit found. */}
+      <div className={cn('grid grid-cols-2 gap-1.5 sm:grid-cols-3', !compact && 'mt-2')} role="tablist" aria-label="Ghost Packs">
+        {GHOST_PACKS.map((pack) => {
+          const found = groups.filter((g) => pack.groups.includes(g.key) && (g.key !== 'ai' || aiTools.length >= 2));
+          const count = found.reduce((n, g) => n + g.items.length, 0);
+          const on = pack.groups.includes(tab);
+          const open = pack.groups.length > 0;
+          return (
+            <button key={pack.key} type="button" role="tab" aria-selected={on} disabled={!open}
+              onClick={() => setTab(found[0]?.key || pack.groups[0])}
+              title={`${pack.name} pack hunts ${pack.hunts}`}
+              className={cn('rounded-xl border px-2.5 py-2 text-left transition-colors disabled:opacity-60', on ? 'border-[#7fd1ff] bg-[#7fd1ff]/10' : 'border-border bg-background/50 hover:border-[#7fd1ff]/50')}>
+              <span className="block text-[13.5px] font-bold text-foreground">{pack.emoji} {pack.name}</span>
+              <span className={cn('block text-[12px] leading-tight', count ? 'font-semibold' : 'text-muted-foreground')} style={count ? { color: KIT } : undefined}>
+                {count ? `${count} doubled · ${money(sumMonthly(found.flatMap((g) => g.items)))} a month` : open ? 'Nothing doubled yet' : 'Ask Ghost It about weekly costs'}
+              </span>
+            </button>
+          );
+        })}
       </div>
+      {(() => {
+        const pack = GHOST_PACKS.find((p) => p.groups.includes(tab));
+        if (!pack) return null;
+        const subs = pack.groups.filter((k) => k === 'ai' || groups.some((g) => g.key === k));
+        return (
+          <>
+            <p className="mt-2 text-[12.5px] text-muted-foreground">{pack.emoji} <span className="font-bold text-foreground">{pack.name} pack</span> hunts {pack.hunts}.</p>
+            {subs.length > 1 && (
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {subs.map((k) => {
+                  const g = groups.find((x) => x.key === k);
+                  return <Pill key={k} on={tab === k} onClick={() => setTab(k)}>{k === 'ai' ? '🤖 AI tools' : `${g.items.length} ${g.label}`}</Pill>;
+                })}
+              </div>
+            )}
+          </>
+        );
+      })()}
+
+      <label className="mt-2 block">
+        <span className="text-[12.5px] text-muted-foreground">Pay for something not on this statement? Type it with the price.</span>
+        <input value={typed} onChange={(e) => setTyped(e.target.value)} maxLength={400}
+          placeholder="Disney+ $16, YouTube Premium $17, ChatGPT $30, Claude $30"
+          className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] text-foreground outline-none placeholder:text-muted-foreground focus:border-[#7fd1ff]" />
+      </label>
+      {typedSubs.length > 0 && <p className="mt-1 text-[12.5px] text-muted-foreground">Got it: {itemLine(typedSubs)}.</p>}
+      {!groups.length && !typedSubs.length && <p className="mt-2 text-[13.5px] text-muted-foreground">No double-ups on this statement yet. Type what else you pay for and Kit checks every Ghost It pack: Screen, Sound, Tech Stack, Food and Play.</p>}
 
       {group && tab !== 'ai' && (
         <div className="mt-3">
@@ -221,6 +262,11 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
             <p className="mb-2 text-[14px] text-foreground">
               {itemLine(group.items)}: <span className="font-bold">{money(group.monthly)} a month</span> together.
             </p>
+          )}
+          {group.tips?.length > 0 && (
+            <ul className="mb-2 space-y-0.5 text-[12.5px] text-muted-foreground">
+              {group.tips.map((tip) => <li key={tip}>💡 {tip}</li>)}
+            </ul>
           )}
           {group.key === 'video' && <KitResearch key={group.key} group={group} onDecide={onDecide} onCancelHelp={onCancelHelp} />}
           <p className={cn('text-[14px] font-bold text-foreground', group.key === 'video' && 'mt-3')}>{group.key === 'video' ? 'Or just pick the one you watch most:' : group.ask}</p>
@@ -272,17 +318,10 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
 
       {tab === 'ai' && (
         <div className="mt-3">
-          {statementAi.length >= 2 && !typed
-            ? <p className="text-[14px] text-foreground">On your statement: {itemLine(statementAi)}: <span className="font-bold">{money(sumMonthly(statementAi))} a month</span>.</p>
-            : <p className="text-[14px] text-muted-foreground">Type the AI tools you pay for and what each costs a month.</p>}
-          <label className="mt-2 block">
-            <span className="sr-only">AI tools you pay for</span>
-            <input value={typed} onChange={(e) => setTyped(e.target.value)} maxLength={300}
-              placeholder="ChatGPT $30, Claude $30, Midjourney $15"
-              className="w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] text-foreground outline-none placeholder:text-muted-foreground focus:border-[#7fd1ff]" />
-          </label>
-          {typedTools.length > 0 && <p className="mt-1 text-[12.5px] text-muted-foreground">Got it: {itemLine(typedTools)}.</p>}
-
+          {aiTools.length >= 2
+            ? <p className="text-[14px] text-foreground">{itemLine(aiTools)}: <span className="font-bold">{money(sumMonthly(aiTools))} a month</span>.</p>
+            : <p className="text-[14px] text-muted-foreground">Type the AI tools you pay for above, with prices.</p>}
+          {groups.find((g) => g.key === 'ai')?.tips.map((tip) => <p key={tip} className="mt-1 text-[12.5px] text-muted-foreground">💡 {tip}</p>)}
           <p className="mt-3 text-[14px] font-bold text-foreground">What do you use AI for? Tick all that apply.</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {AI_NEEDS.map((n) => <Pill key={n.key} on={needs.includes(n.key)} onClick={() => toggleNeed(n.key)}>{n.emoji} {n.label}</Pill>)}
@@ -292,7 +331,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
             {BUDGETS.map((b) => <Pill key={String(b)} on={budget === b} onClick={() => setBudget(b)}>{b ? `Up to $${b}` : 'No limit'}</Pill>)}
           </div>
 
-          {aiTools.length < 2 && needs.length > 0 && <p className="mt-3 text-[14px] text-muted-foreground">Add at least two tools above and I'll sort them.</p>}
+          {aiTools.length < 2 && needs.length > 0 && <p className="mt-3 text-[14px] text-muted-foreground">Add at least two AI tools above and I'll sort them.</p>}
           {plan && (
             <div className="mt-3 rounded-xl border border-[#7fd1ff]/30 bg-[#7fd1ff]/[0.06] p-3">
               <p className="text-[14px] font-bold text-foreground">Keep {plan.keep.length} {plan.keep.length === 1 ? 'tool' : 'tools'}:</p>
