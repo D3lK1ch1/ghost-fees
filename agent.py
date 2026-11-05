@@ -1632,7 +1632,7 @@ if os.environ.get("GHOSTIT_LOCAL_SEED"):
                   mailbox=True, publish_agent_details=True,
                   handle=os.environ.get("GHOSTIT_HANDLE", "ghostit"),
                   description="I hunt the money leaks your bank statement can't show you. A Ghost Pack for streaming, music, AI tools, food, gym and gaming.",
-                  avatar_url=os.environ.get("GHOSTIT_AVATAR_URL", "https://hunt-ghost-fees.base44.app/themes/ghostit/ghost-it-wave.webp"),
+                  avatar_url=os.environ.get("GHOSTIT_AVATAR_URL", "https://storage.googleapis.com/agentverse-prod-assets/agent-avatars-pub/939401106.jpg"),
                   readme_path=_readme if os.path.exists(_readme) else None)
 else:
     agent = Agent()
