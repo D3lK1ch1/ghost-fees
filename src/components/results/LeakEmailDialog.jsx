@@ -182,8 +182,11 @@ export default function LeakEmailDialog({ leak, onClose }) {
 
   return (
     <Dialog open={Boolean(leak)} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="max-w-lg rounded-[1.5rem] border-border bg-popover p-0">
-        <div className="p-5 sm:p-6">
+      {/* Fits the screen: the title and buttons stay put and only the email scrolls, so
+          Close, Copy and Open in Mail are always visible (a long fee email was taller than
+          a laptop screen and hid them). */}
+      <DialogContent className="flex max-h-[calc(100dvh-1.5rem)] max-w-lg flex-col gap-0 rounded-[1.5rem] border-border bg-popover p-0 [&>button:last-child]:right-4 [&>button:last-child]:top-4 [&>button:last-child]:rounded-full [&>button:last-child]:bg-white/10 [&>button:last-child]:p-1.5 [&>button:last-child]:opacity-100">
+        <div className="shrink-0 px-5 pb-3 pt-5 sm:px-6 sm:pt-6">
           <DialogTitle className="pr-8 font-heading text-lg font-semibold text-foreground">
             {title}
           </DialogTitle>
@@ -199,12 +202,16 @@ export default function LeakEmailDialog({ leak, onClose }) {
             )}
           </p>
           )}
+        </div>
 
-          <p className="mt-4 whitespace-pre-wrap rounded-xl border border-border bg-background/60 p-4 text-[14px] leading-relaxed text-foreground/85">
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 sm:px-6">
+          <p className="whitespace-pre-wrap rounded-xl border border-border bg-background/60 p-4 text-[14px] leading-relaxed text-foreground/85">
             {body}
           </p>
+        </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-3">
+        <div className="shrink-0 px-5 pb-5 pt-3 sm:px-6 sm:pb-6">
+          <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={copy}
@@ -221,6 +228,9 @@ export default function LeakEmailDialog({ leak, onClose }) {
               Open in Mail
             </a>
           </div>
+          <button type="button" onClick={onClose} className="mt-2 w-full rounded-xl px-4 py-2 text-[14px] font-semibold text-muted-foreground transition-colors hover:text-foreground">
+            Close
+          </button>
         </div>
       </DialogContent>
     </Dialog>

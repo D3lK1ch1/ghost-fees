@@ -931,3 +931,9 @@ One entry per change. Newest at the bottom.
 - Files: public/themes/mind/mo-lantern.webp (copy of haunted/lantern-ghost.webp), src/lib/ghostFees/guides.js, src/components/patterns/MoWalkthrough.jsx, src/components/guide/GhostGuide.jsx, src/components/results/HauntedHouse.jsx
 - How to test: Any theme > sample > Money patterns: Mo is the lantern ghost. Ask a ghost > Mo: the same art in the header. Ex theme > Hattie: pink-bow Hattie (Hank on "I'm Fine").
 - User feedback that drove this: "look local image assets ofpr proper images" (screenshot of plain Mo on the Ex theme).
+
+### Email box always shows Close; chat reopens on the newest message
+- What: (1) A long fee email was taller than a laptop screen, so the × and the Copy / Open in Mail buttons were off screen. The email box now fits the screen: the title and × stay at the top, the buttons and a new Close button stay at the bottom, and only the email scrolls. (2) After switching ghost with the chat closed, reopening showed the top of the chat (an old hello from Penny) under the newly picked ghost. The chat now jumps to the newest message every time it opens.
+- Files: src/components/results/LeakEmailDialog.jsx, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Waive it on Monthly Account Fee: × at top, Copy / Open in Mail / Close at the bottom, with no scrolling of the page. Open Ask a ghost, close it, pick Cassy in the Haunted House, reopen: Cassy's message shows.
+- User feedback that drove this: "open email where is teh clsoe button" and "why is peneny inetrdoucsing under gus".
