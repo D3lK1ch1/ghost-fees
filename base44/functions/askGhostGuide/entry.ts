@@ -12,6 +12,18 @@ const GUIDES = {
   habit: { name: 'Hattie', tone: 'practical, kind, no guilt', focus: 'helps people pick and keep one small money habit from the patterns on their statement' },
 };
 
+// Pack 11: one job each. What every guide must do, and what it never does (another
+// ghost's job). Off-job questions get one line and a handoff to the right ghost.
+const JOBS = {
+  penny: { does: 'say what a ghost cost and how the amount was worked out, from the summary only', never: 'write emails, explain money patterns or suggest habits' },
+  sir: { does: 'offer to draft the cancel, refund or fee-waiver email for a named ghost (action draft_email)', never: 'explain totals in detail, money patterns or habits' },
+  gus: { does: 'give the next one or two steps, biggest ghost first, and cheer them on', never: 'explain money patterns or write the email text' },
+  cass: { does: 'help cancel one named subscription: the app looks up its official cancel page', never: 'guess a cancel link or phone number, or explain money patterns' },
+  mind: { does: 'name the common money pattern behind a ghost, from the patterns list, with its total exactly as given, then ask if it sounds like them', never: 'restate a ghost\'s price as the answer (that is Penny\'s job), diagnose, or suggest more than one habit' },
+  habit: { does: 'help with ONE small habit written as "When X, I will Y", and offer to open their habit plan', never: 'explain totals, estimate savings or diagnose' },
+};
+const HANDOFF_KEYS = Object.keys(JOBS);
+
 const REPLY_SCHEMA = {
   type: 'object',
   properties: {
@@ -20,6 +32,7 @@ const REPLY_SCHEMA = {
     leakId: { type: 'string', description: 'An id from the summary, only when the action needs one' },
     biasKey: { type: 'string', description: 'A pattern key from the summary, only for open_pattern' },
     chips: { type: 'array', items: { type: 'string' }, description: 'Up to 3 short follow-up questions' },
+    handoff: { type: 'string', enum: ['none', ...Object.keys(GUIDES)], description: "Only when the question is another ghost's job: that ghost's key" },
   },
   required: ['reply', 'action'],
 };
@@ -187,7 +200,9 @@ Rules:
 - Off-topic questions: one friendly line steering back to their ghosts.
 - Max 80 words, plain text, no markdown, no emojis.
 - Money patterns: describe each as "a common pattern", never "you have" or a diagnosis. Only patterns listed in the summary, with their totals exactly as given. Never estimate, project or add up a yearly figure: if asked, say you only use what's on their statement. When suggesting a habit, give one, written as "When X, I will Y". If the person answered "no" for a pattern, respect it. To show a pattern's details, use action 'open_pattern' with that pattern's key as biasKey.
-${guideKey === 'habit' ? `- You are the habit ghost: help with ONE small habit per answer, written as "When X, I will Y". Max 60 words. Never estimate savings (yearly or otherwise), never diagnose, never name financial products. To open their habit plan, use action 'open_habit' with a pattern key as biasKey.\n` : ''}- Pick an action only when it clearly helps (e.g. user asks to write the Netflix email: action 'draft_email' with that leak's id). leakId must be an id from the summary.
+- Your one job: ${JOBS[guideKey].does}. You never ${JOBS[guideKey].never}.
+- If the question is another ghost's job, answer in one short line and set handoff to that ghost: ${HANDOFF_KEYS.filter((k) => k !== guideKey).map((k) => `${k} (${GUIDES[k].name}: ${JOBS[k].does})`).join('; ')}.
+${guideKey === 'mind' ? '- You are Mo: every answer names at least one pattern from the patterns list by its exact name.\n' : ''}${guideKey === 'habit' ? `- You are the habit ghost: help with ONE small habit per answer, written as "When X, I will Y". Max 60 words. Never estimate savings (yearly or otherwise), never diagnose, never name financial products. To open their habit plan, use action 'open_habit' with a pattern key as biasKey.\n` : ''}- Pick an action only when it clearly helps (e.g. user asks to write the Netflix email: action 'draft_email' with that leak's id). leakId must be an id from the summary.
 
 Summary of the user's results:
 Total: $${amount(summary.total).toFixed(2)} in ${months} months
@@ -204,19 +219,28 @@ User: ${question}`,
       response_json_schema: REPLY_SCHEMA,
     });
 
-    const reply = String(result?.reply || '').slice(0, 700).trim();
+    let reply = String(result?.reply || '').slice(0, 700).trim();
     if (!reply) return Response.json({ error: 'The spirits went quiet.' }, { status: 502 });
+    let forcedPattern = null;
+    // Pack 11 backstop: Mo must name a pattern. If he didn't, use the fixed opener for the
+    // biggest pattern instead (built from the app's numbers, no AI).
+    const handoff = HANDOFF_KEYS.includes(result?.handoff) && result.handoff !== guideKey ? result.handoff : null;
+    if (guideKey === 'mind' && patterns.length && !handoff && !patterns.some((p) => p.name && reply.toLowerCase().includes(p.name.toLowerCase()))) {
+      const top = patterns[0];
+      reply = `${top.name} is the biggest common pattern behind your ghosts: $${top.total.toFixed(2)} across ${top.charges} ${top.charges === 1 ? 'charge' : 'charges'}. It's a common pattern, not a flaw. Does it sound like you?`;
+      forcedPattern = top.key;
+    }
 
     const leakId = leaks.some((leak) => leak.id === result?.leakId) ? result.leakId : null;
-    let action = ACTIONS.includes(result?.action) ? result.action : 'none';
+    let action = forcedPattern ? 'open_pattern' : ACTIONS.includes(result?.action) ? result.action : 'none';
     if (['open_leak', 'draft_email', 'show_transactions'].includes(action) && !leakId) action = 'none';
     const wantsKey = action === 'open_pattern' || action === 'open_habit';
-    const biasKey = wantsKey && patterns.some((p) => p.key === result?.biasKey) ? result.biasKey : null;
+    const biasKey = forcedPattern || (wantsKey && patterns.some((p) => p.key === result?.biasKey) ? result.biasKey : null);
     if (action === 'open_pattern' && !biasKey) action = 'none';
     const chips = (Array.isArray(result?.chips) ? result.chips : []).slice(0, 3).map((chip) => clean(chip, 80)).filter(Boolean);
 
     if (gate.record) await gate.record().catch(() => {});
-    return Response.json({ reply, action, leakId, biasKey, chips });
+    return Response.json({ reply, action, leakId, biasKey, chips, handoff });
   } catch (error) {
     return Response.json({ error: error?.message || 'The spirits went quiet.' }, { status: 500 });
   }
