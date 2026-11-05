@@ -1012,3 +1012,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/bundles.js (consolidationPlan, consolidationText), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx, src/components/guide/KitPlanner.jsx
 - How to test: Sample > Ask a ghost > Kit: the opener is the consolidation plan. Type "can you help me consolidate subscriptions" to get the same plan. Research (after Publish) shows cards in chat.
 - User feedback that drove this: "format this more" and "can you help me consolidate subscriptions didn't really work out".
+
+### Home team matches the app, badges cascade, feedback answers match, seven ghosts everywhere
+- What: (1) Meet your ghost team: Hattie now wears the theme's outfit like in the app (witch in Haunted, pink bow or Hank on Ex, Santa at Christmas), with Hank's name on "I'm Fine". (2) Badges you can earn: one line cascading down the page on a thin track, each badge fading in after the last (was a 2-column grid). (3) Feedback form: both questions now read Yes / Not sure / No (were Yes / Kinda / No and Yes / Maybe / No). Only the button text changed, so the stored answers (Kinda / Maybe) and the progress counts still work. (4) "All 6 ghost guides" is now 7 (with Kit) on Pricing, Upgrade, Unlocked and sign-in.
+- Files: src/components/landing/GhostTeam.jsx, src/components/results/BadgesExplainer.jsx, src/components/results/ChoiceGroup.jsx, src/components/results/FeedbackPanel.jsx, src/components/AuthLayout.jsx, src/components/landing/PlansAtAGlance.jsx, src/pages/Upgrade.jsx, src/pages/Unlocked.jsx
+- How to test: Home (Haunted): Hattie is the witch. Sample > Subscriptions: badges in one cascading line. Feedback form: both questions show Yes / Not sure / No.
+- User feedback that drove this: "make these ghosts match the avatars in the app", "arrange these better like a line cascading down", "yes no, kinda and maybe need to be consistent".

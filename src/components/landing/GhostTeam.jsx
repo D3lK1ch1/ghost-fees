@@ -2,6 +2,8 @@ import { Brain, Calculator, CalendarCheck, Layers, Mail, MessageCircle, Scissors
 import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
 import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
+import { habitArt, habitGhost, readExPick } from '@/lib/ghostFees/habitArt';
+import { useTheme } from '@/lib/ThemeContext';
 
 // Home page, under the stats: who does what. The seven ghost guides in the app and
 // Ghost It, the chat agent in ASI:One. "Where's the different ghost agents?" (2 Nov)
@@ -31,13 +33,19 @@ export const TEAM = [
 
 
 export default function GhostTeam() {
+  // Same avatars as the app: Hattie wears the theme's outfit (Hank on the Ex "I'm Fine" pick).
+  const { theme } = useTheme();
+  const exPick = readExPick();
+  const team = TEAM.map((agent) => (agent.key === 'habit'
+    ? { ...agent, image: habitArt(theme?.key, exPick), name: habitGhost(theme?.key, exPick).name }
+    : agent));
   return (
     <section aria-label="Meet your ghost team" className="mx-auto mt-8 w-full max-w-4xl px-4">
       <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Meet your ghost team</p>
       <p className="mt-1 text-center text-[15px] text-muted-foreground">Seven ghost guides in the app, plus Ghost It in ASI:One.</p>
       {/* One agent per row, cascading down the page (each fades in a beat after the last). */}
       <ul className="mx-auto mt-4 flex max-w-2xl flex-col gap-3">
-        {TEAM.map((agent, index) => (
+        {team.map((agent, index) => (
           <li
             key={agent.key}
             className="team-cascade flex items-center gap-4 rounded-3xl border-2 bg-card/70 px-4 py-4 sm:px-5"

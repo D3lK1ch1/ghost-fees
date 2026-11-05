@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils';
 
-export default function ChoiceGroup({ label, options, value, onChange }) {
+// labels: optional display text per stored option (e.g. store 'Kinda', show 'Not sure').
+export default function ChoiceGroup({ label, options, value, onChange, labels = {} }) {
   return (
     <div className="mt-5">
       <p className="text-[14px] font-medium text-white">{label}</p>
@@ -20,7 +21,7 @@ export default function ChoiceGroup({ label, options, value, onChange }) {
                   : 'border-white/[0.1] bg-white/[0.02] font-medium text-muted-foreground hover:border-white/25 hover:text-white',
               )}
             >
-              {option}
+              {labels[option] || option}
             </button>
           );
         })}
