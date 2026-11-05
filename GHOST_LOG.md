@@ -990,3 +990,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/bundles.js (GHOST_PACKS), src/components/guide/KitPlanner.jsx
 - How to test: Sample > Subscriptions > Kit, type "YouTube Premium $17, Google One $4.49, Uber One $9.99, DashPass $9.99, Game Pass $15, PS Plus $12, ChatGPT $30, Claude $30". The pack cards read Screen 3, Sound 2, Food 2, Tech Stack 5 and Play 2 doubled.
 - User feedback that drove this: "do the packages like ghost it".
+
+### Kit's description: researches and optimises your subscriptions
+- What: Kit's picker subtitle "Sorts double-ups" is now "Optimises subs". His job line, hello, home page blurb and card title now say he researches and optimises your subscriptions: finds double-ups across every Ghost Pack, checks where your shows stream, compares cost against what you use, then keep one, rotate or cancel.
+- Files: src/lib/ghostFees/guides.js, src/components/landing/GhostTeam.jsx, src/components/guide/KitPlanner.jsx
+- How to test: Ask a ghost: the Kit chip reads "Optimises subs", and the header reads "Kit · Researches and optimises your subscriptions".
+- User feedback that drove this: "better description like researches and optimises subscriptions".

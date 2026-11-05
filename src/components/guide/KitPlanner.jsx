@@ -205,7 +205,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
     <div className={cn('rounded-2xl border bg-card/80 p-4', compact ? 'border-border' : 'border-[#7fd1ff]/40', className)}>
       {!compact && (
         <p className="font-heading text-[15px] font-bold text-foreground">
-          <span style={{ color: KIT }}>Kit</span> · keep one, rotate the rest
+          <span style={{ color: KIT }}>Kit</span> · researches and optimises your subscriptions
         </p>
       )}
       {/* Ghost It's six Ghost Packs: each card says what it hunts and what Kit found. */}

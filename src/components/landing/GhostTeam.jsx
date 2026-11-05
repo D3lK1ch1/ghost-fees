@@ -12,7 +12,7 @@ const BLURBS = {
   sir: 'Writes your cancel, refund and fee-waiver emails.',
   gus: 'Keeps score as you bust ghosts and sets goals.',
   cass: 'Finds the real cancel page, steps and phone number.',
-  bundle: 'Compares subscriptions that do the same job: keep the one you like most, rotate, or sort your AI tools by what you use them for and your budget.',
+  bundle: 'Researches and optimises your subscriptions: checks where your shows stream, compares cost against what you use, then keep one, rotate or cancel.',
   mind: 'Explains the money pattern behind each ghost and one habit to beat it.',
   habit: 'Helps you keep one small money habit and checks in a week later.',
 };
