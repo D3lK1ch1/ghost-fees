@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { MessageCircle, Sparkles } from 'lucide-react';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_MENTION } from '@/lib/ghostFees/ghostItAgent';
 import { useGo } from './AskGhostIt';
 import GhostItDialog from './GhostItDialog';
 
@@ -22,8 +22,8 @@ export const PACKS = [
 export default function GhostItPacks({ items = [], className = '', kicker = 'Ghost It · AI agent on ASI:One', title = 'The leaks your statement can\'t show', intro }) {
   const list = items.filter((item) => item?.merchant && Number(item.monthly) > 0).slice(0, 8);
   const text = list.length
-    ? `@ghostit ${list.map((item) => `${item.merchant} $${Number(item.monthly).toFixed(2)}/mo`).join(', ')}`
-    : '@ghostit packs';
+    ? `${GHOST_IT_MENTION} ${list.map((item) => `${item.merchant} $${Number(item.monthly).toFixed(2)}/mo`).join(', ')}`
+    : `${GHOST_IT_MENTION} packs`;
   const go = useGo(text);
   const [about, setAbout] = useState(false);
 

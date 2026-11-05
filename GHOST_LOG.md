@@ -841,3 +841,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostItOffer.jsx
 - How to test: home, Ghost It card, tap Try it in ASI:One: ASI:One opens on Ghost.it.
 - User feedback that drove this: team review ("try it links open Ghost Fees, not working; try it should lead to ASI:One")
+
+### Copied Ghost It messages mention the working agent by address
+- What: every message the app copies for Ghost It (Ask Ghost It on results, Ghost Packs, Try, the Ghost It page sample) now starts with the working agent's address mention instead of "@ghostit", because ASI:One still sends "@ghostit" to the old stopped agent until its index refreshes. One setting (GHOST_IT_MENTION in ghostItAgent.js) to switch back to "@ghostit" later.
+- Files: src/lib/ghostFees/ghostItAgent.js, src/components/results/AskGhostIt.jsx, src/components/results/GhostItPacks.jsx, src/pages/Try.jsx, src/pages/GhostIt.jsx
+- How to test: copy a Ghost It message in the app and paste it in ASI:One: it goes to Ghost.it (agent1qdaylw...), not your personal assistant.
+- User feedback that drove this: team review ("link the correct ASI in the app")
