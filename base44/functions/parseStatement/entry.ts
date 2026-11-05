@@ -9,7 +9,7 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const FREE_SCANS = 3; // 3 free statement uploads (one upload = up to 6 files). The sample never counts.
 const FREE_CASS = 1; // Cassy looks up one subscription for free
 const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
-const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass'];
+const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind'];
 
 function secretOr(name, fallback = '') {
   try {

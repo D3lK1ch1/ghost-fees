@@ -3,6 +3,8 @@ import { Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
+import { usePatterns } from '@/components/patterns/PatternContext';
 import CassLookup from '@/components/results/CassLookup';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
@@ -21,6 +23,7 @@ const ACTION_LABELS = {
   open_path: 'Open my goal path',
   open_emails: 'See all email templates',
   scroll_feedback: 'Take me there',
+  open_pattern: 'Open the pattern',
 };
 
 const nameOf = (leak) => leak.title || leak.merchant;
@@ -113,8 +116,11 @@ function answer(question, analysis) {
 }
 
 // What the AI guide may see: the results summary only. Never rows, descriptions, pay or file names.
-function summaryFor(analysis) {
+function summaryFor(analysis, patternAnswers = {}) {
   return {
+    // Pack 9: the money patterns, computed by biasGroups (the AI explains, never calculates).
+    patterns: biasGroups(analysis.leaks).map((g) => ({ key: g.key, name: g.bias, badge: g.badge, total: g.total, charges: g.charges, from: g.from, to: g.to, evidence: g.evidence })),
+    patternAnswers,
     total: analysis.total,
     months: analysis.monthSpan,
     leaks: analysis.leaks.map((leak) => ({
@@ -138,6 +144,9 @@ function starterChips(analysis, guide) {
     'Is my data stored?',
     'What is price creep?',
     'Show me the haunted house',
+    'Why do my trials turn into charges?',
+    'Which pattern costs me most?',
+    'One habit for the biggest one?',
   ].filter(Boolean);
   const own = (guide?.chips || []).filter((chip) => all.includes(chip));
   return [...own, ...all.filter((chip) => !own.includes(chip))];
@@ -153,6 +162,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const guide = GUIDES[guideKey];
+  const patterns = usePatterns();
   const chips = starterChips(analysis, guide);
   const { leaks, total, monthSpan } = analysis;
 
@@ -234,7 +244,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     setThinking(true);
     setAiCount((count) => count + 1);
     try {
-      const response = await base44.functions.invoke('askGhostGuide', { guide: guideKey, question: text, history, summary: summaryFor(analysis) });
+      const response = await base44.functions.invoke('askGhostGuide', { guide: guideKey, question: text, history, summary: summaryFor(analysis, patterns?.answers) });
       const data = response?.data || {};
       if (data.locked) {
         if (data.reason === 'busy') reply({ text: 'Lots of ghost hunters at once. Sign in, or try again soon. The quick questions below still work.', chips: nextChips });
@@ -248,7 +258,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       markGuide(guideKey);
       const leak = leaks.find((item) => item.id === data.leakId);
       const action = ACTION_LABELS[data.action] && (leak || !['draft_email', 'open_leak', 'show_transactions'].includes(data.action)) ? data.action : null;
-      reply({ text: data.reply, action, leak, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
+      const biasKey = action === 'open_pattern' && PATTERN_BY_KEY[data.biasKey] ? data.biasKey : null;
+      reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
     } catch {
       reply({ text: 'The spirits went quiet. Try again, or tap a question below.', chips: nextChips });
     } finally {
@@ -257,7 +268,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   };
 
   const run = (message) => {
-    onAction(message.action, message.leak);
+    if (message.action === 'open_pattern' && message.biasKey) patterns?.openPattern(message.biasKey);
+    else onAction(message.action, message.leak);
     if (window.matchMedia('(max-width: 639px)').matches) setOpen(false);
   };
 
