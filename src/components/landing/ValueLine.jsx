@@ -1,7 +1,5 @@
-import { Check, Lock } from 'lucide-react';
 import VideoCard from '@/components/site/VideoCard';
 import { PROMO } from '@/data/videos';
-import { openTypicalPrices } from '@/components/site/DataSafety';
 
 // The first thing on the home page in every theme (design A, 4 Nov: "less chunky,
 // more streamlined"). One kicker, one headline, one sentence, three steps in a line,
@@ -17,9 +15,6 @@ export default function ValueLine({ onSample, onUpload }) {
       <h2 className="mt-2 font-heading text-[30px] font-semibold leading-[1.1] tracking-tight text-foreground sm:text-[38px]">
         Ghost them once. <span className="text-primary">Pay once.</span>
       </h2>
-      <p className="mx-auto mt-3 max-w-md text-[16px] leading-relaxed text-muted-foreground">
-        Find the subscriptions you forgot and cancel them in one click. No bank login.
-      </p>
 
       <ol className="mx-auto mt-5 flex max-w-md items-center justify-center gap-2 text-[14px] text-foreground/90" aria-label="How it works">
         {STEPS.map((step, index) => (
@@ -34,7 +29,7 @@ export default function ValueLine({ onSample, onUpload }) {
       <div className="mt-6 flex flex-col items-center gap-2">
         {onSample && (
           <button type="button" data-tour="try" onClick={onSample} className="rounded-full bg-primary px-6 py-3 text-[15px] font-semibold text-primary-foreground shadow-[0_10px_34px_hsl(var(--primary)/0.32)] transition-transform hover:-translate-y-0.5">
-            See it on a sample · 10 sec
+            Try the sample (10 sec)
           </button>
         )}
         {onUpload && (
@@ -44,23 +39,11 @@ export default function ValueLine({ onSample, onUpload }) {
         )}
       </div>
 
-      <ul className="mt-5 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[13px] text-muted-foreground">
-        <li className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />$10 once</li>
-        <li className="inline-flex items-center gap-1"><Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />No bank login</li>
-        <li>
-          <button type="button" onClick={openTypicalPrices} className="inline-flex items-center gap-1 hover:text-foreground">
-            <Check className="h-3.5 w-3.5 text-primary" aria-hidden="true" />No upload needed
-          </button>
-        </li>
-      </ul>
-      {/* Same pattern as the UVP block under the theme headline: a lock icon, one line. */}
-      <p className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
-        <Lock className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
-        We never touch your bank, cards or accounts. You decide.
-      </p>
+      {/* Pack 9: the selling lines (price, no bank login, trust) live once, in the theme
+          hero below, so this card is just the headline, the 3 steps and the button. */}
 
       {/* The promo, our story in 90 seconds (4 Nov: "embed the promo one too"). The demo
-          sits further down, under Scan a sample free. */}
+          sits further down, as a Watch the full demo link. */}
       <div className="mx-auto mt-6 max-w-xl text-left">
         <p className="mb-2 text-center text-[12.5px] font-semibold uppercase tracking-[0.14em] text-primary">Our story in 90 seconds</p>
         <VideoCard video={PROMO} />

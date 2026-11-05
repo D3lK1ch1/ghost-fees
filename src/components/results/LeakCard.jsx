@@ -81,7 +81,7 @@ export default function LeakCard({ leak, onDraft, avatar }) {
       {rise && (
         <p className={cn('mt-2 text-[13.5px] leading-relaxed', muted)}>
           Up <strong className={strong}>{rise.percent}%</strong> since {shortDate(leak.priceRise.since)}.
-          {' '}Prices overall rose {CPI.rate}% in the year to {CPI.asOf} (ABS).
+          {' '}Prices overall rose {CPI.rate}% in the year to {CPI.asOf} (ABS).{' '}
           {rise.above && (
             <span className="ml-2 inline-block rounded-full bg-[#ffd9a8] px-2 py-0.5 text-[12.5px] font-bold text-[#8a3b00]">
               Above inflation

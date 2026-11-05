@@ -145,7 +145,7 @@ export default function Try() {
         <div className="mt-5 flex flex-col gap-4">
           <Step n={1} title="Find the ghosts (app)" isDone={done.app}>
             <p className="text-[14px] text-muted-foreground">Run our sample bank statement and see what it finds. A &ldquo;Back to the test&rdquo; button brings you here.</p>
-            <button type="button" onClick={startSample} className="mt-3 rounded-2xl bg-primary px-5 py-3 text-[15px] font-bold text-primary-foreground">{done.app ? 'Try it again' : 'Try a sample statement'}</button>
+            <button type="button" onClick={startSample} className="mt-3 rounded-2xl bg-primary px-5 py-3 text-[15px] font-bold text-primary-foreground">{done.app ? 'Try it again' : 'Try the sample (10 sec)'}</button>
           </Step>
 
           <Step n={2} title="Ask Ghost It (agent)" isDone={done.agent}>

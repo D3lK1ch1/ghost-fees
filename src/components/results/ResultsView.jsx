@@ -23,6 +23,8 @@ import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
 import LeakFilter, { filterLeaks } from './LeakFilter';
 import BiasChart from './BiasChart';
+import { biasFor } from '@/lib/ghostFees/leaks';
+import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
 import XmasLeakCard from '@/components/xmas/XmasLeakCard';
@@ -301,7 +303,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             <div data-tour="actions">
               <ReportButton analysis={analysis} usedSample={usedSample} />
               {!exStory && <TourButton name="results" label="New here? Take the tour" className="ml-2 mt-3" />}
-              <GhostItPacks items={subscriptions} className="mt-4" />
+              {/* Pack 9: one line here, so the ghosts come straight after the total. The full
+                  Ghost It panel stays in the Cancel & track tab. */}
+              <a href={GHOST_IT_CHAT} target="_blank" rel="noopener noreferrer" className="mt-3 block text-[14px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
+                <span aria-hidden="true">👻 </span>Ghost It in ASI:One finds doubles your statement can&apos;t show. <span className="font-semibold text-primary">Try it →</span>
+              </a>
             </div>
           </>
         )}
@@ -414,7 +420,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                         ) : (
                           <LeakCard leak={leak} onDraft={() => openEmail(leak)} />
                         )}
-                        {cardStats[leak.id] && <StatNote statKey={cardStats[leak.id]} className="mx-4 mt-1" />}
+                        {cardStats[leak.id] && !biasFor(leak) && <StatNote statKey={cardStats[leak.id]} className="mx-4 mt-1" />}
                       </div>
                     </CardItem>
                   ))}

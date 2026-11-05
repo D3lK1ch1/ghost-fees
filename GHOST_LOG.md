@@ -841,3 +841,10 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostItOffer.jsx
 - How to test: home, Ghost It card, tap Try it in ASI:One: ASI:One opens on Ghost.it.
 - User feedback that drove this: team review ("try it links open Ghost Fees, not working; try it should lead to ASI:One")
+
+### Pack 9 part 0: copy and flow fixes
+- What: Ex chat counts the same 5 ghosts as the Ghosts tab (was 7, it counted subscriptions). The results page shows one Ghost It line under the total instead of the full panel (the panel stays in Cancel & track). Leak cards show a small "🧠 Present Bias · why?" chip instead of the full pattern sentence (tap to read it with the research), and the research stat line only shows on cards without a chip. Ex cards get one line per kind of leak ("I said it was free. I lied.", "Just a little something every month. You won't notice.", "Twice the love, twice the bill.", "Late again? That one costs extra."), so no quote repeats. "(ABS). Above inflation" has its space; chart names are one label each. Landing: every sample button says "Try the sample (10 sec)"; the top card keeps only the headline, 3 steps and the button (the selling lines live once in the theme hero); "No upload needed for the sample"; the 8.4M stat is gone (1 in 2 and $1,600+ stay); "Pick a mood. It only changes the words." under Choose your ghost.
+- Files: src/components/ex/ExJourney.jsx, src/lib/ghostFees/themes.js, src/components/ex/ExLeakCard.jsx, src/components/results/LeakCard.jsx, src/components/results/BiasLine.jsx, src/components/results/BiasChart.jsx, src/components/results/ResultsView.jsx, src/data/upgradeStats.json, src/components/landing/ValueLine.jsx, Hero.jsx, ExHero.jsx, PlansAtAGlance.jsx, UvpLine.jsx, src/pages/Try.jsx
+- How to test: Ex theme, Try the sample: chat says Found 5; five different quotes; chips on the trial and bank fee cards; one Ghost It line under the total.
+- Not yet: the "See why →" hook under the total (needs the Money patterns tab, part 2) and "Five ghost guides" (only once Mo ships, part 5).
+- User feedback that drove this: Update Pack 9 part 0

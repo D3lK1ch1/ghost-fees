@@ -33,7 +33,16 @@ export default function BiasChart({ leaks, activeType, onType }) {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={groups} layout="vertical" margin={{ top: 4, right: 64, bottom: 4, left: 4 }} barCategoryGap={12}>
             <XAxis type="number" hide domain={[0, 'dataMax']} />
-            <YAxis type="category" dataKey="bias" width={140} tickLine={false} axisLine={false} tick={{ fill: 'rgba(255,255,255,0.8)', fontSize: 13 }} />
+            {/* One text per name (the default tick split "Denomination Effect" into two
+                pieces, which read as "DenominationEffect"). */}
+            <YAxis
+              type="category"
+              dataKey="bias"
+              width={150}
+              tickLine={false}
+              axisLine={false}
+              tick={({ x, y, payload }) => <text x={x} y={y} dy={4} textAnchor="end" fontSize={13} fill="rgba(255,255,255,0.8)">{payload.value}</text>}
+            />
             <Tooltip content={<Tip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
             <Bar dataKey="total" radius={[0, 4, 4, 0]} barSize={18} onClick={(g) => onType(activeType === g.badge ? 'all' : g.badge)} className="cursor-pointer">
               {groups.map((g) => (

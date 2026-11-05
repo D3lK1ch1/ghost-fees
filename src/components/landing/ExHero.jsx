@@ -62,6 +62,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
       </div>
 
       <p className="mt-6 font-heading text-[16px] font-bold text-foreground/90">Choose your ghost</p>
+      <p className="mt-0.5 text-[13.5px] text-muted-foreground">Pick a mood. It only changes the words.</p>
       <div role="radiogroup" aria-label="Choose your ghost" className="mt-3 grid w-full grid-cols-2 gap-3">
         {EX_GHOSTS.map((key) => {
           const item = EX_PICKS[key];
@@ -101,7 +102,7 @@ export default function ExHero({ theme, onSample, onUpload }) {
           onClick={onSample}
           className="mt-5 w-full rounded-[20px] bg-primary px-6 py-4 font-heading text-[18px] font-bold text-primary-foreground shadow-[0_8px_36px_hsl(var(--primary)/0.3)] transition-transform hover:-translate-y-0.5"
         >
-          Try a sample statement
+          Try the sample (10 sec)
         </button>
         <button
           type="button"

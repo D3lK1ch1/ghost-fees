@@ -1,7 +1,7 @@
 [
   { "id": "half", "big": "1 in 2", "text": "Australians pay for subscriptions they don't use", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["home"] },
   { "id": "waste", "big": "$1,600+", "text": "a year potentially wasted on unused subscriptions", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["home", "paywall"] },
-  { "id": "aussies", "big": "8.4M", "text": "Aussies paying for subscriptions they don't use", "source": "ING, 2025", "matches": ["home"] },
+  { "id": "aussies", "big": "8.4M", "text": "Aussies paying for subscriptions they don't use", "source": "ING, 2025", "matches": [] },
   { "id": "realise", "big": "20%", "text": "more spent on subscriptions than people think", "source": "Westpac, 2025", "matches": ["reveal"] },
   { "id": "trial", "big": "38%", "text": "of overspenders forgot to cancel a free trial", "source": "Westpac, 2025", "matches": ["trial"] },
   { "id": "gym", "big": "$1,116", "text": "a year for an unused gym membership", "source": "Compare the Market, 2026", "url": "https://www.comparethemarket.com.au/news/wasted-subscriptions-2026", "matches": ["gym"] },

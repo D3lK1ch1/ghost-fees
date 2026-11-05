@@ -50,7 +50,7 @@ export default function Hero({ onSample, onUpload }) {
           className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-7 py-4 text-[17px] font-bold text-primary-foreground shadow-[0_8px_40px_hsl(var(--primary)/0.35)] transition-transform hover:-translate-y-0.5"
         >
           <GhostMark className="h-5 w-5 text-primary-foreground" eyeColor="hsl(30 100% 62%)" />
-          Scan a sample free
+          Try the sample (10 sec)
         </button>
         <button
           type="button"

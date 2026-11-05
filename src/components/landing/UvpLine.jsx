@@ -23,7 +23,7 @@ export default function UvpLine({ align = 'center', className = '' }) {
         <li className={tick}><Check className="h-4 w-4 text-primary" aria-hidden="true" />No bank login</li>
         <li>
           <button type="button" onClick={openTypicalPrices} className={`${tick} hover:text-foreground`}>
-            <Check className="h-4 w-4 text-primary" aria-hidden="true" />No upload needed
+            <Check className="h-4 w-4 text-primary" aria-hidden="true" />No upload needed for the sample
           </button>
         </li>
       </ul>
