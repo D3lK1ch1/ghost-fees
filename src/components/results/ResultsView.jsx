@@ -2,7 +2,7 @@ import GoalTasks from '@/components/results/GoalTasks';
 import { clearGoalTasks } from '@/lib/ghostFees/goalTasks';
 import DataSafety from '@/components/site/DataSafety';
 import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
+import { Brain, CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import BrandHeader from '@/components/site/BrandHeader';
@@ -22,8 +22,10 @@ import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
 import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
 import LeakFilter, { filterLeaks } from './LeakFilter';
-import BiasChart from './BiasChart';
-import { biasFor } from '@/lib/ghostFees/leaks';
+import { biasFor, biasGroups } from '@/lib/ghostFees/leaks';
+import { PatternContext } from '@/components/patterns/PatternContext';
+import PatternDialog from '@/components/patterns/PatternDialog';
+import PatternsTab from '@/components/patterns/PatternsTab';
 import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
@@ -64,6 +66,7 @@ import { cn } from '@/lib/utils';
 // One tab per feature so each is easy to find.
 const TABS = [
   { key: 'ghosts', label: 'Ghosts', Icon: Ghost, title: 'Your ghosts, biggest first', blurb: 'Each card is one money leak, with the transactions behind it. Tap a card to mark it most useful.' },
+  { key: 'patterns', label: 'Money patterns', themed: 'Why they haunt you', Icon: Brain, title: 'Money patterns', blurb: 'The common money patterns behind your ghosts, with the research and one habit to beat each.' },
   { key: 'house', label: 'Cancel & track', themed: 'Haunted House', Icon: House, title: 'Haunted House', blurb: 'Every room holds one kind of ghost. Pick a room, draft an email, then bust each ghost once it is sorted.' },
   { key: 'path', label: 'Goal path', Icon: Route, title: 'Goal path', blurb: 'One stop per ghost. Walk your lantern up the hill to the ghost-free house.' },
   { key: 'calendar', label: 'Calendar & reminders', Icon: CalendarDays, title: 'Haunted calendar', blurb: 'See the days you were charged and add reminders for the next charges to your own calendar.' },
@@ -75,6 +78,7 @@ const TABS = [
 
 // 💔 names and intros for each tab, in the story's words. Same features underneath.
 const EX_TAB_TEXT = {
+  patterns: { label: 'Our patterns', title: 'Why we stayed', blurb: 'The common patterns that kept your exes around, with the research and one habit to beat each.' },
   ghosts: { title: 'Your exes, biggest first', blurb: 'Every ex still charging you, with the transactions behind it. Tap a card to mark it most useful.' },
   house: { label: 'Heartbreak House', title: 'Heartbreak House', blurb: 'Every ex has a window. Block one once you have cancelled and its window lights up.' },
   path: { label: 'Glow-up plan', title: 'Your glow-up plan', blurb: 'What blocking your exes pays for, month by month. Tick them off one by one below.' },
@@ -86,6 +90,7 @@ const EX_TAB_TEXT = {
 
 // 🎄 names and intros, in the story's words. Same features underneath.
 const XMAS_TAB_TEXT = {
+  patterns: { label: 'Old habits', title: 'Why they come back', blurb: 'The common money habits behind your ghosts, with the research and one habit to beat each.' },
   ghosts: { label: 'Fees Past', title: 'The Ghost of Fees Past', blurb: 'Every leak on your statement, biggest first, with the transactions behind it.' },
   house: { label: "Jacob's chain", title: "Jacob's chain", blurb: 'Every leak is a link. Draft the email, then break the link once it is sorted.' },
   path: { label: 'Christmas morning', title: 'Christmas morning', blurb: 'Break links to bring the dawn. Tick off each step below.' },
@@ -114,6 +119,10 @@ const WINDOWS = [
 
 export default function ResultsView({ analysis, usedSample, onRestart, onSample }) {
   const { leaks, subscriptions, total, enoughHistory } = analysis;
+  // Money patterns (Pack 9): open popup and "Sound like you?" answers, this tab only.
+  const [patternKey, setPatternKey] = useState(null);
+  const [patternAnswers, setPatternAnswers] = useState({});
+  const patternCount = biasGroups(leaks).length;
   // 💔 only: one photo avatar per ex, the same on every screen.
   const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const avatarFor = useMemo(
@@ -243,7 +252,9 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     }
   };
 
+  const patternCtx = { answers: patternAnswers, openPattern: setPatternKey };
   return (
+    <PatternContext.Provider value={patternCtx}>
     <div className="relative min-h-screen">
       {theme.key === 'haunted' && <NightSky />}
       <div className="relative z-10">
@@ -303,6 +314,11 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
             <div data-tour="actions">
               <ReportButton analysis={analysis} usedSample={usedSample} />
               {!exStory && <TourButton name="results" label="New here? Take the tour" className="ml-2 mt-3" />}
+              {patternCount >= 2 && (
+                <button type="button" onClick={() => setTab('patterns')} className="mt-3 block text-left text-[14.5px] text-foreground/90 underline-offset-4 hover:underline">
+                  Most of it comes from {patternCount} money patterns. <span className="font-semibold text-primary">See why →</span>
+                </button>
+              )}
               {/* Pack 9: one line here, so the ghosts come straight after the total. The full
                   Ghost It panel stays in the Cancel & track tab. */}
               <a href={GHOST_IT_CHAT} target="_blank" rel="noopener noreferrer" className="mt-3 block text-[14px] text-muted-foreground underline-offset-4 hover:text-foreground hover:underline">
@@ -391,7 +407,12 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
               {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
 
-              {tab === 'ghosts' && <BiasChart leaks={leaks} activeType={activeLeakType} onType={setLeakType} />}
+              {tab === 'ghosts' && patternCount > 0 && (
+                <button type="button" onClick={() => setTab('patterns')} className="mt-3 text-left text-[14.5px] text-foreground/90 underline-offset-4 hover:underline">
+                  <span aria-hidden="true">🧠 </span>{patternCount} money {patternCount === 1 ? 'pattern' : 'patterns'} behind these ghosts. <span className="font-semibold text-primary">See why →</span>
+                </button>
+              )}
+              {tab === 'patterns' && <PatternsTab leaks={leaks} total={total} />}
               {tab === 'ghosts' && (
                 <LeakFilter leaks={leaks} type={activeLeakType} sort={leakSort} onType={setLeakType} onSort={setLeakSort} />
               )}
@@ -547,6 +568,17 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
 
       <GhostGuide analysis={analysis} guideKey={guideKey} onGuide={setGuideKey} onAction={onGuideAction} openRequest={guideOpen} />
       <ResultsTour ready={leaks.length > 0 && (guessDone || exStory)} setTab={setTab} guideKey={guideKey} />
+      <PatternDialog
+        patternKey={patternKey}
+        leaks={leaks}
+        answers={patternAnswers}
+        onAnswer={(key, value) => setPatternAnswers((current) => ({ ...current, [key]: value }))}
+        onClose={() => setPatternKey(null)}
+        onShowGhosts={(badge) => { setTab('ghosts'); setLeakType(badge); }}
+        onDraft={openEmail}
+        onTab={setTab}
+      />
     </div>
+    </PatternContext.Provider>
   );
 }

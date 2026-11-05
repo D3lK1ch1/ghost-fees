@@ -27,21 +27,77 @@ export const BADGE_MEANING = {
 // common pattern", never as a judgement about the person.
 export const BADGE_BIAS = {
   'Trial converted': {
-    bias: 'Present Bias',
+    key: 'present_bias', bias: 'Present Bias', evidence: 'strong',
     line: "Free now feels real, paying later doesn't. That's how trials turn into charges.",
+    what: 'We value now much more than later.',
+    why: 'A free trial costs nothing today, and the bill is a future problem.',
+    beat: 'When I start a free trial, I will set a reminder 2 days before it ends.',
+    beatAction: 'reminder',
     cite: 'O’Donoghue & Rabin, 1999, American Economic Review',
-  },
-  'Still using this?': {
-    bias: 'Status Quo Bias',
-    line: 'Doing nothing is the easiest choice, so auto-renew wins by default.',
-    cite: 'Samuelson & Zeckhauser, 1988, Journal of Risk and Uncertainty',
+    paper: 'O’Donoghue, T. & Rabin, M. (1999). Doing it now or later. American Economic Review, 89(1), 103-124.',
+    url: 'https://doi.org/10.1257/aer.89.1.103',
   },
   'Bank fee': {
-    bias: 'Denomination Effect',
+    key: 'denomination', bias: 'Denomination Effect', evidence: 'medium',
     line: 'Small amounts feel like nothing, so small fees rarely get questioned.',
+    what: 'Small amounts get spent more easily than big ones.',
+    why: '$5 here and $10 there never feels worth a phone call.',
+    beat: 'When I see a bank fee, I will ask once for it to be waived.',
+    beatAction: 'waive',
     cite: 'Raghubir & Srivastava, 2009, Journal of Consumer Research',
+    paper: 'Raghubir, P. & Srivastava, J. (2009). The denomination effect. Journal of Consumer Research, 36(4), 701-713.',
+    url: 'https://doi.org/10.1086/599222',
   },
+  'Price creep': {
+    key: 'status_quo', bias: 'Status Quo Bias', evidence: 'strong',
+    line: 'Staying put is the default, so a small price rise rarely makes us switch.',
+    what: 'We stick with what we already have.',
+    why: 'Switching takes effort, and a $2 rise feels too small to bother.',
+    beat: "When a price goes up, I will check if I'd still sign up at the new price.",
+    beatAction: 'cancel',
+    cite: 'Samuelson & Zeckhauser, 1988, Journal of Risk and Uncertainty',
+    paper: 'Samuelson, W. & Zeckhauser, R. (1988). Status quo bias in decision making. Journal of Risk and Uncertainty, 1(1), 7-59.',
+    url: 'https://doi.org/10.1007/BF00055564',
+  },
+  Duplicate: {
+    key: 'ostrich', bias: 'Ostrich Effect', evidence: 'medium',
+    line: 'When money news might be bad, we look less, so double charges slip through.',
+    what: 'We look away from money news that might be bad.',
+    why: 'Checking a statement can feel stressful, so we skip it.',
+    beat: 'On the 1st of each month, I will scan my statement for doubles.',
+    beatAction: 'review',
+    cite: 'Karlsson, Loewenstein & Seppi, 2009, Journal of Risk and Uncertainty',
+    paper: 'Karlsson, N., Loewenstein, G. & Seppi, D. (2009). The ostrich effect: Selective attention to information. Journal of Risk and Uncertainty, 38(2), 95-115.',
+    url: 'https://doi.org/10.1007/s11166-009-9060-6',
+  },
+  Overlap: {
+    key: 'mental_accounting', bias: 'Mental Accounting', evidence: 'medium',
+    line: "Each app sits in its own mental box, so two that do the same job don't feel like a double-up.",
+    what: 'We keep money in separate mental boxes.',
+    why: 'Each app has its own box, so overlaps hide.',
+    beat: 'When I add a new app, I will check what it overlaps with.',
+    beatAction: 'subscriptions',
+    cite: 'Thaler, 1999, Journal of Behavioral Decision Making',
+    paper: 'Thaler, R. H. (1999). Mental accounting matters. Journal of Behavioral Decision Making, 12(3), 183-206.',
+    url: 'https://doi.org/10.1002/(SICI)1099-0771(199909)12:3%3C183::AID-BDM318%3E3.0.CO;2-F',
+  },
+  'Borrowing cost': {
+    key: 'pain_of_paying', bias: 'Pain of Paying', evidence: 'medium',
+    line: 'Paying later on credit hurts less than paying now, so interest is easy to miss.',
+    what: 'Paying by credit hurts less than paying with cash.',
+    why: 'The cost arrives later and feels less real.',
+    beat: 'When I pay on credit, I will check the interest line on my statement.',
+    beatAction: null,
+    cite: 'Prelec & Loewenstein, 1998, Marketing Science',
+    paper: 'Prelec, D. & Loewenstein, G. (1998). The red and the black: Mental accounting of savings and debt. Marketing Science, 17(1), 4-28.',
+    url: 'https://doi.org/10.1287/mksc.17.1.4',
+  },
+  // Surcharge: no pattern on purpose. Still using this? isn't made by the analyser.
 };
+
+// "How to beat it" lines use implementation intentions (one mention, in the tab footer).
+export const PATTERN_FOOTER_REF = 'Gollwitzer, P. M. (1999). Implementation intentions: Strong effects of simple plans. American Psychologist, 54(7), 493-503.';
+export const PATTERN_BY_KEY = Object.fromEntries(Object.entries(BADGE_BIAS).map(([badge, p]) => [p.key, { ...p, badge }]));
 
 // The bias for a leak, only when it is backed by charges on this statement.
 export function biasFor(leak) {
@@ -54,7 +110,8 @@ export function biasGroups(leaks) {
   (leaks || []).forEach((leak) => {
     const info = biasFor(leak);
     if (!info) return;
-    const group = groups.get(info.bias) || { ...info, badge: leak.badge, total: 0, charges: 0, dates: [] };
+    const group = groups.get(info.bias) || { ...info, badge: leak.badge, total: 0, charges: 0, dates: [], leakIds: [] };
+    group.leakIds.push(leak.id);
     group.total += Number(leak.amount) || 0;
     // Paid charges only: a trial's $0 start isn't a charge (matches "then 6 paid charges").
     const paid = leak.rows.filter((row) => Math.abs(Number(row.amount) || 0) > 0);

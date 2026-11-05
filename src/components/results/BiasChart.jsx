@@ -19,16 +19,17 @@ function Tip({ active, payload }) {
   );
 }
 
-export default function BiasChart({ leaks, activeType, onType }) {
+export default function BiasChart({ leaks, activeType = 'all', onType, onBar, footer = true, heading = true }) {
   const [table, setTable] = useState(false);
-  const groups = biasGroups(leaks);
+  // Only plain fields go to recharts (it spreads each row onto SVG elements).
+  const groups = biasGroups(leaks).map((g) => ({ bias: g.bias, total: g.total, badge: g.badge, charges: g.charges, pkey: g.key, from: g.from, to: g.to }));
   if (groups.length < 2) return null;
   const height = 24 + groups.length * 44;
   return (
     <section className="mt-4 rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4" aria-labelledby="bias-chart-title">
-      <p className="flex items-center gap-1.5 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-primary"><Brain className="h-4 w-4" aria-hidden="true" /> Money patterns</p>
+      {heading && <p className="flex items-center gap-1.5 text-[12.5px] font-semibold uppercase tracking-[0.12em] text-primary"><Brain className="h-4 w-4" aria-hidden="true" /> Money patterns</p>}
       <h3 id="bias-chart-title" className="mt-1 text-[16px] font-semibold text-foreground">Where your ghost money went</h3>
-      <p className="mt-0.5 text-[13.5px] text-muted-foreground">From the charges on this statement. Tap a bar to see those ghosts.</p>
+      <p className="mt-0.5 text-[13.5px] text-muted-foreground">From the charges on this statement. {onBar ? 'Tap a bar to see why.' : 'Tap a bar to see those ghosts.'}</p>
       <div className="mt-2" style={{ height }} role="img" aria-label={groups.map((g) => `${g.bias}: ${money(g.total)}`).join(', ')}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={groups} layout="vertical" margin={{ top: 4, right: 64, bottom: 4, left: 4 }} barCategoryGap={12}>
@@ -44,7 +45,7 @@ export default function BiasChart({ leaks, activeType, onType }) {
               tick={({ x, y, payload }) => <text x={x} y={y} dy={4} textAnchor="end" fontSize={13} fill="rgba(255,255,255,0.8)">{payload.value}</text>}
             />
             <Tooltip content={<Tip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
-            <Bar dataKey="total" radius={[0, 4, 4, 0]} barSize={18} onClick={(g) => onType(activeType === g.badge ? 'all' : g.badge)} className="cursor-pointer">
+            <Bar dataKey="total" radius={[0, 4, 4, 0]} barSize={18} onClick={(g) => (onBar ? onBar(g.pkey) : onType(activeType === g.badge ? 'all' : g.badge))} className="cursor-pointer">
               {groups.map((g) => (
                 <Cell key={g.bias} fill="hsl(var(--primary))" fillOpacity={activeType === 'all' || activeType === g.badge ? 1 : 0.35} />
               ))}
@@ -76,7 +77,7 @@ export default function BiasChart({ leaks, activeType, onType }) {
           </table>
         </div>
       )}
-      <p className="mt-3 text-[12.5px] text-muted-foreground">Common money patterns from behavioural finance research. Not a judgement, and not financial advice.</p>
+      {footer && <p className="mt-3 text-[12.5px] text-muted-foreground">Common money patterns from behavioural finance research. Not a judgement, and not financial advice.</p>}
     </section>
   );
 }
