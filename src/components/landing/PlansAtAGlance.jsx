@@ -50,7 +50,7 @@ export default function PlansAtAGlance({ onSample }) {
           {isAuthenticated && !pro ? (
             <span className="mt-4 flex h-11 items-center justify-center rounded-full border border-border text-[14.5px] font-bold text-muted-foreground">Your current plan</span>
           ) : (
-            <button type="button" onClick={onSample} className="mt-4 h-11 rounded-full border border-border bg-white/5 text-[14.5px] font-bold text-foreground hover:border-primary/60">Try the sample free</button>
+            <button type="button" onClick={onSample} className="mt-4 h-11 rounded-full border border-border bg-white/5 text-[14.5px] font-bold text-foreground hover:border-primary/60">Try the sample (10 sec)</button>
           )}
           <ul className="mt-4 space-y-2">{FREE.map((line) => <Feature key={line}>{line}</Feature>)}</ul>
         </section>

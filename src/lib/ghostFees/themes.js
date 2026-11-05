@@ -26,7 +26,18 @@ export const THEMES = {
       { match: /SPOTIFY|MUSIC/i, text: "Remember our song? It's $14.99 a month now." },
       { match: /ADOBE|CANVA/i, text: "We were so creative together. Every month." },
       { match: /ICLOUD|APPLE|GOOGLE|DROPBOX/i, text: "I'm keeping all your photos. And your money." },
+      { match: /\bLATE\b/i, text: 'Late again? That one costs extra.' },
     ],
+    // Pack 9: one line per kind of leak, so the same quote doesn't repeat down the page.
+    badgeLines: {
+      'Trial converted': 'I said it was free. I lied.',
+      'Bank fee': "Just a little something every month. You won't notice.",
+      Duplicate: 'Twice the love, twice the bill.',
+      'Price creep': "I've changed. My price has too.",
+      Overlap: "You don't need both of us. You know that.",
+      'Borrowing cost': 'Pay me later. With interest.',
+      Surcharge: 'A little extra, just for paying me.',
+    },
     fallbackLine: "Hey stranger. Still paying for me?",
     outro: (yearly) => `Cut them loose and that's ${yearly} a year back.`,
     // Charcoal page with a limited pink: pink only on the main button and the

@@ -34,7 +34,7 @@ export default function ExLeakCard({ leak, onDraft, avatar, primary = false }) {
   const rows = leak.rows || [];
   const rise = leak.priceRise ? versusCpi(leak.priceRise.oldPrice, leak.priceRise.newPrice) : null;
   const kind = FEE_RE.test(name) || leak.badge === 'Bank fee' ? 'Bank' : kindOf(leak.merchant || name);
-  const line = theme.lines?.find((entry) => entry.match.test(leak.merchant || name))?.text || theme.fallbackLine;
+  const line = theme.lines?.find((entry) => entry.match.test(leak.merchant || name))?.text || theme.badgeLines?.[leak.badge] || theme.fallbackLine;
   const label = ACTIONS[leak.action];
   const Button = primary ? PrimaryButton : GhostButton;
 
@@ -66,7 +66,7 @@ export default function ExLeakCard({ leak, onDraft, avatar, primary = false }) {
       {rise && (
         <p className="m-0 text-[14px] leading-relaxed" style={{ color: C.muted }}>
           Up <strong style={{ color: C.text }}>{rise.percent}%</strong> since {shortDate(leak.priceRise.since)}.
-          {' '}Prices overall rose {CPI.rate}% in the year to {CPI.asOf} (ABS).
+          {' '}Prices overall rose {CPI.rate}% in the year to {CPI.asOf} (ABS).{' '}
           {rise.above && (
             <span className="ml-2 inline-block rounded-full px-2.5 py-0.5 text-[13px] font-extrabold" style={{ background: C.coral, color: C.bg }}>
               Above inflation
