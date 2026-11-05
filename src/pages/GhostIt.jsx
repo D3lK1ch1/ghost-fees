@@ -11,7 +11,7 @@ import { getSessionId } from '@/lib/session';
 // separate, optional next step, so nobody has to understand both at once.
 const STEPS = [
   { title: 'Copy the test message', line: 'Or type your own: what you pay for, in plain words.' },
-  { title: 'Open Ghost It', line: 'Its ASI:One page opens. Tap its bubble, or paste the message and send. Keep @ghostit at the start so Ghost It answers, not your own assistant.' },
+  { title: 'Open Ghost It', line: 'Its ASI:One page opens. Tap its bubble, or paste the message and send. Keep the @ part at the start so Ghost It answers, not your own assistant.' },
   { title: 'Paste and send', line: 'You get the yearly cost line by line, any double-ups and the cancel steps.' },
 ];
 
