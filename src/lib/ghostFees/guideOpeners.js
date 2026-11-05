@@ -5,10 +5,11 @@ import { money, monthsLabel } from './format';
 import { biasFor, biasGroups } from './leaks';
 import { cancelInfo } from './cancelLinks';
 import { GUIDES } from './guides';
+import { bundleGroups } from './bundles';
 
 const nameOf = (leak) => leak.title || leak.merchant;
 export const handoffChip = (key) => `Ask ${GUIDES[key].name.replace('Sir ', '')} →`;
-export const HANDOFF_RE = /^Ask (Penny|Spooksworth|Gus|Cassy|Mo|Hattie|Hank) →$/;
+export const HANDOFF_RE = /^Ask (Penny|Spooksworth|Gus|Cassy|Kit|Mo|Hattie|Hank) →$/;
 export const handoffKey = (chip) => {
   const m = HANDOFF_RE.exec(chip);
   if (!m) return null;
@@ -61,7 +62,7 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
   const months = `${monthsLabel(monthSpan)} months`;
   const biggest = leaks[0];
   const g = GUIDES[guideKey];
-  if (!biggest) return { text: `${g.hello} No ghosts in this statement, so nothing to do. Nice.`, chips: [] };
+  if (!biggest && guideKey !== 'bundle') return { text: `${g.hello} No ghosts in this statement, so nothing to do. Nice.`, chips: [] };
 
   if (guideKey === 'penny') {
     const fee = feeOrder(leaks)[0];
@@ -96,6 +97,18 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
       leak: target,
       // No checked link: offer a live lookup on their official site (uses Cassy's free answer).
       chips: [CHIP.worked, CHIP.notYet, ...(info.url ? [] : [`Look up ${target.merchant || nameOf(target)}`])],
+    };
+  }
+  if (guideKey === 'bundle') {
+    // Kit works from the subscriptions list, so he opens even with no ghosts.
+    const groups = bundleGroups(analysis.subscriptions || []).filter((group) => group.key !== 'ai');
+    const top = groups[0];
+    return {
+      text: top
+        ? `${g.hello}\n\nYou pay for ${top.items.length} ${top.label}: ${money(top.monthly)} a month for the same job. Pick your favourite below and I'll show what to keep, or how to rotate.`
+        : `${g.hello}\n\nNo double-ups on this statement. Got AI tools? Type them with prices, or tick what you use AI for below.`,
+      kit: top ? top.key : 'ai',
+      chips: [handoffChip('cass'), handoffChip('habit')],
     };
   }
   if (guideKey === 'mind') {

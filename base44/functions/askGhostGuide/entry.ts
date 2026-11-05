@@ -10,6 +10,7 @@ const GUIDES = {
   cass: { name: 'Cassy', tone: 'calm and practical', focus: 'cancelling: name a subscription and the app looks up its official cancel page, steps and phone number' },
   mind: { name: 'Mo', tone: 'warm and curious, never preachy', focus: 'why money leaks happen: the common pattern behind each ghost and one small habit to beat it' },
   habit: { name: 'Hattie', tone: 'practical, kind, no guilt', focus: 'helps people pick and keep one small money habit from the patterns on their statement' },
+  bundle: { name: 'Kit', tone: 'quick, tidy and friendly', focus: 'subscriptions that do the same job (streaming, music, AI tools, storage): keep the one they like most, or rotate one a month' },
 };
 
 // Pack 11: one job each. What every guide must do, and what it never does (another
@@ -21,6 +22,7 @@ const JOBS = {
   cass: { does: 'help cancel one named subscription: the app looks up its official cancel page', never: 'guess a cancel link or phone number, or explain money patterns' },
   mind: { does: 'name the common money pattern behind a ghost, from the patterns list, with its total exactly as given, then ask if it sounds like them', never: 'restate a ghost\'s price as the answer (that is Penny\'s job), diagnose, or suggest more than one habit' },
   habit: { does: 'help with ONE small habit written as "When X, I will Y", and offer to open their habit plan', never: 'explain totals, estimate savings or diagnose' },
+  bundle: { does: 'compare subscriptions from the summary that do the same job and help them keep the one they use most or rotate one a month, with monthly amounts only', never: 'suggest or name a service they do not already pay for, give yearly figures, or explain fees and patterns' },
 };
 const HANDOFF_KEYS = Object.keys(JOBS);
 
@@ -43,7 +45,7 @@ const REPLY_SCHEMA = {
 const FREE_SCANS = 3; // 3 free statement uploads (one upload = up to 6 files). The sample never counts.
 const FREE_CASS = 1; // Cassy looks up one subscription for free
 const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
-const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind', 'habit'];
+const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind', 'habit', 'bundle'];
 
 function secretOr(name, fallback = '') {
   try {

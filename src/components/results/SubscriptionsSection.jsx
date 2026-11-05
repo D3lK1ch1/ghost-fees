@@ -11,6 +11,7 @@ import BadgesExplainer from './BadgesExplainer';
 import { useCancelProof } from './ProofDialog';
 import PickTimeDialog from './PickTimeDialog';
 import { LIFE_STAGES, TYPE_ICONS, TYPE_LABELS, findOverlaps, tipFor } from '@/lib/ghostFees/overlaps';
+import KitPlanner from '@/components/guide/KitPlanner';
 import { useCategories } from '@/hooks/use-categories';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import StatNote from '@/components/stats/StatNote';
@@ -125,6 +126,9 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">{tipFor(stage, overlaps)}</p>
         </div>
       )}
+
+      {/* Kit, the bundle ghost: keep one, rotate the rest, or sort AI tools (6 Nov). */}
+      <KitPlanner subscriptions={subscriptions} className="mt-3" />
 
       {ghosts.length === 0 && <BadgesExplainer compact className="mt-3" />}
       <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} onAddProof={proof.addProof} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />
