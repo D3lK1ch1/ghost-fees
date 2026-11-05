@@ -69,7 +69,7 @@ function moAnswer(text, analysis) {
   if (named) {
     return { reply: `${named.bias}: ${named.what} ${named.why} In your statement it's ${money(named.total)} across ${periodOf(named)}. Research: ${named.cite}.`, action: 'open_pattern', biasKey: named.key };
   }
-  if (/most|biggest|largest|worst|top|costs?/.test(text)) {
+  if (/most|biggest|largest|worst|top|costs?/.test(text) && !/ghost|fee|charge|subscription/.test(text)) {
     return { reply: `${top.bias} is the biggest common pattern behind your ghosts: ${money(top.total)} across ${periodOf(top)}. ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
   }
   if (/why|pattern|bias|brain|psycholog/.test(text)) {
@@ -93,7 +93,7 @@ function hattieAnswer(text, analysis) {
   if (/forget|forgot|remember|remind/.test(text)) {
     return { reply: 'Tie it to something you already do, like checking your bank app on payday. Then save the plan: it goes in your calendar with a check-in a week later, so I remind you.', action: 'open_habit', biasKey: g?.key };
   }
-  if (/habit|start|first|which|begin|pick/.test(text)) {
+  if (/habit|start|begin/.test(text)) {
     return { reply: `Start with your biggest pattern, ${g.bias} (${money(g.total)}). One habit: ${g.beat} Pick a start day and I'll put it in your calendar.`, action: 'open_habit', biasKey: g.key };
   }
   return null;
@@ -123,6 +123,13 @@ function answer(question, analysis, guideKey) {
   if (guideKey === 'mind' || guideKey === 'habit') {
     const own = guideKey === 'mind' ? moAnswer(text, analysis) : hattieAnswer(text, analysis);
     if (own) return own;
+  }
+  // Another ghost's job: one line, then a chip that hands you to the right ghost.
+  if (guideKey !== 'mind' && /pattern|bias|psycholog|brain|why do (i|my)|why does (this|it) keep|turn into charges/.test(text)) {
+    return { reply: "That's Mo's job. He explains the common pattern behind each ghost, with the research.", owner: 'mind' };
+  }
+  if (guideKey !== 'habit' && /\bhabits?\b/.test(text)) {
+    return { reply: "That's Hattie's job. She helps you keep one small habit so ghosts don't come back.", owner: 'habit' };
   }
   if (/work(ed)? out|how .*total|calculat/.test(text) && !mentioned) {
     return { reply: `${money(total)} is every ghost added up: ${leaks.slice(0, 5).map((leak) => `${nameOf(leak)} ${money(leak.amount)}`).join(', ')}. Each card shows its own charges, line by line.` };
@@ -247,6 +254,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const hank = theme?.key === 'ex' && readExPick() === 'fine';
   // Hattie wears the theme's outfit (Hank on the Ex "I'm Fine" pick), like her habit card.
   const guideImage = guideKey === 'habit' ? habitArt(theme?.key, readExPick()) : guide.image;
+  // Hank is Hattie's "I'm Fine" twin on the Ex theme: same job, his own name everywhere.
+  const nameFor = (key) => (key === 'habit' && hank ? 'Hank' : GUIDES[key].name);
+  const chipLabel = (chip) => (hank ? chip.replace('Ask Hattie →', 'Ask Hank →') : chip);
+  const guideName = nameFor(guideKey);
   const focusRef = useRef(null);
   const openerFor = (key) => {
     const focus = focusRef.current;
@@ -296,7 +307,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const value = { [CHIP.yes]: 'yes', [CHIP.unsure]: 'unsure', [CHIP.no]: 'no' }[text];
       if (biasKey) patterns?.setAnswer?.(biasKey, value);
       if (value === 'yes') {
-        reply({ text: 'Thanks for being honest. Lots of people say yes. Over to Hattie for one small habit.' });
+        reply({ text: `Thanks for being honest. Lots of people say yes. Over to ${nameFor('habit')} for one small habit.` });
         setTimeout(() => onGuide('habit'), 400);
       } else if (value === 'unsure') {
         reply({ text: 'That\'s fine. Open the pattern to see the research, and decide later.', action: 'open_pattern', biasKey, chips: [handoffChip('habit')] });
@@ -306,7 +317,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       return true;
     }
     if (START_CHIPS.includes(text)) {
-      reply({ text: `${text} it is. Open your plan, pick ${text.toLowerCase()} and save: it goes in your calendar with a check-in a week later.`, action: 'open_habit', biasKey: lastWith('biasKey')?.biasKey, chips: ['Make my habit smaller', 'I keep forgetting, help'] });
+      reply({ text: `${text} it is. Open your plan, pick ${text} and save: it goes in your calendar with a check-in a week later.`, action: 'open_habit', biasKey: lastWith('biasKey')?.biasKey, chips: ['Make my habit smaller', 'I keep forgetting, help'] });
       return true;
     }
     return false;
@@ -332,7 +343,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     if (openRequest) openPanel();
   }, [openRequest]);
 
-  const reply = (message) => setMessages((current) => [...current, { role: 'guide', guide: guideKey, ...message }]);
+  const reply = (message) => setMessages((current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He") : message.text }]);
 
   // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
   const ask = async (question) => {
@@ -362,7 +373,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
     const local = answer(text, analysis, guideKey);
     if (local) {
-      const owner = { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'gus', open_pattern: 'mind', open_habit: 'habit' }[local.action];
+      const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
+      const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'gus', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
       reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
@@ -437,7 +449,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       {open && (
         <div
           role="dialog"
-          aria-label={`Ask ${guide.name}, your ghost guide`}
+          aria-label={`Ask ${guideName}, your ghost guide`}
           className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] animate-rise flex-col overflow-hidden rounded-t-3xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-h-[min(640px,calc(100dvh-2.5rem))] sm:w-[380px] sm:rounded-3xl"
         >
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 pb-3 pt-4">
@@ -448,7 +460,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">
-                {guide.name} <span className="text-[14px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
+                {guideName} <span className="text-[14px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
               {GUIDE_GROUPS.map((group) => (
@@ -469,7 +481,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   >
                     <span className="flex items-center gap-1 text-[12.5px] font-bold leading-tight">
                       <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
-                      {GUIDES[key].name.replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
+                      {nameFor(key).replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
                     </span>
                     <span className={cn('mt-0.5 text-[12px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
                   </button>
@@ -488,7 +500,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             {messages.map((message, index) => (
               <div key={index} className={cn('flex flex-col', message.role === 'user' ? 'items-end' : 'items-start')}>
                 {message.role === 'guide' && GUIDES[message.guide] && messages.slice(0, index).filter((m) => m.role === 'guide').at(-1)?.guide !== message.guide && (
-                  <span className="mb-1 ml-1 text-[12px] font-bold" style={{ color: GUIDES[message.guide].color }}>{GUIDES[message.guide].name.replace('Sir ', '')} · {GUIDES[message.guide].short}</span>
+                  <span className="mb-1 ml-1 text-[12px] font-bold" style={{ color: GUIDES[message.guide].color }}>{nameFor(message.guide).replace('Sir ', '')} · {GUIDES[message.guide].short}</span>
                 )}
                 <p
                   className={cn(
@@ -521,10 +533,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                       <button
                         key={chip}
                         type="button"
-                        onClick={() => ask(chip)}
+                        onClick={() => ask(chipLabel(chip))}
                         className="rounded-full border border-border bg-background/60 px-3 py-1.5 text-left text-[13px] font-bold text-muted-foreground transition-colors hover:border-primary/60 hover:text-foreground"
                       >
-                        {chip}
+                        {chipLabel(chip)}
                       </button>
                     ))}
                   </div>
@@ -532,7 +544,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
             {thinking && (
-              <div className="flex items-center gap-1.5 px-1" aria-label={`${guide.name} is typing`}>
+              <div className="flex items-center gap-1.5 px-1" aria-label={`${guideName} is typing`}>
                 {[0, 1, 2].map((dot) => (
                   <span key={dot} className="animate-bob" style={{ animationDelay: `${dot * 0.2}s`, color: guide.color }}>
                     <GhostMark className="h-4 w-4" eyeColor="#1a1230" />
@@ -553,7 +565,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               value={input}
               maxLength={MAX_INPUT}
               onChange={(event) => setInput(event.target.value)}
-              placeholder={guide.ask || 'Ask about your ghosts'}
+              placeholder={(hank ? guide.ask?.replace('Hattie', 'Hank') : guide.ask) || 'Ask about your ghosts'}
               className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2.5 text-[14.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
             <button type="submit" aria-label="Send" className="rounded-xl bg-primary p-2.5 text-primary-foreground disabled:opacity-50" disabled={!input.trim() || thinking}>

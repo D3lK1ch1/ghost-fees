@@ -937,3 +937,14 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/LeakEmailDialog.jsx, src/components/guide/GhostGuide.jsx
 - How to test: Sample > Waive it on Monthly Account Fee: × at top, Copy / Open in Mail / Close at the bottom, with no scrolling of the page. Open Ask a ghost, close it, pick Cassy in the Haunted House, reopen: Cassy's message shows.
 - User feedback that drove this: "open email where is teh clsoe button" and "why is peneny inetrdoucsing under gus".
+
+### Every ghost checked on every theme: handoffs fixed, Hank named properly
+- What: Ran all six ghosts on Haunted, Ex and Christmas, with every opener and chip, and asked each one a question outside its job. Fixed:
+  - Asking Penny, Spooksworth, Gus or Cassy about a pattern ("Which pattern costs me most?", "Why do my trials turn into charges?") got a ghost answer or a failed AI call. Now it's one line ("That's Mo's job...") and an Ask Mo → chip.
+  - Habit questions to the other ghosts (Gus answered "Which habit should I start with?" with goals) now say "That's Hattie's job" with an Ask Hattie → chip.
+  - Total, cost and price-creep answers from Mo, Hattie or Cassy now add Ask Penny →. Mo and Hattie no longer answer "Which ghost costs the most?" themselves.
+  - On the Ex "I'm Fine" pick, Hank's name shows in the picker, name tags, header, placeholder, Mo's handover line and the Ask Hank → chip. Before, only his hello said Hank.
+  - Hattie defaults to the pattern Mo opens with (the biggest ghost's) when you have no plan or answer yet. "pick Next Monday" keeps its capital letters.
+- Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guideOpeners.js
+- How to test: Sample > Ask a ghost. Penny: "Which pattern costs me most?" gives Ask Mo →. Gus: "Which habit should I start with?" gives Ask Hattie →. Ex theme with I'm Fine: Mo > Yes hands to Hank.
+- User feedback that drove this: "chekc other ghsots smake suer they inroudce properly and have tehir specilaisties".
