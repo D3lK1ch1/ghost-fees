@@ -925,3 +925,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/guideOpeners.js (new), src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guides.js, base44/functions/askGhostGuide/entry.ts
 - How to test: Sample > Ask a ghost. Check each ghost's opener, then Mo > "Yes, sounds like me" lands on Hattie with the Present Bias habit, and Penny > "Ask Spooksworth →" drafts the waive email for the Monthly Account Fee.
 - User feedback that drove this: Update Pack 11 ("Each ghost has one job and does it first").
+
+### Mo gets his own picture: the lantern ghost (and Hattie dresses for the theme in chat)
+- What: Mo was a plain lime ghost shape. He's now the hooded lantern ghost from Image Assets ("Chibi Ghost with Glowing Lantern"): he shines a light on why your ghosts happen. Until now it was only on the Demo page. It shows in Mo's walk-through, the chat header and both Haunted House guide menus. Hattie in the chat now wears the theme's outfit like her habit card (witch, pink bow, Hank, Santa), and the Haunted House porch shows witch Hattie.
+- Files: public/themes/mind/mo-lantern.webp (copy of haunted/lantern-ghost.webp), src/lib/ghostFees/guides.js, src/components/patterns/MoWalkthrough.jsx, src/components/guide/GhostGuide.jsx, src/components/results/HauntedHouse.jsx
+- How to test: Any theme > sample > Money patterns: Mo is the lantern ghost. Ask a ghost > Mo: the same art in the header. Ex theme > Hattie: pink-bow Hattie (Hank on "I'm Fine").
+- User feedback that drove this: "look local image assets ofpr proper images" (screenshot of plain Mo on the Ex theme).

@@ -74,6 +74,7 @@ export const GUIDES = {
     name: 'Mo',
     role: 'the money mind ghost',
     color: '#c4f06c',
+    image: '/themes/mind/mo-lantern.webp', // the lantern ghost: he shines a light on why
     job: 'Why ghosts happen',
     short: 'Why it happened',
     does: 'Explains the common money pattern behind each ghost, with the research, and one small habit to beat it.',

@@ -5,6 +5,10 @@ import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 import { GUIDES, GUIDE_GROUPS, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import { habitArt } from '@/lib/ghostFees/habitArt';
+
+// Hattie wears her witch hat in the Haunted House.
+const guideArt = (key) => (key === 'habit' ? habitArt('haunted') : GUIDES[key].image);
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
@@ -418,8 +422,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   >
                     <GhostTip label={`${item.name} · ${item.job}`} detail={item.does}>
                       <span className="block animate-float" style={{ color: item.color, animationDelay: `${index * 0.5}s` }}>
-                        {item.image
-                          ? <img src={item.image} alt="" width={44} height={44} className={cn('h-11 w-11 object-contain', chosen && 'drop-shadow-[0_0_12px_currentColor]')} />
+                        {guideArt(key)
+                          ? <img src={guideArt(key)} alt="" width={44} height={44} className={cn('h-11 w-11 object-contain', chosen && 'drop-shadow-[0_0_12px_currentColor]')} />
                           : <GhostMark className={cn('h-11 w-11', chosen && 'drop-shadow-[0_0_12px_currentColor]')} eyeColor="#1a1230" />}
                       </span>
                     </GhostTip>
@@ -557,8 +561,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   )}
                 >
                   <span className="block" style={{ color: GUIDES[key].color }}>
-                    {GUIDES[key].image
-                      ? <img src={GUIDES[key].image} alt="" width={28} height={28} className="h-7 w-7 object-contain" />
+                    {guideArt(key)
+                      ? <img src={guideArt(key)} alt="" width={28} height={28} className="h-7 w-7 object-contain" />
                       : <GhostMark className="h-7 w-7" eyeColor="#1a1230" />}
                   </span>
                 </button>
