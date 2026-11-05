@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Send, X } from 'lucide-react';
+import { Maximize2, Minimize2, Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
@@ -11,7 +11,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
-import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, parseTyped } from '@/lib/ghostFees/bundles';
+import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
@@ -122,6 +122,35 @@ function answer(question, analysis, guideKey) {
   if (/\b(stor(e|ed|ing|age)|saved?|privacy|private|data|keep (my|it|this)|delete)\b/.test(text)) {
     return { reply: 'CSVs are read in your browser and never leave it. PDFs are uploaded to private storage so they can be read. Your results and this chat are not saved either.' };
   }
+  // "What can you do?", "How do you optimise my subscriptions?", "Can you help me?": the
+  // ghost explains its own job in steps (from its description), then offers to start.
+  const about = /what (can|do|does) (you|kit|penny|mo|hattie|gus|cassy) do|what('?s| is) your (job|role)|who are you|how (do|does|can|would|will) (you|it|this)|what are you (for|good at)|can you help|could you help|how does (this|it) work|explain yourself/;
+  // Whose job is the thing they asked about? "Can you help me with X?" gets a straight
+  // yes (here's how) or no (that's Kit's job) with a handoff chip.
+  const TOPICS = [
+    ['sir', /email|letter|write|draft/],
+    ['cass', /cancel|phone number|unsubscribe/],
+    ['mind', /pattern|bias|psycholog|why (do|does) (i|this|it)/],
+    ['habit', /\bhabits?\b|remind me to|stick to/],
+    ['bundle', /double|consolidat|rotat|optimi|streaming|ai tools?|organi[sz]|collat|too many|subscriptions?/],
+    ['gus', /goals?|progress|score|motivat|plan of attack/],
+    ['penny', /fees?|totals?|charges?|how much|price (rise|creep)|work(ed)? out/],
+  ];
+  const owner = TOPICS.find(([, re]) => re.test(text))?.[0] || null;
+  if (/can (you|kit|penny|mo|hattie|gus|cassy) help|could you help|are you able to|do you do/.test(text) && owner && owner !== guideKey) {
+    const o = GUIDES[owner];
+    return { reply: `Not me, but ${o.name} can. ${o.does}`, owner };
+  }
+  if (about.test(text) && GUIDES[guideKey]?.how && !/collat|organi[sz]|\blist\b|consolidat|cancel (my|the|it)|email|letter/.test(text.replace(/^(yes|so)\b/, ''))) {
+    const g = GUIDES[guideKey];
+    const steps = g.how.map((step, i) => `${i + 1}. ${step}`).join('\n');
+    if (guideKey === 'bundle') {
+      const plan = consolidationText(consolidationPlan(bundleGroups(analysis.subscriptions || [])));
+      return { reply: `${/can you help|could you help/.test(text) ? 'Yes! ' : ''}Here's how I optimise your subscriptions:\n${steps}${plan ? `\n\nOn this statement:\n${plan.replace("Here's your consolidation plan, pack by pack:\n\n", '')}` : ''}`, kit: 'video' };
+    }
+    const yes = /can you help|could you help|are you able/.test(text) ? 'Yes, I can help with that. ' : '';
+    return { reply: `${yes}${g.hello}\n\nHow I do it:\n${steps}\n\nTap a question below to start.` };
+  }
   if (guideKey === 'mind' || guideKey === 'habit') {
     const own = guideKey === 'mind' ? moAnswer(text, analysis) : hattieAnswer(text, analysis);
     if (own) return own;
@@ -139,14 +168,21 @@ function answer(question, analysis, guideKey) {
     }
     if (/\bai\b|chatgpt|claude|midjourney|gemini|copilot|cursor|tools?/.test(text)) return { reply: 'Tick what you use AI for and pick a budget. I only choose from tools you already pay for.', kit: 'ai' };
     if (/rotat/.test(text)) return { reply: 'Rotating means one service a month: start one, cancel the last. Pick your favourite and tap Rotate, one a month. I can put every switch in your calendar.', kit: 'video' };
-    if (doubles.test(text) || /optimi|save (me )?money|my subscriptions|sort (out|my)|help me/.test(text)) {
+    // "Collate / organise / list my subscriptions": everything by pack first, then the plan.
+    if (/collat|organi[sz]|\blist\b|overview|everything i pay|all (of )?my|what do i pay|tidy|manage|review|audit/.test(text)) {
+      const groups = bundleGroups(analysis.subscriptions || []);
+      const all = organiseText(analysis.subscriptions || []);
+      const plan = consolidationText(consolidationPlan(groups));
+      if (all) return { reply: plan ? `${all}\n\n${plan}` : `${all}\n\nNo double-ups between them. Type anything else you pay for below and I'll check it.`, kit: groups.find((g) => g.key !== 'ai')?.key || 'ai' };
+    }
+    if (doubles.test(text) || /optimi|save (me )?money|my subscriptions|subscriptions|sort (out|my)|help me/.test(text)) {
       const groups = bundleGroups(analysis.subscriptions || []);
       const plan = consolidationText(consolidationPlan(groups));
       return plan
         ? { reply: plan, kit: groups.find((g) => g.key !== 'ai')?.key || 'ai' }
         : { reply: 'No double-ups on this statement yet. Type what else you pay for, like "Disney+ $16, YouTube Premium $17", and I\'ll check every pack.', kit: 'video' };
     }
-  } else if (doubles.test(text) && !/cancel|email|letter/.test(text)) {
+  } else if ((doubles.test(text) || /collat|organi[sz]|optimi|(sort|tidy|manage|review|audit) (out )?(all )?my subscriptions/.test(text)) && !/cancel|email|letter/.test(text)) {
     return { reply: "That's Kit's job. He compares subscriptions that do the same thing and helps you keep one or rotate.", owner: 'bundle' };
   }
   // Another ghost's job: one line, then a chip that hands you to the right ghost.
@@ -245,6 +281,7 @@ function starterChips(analysis, guide) {
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
   const [open, setOpen] = useState(false);
+  const [big, setBig] = useState(false); // expand button: nearly full screen
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [thinking, setThinking] = useState(false);
@@ -289,6 +326,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     focusRef.current = null;
     return { role: 'guide', guide: key, ...opener(key, analysis, { answers: patterns?.answers || {}, plan: readHabit(), hank, focus }) };
   };
+  const lastKitIndex = messages.reduce((at, m, i) => (m.kit ? i : at), -1);
   const lastWith = (field) => [...messages].reverse().find((m) => m.role === 'guide' && m[field] != null);
 
   // The openers' own chips are answered here, from the scan, with no AI.
@@ -368,7 +406,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     if (openRequest) openPanel();
   }, [openRequest]);
 
-  const reply = (message) => setMessages((current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He") : message.text }]);
+  const reply = (message) => setMessages((current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He").replace("I'm Hattie", "I'm Hank") : message.text }]);
 
   // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
   const ask = async (question) => {
@@ -475,7 +513,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
         <div
           role="dialog"
           aria-label={`Ask ${guideName}, your ghost guide`}
-          className="fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] animate-rise flex-col overflow-hidden rounded-t-3xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:max-h-[min(640px,calc(100dvh-2.5rem))] sm:w-[380px] sm:rounded-3xl"
+          className={cn('fixed inset-x-0 bottom-0 z-50 flex animate-rise flex-col overflow-hidden rounded-t-3xl border border-border bg-card shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:rounded-3xl', big ? 'h-[94dvh] sm:h-[calc(100dvh-2.5rem)] sm:w-[min(900px,calc(100vw-2.5rem))]' : 'max-h-[90dvh] sm:max-h-[min(780px,calc(100dvh-2.5rem))] sm:w-[460px]')}
         >
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 pb-3 pt-4">
             <span className="flex h-12 w-11 shrink-0 items-end justify-center overflow-visible pt-2" style={{ color: guide.color }}>
@@ -488,33 +526,35 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 {guideName} <span className="text-[14px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
-              {GUIDE_GROUPS.map((group) => (
-              <div key={group.label} className="mt-1.5">
-              <p className="mb-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{group.label}</p>
-              <div className={cn('grid gap-1', group.keys.length === 3 ? 'grid-cols-3' : 'grid-cols-2')} role="group" aria-label={`${group.label}: pick a ghost guide`}>
-                {group.keys.map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => onGuide(key)}
-                    aria-pressed={guideKey === key}
-                    title={GUIDES[key].does}
-                    className={cn(
-                      'flex flex-col items-center rounded-xl px-1 py-1 text-center transition-colors',
-                      guideKey === key ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:text-foreground',
-                    )}
-                  >
-                    <span className="flex items-center gap-1 text-[12.5px] font-bold leading-tight">
-                      <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
-                      {nameFor(key).replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
-                    </span>
-                    <span className={cn('mt-0.5 text-[12px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
-                  </button>
+              {/* Compact picker: names only, so the conversation gets the room. The chosen
+                  ghost's job shows in the line above; hover a name for what it does. */}
+              <div className="mt-1.5 flex flex-wrap items-center gap-1" role="group" aria-label="Pick your ghost guide">
+                {GUIDE_GROUPS.map((group, gi) => (
+                  <span key={group.label} className="contents">
+                    <span className={cn('text-[10.5px] font-bold uppercase tracking-[0.12em] text-muted-foreground', gi > 0 && 'ml-1.5')}>{group.label.replace('Your ', '')}</span>
+                    {group.keys.map((key) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => onGuide(key)}
+                        aria-pressed={guideKey === key}
+                        title={`${nameFor(key)}: ${GUIDES[key].short}. ${GUIDES[key].does}`}
+                        className={cn(
+                          'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-bold leading-none transition-colors',
+                          guideKey === key ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:text-foreground',
+                        )}
+                      >
+                        <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
+                        {nameFor(key).replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
+                      </button>
+                    ))}
+                  </span>
                 ))}
               </div>
-              </div>
-              ))}
             </div>
+            <button type="button" onClick={() => setBig((b) => !b)} aria-label={big ? 'Make the chat smaller' : 'Make the chat bigger'} title={big ? 'Smaller' : 'Bigger'} className="hidden rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground sm:block">
+              {big ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+            </button>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground">
               <X className="h-5 w-5" />
             </button>
@@ -522,6 +562,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           <p className="shrink-0 border-b border-border px-4 py-1.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
 
           <div ref={listRef} aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
+            {/* Kit's planner shows once, under his latest reply, so the chat doesn't repeat it. */}
             {messages.map((message, index) => (
               <div key={index} className={cn('flex flex-col', message.role === 'user' ? 'items-end' : 'items-start')}>
                 {message.role === 'guide' && GUIDES[message.guide] && messages.slice(0, index).filter((m) => m.role === 'guide').at(-1)?.guide !== message.guide && (
@@ -543,7 +584,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     Unlock all ghosts
                   </button>
                 )}
-                {message.kit && (
+                {message.kit && index === lastKitIndex && (
                   <KitPlanner compact subscriptions={analysis.subscriptions || []} initialTab={message.kit} initialTyped={message.typed || ''}
                     onCancelHelp={(names) => reply({ text: `Cassy can find the official cancel page for ${names.join(' and ')}.`, chips: names.slice(0, 2).map((n) => `Cancel ${n}`).concat(handoffChip('cass')) })}
                     className="mt-2 w-full" />
