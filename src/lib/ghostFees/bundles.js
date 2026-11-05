@@ -68,6 +68,15 @@ export const BUNDLE_GROUPS = [
 ];
 export const GROUP_BY_KEY = Object.fromEntries(BUNDLE_GROUPS.map((g) => [g.key, g]));
 
+// Ghost It's six Ghost Packs, each with what it hunts and the groups Kit sorts inside it.
+export const GHOST_PACKS = CATALOGUE.packs.map((pack) => ({
+  key: pack,
+  name: pack === 'Gym and Fitness' ? 'Gym & Fitness' : pack,
+  emoji: CATALOGUE.packEmoji[pack] || '📦',
+  hunts: CATALOGUE.packHunts[pack] || '',
+  groups: pack === 'Tech Stack' ? ['ai', 'storage', 'design'] : BUNDLE_GROUPS.filter((g) => g.pack === pack && g.key !== 'ai').map((g) => g.key),
+}));
+
 // The Ghost It service a merchant is (e.g. "NETFLIX.COM 866..." -> Netflix), or null.
 export function serviceFor(merchant = '') {
   // Statements add symbols (UBER *EATS, NETFLIX.COM): treat them as spaces, keep + for Disney+.

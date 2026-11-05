@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { trackEvent } from '@/lib/session';
 import {
-  AI_NEEDS, GENRES, aiPlan, aiToolFor, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
+  AI_NEEDS, GENRES, GHOST_PACKS, aiPlan, aiToolFor, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
 } from '@/lib/ghostFees/bundles';
 
 const KIT = '#7fd1ff';
@@ -208,13 +208,44 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
           <span style={{ color: KIT }}>Kit</span> · keep one, rotate the rest
         </p>
       )}
-      <div className={cn('flex flex-wrap gap-1.5', !compact && 'mt-2')} role="tablist" aria-label="Which double-ups">
-        {tabs.map((t) => (
-          <Pill key={t.key} on={tab === t.key} onClick={() => setTab(t.key)}>
-            {t.emoji} {t.key === 'ai' ? `${aiTools.length > 1 ? `${aiTools.length} ` : ''}AI tools` : `${t.items.length} ${t.label}`}
-          </Pill>
-        ))}
+      {/* Ghost It's six Ghost Packs: each card says what it hunts and what Kit found. */}
+      <div className={cn('grid grid-cols-2 gap-1.5 sm:grid-cols-3', !compact && 'mt-2')} role="tablist" aria-label="Ghost Packs">
+        {GHOST_PACKS.map((pack) => {
+          const found = groups.filter((g) => pack.groups.includes(g.key) && (g.key !== 'ai' || aiTools.length >= 2));
+          const count = found.reduce((n, g) => n + g.items.length, 0);
+          const on = pack.groups.includes(tab);
+          const open = pack.groups.length > 0;
+          return (
+            <button key={pack.key} type="button" role="tab" aria-selected={on} disabled={!open}
+              onClick={() => setTab(found[0]?.key || pack.groups[0])}
+              title={`${pack.name} pack hunts ${pack.hunts}`}
+              className={cn('rounded-xl border px-2.5 py-2 text-left transition-colors disabled:opacity-60', on ? 'border-[#7fd1ff] bg-[#7fd1ff]/10' : 'border-border bg-background/50 hover:border-[#7fd1ff]/50')}>
+              <span className="block text-[13.5px] font-bold text-foreground">{pack.emoji} {pack.name}</span>
+              <span className={cn('block text-[12px] leading-tight', count ? 'font-semibold' : 'text-muted-foreground')} style={count ? { color: KIT } : undefined}>
+                {count ? `${count} doubled · ${money(sumMonthly(found.flatMap((g) => g.items)))} a month` : open ? 'Nothing doubled yet' : 'Ask Ghost It about weekly costs'}
+              </span>
+            </button>
+          );
+        })}
       </div>
+      {(() => {
+        const pack = GHOST_PACKS.find((p) => p.groups.includes(tab));
+        if (!pack) return null;
+        const subs = pack.groups.filter((k) => k === 'ai' || groups.some((g) => g.key === k));
+        return (
+          <>
+            <p className="mt-2 text-[12.5px] text-muted-foreground">{pack.emoji} <span className="font-bold text-foreground">{pack.name} pack</span> hunts {pack.hunts}.</p>
+            {subs.length > 1 && (
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {subs.map((k) => {
+                  const g = groups.find((x) => x.key === k);
+                  return <Pill key={k} on={tab === k} onClick={() => setTab(k)}>{k === 'ai' ? '🤖 AI tools' : `${g.items.length} ${g.label}`}</Pill>;
+                })}
+              </div>
+            )}
+          </>
+        );
+      })()}
 
       <label className="mt-2 block">
         <span className="text-[12.5px] text-muted-foreground">Pay for something not on this statement? Type it with the price.</span>
