@@ -1736,10 +1736,13 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     # uagents sends one envelope at a time, so with the reply first it waited ~30 s for
     # ASI:One, which was waiting for our acknowledgement (logs: send=30.5s, then a
     # "Timeout waiting for dispense response" and nothing shown). Counters come after.
-    await ctx.send(sender, ack)
+    # v13.4 (5 Nov): ASI:One takes 25 to 30 s to accept each envelope at busy times and
+    # drops replies that arrive after ~30 s, so the reply goes FIRST (it is what people see)
+    # and the receipt after. Each send is timed on its own.
     await send_reply(ctx, sender, text, card)
-    # Timings (3 Nov): replies left ~30 s after the message. Which part is slow?
-    ctx.logger.info(f"TIMING route={t1 - t0:.1f}s send={_t.monotonic() - t1:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
+    t_reply = _t.monotonic()
+    await ctx.send(sender, ack)
+    ctx.logger.info(f"TIMING route={t1 - t0:.1f}s reply={t_reply - t1:.1f}s ack={_t.monotonic() - t_reply:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
     try:
         if not ctx.storage.get(f"seen:{sender}"):
             ctx.storage.set(f"seen:{sender}", True)
