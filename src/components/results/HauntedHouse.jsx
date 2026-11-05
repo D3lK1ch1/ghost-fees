@@ -5,10 +5,9 @@ import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 import { GUIDES, GUIDE_GROUPS, GUIDE_KEYS } from '@/lib/ghostFees/guides';
-import { habitArt } from '@/lib/ghostFees/habitArt';
 
-// Hattie wears her witch hat in the Haunted House.
-const guideArt = (key) => (key === 'habit' ? habitArt('haunted') : GUIDES[key].image);
+// Small coloured ghosts for every guide, the same as the chat picker.
+const guideArt = () => null;
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
