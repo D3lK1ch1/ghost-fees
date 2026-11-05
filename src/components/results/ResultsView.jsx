@@ -1,5 +1,6 @@
 import GoalTasks from '@/components/results/GoalTasks';
 import { clearGoalTasks } from '@/lib/ghostFees/goalTasks';
+import { clearHabit } from '@/lib/ghostFees/habitPlan';
 import DataSafety from '@/components/site/DataSafety';
 import { useEffect, useMemo, useState } from 'react';
 import { Brain, CalendarDays, Ghost, House, Mail, MessageSquareHeart, Receipt, Repeat, Route, ShieldCheck, Trash2 } from 'lucide-react';
@@ -121,6 +122,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   // Money patterns (Pack 9): open popup and "Sound like you?" answers, this tab only.
   const [patternKey, setPatternKey] = useState(null);
   const [patternAnswers, setPatternAnswers] = useState({});
+  const [habitRequest, setHabitRequest] = useState(null);
   const patternCount = biasGroups(leaks).length;
   // 💔 only: one photo avatar per ex, the same on every screen.
   const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
@@ -181,6 +183,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     clearGhostList();
     clearPlans();
     clearGoalTasks();
+    clearHabit();
     forgetRealTotal();
     setSubAnswers({});
     try {
@@ -251,7 +254,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     }
   };
 
-  const patternCtx = { answers: patternAnswers, openPattern: setPatternKey };
+  const patternCtx = { answers: patternAnswers, openPattern: setPatternKey, setAnswer: (key, value) => setPatternAnswers((current) => ({ ...current, [key]: value })), openHabit: (key) => { setTab('patterns'); setHabitRequest({ key: key || null, at: Date.now() }); } };
   return (
     <PatternContext.Provider value={patternCtx}>
     <div className="relative min-h-screen">
@@ -411,7 +414,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
                   <span aria-hidden="true">🧠 </span>{patternCount} money {patternCount === 1 ? 'pattern' : 'patterns'} behind these ghosts. <span className="font-semibold text-primary">See why →</span>
                 </button>
               )}
-              {tab === 'patterns' && <PatternsTab leaks={leaks} total={total} subscriptions={subscriptions} cancelSubs={cancelSubs} />}
+              {tab === 'patterns' && <PatternsTab leaks={leaks} total={total} subscriptions={subscriptions} cancelSubs={cancelSubs} usedSample={usedSample} onDraft={openEmail} onTab={setTab} habitRequest={habitRequest} />}
               {tab === 'ghosts' && (
                 <LeakFilter leaks={leaks} type={activeLeakType} sort={leakSort} onType={setLeakType} onSort={setLeakSort} />
               )}

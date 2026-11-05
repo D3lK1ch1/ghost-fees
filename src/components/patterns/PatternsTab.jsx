@@ -1,4 +1,9 @@
+import { useEffect, useRef, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import MoWalkthrough from './MoWalkthrough';
+import HabitCard from './HabitCard';
+import { habitGhost, readExPick } from '@/lib/ghostFees/habitArt';
+import { useTheme } from '@/lib/ThemeContext';
 import BiasChart from '@/components/results/BiasChart';
 import WhenChart from '@/components/patterns/WhenChart';
 import FutureSpend from '@/components/results/FutureSpend';
@@ -22,9 +27,18 @@ function LookingAhead({ subscriptions, cancelSubs }) {
   );
 }
 
-export default function PatternsTab({ leaks, total, subscriptions = [], cancelSubs = [] }) {
+export default function PatternsTab({ leaks, total, subscriptions = [], cancelSubs = [], usedSample = false, onDraft, onTab, habitRequest }) {
   const { openPattern } = usePatterns();
+  const { theme } = useTheme();
   const groups = biasGroups(leaks);
+  const habitRef = useRef(null);
+  const [habitPick, setHabitPick] = useState(null);
+  const habitName = habitGhost(theme.key, readExPick()).name;
+  useEffect(() => { if (habitRequest) toHabit(habitRequest.key || groups[0]?.key); }, [habitRequest]); // eslint-disable-line react-hooks/exhaustive-deps
+  const toHabit = (key) => {
+    setHabitPick(key);
+    setTimeout(() => habitRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }), 60);
+  };
   if (!groups.length) {
     return (
       <div className="mt-4 space-y-4">
@@ -36,6 +50,8 @@ export default function PatternsTab({ leaks, total, subscriptions = [], cancelSu
   const top = groups[0];
   return (
     <div className="mt-4 space-y-4">
+      <MoWalkthrough groups={groups} total={total} themeKey={theme.key} habitName={habitName} onHabit={toHabit} />
+      <HabitCard ref={habitRef} groups={groups} leaks={leaks} preselect={habitPick} usedSample={usedSample} onDraft={onDraft} onTab={onTab} />
       <div>
         <p className="text-[19px] font-semibold text-foreground">{groups.length} {groups.length === 1 ? 'pattern' : 'patterns'} behind your {money(total)}</p>
         <p className="text-[14px] text-muted-foreground">From the charges on this statement. Not a judgement.</p>

@@ -5,6 +5,7 @@ import SiteFooter from '@/components/site/SiteFooter';
 // Exactly what is kept, where and for how long. Keep this true: update it with every data change.
 const STORED = [
   { what: 'Your results, Ghost List and theme', where: 'Your browser only', how: 'Until you press Clear my data or clear your browser' },
+  { what: 'Your habit plan', where: 'In this browser only', how: 'Until you press Clear my data, stop the habit, or clear your browser' },
   { what: 'Proof of cancelling (how and when, references, screenshots you add)', where: 'Your browser only, with your Ghost List. Never uploaded', how: 'Until you press Clear my data, remove it, or clear your browser' },
   { what: 'CSV statements', where: 'Never leave your browser', how: 'Not stored' },
   { what: 'PDF statements', where: 'Base44 private storage, so they can be read', how: 'Kept for now: we are working on deleting them right after reading' },

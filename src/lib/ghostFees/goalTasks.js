@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { money } from './format';
+import { isHabitKeeper, readHabit } from './habitPlan';
 
 // One plan, three views (3 Nov): the goal path makes the goals, the Calendar tab lists
 // them as a checklist with dates and the ghost guide's "Make my goals" points there.
@@ -12,6 +13,7 @@ export const GOAL_KINDS = {
   refund: { label: (name) => `Get your ${name} refund`, steps: ['Open the refund request', 'Send it with the extra charges listed', 'Check the refund lands'] },
   waive: { label: (name) => `Ask the bank to waive the ${name}`, steps: ['Open the waiver email', 'Send it to your bank', 'Ask about a fee-free account if they say no'] },
   check: { label: (name) => `Check ${name}`, steps: ['Look at the new price', 'Decide if it is still worth it', 'Cancel it if not'] },
+  habit: { label: (text) => `Keep your habit: ${text}`, steps: ['Do it on your start day', 'Tell Hattie a week later', 'Do it again for a second week'] },
   reminders: { label: () => 'Add your reminders', steps: ['Tap Add all reminders', 'Open the file to add them to your calendar', 'Renewals will not sneak up on you'] },
 };
 
@@ -37,7 +39,10 @@ export function buildGoals({ leaks = [], subscriptions = [], cancelSubs = [], cl
       done: cleared.includes(id),
     };
   });
-  return [...leakGoals.slice(0, 1), ...reminderGoal, ...leakGoals.slice(1), ...subGoals];
+  // Pack 10: Hattie's habit, when you added it to your task list.
+  const plan = readHabit();
+  const habitGoal = plan?.inTasks ? [{ id: 'habit', kind: 'habit', label: GOAL_KINDS.habit.label(plan.habitText), save: 0, why: 'One small habit from your money patterns. Hattie checks in a week after your start day.', done: isHabitKeeper(plan) || cleared.includes('habit') }] : [];
+  return [...leakGoals.slice(0, 1), ...habitGoal, ...reminderGoal, ...leakGoals.slice(1), ...subGoals];
 }
 
 function read() {

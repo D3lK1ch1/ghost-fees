@@ -5,6 +5,7 @@ import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
 import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
+import { readHabit } from '@/lib/ghostFees/habitPlan';
 import CassLookup from '@/components/results/CassLookup';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
@@ -24,6 +25,7 @@ const ACTION_LABELS = {
   open_emails: 'See all email templates',
   scroll_feedback: 'Take me there',
   open_pattern: 'Open the pattern',
+  open_habit: 'Open my habit plan',
 };
 
 const nameOf = (leak) => leak.title || leak.merchant;
@@ -121,6 +123,7 @@ function summaryFor(analysis, patternAnswers = {}) {
     // Pack 9: the money patterns, computed by biasGroups (the AI explains, never calculates).
     patterns: biasGroups(analysis.leaks).map((g) => ({ key: g.key, name: g.bias, badge: g.badge, total: g.total, charges: g.charges, from: g.from, to: g.to, evidence: g.evidence })),
     patternAnswers,
+    habitPlan: (() => { const p = readHabit(); return p ? { patternKey: p.patternKey, habitText: p.habitText } : null; })(),
     total: analysis.total,
     months: analysis.monthSpan,
     leaks: analysis.leaks.map((leak) => ({
@@ -147,6 +150,9 @@ function starterChips(analysis, guide) {
     'Why do my trials turn into charges?',
     'Which pattern costs me most?',
     'One habit for the biggest one?',
+    'Which habit should I start with?',
+    'Make my habit smaller',
+    'I keep forgetting, help',
   ].filter(Boolean);
   const own = (guide?.chips || []).filter((chip) => all.includes(chip));
   return [...own, ...all.filter((chip) => !own.includes(chip))];
@@ -258,7 +264,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       markGuide(guideKey);
       const leak = leaks.find((item) => item.id === data.leakId);
       const action = ACTION_LABELS[data.action] && (leak || !['draft_email', 'open_leak', 'show_transactions'].includes(data.action)) ? data.action : null;
-      const biasKey = action === 'open_pattern' && PATTERN_BY_KEY[data.biasKey] ? data.biasKey : null;
+      const biasKey = (action === 'open_pattern' || action === 'open_habit') && PATTERN_BY_KEY[data.biasKey] ? data.biasKey : null;
       reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
     } catch {
       reply({ text: 'The spirits went quiet. Try again, or tap a question below.', chips: nextChips });
@@ -269,6 +275,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
   const run = (message) => {
     if (message.action === 'open_pattern' && message.biasKey) patterns?.openPattern(message.biasKey);
+    else if (message.action === 'open_habit') patterns?.openHabit?.(message.biasKey);
     else onAction(message.action, message.leak);
     if (window.matchMedia('(max-width: 639px)').matches) setOpen(false);
   };
@@ -297,7 +304,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
         >
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 pb-3 pt-4">
             <span className="flex h-12 w-11 shrink-0 items-end justify-center overflow-visible pt-2" style={{ color: guide.color }}>
-              <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />
+              {guide.image
+                ? <img src={guide.image} alt="" width={44} height={44} className="h-11 w-11 object-contain motion-safe:animate-float" />
+                : <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />}
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">

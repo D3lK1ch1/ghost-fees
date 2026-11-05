@@ -20,7 +20,7 @@ const FREE = [
 
 const PRO = [
   'Scans for every bank and card, every month, with a fair daily limit',
-  'Chat with all 5 ghost guides, with a fair daily limit',
+  'Chat with all 6 ghost guides, with a fair daily limit',
   'Cassy looks up every subscription: the real cancel page, steps and phone number',
   'A PDF report of your results to keep or share',
 ];

@@ -1,21 +1,22 @@
-import { Brain, Calculator, Mail, MessageCircle, Scissors, Trophy } from 'lucide-react';
+import { Brain, Calculator, CalendarCheck, Mail, MessageCircle, Scissors, Trophy } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
 import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
-// Home page, under the stats: who does what. The five ghost guides in the app and
+// Home page, under the stats: who does what. The six ghost guides in the app and
 // Ghost It, the chat agent in ASI:One. "Where's the different ghost agents?" (2 Nov)
 // Each agent: their colour ghost, a role icon, their job and what they actually do.
-const ICONS = { penny: Calculator, sir: Mail, gus: Trophy, cass: Scissors, mind: Brain };
+const ICONS = { penny: Calculator, sir: Mail, gus: Trophy, cass: Scissors, mind: Brain, habit: CalendarCheck };
 const BLURBS = {
   penny: 'Adds up every charge and fee and shows the maths.',
   sir: 'Writes your cancel, refund and fee-waiver emails.',
   gus: 'Keeps score as you bust ghosts and sets goals.',
   cass: 'Finds the real cancel page, steps and phone number.',
   mind: 'Explains the money pattern behind each ghost and one habit to beat it.',
+  habit: 'Helps you keep one small money habit and checks in a week later.',
 };
 export const TEAM = [
-  ...['penny', 'sir', 'gus', 'cass', 'mind'].map((key) => ({ key, ...GUIDES[key], Icon: ICONS[key], does: BLURBS[key] })),
+  ...['penny', 'sir', 'gus', 'cass', 'mind', 'habit'].map((key) => ({ key, ...GUIDES[key], Icon: ICONS[key], does: BLURBS[key] })),
   {
     key: 'ghostit',
     name: 'Ghost It',
@@ -32,7 +33,7 @@ export default function GhostTeam() {
   return (
     <section aria-label="Meet your ghost team" className="mx-auto mt-8 w-full max-w-4xl px-4">
       <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Meet your ghost team</p>
-      <p className="mt-1 text-center text-[15px] text-muted-foreground">Five ghost guides in the app, plus Ghost It in ASI:One.</p>
+      <p className="mt-1 text-center text-[15px] text-muted-foreground">Six ghost guides in the app, plus Ghost It in ASI:One.</p>
       {/* One agent per row, cascading down the page (each fades in a beat after the last). */}
       <ul className="mx-auto mt-4 flex max-w-2xl flex-col gap-3">
         {TEAM.map((agent, index) => (
@@ -43,8 +44,8 @@ export default function GhostTeam() {
           >
             <span className="relative shrink-0" aria-hidden="true">
               <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full" style={{ background: `${agent.color}2e`, boxShadow: `0 0 24px ${agent.color}40` }}>
-                {agent.key === 'ghostit' ? (
-                  <img src={GHOST_IT_MASCOT} alt="" className="h-[60px] w-[60px] object-contain motion-safe:animate-float" />
+                {agent.key === 'ghostit' || agent.image ? (
+                  <img src={agent.key === 'ghostit' ? GHOST_IT_MASCOT : agent.image} alt="" width={60} height={60} loading="lazy" className="h-[60px] w-[60px] object-contain motion-safe:animate-float" />
                 ) : (
                   <GhostMark className="h-11 w-11 motion-safe:animate-float" style={{ color: agent.color }} eyeColor="#1a1230" />
                 )}
