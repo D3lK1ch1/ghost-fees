@@ -69,10 +69,12 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
 
       {group && tab !== 'ai' && (
         <div className="mt-3">
-          <p className="text-[14px] text-foreground">
-            {itemLine(group.items)}: <span className="font-bold">{money(group.monthly)} a month</span> together.
-          </p>
-          <p className="mt-2 text-[14px] font-bold text-foreground">{group.ask}</p>
+          {!compact && (
+            <p className="mb-2 text-[14px] text-foreground">
+              {itemLine(group.items)}: <span className="font-bold">{money(group.monthly)} a month</span> together.
+            </p>
+          )}
+          <p className="text-[14px] font-bold text-foreground">{group.ask}</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {group.items.map((item) => <Pill key={item.name} on={fav[tab] === item.name} onClick={() => pickFav(item.name)}>{item.name}</Pill>)}
           </div>

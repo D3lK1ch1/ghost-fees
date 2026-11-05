@@ -5,7 +5,7 @@ import { money, monthsLabel } from './format';
 import { biasFor, biasGroups } from './leaks';
 import { cancelInfo } from './cancelLinks';
 import { GUIDES } from './guides';
-import { bundleGroups, itemLine } from './bundles';
+import { bundleGroups } from './bundles';
 
 const nameOf = (leak) => leak.title || leak.merchant;
 export const handoffChip = (key) => `Ask ${GUIDES[key].name.replace('Sir ', '')} →`;
@@ -105,7 +105,7 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     const top = groups[0];
     return {
       text: top
-        ? `${g.hello}\n\nYou pay for ${top.items.length} ${top.label}: ${itemLine(top.items)}. That's ${money(top.monthly)} a month for the same job.\n\n${top.ask}`
+        ? `${g.hello}\n\nYou pay for ${top.items.length} ${top.label}: ${money(top.monthly)} a month for the same job. Pick your favourite below and I'll show what to keep, or how to rotate.`
         : `${g.hello}\n\nNo double-ups on this statement. Got AI tools? Type them with prices, or tick what you use AI for below.`,
       kit: top ? top.key : 'ai',
       chips: [handoffChip('cass'), handoffChip('habit')],

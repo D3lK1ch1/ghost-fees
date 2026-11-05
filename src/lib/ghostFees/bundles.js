@@ -9,7 +9,7 @@ import { cancelInfo } from './cancelLinks';
 // "covers" means the tool's main paid plan is known for it. Kit says to check your plan.
 export const AI_NEEDS = [
   { key: 'writing', label: 'Writing', emoji: '✍️' },
-  { key: 'docs', label: 'Docs and formatting', emoji: '📄' },
+  { key: 'docs', label: 'Docs & formatting', emoji: '📄' },
   { key: 'images', label: 'Images', emoji: '🖼️' },
   { key: 'video', label: 'Video', emoji: '🎬' },
   { key: 'design', label: 'Design', emoji: '🎨' },

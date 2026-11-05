@@ -948,3 +948,16 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guideOpeners.js
 - How to test: Sample > Ask a ghost. Penny: "Which pattern costs me most?" gives Ask Mo →. Gus: "Which habit should I start with?" gives Ask Hattie →. Ex theme with I'm Fine: Mo > Yes hands to Hank.
 - User feedback that drove this: "chekc other ghsots smake suer they inroudce properly and have tehir specilaisties".
+
+### Kit, the bundle ghost: keep one, rotate the rest, sort AI tools by need and budget
+- What: A seventh ghost guide, Kit (sky blue), with one job: subscriptions that do the same thing. Every pick is made by rules in the browser (no AI), only from what you already pay for, at your statement's (or typed) prices, and per month only (no yearly forecasts).
+  - Streaming, food and gaming: "Which do you watch most?". Then Keep [it] only shows what to cancel and the monthly saving. Rotate, one a month gives a month-by-month plan (favourite first) and "Add the rotation to my calendar" (.ics with a reminder 2 days before each switch).
+  - Music and storage: keep one.
+  - AI tools: type them with prices (or use the ones on your statement), tick what you use AI for (writing, docs & formatting, images, video, design, coding, research) and a budget (up to $20 / $40 / $60 / no limit). Kit keeps the smallest mix (max 3) that covers it. Each kept tool says what it covers, and Kit says what's left out if the budget is too small. Capabilities are the tools' main features, with "check your plan includes them".
+  - In Ask a ghost (new "Your plan" row: Kit, Mo, Hattie) and as a card on the Subscriptions tab.
+  - Other ghosts hand double-up questions to Kit ("That's Kit's job", Ask Kit →). Kit hands cancelling to Cassy.
+  - Server: Kit's one-job rule (never names a service they don't pay for, no yearly figures). He's added to the free-tier guide list in all five functions. Needs Publish.
+- Every ghost has its own voice now: Penny the tidy accountant, Sir Spooksworth "polite but firm", Gus "LET'S GO!", Cassy calm and practical, Mo "I've seen this a hundred times", Hattie "small and boring beats big and forgotten". Each ghost's chat bubbles have a stripe in its colour.
+- Files: src/lib/ghostFees/bundles.js (new), src/components/guide/KitPlanner.jsx (new), src/lib/ghostFees/guides.js, src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx, src/components/results/SubscriptionsSection.jsx, src/components/results/HauntedHouse.jsx, src/components/landing/GhostTeam.jsx, base44/functions/*/entry.ts (GUIDE_KEYS)
+- How to test: Sample > Ask a ghost > Kit: 3 streaming services ($49.98 a month). Pick Netflix: Keep Netflix only gives $32.99 a month less. Rotate gives Dec, Jan, Feb, about $16.66 a month. AI tools: "ChatGPT $30, Claude $30, Midjourney $15, Canva $18", tick writing, docs, images and video, Up to $60: keep ChatGPT + Midjourney, $93.00 becomes $45.00. Penny: "I pay for too many streaming services" gives Ask Kit →.
+- User feedback that drove this: "one that will compare all subscriptions similar and consolidate... 3 streaming services what do you like most then help you pick one or schedule rotations. with ai subscriptions... assess based on user criteria... consolidate to max 2-3 and give you a way to fit budgets", "try differentiate the others".
