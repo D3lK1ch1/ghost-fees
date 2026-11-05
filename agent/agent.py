@@ -1,4 +1,5 @@
 # Ghost It: subscription ghosting agent for ASI:One (Agentverse hosted agent)
+# v13.5 (5 Nov 2026): `version` reply and a version line under the menu (ASI:One sync check).
 # v13.2 (4 Nov 2026): reply sent before the receipt (ASI:One timeout).
 # v13 (4 Nov 2026): tap buttons (Fetch.ai feedback), evidence line, Mark ghosted approval, trust line. Text and card in one message, cards on; suggested commands become buttons.
 # v12 (3 Nov 2026): text-first. Cards off by default (blank in ASI:One); numbered menu, reply with a number; one-line purpose.
@@ -90,6 +91,18 @@ CHANGES = [
 # v13 (Kingan, 4 Nov): say plainly that Ghost It never touches money. People decide.
 TRUST = "🔒 Ghost It never touches your bank, cards or accounts. It only shows you what to cancel. You decide."
 # v8: the one line that says what Ghost It is for (Raj: "not clear what it's trying to do").
+# v13.5 (5 Nov): version marker. Fetch.ai (Raj, 5 Nov) said ASI:One can lag behind
+# Agentverse after an update, so `version` shows which code actually answered.
+VERSION = "v13.5"
+STARTED_UTC = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+
+def version_reply():
+    return (f"👻 **Ghost It {VERSION}** (running since {STARTED_UTC}).\n\n"
+            "If you see an older version here, ASI:One is still syncing with Agentverse. "
+            "That's a known Fetch.ai delay, and it catches up on its own."), None
+
+
 PURPOSE = ("👻 **I'm Ghost It. I find subscriptions you pay for twice, and help you cancel them.**\n\n"
            "Streaming, music, AI tools, food, gym and gaming. Real maths, checked cancel links, first pack free. "
            "Tell me what you pay for below.\n\n" + TRUST)
@@ -476,6 +489,7 @@ def quick_start_text():
     lines.append("**Common questions:**")
     lines += [f"**{i}.** {label}" for i, label in enumerate(QUESTION_LABELS, len(MENU_LABELS) + 1)]
     lines.append("Or just tell me what you pay for, like: Netflix $19, gym $25 a week")
+    lines.append(f"_Ghost It {VERSION} · type `version` to check_")
     return "\n\n".join(lines)
 
 
@@ -1528,6 +1542,8 @@ def route(ctx, sender, raw):
         if ADMIN_CODE != "change-me" and code == ADMIN_CODE:
             return evidence_reply(ctx)
         return ("Evidence is for the Ghost It team only.", None)
+    if re.fullmatch(r"\s*(version|about version|what version(?: are you)?\??|which version\??|v\d+(?:\.\d+)?\??)\s*", low):
+        return version_reply()
     if re.search(r"(created|made|built|designed) (you )?(to|for)|what (were|are) you (for|made|built|created)|who are you|what is this|what are you|about you|your purpose", low):
         return about_reply()
     if re.fullmatch(r"\s*(consolidate|consolidate plan|combine|merge|rotate|rotation plan|which (?:one )?should i keep\??)(?:\s+(\w+))?(?:\s+pack)?\s*", low):
@@ -1624,9 +1640,16 @@ def route(ctx, sender, raw):
 # Hosted on Agentverse: Agent() with no arguments. Plan B (4 Nov, Raj's mailbox tip): set
 # GHOSTIT_LOCAL_SEED to run the same code on a computer, connected through a mailbox.
 if os.environ.get("GHOSTIT_LOCAL_SEED"):
-    agent = Agent(name=os.environ.get("GHOSTIT_LOCAL_NAME", "ghost-it-mailbox"),
+    # 5 Nov: publish the full profile on every start. Without these, uagents publishes an
+    # empty picture and description each time, which is why ASI:One showed a plain robot.
+    _readme = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agentverse-readme.md")
+    agent = Agent(name=os.environ.get("GHOSTIT_LOCAL_NAME", "Ghost.it"),
                   seed=os.environ["GHOSTIT_LOCAL_SEED"], port=int(os.environ.get("GHOSTIT_LOCAL_PORT", "8001")),
-                  mailbox=True, publish_agent_details=True)
+                  mailbox=True, publish_agent_details=True,
+                  handle=os.environ.get("GHOSTIT_HANDLE", "ghostit"),
+                  description="I hunt the money leaks your bank statement can't show you. A Ghost Pack for streaming, music, AI tools, food, gym and gaming.",
+                  avatar_url=os.environ.get("GHOSTIT_AVATAR_URL", "https://storage.googleapis.com/agentverse-prod-assets/agent-avatars-pub/939401106.jpg"),
+                  readme_path=_readme if os.path.exists(_readme) else None)
 else:
     agent = Agent()
 protocol = Protocol(spec=chat_protocol_spec)
@@ -1736,10 +1759,13 @@ async def handle_message(ctx: Context, sender: str, msg: ChatMessage):
     # uagents sends one envelope at a time, so with the reply first it waited ~30 s for
     # ASI:One, which was waiting for our acknowledgement (logs: send=30.5s, then a
     # "Timeout waiting for dispense response" and nothing shown). Counters come after.
-    await ctx.send(sender, ack)
+    # v13.4 (5 Nov): ASI:One takes 25 to 30 s to accept each envelope at busy times and
+    # drops replies that arrive after ~30 s, so the reply goes FIRST (it is what people see)
+    # and the receipt after. Each send is timed on its own.
     await send_reply(ctx, sender, text, card)
-    # Timings (3 Nov): replies left ~30 s after the message. Which part is slow?
-    ctx.logger.info(f"TIMING route={t1 - t0:.1f}s send={_t.monotonic() - t1:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
+    t_reply = _t.monotonic()
+    await ctx.send(sender, ack)
+    ctx.logger.info(f"TIMING route={t1 - t0:.1f}s reply={t_reply - t1:.1f}s ack={_t.monotonic() - t_reply:.1f}s chars={len(text)} cards={'on' if USE_CARDS and card else 'off'}")
     try:
         if not ctx.storage.get(f"seen:{sender}"):
             ctx.storage.set(f"seen:{sender}", True)

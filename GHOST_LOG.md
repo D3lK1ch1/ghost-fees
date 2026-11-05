@@ -894,6 +894,11 @@ One entry per change. Newest at the bottom.
 - How to test: Haunted theme > sample > Cancel & track: all six ghosts visible on the porch and in Pick your ghost guide, nothing past the card edge.
 - User feedback that drove this: "can we arranhe the agent menue betetr lookss weird as 5".
 
+### Ghost It agent synced into agent/ (v13.4 to v13.5)
+- What: The agent's latest code, copied in from ~/ghost-it with git subtree. It sends the reply before the receipt, times each send, publishes the full profile (handle, description, picture, readme) on every start, uses the scissors-ghost avatar, and has the v13.5 `version` reply plus a version line under the menu. The version line came from Raj's 5 Nov note that ASI:One can lag behind Agentverse.
+- Files: agent/agent.py, agent/tests/test_agent.py
+- How to test: cd agent && python3 -m unittest discover -s tests (98 pass). In ASI:One, `@ghostit version` should say v13.5.
+- User feedback that drove this: Fetch.ai Slack (Raj, 5 Nov) via the ASI:One sync addendum.
 ### Each ghost is a specialist: own intro, own questions, own answers
 - What: Mo answered "Which pattern costs me most?" with Streammax (a ghost, not a pattern), because the app's quick answers ignored which ghost you were talking to and "most" matched Penny's "which ghost costs the most". Now:
   - Quick answers belong to a ghost. Mo answers patterns (biggest pattern, what a money pattern is, trials, one habit) and Hattie answers habits (where to start, make it smaller, I keep forgetting, open my plan), all from the app's own maths. The safety answers (no advice, no yearly guesses, privacy) still come first for everyone.
