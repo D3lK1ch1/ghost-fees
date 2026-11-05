@@ -1,7 +1,7 @@
 import { Brain, Calculator, CalendarCheck, Layers, Mail, MessageCircle, Scissors, Trophy } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
-import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_CHAT, GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 import { habitArt, habitGhost, readExPick } from '@/lib/ghostFees/habitArt';
 import { useTheme } from '@/lib/ThemeContext';
 
@@ -32,7 +32,8 @@ export const TEAM = [
 ];
 
 
-export default function GhostTeam() {
+// onAsk(key): opens the sample with the chat already talking to that ghost.
+export default function GhostTeam({ onAsk }) {
   // Same avatars as the app: Hattie wears the theme's outfit (Hank on the Ex "I'm Fine" pick).
   const { theme } = useTheme();
   const exPick = readExPick();
@@ -42,15 +43,16 @@ export default function GhostTeam() {
   return (
     <section aria-label="Meet your ghost team" className="mx-auto mt-8 w-full max-w-4xl px-4">
       <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Meet your ghost team</p>
-      <p className="mt-1 text-center text-[15px] text-muted-foreground">Seven ghost guides in the app, plus Ghost It in ASI:One.</p>
+      <p className="mt-1 text-center text-[15px] text-muted-foreground">Seven ghost guides in the app, plus Ghost It in ASI:One. Tap one to chat with it on the sample.</p>
       {/* One agent per row, cascading down the page (each fades in a beat after the last). */}
       <ul className="mx-auto mt-4 flex max-w-2xl flex-col gap-3">
         {team.map((agent, index) => (
-          <li
-            key={agent.key}
-            className="team-cascade flex items-center gap-4 rounded-3xl border-2 bg-card/70 px-4 py-4 sm:px-5"
-            style={{ borderColor: `${agent.color}55`, background: `linear-gradient(90deg, ${agent.color}1f, transparent 55%)`, animationDelay: `${index * 120}ms` }}
-          >
+          <li key={agent.key} className="team-cascade" style={{ animationDelay: `${index * 120}ms` }}>
+            {(() => {
+              const cls = 'flex w-full items-center gap-4 rounded-3xl border-2 bg-card/70 px-4 py-4 text-left transition-transform hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:px-5';
+              const style = { borderColor: `${agent.color}55`, background: `linear-gradient(90deg, ${agent.color}1f, transparent 55%)` };
+              const body = (
+                <>
             <span className="relative shrink-0" aria-hidden="true">
               <span className="flex h-[68px] w-[68px] items-center justify-center rounded-full" style={{ background: `${agent.color}2e`, boxShadow: `0 0 24px ${agent.color}40` }}>
                 {agent.key === 'ghostit' || agent.image ? (
@@ -70,6 +72,13 @@ export default function GhostTeam() {
               </span>
               <span className="mt-1 block text-[15px] leading-snug text-muted-foreground">{agent.does}</span>
             </span>
+                  <span className="hidden shrink-0 text-[13.5px] font-bold sm:block" style={{ color: agent.color }}>{agent.key === 'ghostit' ? 'Open in ASI:One →' : `Chat with ${agent.name.replace('Sir ', '')} →`}</span>
+                </>
+              );
+              return agent.key === 'ghostit'
+                ? <a href={GHOST_IT_CHAT} target="_blank" rel="noreferrer" className={cls} style={style}>{body}</a>
+                : <button type="button" onClick={() => onAsk?.(agent.key)} aria-label={`Chat with ${agent.name}: ${agent.job}`} className={cls} style={style}>{body}</button>;
+            })()}
           </li>
         ))}
       </ul>

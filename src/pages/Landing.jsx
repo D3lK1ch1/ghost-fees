@@ -16,6 +16,7 @@ import HomeTabs from '@/components/landing/HomeTabs';
 import IsThisYou from '@/components/landing/IsThisYou';
 import PlansAtAGlance from '@/components/landing/PlansAtAGlance';
 import GhostTeam from '@/components/landing/GhostTeam';
+import { OPEN_GUIDE_KEY } from '@/lib/ghostFees/askGuide';
 import { Link } from 'react-router-dom';
 import { TRY_RETURN, markTry } from '@/pages/Try';
 import SiteFooter from '@/components/site/SiteFooter';
@@ -158,7 +159,7 @@ export default function Landing() {
           <ValueLine onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <Hero onSample={() => scan([], true)} onUpload={() => inputRef.current?.click()} />
           <StatsStrip />
-          <GhostTeam />
+          <GhostTeam onAsk={(key) => { try { sessionStorage.setItem(OPEN_GUIDE_KEY, key); } catch { /* private mode */ } scan([], true); }} />
           {/* Free vs Pro on show, above the tabs, so nobody has to find it (3 Nov). */}
           <section id="plans" aria-label="Free vs Pro" className="mx-auto mt-8 w-full max-w-4xl">
             <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Free vs Pro</p>

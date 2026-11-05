@@ -5,3 +5,6 @@ export const ASK_GUIDE = 'ghostfees:ask-guide';
 export function askGuide(guide) {
   window.dispatchEvent(new CustomEvent(ASK_GUIDE, { detail: { guide } }));
 }
+
+// Set by the home page ghost team: open the results with the chat on this ghost.
+export const OPEN_GUIDE_KEY = 'gf_open_guide';

@@ -1018,3 +1018,14 @@ One entry per change. Newest at the bottom.
 - Files: src/components/landing/GhostTeam.jsx, src/components/results/BadgesExplainer.jsx, src/components/results/ChoiceGroup.jsx, src/components/results/FeedbackPanel.jsx, src/components/AuthLayout.jsx, src/components/landing/PlansAtAGlance.jsx, src/pages/Upgrade.jsx, src/pages/Unlocked.jsx
 - How to test: Home (Haunted): Hattie is the witch. Sample > Subscriptions: badges in one cascading line. Feedback form: both questions show Yes / Not sure / No.
 - User feedback that drove this: "make these ghosts match the avatars in the app", "arrange these better like a line cascading down", "yes no, kinda and maybe need to be consistent".
+
+### Bigger chat, tap a ghost to chat, every ghost explains itself
+- What:
+  - The chat window is bigger (460 x up to 780px, was 380 x 640). A new expand button makes it nearly full screen (900px wide, full height). The ghost picker is now one compact row of names (Fees: Penny, Spooksworth, Gus, Cassy · Plan: Kit, Mo, Hattie), and each name's hover says its job, so the conversation gets the room. Kit's planner shows once, under his latest reply.
+  - Home page "Meet your ghost team": every ghost is a button ("Chat with Kit →"). It opens the sample with the chat already talking to that ghost. Ghost It opens ASI:One.
+  - Ask any ghost "What can you do?", "How does this work?" or "How do you optimise my subscriptions?" and it explains its job in steps (new `how` list per ghost). Kit adds the plan for your statement.
+  - "Can you help me with X?" gets a straight answer: "Yes, I can help with that" plus steps if it's that ghost's job, or "Not me, but Kit can..." with an Ask Kit → chip.
+  - "Collate / organise / list my subscriptions" (Kit): all subscriptions sorted into Ghost Packs with each pack's monthly total and the overall total, then the consolidation plan. The other ghosts hand that to Kit.
+- Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guides.js (how steps), src/lib/ghostFees/bundles.js (organiseText), src/components/landing/GhostTeam.jsx, src/pages/Landing.jsx, src/lib/ghostFees/askGuide.js, src/components/results/ResultsView.jsx
+- How to test: Home > tap Kit in Meet your ghost team: the sample opens with Kit's chat. "How do you optimise my subscriptions?" gives 4 steps plus the plan. Mo: "Can you help me with my AI subscriptions?" gives "Not me, but Kit can" and Ask Kit →. Kit: "can you help me collate and organise my subscriptions?" lists 7 subscriptions by pack ($144.45 a month) plus the plan. Expand button: 900px window.
+- User feedback that drove this: "need the chat window expanded bigger and easier to see", "not answering... can you help me collate and organise my subscriptions?", "make the press agent button open new window chat with agents where you can discuss and answer questions like what you can do", "apply this logic other agents".

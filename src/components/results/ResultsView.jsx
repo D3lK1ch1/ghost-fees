@@ -21,7 +21,8 @@ import FirstSteps from './FirstSteps';
 import { TourButton, TOUR_EVENT } from '@/components/tour/Tour';
 import StatNote from '@/components/stats/StatNote';
 import { statKeyForLeak } from '@/data/stats';
-import { ASK_GUIDE } from '@/lib/ghostFees/askGuide';
+import { ASK_GUIDE, OPEN_GUIDE_KEY } from '@/lib/ghostFees/askGuide';
+import { GUIDES } from '@/lib/ghostFees/guides';
 import LeakFilter, { filterLeaks } from './LeakFilter';
 import { biasFor, biasGroups } from '@/lib/ghostFees/leaks';
 import { PatternContext } from '@/components/patterns/PatternContext';
@@ -215,6 +216,15 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
     };
     window.addEventListener(ASK_GUIDE, open);
     return () => window.removeEventListener(ASK_GUIDE, open);
+  }, []);
+  // From the home page ghost team: open the chat on the ghost they tapped.
+  useEffect(() => {
+    let key = null;
+    try { key = sessionStorage.getItem(OPEN_GUIDE_KEY); sessionStorage.removeItem(OPEN_GUIDE_KEY); } catch { /* private mode */ }
+    if (!key || !GUIDES[key]) return undefined;
+    setGuideKey(key);
+    const t = setTimeout(() => setGuideOpen((count) => count + 1), 700);
+    return () => clearTimeout(t);
   }, []);
   const [pulseId, setPulseId] = useState(null);
   const [mostUsefulId, setMostUsefulId] = useState(null);

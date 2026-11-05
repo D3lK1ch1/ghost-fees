@@ -338,3 +338,23 @@ export function consolidationText(plan) {
   const total = plan.totalMax ? `\n\nAll together: up to ${money(plan.totalMax)} a month less${plan.totalMin !== plan.totalMax ? ` (at least ${money(plan.totalMin)})` : ''}, depending on what you keep.` : '';
   return `Here's your consolidation plan, pack by pack:\n\n${rows.join('\n\n')}${total}\n\nStart with the first one below: pick your favourite, or tell me what you watch and I'll research it.`;
 }
+
+// "Collate and organise my subscriptions": every subscription sorted into Ghost It's packs
+// (anything Ghost It doesn't know goes under Other), with each pack's monthly total.
+export function organiseText(subscriptions = []) {
+  const subs = subscriptions.filter((s) => Number(s.monthly) > 0);
+  if (!subs.length) return null;
+  const byPack = new Map();
+  subs.forEach((s) => {
+    const svc = serviceFor(s.merchant);
+    const pack = svc?.pack || (/GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45|PILATES|YOGA/i.test(s.merchant) ? 'Gym and Fitness' : KIT_GROUPS.video.fallback.test(s.merchant) ? 'Screen' : 'Other');
+    byPack.set(pack, [...(byPack.get(pack) || []), { ...s, name: svc?.name || s.merchant }]);
+  });
+  const order = [...CATALOGUE.packs, 'Other'].filter((p) => byPack.has(p));
+  const lines = order.map((pack) => {
+    const items = byPack.get(pack).sort((a, b) => b.monthly - a.monthly);
+    const label = pack === 'Gym and Fitness' ? 'Gym & Fitness' : pack;
+    return `${CATALOGUE.packEmoji[pack] || '📦'} ${label} (${money(sumMonthly(items))} a month): ${items.map((i) => `${i.name} ${money(i.monthly)}`).join(', ')}`;
+  });
+  return `Your ${subs.length} subscriptions, organised by Ghost Pack:\n\n${lines.join('\n')}\n\nAll together: ${money(sumMonthly(subs))} a month.`;
+}
