@@ -306,3 +306,35 @@ export function researchVerdict(group, research) {
     keepSaving: mode === 'keep' ? Math.round((group.monthly - top.item.monthly) * 100) / 100 : 0,
   };
 }
+
+// Kit's answer to "help me consolidate": every group of doubles, what it costs and the
+// saving from keeping one (keep the dearest = least, keep the cheapest = most). Rules only.
+export function consolidationPlan(groups) {
+  const lines = groups.filter((g) => g.key !== 'ai').map((g) => {
+    const priced = g.items.filter((i) => i.monthly);
+    const known = !g.unpriced?.length && priced.length === g.items.length;
+    const prices = priced.map((i) => i.monthly);
+    const cheapest = priced.reduce((a, b) => (b.monthly < a.monthly ? b : a), priced[0]);
+    return {
+      group: g, known, cheapest,
+      minSave: known ? Math.round((g.monthly - Math.max(...prices)) * 100) / 100 : 0,
+      maxSave: known ? Math.round((g.monthly - Math.min(...prices)) * 100) / 100 : 0,
+    };
+  });
+  const ai = groups.find((g) => g.key === 'ai');
+  const sum = (k) => Math.round(lines.reduce((t, l) => t + l[k], 0) * 100) / 100;
+  return { lines, ai, totalMin: sum('minSave'), totalMax: sum('maxSave') };
+}
+
+export function consolidationText(plan) {
+  if (!plan.lines.length && !plan.ai) return null;
+  const rows = plan.lines.map(({ group, known, minSave, maxSave, cheapest }) => {
+    const head = `${group.emoji} ${group.items.length} ${group.label}: ${itemLine(group.items)}`;
+    if (!known) return `${head}. Add the missing price to see the saving.`;
+    const range = minSave === maxSave ? money(maxSave) : `${money(minSave)} to ${money(maxSave)}`;
+    return `${head}. Keep one: ${range} a month less (most if you keep ${cheapest.name}).${group.rotate ? ' Or rotate one a month.' : ''}`;
+  });
+  if (plan.ai) rows.push(`🤖 ${plan.ai.items.length} AI tools: tick what you use AI for and I'll keep the 2 or 3 that cover it.`);
+  const total = plan.totalMax ? `\n\nAll together: up to ${money(plan.totalMax)} a month less${plan.totalMin !== plan.totalMax ? ` (at least ${money(plan.totalMin)})` : ''}, depending on what you keep.` : '';
+  return `Here's your consolidation plan, pack by pack:\n\n${rows.join('\n\n')}${total}\n\nStart with the first one below: pick your favourite, or tell me what you watch and I'll research it.`;
+}

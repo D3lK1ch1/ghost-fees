@@ -5,7 +5,7 @@ import { money, monthsLabel } from './format';
 import { biasFor, biasGroups } from './leaks';
 import { cancelInfo } from './cancelLinks';
 import { GUIDES } from './guides';
-import { bundleGroups } from './bundles';
+import { bundleGroups, consolidationPlan, consolidationText } from './bundles';
 
 const nameOf = (leak) => leak.title || leak.merchant;
 export const handoffChip = (key) => `Ask ${GUIDES[key].name.replace('Sir ', '')} →`;
@@ -100,14 +100,15 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     };
   }
   if (guideKey === 'bundle') {
-    // Kit works from the subscriptions list, so he opens even with no ghosts.
-    const groups = bundleGroups(analysis.subscriptions || []).filter((group) => group.key !== 'ai');
-    const top = groups[0];
+    // Kit opens with the consolidation plan for every pack (rules, no AI), then his planner.
+    const all = bundleGroups(analysis.subscriptions || []);
+    const plan = consolidationText(consolidationPlan(all));
+    const first = all.find((group) => group.key !== 'ai');
     return {
-      text: top
-        ? `${g.hello}\n\nYou pay for ${top.items.length} ${top.label}: ${money(top.monthly)} a month for the same job. Pick your favourite below and I'll show what to keep, or how to rotate.`
-        : `${g.hello}\n\nNo double-ups on this statement. Got AI tools? Type them with prices, or tick what you use AI for below.`,
-      kit: top ? top.key : 'ai',
+      text: plan
+        ? `${g.hello}\n\n${plan}`
+        : `${g.hello}\n\nNo double-ups on this statement. Type what else you pay for below (names are enough, like "Disney+ and YouTube"), or tick what you use AI for.`,
+      kit: first ? first.key : 'ai',
       chips: [handoffChip('cass'), handoffChip('habit')],
     };
   }
