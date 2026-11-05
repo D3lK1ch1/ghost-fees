@@ -164,3 +164,53 @@ export function downloadRotation(plan) {
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+// ---- Kit's research (6 Nov) ----
+// Genres people tap before Kit looks up where their shows are.
+export const GENRES = ['Romcom', 'Drama', 'Crime', 'Comedy', 'Reality', 'Sport', 'Kids', 'Docos', 'Sci-fi', 'Anime'];
+// Made-up services in the sample statement: never searched, labelled as samples.
+export const isSampleService = (name = '') => /STREAMMAX/i.test(name);
+export const splitShows = (text = '') => text.split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean).slice(0, 5);
+
+// The cost-benefit table and Kit's verdict, from the research (facts) plus the prices on
+// the statement. Rules only: shows count double, a genre win counts once.
+export function researchVerdict(group, research) {
+  const shows = research?.shows || [];
+  const genres = research?.genres || [];
+  const found = shows.filter((s) => s.service !== 'none');
+  const rows = group.items.map((item) => {
+    const mine = shows.filter((s) => s.service === item.name);
+    const wins = genres.filter((g) => g.service === item.name);
+    const score = mine.length * 2 + wins.length;
+    return {
+      item, shows: mine, genres: wins, score, sample: isSampleService(item.name),
+      perShow: mine.length ? Math.round((item.monthly / mine.length) * 100) / 100 : null,
+    };
+  }).sort((a, b) => b.score - a.score || a.item.monthly - b.item.monthly);
+  const top = rows[0];
+  const useful = rows.filter((r) => r.score > 0);
+  const topShare = found.length ? top.shows.length / found.length : (useful.length === 1 ? 1 : 0);
+  const mode = !useful.length ? 'none' : (useful.length === 1 || topShare >= 0.7) ? 'keep' : 'rotate';
+  let rotation = null;
+  if (mode === 'rotate') {
+    const order = useful.map((r) => r.item);
+    const plan = rotationPlan({ ...group, items: order, monthly: sumMonthly(order) }, order[0].name);
+    rotation = { ...plan, now: group.monthly, saving: Math.round((group.monthly - plan.average) * 100) / 100 };
+  }
+  const keepItems = mode === 'keep' ? [top.item] : mode === 'rotate' ? useful.map((r) => r.item) : [];
+  const cancel = group.items.filter((i) => !keepItems.includes(i));
+  const verdictFor = (row) => {
+    if (mode === 'keep') return row === top ? 'Keep' : 'Cancel';
+    if (mode === 'rotate') {
+      const month = rotation.months.find((m) => m.item === row.item);
+      return month ? `Rotate: ${month.label}` : 'Cancel';
+    }
+    return 'Your pick';
+  };
+  return {
+    rows: rows.map((r) => ({ ...r, verdict: verdictFor(r) })),
+    mode, top, rotation, cancel,
+    missing: shows.filter((s) => s.service === 'none').map((s) => s.title),
+    keepSaving: mode === 'keep' ? Math.round((group.monthly - top.item.monthly) * 100) / 100 : 0,
+  };
+}
