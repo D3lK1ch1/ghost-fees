@@ -123,7 +123,7 @@ const overlapOf = (s) => {
 // Groups of 2+ subscriptions doing the same job (Ghost It's overlap groups). AI tools
 // also count design tools (Canva, Adobe), since "images" or "design" may be covered there.
 export function bundleGroups(subscriptions = []) {
-  const subs = subscriptions.filter((s) => Number(s.monthly) > 0).map((s) => ({ ...s, name: short(s.merchant) }));
+  const subs = subscriptions.filter((s) => Number(s.monthly) > 0 || s.typed).map((s) => ({ ...s, name: s.name || short(s.merchant) }));
   const out = [];
   BUNDLE_GROUPS.forEach((group) => {
     const items = group.key === 'ai'
@@ -131,16 +131,19 @@ export function bundleGroups(subscriptions = []) {
       : subs.filter((s) => overlapOf(s) === group.key);
     const realAi = group.key === 'ai' ? items.filter((s) => overlapOf(s) === 'ai' || (aiToolFor(s.merchant) && overlapOf(s) !== 'design')) : items;
     if (items.length >= 2 && realAi.length >= (group.key === 'ai' ? 1 : 2)) {
-      out.push({ ...group, items: [...items].sort((a, b) => b.monthly - a.monthly), monthly: sumMonthly(items), tips: bundleTips(group.key, items) });
+      out.push({ ...group, items: [...items].sort((a, b) => (b.monthly || 0) - (a.monthly || 0)), monthly: sumMonthly(items), tips: bundleTips(group.key, items), unpriced: items.filter((i) => !i.monthly).map((i) => i.name), typical: items.some((i) => i.typical) });
     }
   });
   return out;
 }
 
 // Merge typed subscriptions into the statement's (a typed one replaces the same service).
+// A typed price replaces the statement's; a name typed without a price never does.
 export function mergeSubs(statement = [], typed = []) {
-  const typedNames = new Set(typed.map((t) => t.name));
-  return [...statement.filter((s) => !typedNames.has(short(s.merchant))), ...typed];
+  const onStatement = new Set(statement.map((s) => short(s.merchant)));
+  const priced = new Set(typed.filter((t) => t.monthly && !t.typical).map((t) => t.name));
+  const keepTyped = typed.filter((t) => priced.has(t.name) || !onStatement.has(t.name));
+  return [...statement.filter((s) => !priced.has(short(s.merchant))), ...keepTyped];
 }
 
 // Typed list, e.g. "Netflix $19, Stan $16, ChatGPT $30". Weekly amounts become monthly.
@@ -154,8 +157,21 @@ export function parseTyped(text = '') {
     if (!name || !price) continue;
     found.push({ merchant: name.toUpperCase(), name: short(name), monthly: m[3] ? Math.round(price * 52 / 12 * 100) / 100 : price, typed: true });
   }
+  // Names without a price ("Spotify and YouTube"): any Ghost It service named in the text.
+  // Kit uses Ghost It's typical Australian price (lowest plan) and marks it, or asks.
+  const rest = text.replace(re, ' ');
+  rest.split(/,|;|\/|\band\b|\bplus\b|&|\n/i).map((part) => part.trim()).filter(Boolean).forEach((part) => {
+    const svc = serviceFor(part);
+    if (!svc || found.some((f) => f.name === svc.name)) return;
+    const typical = CATALOGUE.typical[svc.key];
+    found.push({ merchant: svc.name.toUpperCase(), name: svc.name, monthly: typical ? typical[0] : null, typical: typical ? { low: typical[0], high: typical[1], source: typical[2] } : null, typed: true });
+  });
   return found;
 }
+
+// "Spotify $15.99*" (typical), "YouTube Premium price?" (unknown) or "Netflix $16.99".
+export const priceText = (item) => (item?.monthly ? `${money(item.monthly)}${item.typical ? '*' : ''}` : 'price?');
+export const TYPICAL_NOTE = `* Typical Australian price (lowest plan), from Ghost It's price list checked ${CATALOGUE.typicalChecked}. Type yours for exact maths, like "Spotify $14.99".`;
 
 
 export function keepPlan(group, keepName) {
@@ -209,7 +225,7 @@ export function aiPlan(tools, needs, budget = null) {
 }
 
 export const needList = (keys) => keys.map((k) => NEED_LABEL[k] || k).join(', ').replace(/, ([^,]*)$/, ' and $1');
-export const itemLine = (items) => items.map((i) => `${i.name} ${money(i.monthly)}`).join(', ');
+export const itemLine = (items) => items.map((i) => `${i.name} ${priceText(i)}`).join(', ');
 
 // Calendar file: on each switch day, start the next one and cancel the last.
 export function rotationIcs(plan, today = new Date()) {
@@ -260,7 +276,7 @@ export function researchVerdict(group, research) {
     const score = mine.length * 2 + wins.length;
     return {
       item, shows: mine, genres: wins, score, sample: isSampleService(item.name),
-      perShow: mine.length ? Math.round((item.monthly / mine.length) * 100) / 100 : null,
+      perShow: mine.length && item.monthly ? Math.round((item.monthly / mine.length) * 100) / 100 : null,
     };
   }).sort((a, b) => b.score - a.score || a.item.monthly - b.item.monthly);
   const top = rows[0];

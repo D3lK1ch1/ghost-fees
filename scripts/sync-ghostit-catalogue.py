@@ -26,7 +26,7 @@ for node in tree.body:
             consts[name] = ast.literal_eval(node.value)
         except ValueError:
             continue
-        if name in ("OVERLAP_NAMES", "PACK_EMOJI", "PACK_HUNTS", "PACKS"):
+        if name in ("OVERLAP_NAMES", "PACK_EMOJI", "PACK_HUNTS", "PACKS", "TYPICAL", "TYPICAL_CHECKED"):
             extra[name] = consts[name]
     if isinstance(node, ast.Expr) and isinstance(node.value, ast.Call) and getattr(node.value.func, "id", "") == "add":
         call = node.value
@@ -42,6 +42,9 @@ out = {
     "packs": extra.get("PACKS", []),
     "packEmoji": extra.get("PACK_EMOJI", {}),
     "packHunts": extra.get("PACK_HUNTS", {}),
+    # Typical Australian monthly price range per service: [low, high, source].
+    "typical": {k: list(v) for k, v in extra.get("TYPICAL", {}).items()},
+    "typicalChecked": extra.get("TYPICAL_CHECKED", ""),
 }
 dest = ROOT / "src" / "lib" / "ghostFees" / "ghostItCatalogue.json"
 dest.write_text(json.dumps(out, indent=1, ensure_ascii=False) + "\n")

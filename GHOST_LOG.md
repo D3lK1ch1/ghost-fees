@@ -996,3 +996,13 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/guides.js, src/components/landing/GhostTeam.jsx, src/components/guide/KitPlanner.jsx
 - How to test: Ask a ghost: the Kit chip reads "Optimises subs", and the header reads "Kit · Researches and optimises your subscriptions".
 - User feedback that drove this: "better description like researches and optimises subscriptions".
+
+### Kit understands names without prices ("Spotify and Youtube")
+- What: Typing "Spotify and Youtube" did nothing, because Kit only read names with a $ price. Now any Ghost It service named in the text counts:
+  - If it's on your statement, Kit uses your real price (Spotify $14.99 on the sample).
+  - If not, Kit uses Ghost It's typical Australian price (lowest plan), marked * with "from Ghost It's price list checked 2 Nov 2026. Type yours for exact maths".
+  - If there's no typical price (e.g. YouTube Premium), Kit still spots the double, shows "price?", and asks for the price before showing a saving.
+  - A typed price replaces the statement's; a name typed without a price never does. In chat, typed names no longer count a service twice.
+- Files: scripts/sync-ghostit-catalogue.py (exports TYPICAL prices), src/lib/ghostFees/ghostItCatalogue.json, src/lib/ghostFees/bundles.js, src/components/guide/KitPlanner.jsx, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost > Kit > "Spotify and Youtube". Sound pack: Spotify $14.99 (statement), YouTube Premium price?, the YouTube Music tip, and "Add a price for YouTube Premium...". "Netflix and Disney+" gives 4 streaming apps, with Disney+ $9.99*.
+- User feedback that drove this: screenshot of "Spotify and Youtube" typed into Kit with "not working".

@@ -557,5 +557,73 @@
   "Food": "two delivery passes at once, and a meal kit on top of a delivery pass",
   "Gym and Fitness": "what a weekly membership really costs a year, and a gym plus fitness apps",
   "Play": "two or three gaming passes at once"
- }
+ },
+ "typical": {
+  "netflix": [
+   9.99,
+   28.99,
+   "Tom's Guide, Oct 2026"
+  ],
+  "stan": [
+   9.99,
+   23.99,
+   "WhistleOut, Jul 2026"
+  ],
+  "disney": [
+   9.99,
+   24.99,
+   "Tom's Guide, Apr 2026"
+  ],
+  "binge": [
+   10.0,
+   22.0,
+   "Tom's Guide, Oct 2026"
+  ],
+  "kayo": [
+   29.99,
+   45.99,
+   "EFTM, Jan 2026"
+  ],
+  "paramount": [
+   7.99,
+   17.99,
+   "CompareTV, Oct 2026"
+  ],
+  "prime": [
+   12.99,
+   12.99,
+   "Finder, Oct 2026"
+  ],
+  "appletv": [
+   15.99,
+   15.99,
+   "Tom's Guide, Oct 2026"
+  ],
+  "spotify": [
+   15.99,
+   27.99,
+   "Selectra, Jun 2026"
+  ],
+  "icloud": [
+   1.49,
+   89.99,
+   "Apple"
+  ],
+  "m365": [
+   16.0,
+   33.0,
+   "Microsoft"
+  ],
+  "gamepass": [
+   12.95,
+   25.95,
+   "Press Start, Apr 2026"
+  ],
+  "uberone": [
+   9.99,
+   9.99,
+   "Uber"
+  ]
+ },
+ "typicalChecked": "2 Nov 2026"
 }
