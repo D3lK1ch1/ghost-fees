@@ -893,3 +893,15 @@ One entry per change. Newest at the bottom.
 - Files: src/components/results/HauntedHouse.jsx
 - How to test: Haunted theme > sample > Cancel & track: all six ghosts visible on the porch and in Pick your ghost guide, nothing past the card edge.
 - User feedback that drove this: "can we arranhe the agent menue betetr lookss weird as 5".
+
+### Each ghost is a specialist: own intro, own questions, own answers
+- What: Mo answered "Which pattern costs me most?" with Streammax (a ghost, not a pattern), because the app's quick answers ignored which ghost you were talking to and "most" matched Penny's "which ghost costs the most". Now:
+  - Quick answers belong to a ghost. Mo answers patterns (biggest pattern, what a money pattern is, trials, one habit) and Hattie answers habits (where to start, make it smaller, I keep forgetting, open my plan), all from the app's own maths. The safety answers (no advice, no yearly guesses, privacy) still come first for everyone.
+  - Each ghost says a short hello when you open the chat or switch to them, saying who they are and what they do. Mo explains what a money pattern is in plain words.
+  - Each reply has a name tag (for example "Mo · Explains patterns"), and the input box says what to ask that ghost.
+  - Chips are only that ghost's own questions (plus "Is my data stored?").
+  - Fixes: "I keep forgetting" no longer gets the privacy answer. "Ask the bank to waive a fee" picks the bank fee. The paywall line says "all six of us".
+  - The description box under the picker is gone (the hello says it), which gives the chat more room.
+- Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guides.js
+- How to test: Sample > Ask a ghost > Mo > "Which pattern costs me most?" gives Denomination Effect $117.00 with Open the pattern. Switch to Hattie: she says hello and offers her own habit questions.
+- User feedback that drove this: "mos not asnwewring this why and people dont knwo patterns i thisnk all my aghents need to become more speicliased and need a littleintro to what tehyre doinga dn bceom obvsioud tehyre specila".
