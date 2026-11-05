@@ -6,7 +6,7 @@ import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
 import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
 import { readHabit } from '@/lib/ghostFees/habitPlan';
-import { readExPick } from '@/lib/ghostFees/habitArt';
+import { habitArt, readExPick } from '@/lib/ghostFees/habitArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
@@ -239,6 +239,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
   const { theme } = useTheme();
   const hank = theme?.key === 'ex' && readExPick() === 'fine';
+  // Hattie wears the theme's outfit (Hank on the Ex "I'm Fine" pick), like her habit card.
+  const guideImage = guideKey === 'habit' ? habitArt(theme?.key, readExPick()) : guide.image;
   const focusRef = useRef(null);
   const openerFor = (key) => {
     const focus = focusRef.current;
@@ -434,8 +436,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
         >
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 pb-3 pt-4">
             <span className="flex h-12 w-11 shrink-0 items-end justify-center overflow-visible pt-2" style={{ color: guide.color }}>
-              {guide.image
-                ? <img src={guide.image} alt="" width={44} height={44} className="h-11 w-11 object-contain motion-safe:animate-float" />
+              {guideImage
+                ? <img src={guideImage} alt="" width={44} height={44} className="h-11 w-11 object-contain motion-safe:animate-float" />
                 : <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />}
             </span>
             <div className="min-w-0 flex-1">

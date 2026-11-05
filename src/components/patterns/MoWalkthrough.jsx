@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
 import { MO_WALK_SEEN } from '@/lib/ghostFees/habitPlan';
 import { money, moneyWhole } from '@/lib/ghostFees/format';
@@ -77,7 +76,7 @@ export default function MoWalkthrough({ groups, total, themeKey, habitName, onHa
   return (
     <section aria-label="Mo walks you through your patterns" className="flex flex-col-reverse items-start gap-4 sm:flex-row sm:items-end">
       <div className="flex shrink-0 flex-col items-center sm:w-24">
-        <GhostMark className="h-16 w-16 motion-safe:animate-float" style={{ color: GUIDES.mind.color }} eyeColor="#1a1230" />
+        <img src={GUIDES.mind.image} alt="" width={72} height={80} className="h-20 w-[72px] object-contain drop-shadow-[0_0_14px_rgba(94,230,200,0.35)] motion-safe:animate-float" />
         <p className="mt-1 text-center text-[13px] font-semibold text-foreground">Mo</p>
         <p className="text-center text-[11.5px] leading-tight text-muted-foreground">{voice.who}</p>
       </div>
