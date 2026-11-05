@@ -233,9 +233,15 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
 
+  // Always show the newest message. On reopen jump straight there: the list remounts at
+  // the top, which showed an old ghost's hello under the newly picked one.
+  const wasOpen = useRef(false);
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
-  }, [messages]);
+    if (!open) { wasOpen.current = false; return; }
+    const behavior = wasOpen.current ? 'smooth' : 'auto';
+    wasOpen.current = true;
+    requestAnimationFrame(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior }));
+  }, [messages, open]);
 
   const { theme } = useTheme();
   const hank = theme?.key === 'ex' && readExPick() === 'fine';
