@@ -887,3 +887,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/guides.js (GUIDE_GROUPS), src/components/guide/GhostGuide.jsx
 - How to test: Sample > Ask a ghost: two rows with small headings, every ghost still switches the chat.
 - User feedback that drove this: "why mo is there a btter wy" (screenshot of Mo alone under the other four).
+
+### Haunted House guide menus: Fees and Habits rows, Hattie no longer cut off
+- What: The Front porch had six ghosts in one row, so Hattie was pushed off the right edge. It is now two labelled rows: Your fees (4 across) and Your habits (Mo and Hattie, centred). The small "Pick your ghost guide" row ran 218px past its card; it now wraps into Fees and Habits lines. Hattie shows her sticker instead of a plain ghost.
+- Files: src/components/results/HauntedHouse.jsx
+- How to test: Haunted theme > sample > Cancel & track: all six ghosts visible on the porch and in Pick your ghost guide, nothing past the card edge.
+- User feedback that drove this: "can we arranhe the agent menue betetr lookss weird as 5".

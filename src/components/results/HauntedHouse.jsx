@@ -4,7 +4,7 @@ import { playBoo, playChime, playCreak } from '@/lib/ghostFees/sound';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
-import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import { GUIDES, GUIDE_GROUPS, GUIDE_KEYS } from '@/lib/ghostFees/guides';
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
@@ -399,8 +399,12 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
           </div>
           <div className="bg-[#1d1720] px-3 pb-3 pt-2" role="group" aria-label="Your ghost guides on the front porch">
             <p className="text-center font-heading text-[14px] font-semibold tracking-wide text-[#e6defa]">Front porch · your guides</p>
-            <div className="mt-2 flex items-end justify-around gap-2">
-              {GUIDE_KEYS.map((key, index) => {
+            {GUIDE_GROUPS.map((group, row) => (
+            <div key={group.label} className={row ? 'mt-3' : 'mt-2'}>
+            <p className="text-center text-[11px] font-bold uppercase tracking-[0.12em] text-[#e6defa]/70">{group.label}</p>
+            <div className={cn('mx-auto mt-1 grid items-start gap-1', group.keys.length > 2 ? 'grid-cols-4' : 'max-w-[50%] grid-cols-2')}>
+              {group.keys.map((key) => {
+                const index = GUIDE_KEYS.indexOf(key);
                 const item = GUIDES[key];
                 const chosen = guideKey === key;
                 return (
@@ -410,11 +414,13 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                     onClick={() => onGuide?.(key)}
                     aria-pressed={chosen}
                     aria-label={`${item.name}, ${item.job}. ${item.does}`}
-                    className="flex flex-col items-center rounded-2xl px-2 pt-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                    className="flex min-w-0 flex-col items-center rounded-2xl px-0.5 pt-1 text-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                   >
                     <GhostTip label={`${item.name} · ${item.job}`} detail={item.does}>
                       <span className="block animate-float" style={{ color: item.color, animationDelay: `${index * 0.5}s` }}>
-                        <GhostMark className={cn('h-11 w-11', chosen && 'drop-shadow-[0_0_12px_currentColor]')} eyeColor="#1a1230" />
+                        {item.image
+                          ? <img src={item.image} alt="" width={44} height={44} className={cn('h-11 w-11 object-contain', chosen && 'drop-shadow-[0_0_12px_currentColor]')} />
+                          : <GhostMark className={cn('h-11 w-11', chosen && 'drop-shadow-[0_0_12px_currentColor]')} eyeColor="#1a1230" />}
                       </span>
                     </GhostTip>
                     <span
@@ -429,6 +435,8 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                 );
               })}
             </div>
+            </div>
+            ))}
           </div>
           <div className="relative -mx-6 mt-1 h-10 sm:-mx-10" aria-hidden="true">
             <div className="absolute inset-x-0 bottom-2 h-7 [background-image:repeating-linear-gradient(90deg,#0b0716_0,#0b0716_3px,transparent_3px,transparent_14px)] [mask-image:linear-gradient(to_bottom,transparent,black_25%)]" />
@@ -527,13 +535,15 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="font-heading text-[15px] font-semibold leading-tight text-foreground">Pick your ghost guide</p>
-              <GhostNameField className="mt-1.5" />
-            </div>
-            <div className="flex gap-1.5" role="group" aria-label="Pick your ghost guide">
-              {GUIDE_KEYS.map((key) => (
+          <div>
+            <p className="font-heading text-[15px] font-semibold leading-tight text-foreground">Pick your ghost guide</p>
+            <GhostNameField className="mt-1.5" />
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2" role="group" aria-label="Pick your ghost guide">
+            {GUIDE_GROUPS.map((group) => (
+            <div key={group.label} className="flex items-center gap-1.5">
+              <span className="mr-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{group.label.replace('Your ', '')}</span>
+              {group.keys.map((key) => (
                 <button
                   key={key}
                   type="button"
@@ -547,11 +557,14 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   )}
                 >
                   <span className="block" style={{ color: GUIDES[key].color }}>
-                    <GhostMark className="h-7 w-7" eyeColor="#1a1230" />
+                    {GUIDES[key].image
+                      ? <img src={GUIDES[key].image} alt="" width={28} height={28} className="h-7 w-7 object-contain" />
+                      : <GhostMark className="h-7 w-7" eyeColor="#1a1230" />}
                   </span>
                 </button>
               ))}
             </div>
+            ))}
           </div>
           <p className="mt-3 font-heading text-[14px] font-semibold" style={{ color: guide.color }}>{guide.name} · {guide.job}</p>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">{guide.does}</p>
