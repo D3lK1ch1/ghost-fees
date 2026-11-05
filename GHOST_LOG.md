@@ -881,3 +881,15 @@ One entry per change. Newest at the bottom.
 - Files: public/themes/habit/ (7 webp), src/lib/ghostFees/habitArt.js, habitPlan.js, guides.js, levels.js (Habit Keeper), goalTasks.js (habit row), src/components/patterns/MoWalkthrough.jsx, HabitCard.jsx, HabitCheckIn.jsx, HabitHomeCheckIn.jsx, PatternsTab.jsx, PatternDialog.jsx (BeatButton shared), src/components/guide/GhostGuide.jsx (Hattie, habit plan in summary, open_habit), base44/functions/askGhostGuide/entry.ts (Hattie rules, open_habit; GUIDE_KEYS in all functions), src/pages/Landing.jsx (home check-in), src/pages/Privacy.jsx (habit plan row), src/components/results/ResultsView.jsx (Clear my data wipes gf_habit_plan and gf_mo_walk_seen), GhostTeam and plan copy ("six ghost guides").
 - Also: home stats centred with no boxes (2 stats after the 8.4M one went); the no-upload card heading is "Don't want to upload your statements?".
 - How to test: Try the sample, Money patterns: Mo step 1 "$117 of your $296.92 is the Denomination Effect"; Yes, help me stick to it scrolls to the habit card with the bank fee habit picked; Save gives Mon start + check-in a week later (2 calendar events linking /?habit=check); Add to my task list adds a row in Calendar & reminders. /?habit=check shows the check-in; 2 Yes answers unlock Habit Keeper. Ex "I'm Fine" shows Hank; Heartbroken shows Hattie with the pink bow; Christmas shows Santa Hattie and the calendar pose on check-in. Hattie's chat answers need Publish.
+
+### Ask a ghost picker: "Your fees" and "Your habits" rows
+- What: The chat picker is two labelled rows instead of one grid. Your fees: Penny, Spooksworth, Gus, Cassy. Your habits: Mo and Hattie. Mo no longer sits alone on a fifth row looking like a leftover.
+- Files: src/lib/ghostFees/guides.js (GUIDE_GROUPS), src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost: two rows with small headings, every ghost still switches the chat.
+- User feedback that drove this: "why mo is there a btter wy" (screenshot of Mo alone under the other four).
+
+### Haunted House guide menus: Fees and Habits rows, Hattie no longer cut off
+- What: The Front porch had six ghosts in one row, so Hattie was pushed off the right edge. It is now two labelled rows: Your fees (4 across) and Your habits (Mo and Hattie, centred). The small "Pick your ghost guide" row ran 218px past its card; it now wraps into Fees and Habits lines. Hattie shows her sticker instead of a plain ghost.
+- Files: src/components/results/HauntedHouse.jsx
+- How to test: Haunted theme > sample > Cancel & track: all six ghosts visible on the porch and in Pick your ghost guide, nothing past the card edge.
+- User feedback that drove this: "can we arranhe the agent menue betetr lookss weird as 5".
