@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { GHOST_IT_CHAT, GHOST_IT_PHONE_NOTE } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_CHAT, GHOST_IT_PHONE_NOTE, GHOST_IT_MENTION } from '@/lib/ghostFees/ghostItAgent';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 // feedback form), with progress kept in this browser. Logs ref "try".
 const KEY = 'ghostFees.try.v1';
 export const TRY_RETURN = 'ghostFees.tryReturn';
-export const ASK_TEXT = '@ghostit Netflix $19, Stan $16, Disney+ $16, Spotify $14';
+export const ASK_TEXT = `${GHOST_IT_MENTION} Netflix $19, Stan $16, Disney+ $16, Spotify $14`;
 // Visits and clicks from local development don't count in the real numbers.
 const isLocal = () => /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
 

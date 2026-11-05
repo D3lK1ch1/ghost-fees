@@ -4,7 +4,7 @@ import { toast } from '@/components/ui/use-toast';
 import { getSessionId } from '@/lib/session';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
-import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SNIP } from '@/lib/ghostFees/ghostItAgent';
+import { GHOST_IT_MASCOT, GHOST_IT_PRICE, GHOST_IT_CHAT, GHOST_IT_SNIP, GHOST_IT_MENTION } from '@/lib/ghostFees/ghostItAgent';
 import GhostItDialog from './GhostItDialog';
 
 // "Message Ghost It": hands subscriptions to our chat agent on ASI:One (a separate
@@ -21,7 +21,7 @@ export function ghostItText(items) {
     .filter((item) => item?.merchant && Number(item.monthly) > 0)
     .slice(0, 6)
     .map((item) => `${item.merchant} $${Number(item.monthly).toFixed(2)}/mo`);
-  return parts.length ? `@ghostit ${parts.join(', ')}` : '';
+  return parts.length ? `${GHOST_IT_MENTION} ${parts.join(', ')}` : '';
 }
 
 export function useGo(text) {
@@ -53,7 +53,7 @@ function benefitFor(leak, name) {
     const yearly = (Number(leak.priceRise.newPrice) - Number(leak.priceRise.oldPrice)) * 12;
     return {
       points: [`Works out the rise a year${yearly > 0 ? ` ($${yearly.toFixed(2)} more)` : ''}`, 'Asks if you’d still sign up at the new price', 'Gives you the official cancel steps'],
-      text: `@ghostit ${name} went from $${Number(leak.priceRise.oldPrice).toFixed(2)} to $${Number(leak.priceRise.newPrice).toFixed(2)}`,
+      text: `${GHOST_IT_MENTION} ${name} went from $${Number(leak.priceRise.oldPrice).toFixed(2)} to $${Number(leak.priceRise.newPrice).toFixed(2)}`,
     };
   }
   return {
