@@ -860,3 +860,8 @@ One entry per change. Newest at the bottom.
 - Files: src/components/patterns/WhenChart.jsx, src/lib/ghostFees/leaks.js (leakRows)
 - How to test: Try the sample, Money patterns tab: When it happened shows Mar to Sept; See the numbers month totals sum to $296.92.
 - User feedback that drove this: Update Pack 9 part 4
+### Copied Ghost It messages mention the working agent by address
+- What: every message the app copies for Ghost It (Ask Ghost It on results, Ghost Packs, Try, the Ghost It page sample) now starts with the working agent's address mention instead of "@ghostit", because ASI:One still sends "@ghostit" to the old stopped agent until its index refreshes. One setting (GHOST_IT_MENTION in ghostItAgent.js) to switch back to "@ghostit" later.
+- Files: src/lib/ghostFees/ghostItAgent.js, src/components/results/AskGhostIt.jsx, src/components/results/GhostItPacks.jsx, src/pages/Try.jsx, src/pages/GhostIt.jsx
+- How to test: copy a Ghost It message in the app and paste it in ASI:One: it goes to Ghost.it (agent1qdaylw...), not your personal assistant.
+- User feedback that drove this: team review ("link the correct ASI in the app")
