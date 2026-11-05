@@ -11,7 +11,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
-import { aiToolFor, bundleGroups, parseTyped } from '@/lib/ghostFees/bundles';
+import { aiToolFor, bundleGroups, mergeSubs, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
@@ -132,7 +132,7 @@ function answer(question, analysis, guideKey) {
     const typed = parseTyped(question);
     if (typed.length >= 2) {
       const ai = typed.filter((t) => aiToolFor(t.merchant)).length >= 2;
-      const first = bundleGroups([...(analysis.subscriptions || []), ...typed]).find((g) => g.key !== 'ai' && g.items.some((i) => i.typed));
+      const first = bundleGroups(mergeSubs(analysis.subscriptions || [], typed)).find((g) => g.key !== 'ai' && g.items.some((i) => i.typed || typed.some((t) => t.name === i.name)));
       return ai
         ? { reply: `Got ${typed.length} tools. Tick what you use AI for and pick a budget, and I'll keep the 2 or 3 that cover it.`, kit: 'ai', typed: question }
         : { reply: first ? `Got it. ${first.items.length} ${first.label} doing the same job. ${first.key === 'video' ? 'Tell me what you watch and I\'ll research where it is, or just pick your favourite.' : 'Pick your favourite and I\'ll show what to keep, or how to rotate.'}` : 'Got it. None of those double up with each other or your statement.', kit: first?.key || 'video', typed: question };

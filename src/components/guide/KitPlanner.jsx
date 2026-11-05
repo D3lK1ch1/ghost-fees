@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { trackEvent } from '@/lib/session';
 import {
-  AI_NEEDS, GENRES, GHOST_PACKS, aiPlan, aiToolFor, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
+  AI_NEEDS, GENRES, GHOST_PACKS, TYPICAL_NOTE, aiPlan, aiToolFor, priceText, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
 } from '@/lib/ghostFees/bundles';
 
 const KIT = '#7fd1ff';
@@ -21,12 +21,12 @@ const Pill = ({ on, onClick, children, label }) => (
   </button>
 );
 
-function Row({ keep, name, price, note }) {
+function Row({ keep, name, price, note, item }) {
   return (
     <li className="flex items-start gap-2 text-[14px] leading-snug">
       {keep ? <Check className="mt-0.5 h-4 w-4 shrink-0" style={{ color: KIT }} strokeWidth={3} /> : <X className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={3} />}
       <span className={keep ? 'text-foreground' : 'text-muted-foreground line-through decoration-1'}>
-        <span className="font-bold">{name}</span> {money(price)} a month{note ? <span className="no-underline"> · {note}</span> : null}
+        <span className="font-bold">{name}</span> {item ? priceText(item) : money(price)}{item && !item.monthly ? '' : ' a month'}{note ? <span className="no-underline"> · {note}</span> : null}
       </span>
     </li>
   );
@@ -43,7 +43,7 @@ function CancelSteps({ items, onDecide, onCancelHelp, done, setDone }) {
         const marked = done.includes(item.name);
         return (
           <li key={item.name} className="rounded-xl border border-border bg-background/50 p-2.5 text-[13.5px]">
-            <p className="font-bold text-foreground">Cancel {item.name} <span className="font-semibold text-muted-foreground">({money(item.monthly)} a month)</span></p>
+            <p className="font-bold text-foreground">Cancel {item.name} <span className="font-semibold text-muted-foreground">({priceText(item)}{item.monthly ? ' a month' : ''})</span></p>
             {isSampleService(item.name)
               ? <p className="mt-0.5 text-muted-foreground">Streammax is a made-up service in the sample, so there's nothing to cancel.</p>
               : info.url
@@ -130,7 +130,7 @@ function KitResearch({ group, onDecide, onCancelHelp }) {
                 {verdict.rows.map((r) => (
                   <tr key={r.item.name} className="align-top">
                     <td className="pr-2 font-bold text-foreground">{r.item.name}</td>
-                    <td className="pr-2 text-foreground">{money(r.item.monthly)}</td>
+                    <td className="pr-2 text-foreground">{priceText(r.item)}</td>
                     <td className="pr-2 text-foreground">{r.sample ? <span className="text-muted-foreground">Sample, not searched</span> : r.shows.length ? r.shows.map((s) => (
                       <span key={s.title} className="block">{s.source ? <a href={s.source} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">{s.title}</a> : s.title}{s.note ? <span className="text-muted-foreground"> ({s.note})</span> : null}</span>
                     )) : <span className="text-muted-foreground">None</span>}</td>
@@ -205,7 +205,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
     <div className={cn('rounded-2xl border bg-card/80 p-4', compact ? 'border-border' : 'border-[#7fd1ff]/40', className)}>
       {!compact && (
         <p className="font-heading text-[15px] font-bold text-foreground">
-          <span style={{ color: KIT }}>Kit</span> · keep one, rotate the rest
+          <span style={{ color: KIT }}>Kit</span> · researches and optimises your subscriptions
         </p>
       )}
       {/* Ghost It's six Ghost Packs: each card says what it hunts and what Kit found. */}
@@ -253,16 +253,25 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
           placeholder="Disney+ $16, YouTube Premium $17, ChatGPT $30, Claude $30"
           className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-[14px] text-foreground outline-none placeholder:text-muted-foreground focus:border-[#7fd1ff]" />
       </label>
-      {typedSubs.length > 0 && <p className="mt-1 text-[12.5px] text-muted-foreground">Got it: {itemLine(typedSubs)}.</p>}
+      {typedSubs.length > 0 && (
+        <p className="mt-1 text-[12.5px] text-muted-foreground">
+          Got it: {typedSubs.map((t) => {
+            const fromStatement = !(t.monthly && !t.typical) && groups.some((g) => g.items.some((i) => i.name === t.name && !i.typed));
+            return fromStatement ? `${t.name} (price from your statement)` : `${t.name} ${priceText(t)}`;
+          }).join(', ')}.
+        </p>
+      )}
       {!groups.length && !typedSubs.length && <p className="mt-2 text-[13.5px] text-muted-foreground">No double-ups on this statement yet. Type what else you pay for and Kit checks every Ghost It pack: Screen, Sound, Tech Stack, Food and Play.</p>}
 
       {group && tab !== 'ai' && (
         <div className="mt-3">
           {!compact && (
             <p className="mb-2 text-[14px] text-foreground">
-              {itemLine(group.items)}: <span className="font-bold">{money(group.monthly)} a month</span> together.
+              {itemLine(group.items)}{group.unpriced?.length ? '' : <>: <span className="font-bold">{money(group.monthly)} a month</span> together</>}.
             </p>
           )}
+          {compact && <p className="mb-2 text-[14px] text-foreground">{itemLine(group.items)}</p>}
+          {group.typical && <p className="mb-2 text-[12px] text-muted-foreground">{TYPICAL_NOTE}</p>}
           {group.tips?.length > 0 && (
             <ul className="mb-2 space-y-0.5 text-[12.5px] text-muted-foreground">
               {group.tips.map((tip) => <li key={tip}>💡 {tip}</li>)}
@@ -285,24 +294,28 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
               {(mode === 'keep' || !rota) && (
                 <div className="mt-3">
                   <ul className="space-y-1">
-                    <Row keep name={keep.keep.name} price={keep.keep.monthly} />
-                    {keep.cancel.map((i) => <Row key={i.name} name={i.name} price={i.monthly} />)}
+                    <Row keep name={keep.keep.name} item={keep.keep} />
+                    {keep.cancel.map((i) => <Row key={i.name} name={i.name} item={i} />)}
                   </ul>
+                  {group.unpriced?.length ? (
+                    <p className="mt-2 text-[14px] text-foreground">Add a price for {group.unpriced.join(' and ')} in the box above to see the saving, like &quot;{group.unpriced[0]} $17&quot;.</p>
+                  ) : (
                   <p className="mt-2 text-[14px] text-foreground">
                     {money(keep.now)} a month becomes <span className="font-bold">{money(keep.keep.monthly)}</span>: <span className="font-bold" style={{ color: KIT }}>{money(keep.saving)} a month less</span>.
                   </p>
+                  )}
                 </div>
               )}
               {mode === 'rotate' && rota && (
                 <div className="mt-3">
                   <ol className="space-y-1 text-[14px]">
                     {rota.months.map((m) => (
-                      <li key={m.label + m.item.name}><span className="font-bold text-foreground">{m.label}:</span> <span className="text-muted-foreground">{m.item.name} only ({money(m.item.monthly)})</span></li>
+                      <li key={m.label + m.item.name}><span className="font-bold text-foreground">{m.label}:</span> <span className="text-muted-foreground">{m.item.name} only ({priceText(m.item)})</span></li>
                     ))}
                   </ol>
-                  <p className="mt-2 text-[14px] text-foreground">
+                  {!group.unpriced?.length && <p className="mt-2 text-[14px] text-foreground">
                     One at a time is about <span className="font-bold">{money(rota.average)} a month</span> instead of {money(rota.now)}: <span className="font-bold" style={{ color: KIT }}>{money(rota.saving)} a month less</span>, and you still see everything.
-                  </p>
+                  </p>}
                   <button type="button" onClick={() => { downloadRotation(rota); trackEvent('kit_rotation_ics'); }}
                     className="mt-2 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13.5px] font-bold text-[#0c1b26]" style={{ background: KIT }}>
                     <CalendarPlus className="h-4 w-4" /> Add the rotation to my calendar
