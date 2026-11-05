@@ -1624,9 +1624,16 @@ def route(ctx, sender, raw):
 # Hosted on Agentverse: Agent() with no arguments. Plan B (4 Nov, Raj's mailbox tip): set
 # GHOSTIT_LOCAL_SEED to run the same code on a computer, connected through a mailbox.
 if os.environ.get("GHOSTIT_LOCAL_SEED"):
-    agent = Agent(name=os.environ.get("GHOSTIT_LOCAL_NAME", "ghost-it-mailbox"),
+    # 5 Nov: publish the full profile on every start. Without these, uagents publishes an
+    # empty picture and description each time, which is why ASI:One showed a plain robot.
+    _readme = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agentverse-readme.md")
+    agent = Agent(name=os.environ.get("GHOSTIT_LOCAL_NAME", "Ghost.it"),
                   seed=os.environ["GHOSTIT_LOCAL_SEED"], port=int(os.environ.get("GHOSTIT_LOCAL_PORT", "8001")),
-                  mailbox=True, publish_agent_details=True)
+                  mailbox=True, publish_agent_details=True,
+                  handle=os.environ.get("GHOSTIT_HANDLE", "ghostit"),
+                  description="I hunt the money leaks your bank statement can't show you. A Ghost Pack for streaming, music, AI tools, food, gym and gaming.",
+                  avatar_url=os.environ.get("GHOSTIT_AVATAR_URL", "https://hunt-ghost-fees.base44.app/themes/ghostit/ghost-it-wave.webp"),
+                  readme_path=_readme if os.path.exists(_readme) else None)
 else:
     agent = Agent()
 protocol = Protocol(spec=chat_protocol_spec)
