@@ -69,7 +69,7 @@ function CancelSteps({ items, onDecide, onCancelHelp, done, setDone }) {
 
 // Kit's research: what you like, where it streams (web search, sources shown), then a
 // cost-benefit table and a keep / rotate verdict worked out by rules from it.
-function KitResearch({ group, onDecide, onCancelHelp }) {
+function KitResearch({ group, onDecide, onCancelHelp, compact = false }) {
   const { openPaywall } = useAllowance();
   const [genres, setGenres] = useState([]);
   const [showsText, setShowsText] = useState('');
@@ -121,6 +121,30 @@ function KitResearch({ group, onDecide, onCancelHelp }) {
       {verdict && (
         <div className="mt-3">
           <p className="text-[14px] font-bold text-foreground">3. Cost and benefit</p>
+          {compact ? (
+            // Narrow chat panel: one card per service instead of a wide table.
+            <ul className="mt-1.5 space-y-1.5">
+              {verdict.rows.map((r) => {
+                const good = r.verdict !== 'Cancel';
+                return (
+                  <li key={r.item.name} className={cn('rounded-xl border p-2.5 text-[13.5px]', good ? 'border-[#7fd1ff]/50 bg-[#7fd1ff]/[0.07]' : 'border-border bg-background/50')}>
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="font-bold text-foreground">{r.item.name} <span className="font-semibold text-muted-foreground">{priceText(r.item)}{r.item.monthly ? ' a month' : ''}</span></p>
+                      <span className={cn('shrink-0 rounded-full px-2 py-0.5 text-[12px] font-bold', good ? 'text-[#0c1b26]' : 'bg-white/10 text-muted-foreground')} style={good ? { background: KIT } : undefined}>{r.verdict}</span>
+                    </div>
+                    <p className="mt-1 text-muted-foreground">
+                      <span className="font-semibold text-foreground">Your shows: </span>
+                      {r.sample ? 'Sample service, not searched' : r.shows.length ? r.shows.map((sh, i) => (
+                        <span key={sh.title}>{i ? ', ' : ''}{sh.source ? <a href={sh.source} target="_blank" rel="noreferrer" className="text-foreground underline-offset-4 hover:underline">{sh.title}</a> : sh.title}{sh.note ? ` (${sh.note})` : ''}</span>
+                      )) : 'none of them'}
+                    </p>
+                    {r.genres.length > 0 && <p className="text-muted-foreground"><span className="font-semibold text-foreground">Best for: </span>{r.genres.map((g) => g.genre).join(', ')}</p>}
+                    {r.perShow != null && <p className="text-muted-foreground"><span className="font-semibold text-foreground">Per show: </span>{money(r.perShow)} a month</p>}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
           <div className="mt-1.5 overflow-x-auto">
             <table className="w-full min-w-[440px] border-separate border-spacing-y-1 text-left text-[13px]">
               <thead className="text-[11.5px] uppercase tracking-wide text-muted-foreground">
@@ -142,6 +166,7 @@ function KitResearch({ group, onDecide, onCancelHelp }) {
               </tbody>
             </table>
           </div>
+          )}
           {verdict.missing.length > 0 && <p className="mt-1 text-[12.5px] text-muted-foreground">Not on any of yours: {verdict.missing.join(', ')}. Kit doesn't suggest new services.</p>}
           <p className="mt-1 text-[12px] text-muted-foreground">Where shows stream in Australia, checked {state.research.checked}. Catalogues change, so tap a show to see the source.</p>
 
@@ -277,7 +302,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
               {group.tips.map((tip) => <li key={tip}>💡 {tip}</li>)}
             </ul>
           )}
-          {group.key === 'video' && <KitResearch key={group.key} group={group} onDecide={onDecide} onCancelHelp={onCancelHelp} />}
+          {group.key === 'video' && <KitResearch key={group.key} group={group} onDecide={onDecide} onCancelHelp={onCancelHelp} compact={compact} />}
           <p className={cn('text-[14px] font-bold text-foreground', group.key === 'video' && 'mt-3')}>{group.key === 'video' ? 'Or just pick the one you watch most:' : group.ask}</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {group.items.map((item) => <Pill key={item.name} on={fav[tab] === item.name} onClick={() => pickFav(item.name)}>{item.name}</Pill>)}

@@ -11,7 +11,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
-import { aiToolFor, bundleGroups, mergeSubs, parseTyped } from '@/lib/ghostFees/bundles';
+import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
@@ -139,7 +139,13 @@ function answer(question, analysis, guideKey) {
     }
     if (/\bai\b|chatgpt|claude|midjourney|gemini|copilot|cursor|tools?/.test(text)) return { reply: 'Tick what you use AI for and pick a budget. I only choose from tools you already pay for.', kit: 'ai' };
     if (/rotat/.test(text)) return { reply: 'Rotating means one service a month: start one, cancel the last. Pick your favourite and tap Rotate, one a month. I can put every switch in your calendar.', kit: 'video' };
-    if (doubles.test(text)) return { reply: 'Here are your double-ups. Pick the one you use most and I\'ll show what to keep and cancel.', kit: 'video' };
+    if (doubles.test(text) || /optimi|save (me )?money|my subscriptions|sort (out|my)|help me/.test(text)) {
+      const groups = bundleGroups(analysis.subscriptions || []);
+      const plan = consolidationText(consolidationPlan(groups));
+      return plan
+        ? { reply: plan, kit: groups.find((g) => g.key !== 'ai')?.key || 'ai' }
+        : { reply: 'No double-ups on this statement yet. Type what else you pay for, like "Disney+ $16, YouTube Premium $17", and I\'ll check every pack.', kit: 'video' };
+    }
   } else if (doubles.test(text) && !/cancel|email|letter/.test(text)) {
     return { reply: "That's Kit's job. He compares subscriptions that do the same thing and helps you keep one or rotate.", owner: 'bundle' };
   }

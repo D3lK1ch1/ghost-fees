@@ -1006,3 +1006,9 @@ One entry per change. Newest at the bottom.
 - Files: scripts/sync-ghostit-catalogue.py (exports TYPICAL prices), src/lib/ghostFees/ghostItCatalogue.json, src/lib/ghostFees/bundles.js, src/components/guide/KitPlanner.jsx, src/components/guide/GhostGuide.jsx
 - How to test: Sample > Ask a ghost > Kit > "Spotify and Youtube". Sound pack: Spotify $14.99 (statement), YouTube Premium price?, the YouTube Music tip, and "Add a price for YouTube Premium...". "Netflix and Disney+" gives 4 streaming apps, with Disney+ $9.99*.
 - User feedback that drove this: screenshot of "Spotify and Youtube" typed into Kit with "not working".
+
+### Kit: a real consolidation plan, and cards instead of a cramped table in chat
+- What: (1) "Can you help me consolidate subscriptions" only got "here are your double-ups". Kit now answers, and opens, with a consolidation plan pack by pack: each group of doubles with its prices, the saving from keeping one ("$30.99 to $35.98 a month less, most if you keep Stan"), "or rotate one a month", AI tools (tick what you use), and a total ("up to $35.98 a month less"). Rules only, monthly only. It also answers "optimise", "save money", "sort out my subscriptions" and "help me". (2) The cost-benefit table was too wide for the chat panel and cut columns off. In chat each service is now a small card (price, Keep / Rotate / Cancel badge, your shows, best for, per show). The full table stays on the Subscriptions tab.
+- Files: src/lib/ghostFees/bundles.js (consolidationPlan, consolidationText), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx, src/components/guide/KitPlanner.jsx
+- How to test: Sample > Ask a ghost > Kit: the opener is the consolidation plan. Type "can you help me consolidate subscriptions" to get the same plan. Research (after Publish) shows cards in chat.
+- User feedback that drove this: "format this more" and "can you help me consolidate subscriptions didn't really work out".
