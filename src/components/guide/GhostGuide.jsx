@@ -6,7 +6,7 @@ import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
 import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
 import { readHabit } from '@/lib/ghostFees/habitPlan';
-import { habitArt, readExPick } from '@/lib/ghostFees/habitArt';
+import { readExPick } from '@/lib/ghostFees/habitArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
@@ -19,6 +19,7 @@ import { useAllowance } from '@/lib/AllowanceContext';
 
 const MAX_INPUT = 500;
 const MAX_AI_MESSAGES = 20;
+const NO_MESSAGES = [];
 
 const ACTION_LABELS = {
   draft_email: 'Open the email',
@@ -203,7 +204,7 @@ function answer(question, analysis, guideKey) {
       leak: creep,
     };
   }
-  if (/goals?|steps?|first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text)) {
+  if (/goals?|steps?|first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text) && !/email|letter|write|draft|cancel/.test(text)) {
     const verb = { cancel: 'Cancel', refund: 'Get a refund for', waive: 'Ask the bank to waive' };
     const goals = leaks.slice(0, 4).map((item, i) => `${i + 1}. ${verb[item.action] || 'Check'} ${nameOf(item)} (${money(item.amount)})`);
     const more = leaks.length > 4 ? ` Plus ${leaks.length - 4} more.` : '';
@@ -283,7 +284,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const [open, setOpen] = useState(false);
   const [big, setBig] = useState(false); // expand button: nearly full screen
   const [input, setInput] = useState('');
-  const [messages, setMessages] = useState([]);
+  // Each ghost has its own conversation ("its own window"): switching ghost shows that
+  // ghost's chat, fresh the first time, and switching back brings the old one back.
+  const [threads, setThreads] = useState({});
+  const setThread = (key, update) => setThreads((all) => ({ ...all, [key]: typeof update === 'function' ? update(all[key] || []) : update }));
+  const messages = threads[guideKey] || NO_MESSAGES;
   const [thinking, setThinking] = useState(false);
   const [aiCount, setAiCount] = useState(0);
   const { canAskGuide, markGuide, openPaywall } = useAllowance();
@@ -309,13 +314,20 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     if (!open) { wasOpen.current = false; return; }
     const behavior = wasOpen.current ? 'smooth' : 'auto';
     wasOpen.current = true;
-    requestAnimationFrame(() => listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior }));
+    // Scroll to the START of the newest ghost reply, so the answer is what you see (Kit's
+    // planner sits under his reply; scrolling to the bottom hid the answer).
+    requestAnimationFrame(() => {
+      const list = listRef.current;
+      if (!list) return;
+      const items = [...list.children];
+      const last = items[items.length - 1];
+      const target = last && last.offsetHeight > list.clientHeight * 0.6 ? last : null;
+      list.scrollTo({ top: target ? target.offsetTop - 8 : list.scrollHeight, behavior });
+    });
   }, [messages, open]);
 
   const { theme } = useTheme();
   const hank = theme?.key === 'ex' && readExPick() === 'fine';
-  // Hattie wears the theme's outfit (Hank on the Ex "I'm Fine" pick), like her habit card.
-  const guideImage = guideKey === 'habit' ? habitArt(theme?.key, readExPick()) : guide.image;
   // Hank is Hattie's "I'm Fine" twin on the Ex theme: same job, his own name everywhere.
   const nameFor = (key) => (key === 'habit' && hank ? 'Hank' : GUIDES[key].name);
   const chipLabel = (chip) => (hank ? chip.replace('Ask Hattie →', 'Ask Hank →') : chip);
@@ -389,7 +401,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const openPanel = () => {
     setOpen(true);
     trackEvent('guide_opened');
-    if (!messages.length) setMessages([openerFor(guideKey)]);
+    if (!messages.length) setThread(guideKey, [openerFor(guideKey)]);
   };
 
   // Switching ghost: the new one introduces itself and does its one job straight away.
@@ -397,16 +409,24 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   useEffect(() => {
     if (lastGuide.current === guideKey) return;
     lastGuide.current = guideKey;
-    if (!messages.length) return;
-    setMessages((current) => [...current, openerFor(guideKey)]);
+    if (!open) return; // opening the panel adds the opener
+    // A fresh window gets the ghost's opener; a handoff ("Ask Kit →") also re-opens with
+    // the ghost the last one was talking about.
+    if (!messages.length || focusRef.current) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
   }, [guideKey]);
+
+  // Safety net: an open window is never empty or showing another ghost. Whenever the
+  // chat is open on a ghost with no conversation yet, that ghost says its opener.
+  useEffect(() => {
+    if (open && !(threads[guideKey]?.length)) setThread(guideKey, [openerFor(guideKey)]);
+  }, [open, guideKey]);
 
   // Lets the page's "Ask a ghost" tab open the chat.
   useEffect(() => {
     if (openRequest) openPanel();
   }, [openRequest]);
 
-  const reply = (message) => setMessages((current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He").replace("I'm Hattie", "I'm Hank") : message.text }]);
+  const reply = (message) => setThread(guideKey, (current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He").replace("I'm Hattie", "I'm Hank") : message.text }]);
 
   // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
   const ask = async (question) => {
@@ -415,7 +435,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     trackEvent('guide_message');
     const nextChips = chips.filter((chip) => chip !== text).slice(0, 4);
     const history = messages.slice(-6).map((message) => ({ role: message.role, text: message.text }));
-    setMessages((current) => [...current, { role: 'user', text }]);
+    setThread(guideKey, (current) => [...current, { role: 'user', text }]);
     setInput('');
 
     if (chipReply(text)) return;
@@ -517,40 +537,13 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
         >
           <div className="flex shrink-0 items-center gap-3 border-b border-border px-4 pb-3 pt-4">
             <span className="flex h-12 w-11 shrink-0 items-end justify-center overflow-visible pt-2" style={{ color: guide.color }}>
-              {guideImage
-                ? <img src={guideImage} alt="" width={44} height={44} className="h-11 w-11 object-contain motion-safe:animate-float" />
-                : <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />}
+              <GhostMark className="h-9 w-9 animate-float" eyeColor="#1a1230" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="font-heading text-[15px] font-semibold text-foreground">
                 {guideName} <span className="text-[14px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
-              {/* Compact picker: names only, so the conversation gets the room. The chosen
-                  ghost's job shows in the line above; hover a name for what it does. */}
-              <div className="mt-1.5 flex flex-wrap items-center gap-1" role="group" aria-label="Pick your ghost guide">
-                {GUIDE_GROUPS.map((group, gi) => (
-                  <span key={group.label} className="contents">
-                    <span className={cn('text-[10.5px] font-bold uppercase tracking-[0.12em] text-muted-foreground', gi > 0 && 'ml-1.5')}>{group.label.replace('Your ', '')}</span>
-                    {group.keys.map((key) => (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => onGuide(key)}
-                        aria-pressed={guideKey === key}
-                        title={`${nameFor(key)}: ${GUIDES[key].short}. ${GUIDES[key].does}`}
-                        className={cn(
-                          'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[13px] font-bold leading-none transition-colors',
-                          guideKey === key ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:text-foreground',
-                        )}
-                      >
-                        <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
-                        {nameFor(key).replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
-                      </button>
-                    ))}
-                  </span>
-                ))}
-              </div>
             </div>
             <button type="button" onClick={() => setBig((b) => !b)} aria-label={big ? 'Make the chat smaller' : 'Make the chat bigger'} title={big ? 'Smaller' : 'Bigger'} className="hidden rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground sm:block">
               {big ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -558,6 +551,36 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground">
               <X className="h-5 w-5" />
             </button>
+          </div>
+          {/* Full-width picker: each ghost's name and a 3-4 word job, so people know which
+              to pick. Each ghost opens its own conversation. */}
+          <div className="shrink-0 space-y-1 border-b border-border px-3 pb-2 pt-1" role="group" aria-label="Pick your ghost guide">
+            {GUIDE_GROUPS.map((group) => (
+              <div key={group.label} className="flex items-stretch gap-1">
+                <span className="flex w-8 shrink-0 items-center text-[9.5px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{group.label.replace('Your ', '')}</span>
+                <div className={cn('grid flex-1 gap-1', group.keys.length === 4 ? 'grid-cols-4' : 'grid-cols-3')}>
+                  {group.keys.map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => onGuide(key)}
+                      aria-pressed={guideKey === key}
+                      title={`${nameFor(key)}: ${GUIDES[key].does}`}
+                      className={cn(
+                        'flex min-w-0 flex-col items-center rounded-xl px-1 py-1 text-center transition-colors',
+                        guideKey === key ? 'bg-primary text-primary-foreground' : 'bg-background text-muted-foreground hover:text-foreground',
+                      )}
+                    >
+                      <span className="flex max-w-full items-center gap-1 truncate text-[12px] font-bold leading-tight tracking-tight">
+                        <span className="inline-block h-2 w-2 shrink-0 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
+                        {nameFor(key).replace('Sir ', '')}{GUIDES[key].bonus ? ' ★' : ''}
+                      </span>
+                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           <p className="shrink-0 border-b border-border px-4 py-1.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
 
@@ -626,6 +649,18 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             )}
           </div>
 
+          {/* Always-there quick questions for this ghost: tap one, or type your own below. */}
+          {messages.length > 0 && (
+            <div className="flex shrink-0 gap-1.5 overflow-x-auto border-t border-border px-3 pt-2 [scrollbar-width:none]" aria-label={`Quick questions for ${guideName}`}>
+              {chips.slice(0, 5).map((chip) => (
+                <button key={chip} type="button" onClick={() => ask(chipLabel(chip))} disabled={thinking}
+                  className="shrink-0 rounded-full border px-3 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:bg-white/5 disabled:opacity-50"
+                  style={{ borderColor: `${guide.color}88` }}>
+                  {chipLabel(chip)}
+                </button>
+              ))}
+            </div>
+          )}
           <form
             onSubmit={(event) => { event.preventDefault(); ask(input); }}
             className="flex shrink-0 items-center gap-2 border-t border-border px-3 py-3"

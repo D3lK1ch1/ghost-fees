@@ -2,7 +2,7 @@ import { Brain, Calculator, CalendarCheck, Layers, Mail, MessageCircle, Scissors
 import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
 import { GHOST_IT_CHAT, GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
-import { habitArt, habitGhost, readExPick } from '@/lib/ghostFees/habitArt';
+import { habitGhost, readExPick } from '@/lib/ghostFees/habitArt';
 import { useTheme } from '@/lib/ThemeContext';
 
 // Home page, under the stats: who does what. The seven ghost guides in the app and
@@ -34,12 +34,10 @@ export const TEAM = [
 
 // onAsk(key): opens the sample with the chat already talking to that ghost.
 export default function GhostTeam({ onAsk }) {
-  // Same avatars as the app: Hattie wears the theme's outfit (Hank on the Ex "I'm Fine" pick).
   const { theme } = useTheme();
   const exPick = readExPick();
-  const team = TEAM.map((agent) => (agent.key === 'habit'
-    ? { ...agent, image: habitArt(theme?.key, exPick), name: habitGhost(theme?.key, exPick).name }
-    : agent));
+  // Small coloured ghosts, the same as the chat's picker (no detailed stickers here).
+  const team = TEAM.map((agent) => ({ ...agent, image: null, ...(agent.key === 'habit' ? { name: habitGhost(theme?.key, exPick).name } : {}) }));
   return (
     <section aria-label="Meet your ghost team" className="mx-auto mt-8 w-full max-w-4xl px-4">
       <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Meet your ghost team</p>
