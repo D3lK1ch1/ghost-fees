@@ -96,3 +96,10 @@ export const GUIDES = {
 };
 
 export const GUIDE_KEYS = Object.keys(GUIDES);
+
+// The chat picker shows two labelled rows so Mo and Hattie read as their own team:
+// the fee ghosts sort the charges, the habit ghosts stop them coming back.
+export const GUIDE_GROUPS = [
+  { label: 'Your fees', keys: ['penny', 'sir', 'gus', 'cass'] },
+  { label: 'Your habits', keys: ['mind', 'habit'] },
+];

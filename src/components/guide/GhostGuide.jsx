@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
-import { GUIDES, GUIDE_KEYS } from '@/lib/ghostFees/guides';
+import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
 import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
 import { readHabit } from '@/lib/ghostFees/habitPlan';
@@ -313,8 +313,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 {guide.name} <span className="text-[14px] font-semibold" style={{ color: guide.color }}>· {guide.job}</span>
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
-              <div className="mt-1 grid grid-cols-2 gap-1" role="group" aria-label="Pick your ghost guide">
-                {GUIDE_KEYS.map((key) => (
+              {GUIDE_GROUPS.map((group) => (
+              <div key={group.label} className="mt-1.5">
+              <p className="mb-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{group.label}</p>
+              <div className="grid grid-cols-2 gap-1" role="group" aria-label={`${group.label}: pick a ghost guide`}>
+                {group.keys.map((key) => (
                   <button
                     key={key}
                     type="button"
@@ -334,6 +337,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   </button>
                 ))}
               </div>
+              </div>
+              ))}
             </div>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground">
               <X className="h-5 w-5" />
