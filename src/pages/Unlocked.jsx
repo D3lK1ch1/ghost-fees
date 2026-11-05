@@ -11,7 +11,7 @@ import { useUpgradePalette } from '@/lib/ghostFees/upgradeTheme';
 // /unlocked: where Stripe sends people after paying. The server confirms the
 // payment with Stripe; only then the confetti. Owner (admin) accounts are never charged,
 // so they see that plainly instead of "Paid" (4 Nov: "it did not charge me").
-const PERKS = ['Unlimited scans, within a fair daily limit', 'All 5 ghost guides', 'Cassy for every subscription', 'The PDF report'];
+const PERKS = ['Unlimited scans, within a fair daily limit', 'All 6 ghost guides', 'Cassy for every subscription', 'The PDF report'];
 const ART = { haunted: '/themes/haunted/card-ghost.webp', ex: '/themes/ex/tilly.webp', christmas: '/themes/christmas/xc-festive.webp' };
 
 export default function Unlocked() {

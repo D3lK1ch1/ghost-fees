@@ -38,7 +38,7 @@ export default function CommonSubsChecker({ onUpload, onSample }) {
     <section aria-labelledby="common-subs-title" className="mx-auto mt-10 w-full max-w-5xl px-4">
       <div className="rounded-3xl border border-border bg-card/80 p-5 sm:p-7">
         <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-primary">No upload, no agent</p>
-        <h2 id="common-subs-title" className="mt-1 font-heading text-[22px] font-bold text-foreground">Do you have any of these?</h2>
+        <h2 id="common-subs-title" className="mt-1 font-heading text-[22px] font-bold text-foreground">Don&apos;t want to upload your statements?</h2>
         <p className="mt-1 text-[14.5px] text-muted-foreground">1. Tap the ones you pay for. 2. Tap what you pay. We add it up for a year. Nothing is uploaded or saved.</p>
 
         <div className="mt-4 space-y-3">

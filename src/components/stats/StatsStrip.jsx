@@ -19,10 +19,11 @@ export default function StatsStrip() {
 
   return (
     <section aria-label="Why it matters" className="mx-auto mt-8 w-full max-w-4xl px-4">
-      <ul className="grid gap-2.5 sm:grid-cols-3">
+      {/* 5 Nov: open, centred stats (no boxes), side by side however many there are. */}
+      <ul className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center sm:flex-row sm:items-start sm:justify-center sm:gap-12">
         {HEADLINE_STATS.map((fact) => (
-          <li key={fact.key} className="rounded-2xl border border-border bg-card/70 px-4 py-3">
-            <p className="font-heading text-[26px] font-bold leading-tight text-foreground">
+          <li key={fact.key} className="max-w-[17rem]">
+            <p className="font-heading text-[30px] font-bold leading-tight text-foreground">
               <span aria-hidden="true">{fact.emoji} </span>{fact.stat}
             </p>
             <p className="mt-0.5 text-[15px] leading-snug text-muted-foreground">{fact.text}</p>
@@ -35,7 +36,7 @@ export default function StatsStrip() {
         ))}
       </ul>
       {scans > 0 && (
-        <p className="mt-2 text-center text-[13.5px] text-muted-foreground">
+        <p className="mt-5 text-center text-[13.5px] text-muted-foreground">
           <b className="text-foreground">{scans.toLocaleString('en-AU')}</b> scans run on Ghost Fees so far. <Link to="/progress" className="font-bold text-primary underline-offset-4 hover:underline">See live progress</Link>
         </p>
       )}

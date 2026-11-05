@@ -1,6 +1,6 @@
 import { money } from './format';
 
-// Five ghost guides, each with their own colour and job. They change the tone and
+// Six ghost guides, each with their own colour and job. They change the tone and
 // which questions come first, never the facts.
 export const GUIDES = {
   penny: {
@@ -75,6 +75,23 @@ export const GUIDES = {
     room: (label, count, amount) => `${label}: ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)}. Same pattern, different faces.`,
     bust: (leak, left) => `${leak.title || leak.merchant}, sorted. Noticing is half the work. ${left} to go.`,
     done: (total) => `All ${money(total)} sorted. Notice it, adjust early, no shame.`,
+  },
+  // Pack 10: Hattie, the habit ghost. Mo explains the pattern; Hattie helps you keep one
+  // small habit. (Hank is her "I'm Fine" twin on the Ex theme, on the habit card.)
+  habit: {
+    name: 'Hattie',
+    role: 'the habit ghost',
+    color: '#ff8a7a',
+    image: '/themes/habit/hattie-main.webp',
+    job: 'Make one habit stick',
+    short: 'Builds habits',
+    does: 'Helps you pick one small money habit from your patterns, puts it in your calendar and checks in a week later.',
+    chips: ['Which habit should I start with?', 'Make my habit smaller', 'I keep forgetting, help'],
+    intro: (count, total) => `${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(total)}. Mo told you why. I'll help you do one thing about it.`,
+    pick: (leak) => `${leak.title || leak.merchant}? Let's make one small habit so it doesn't sneak back.`,
+    room: (label, count, amount) => `${label}: ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)}. One habit can cover all of them.`,
+    bust: (leak, left) => `${leak.title || leak.merchant}, gone. That's the habit working. ${left} to go.`,
+    done: (total) => `All ${money(total)} sorted. Keep the habit, and they stay gone.`,
   },
 };
 

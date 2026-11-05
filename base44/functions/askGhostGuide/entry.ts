@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.54';
 import { secrets } from 'base44:runtime';
 
-const ACTIONS = ['none', 'open_leak', 'draft_email', 'show_transactions', 'open_house', 'scroll_feedback', 'run_sample', 'upload', 'open_pattern'];
+const ACTIONS = ['none', 'open_leak', 'draft_email', 'show_transactions', 'open_house', 'scroll_feedback', 'run_sample', 'upload', 'open_pattern', 'open_habit'];
 
 const GUIDES = {
   penny: { name: 'Penny', tone: 'tidy and clear', focus: 'fees and totals: how each amount was worked out and which ghost costs the most' },
@@ -9,6 +9,7 @@ const GUIDES = {
   gus: { name: 'Gus', tone: 'hype and upbeat', focus: 'busting ghosts: what to do first, keeping score and turning savings into goals' },
   cass: { name: 'Cassy', tone: 'calm and practical', focus: 'cancelling: name a subscription and the app looks up its official cancel page, steps and phone number' },
   mind: { name: 'Mo', tone: 'warm and curious, never preachy', focus: 'why money leaks happen: the common pattern behind each ghost and one small habit to beat it' },
+  habit: { name: 'Hattie', tone: 'practical, kind, no guilt', focus: 'helps people pick and keep one small money habit from the patterns on their statement' },
 };
 
 const REPLY_SCHEMA = {
@@ -29,7 +30,7 @@ const REPLY_SCHEMA = {
 const FREE_SCANS = 3; // 3 free statement uploads (one upload = up to 6 files). The sample never counts.
 const FREE_CASS = 1; // Cassy looks up one subscription for free
 const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
-const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind'];
+const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind', 'habit'];
 
 function secretOr(name, fallback = '') {
   try {
@@ -166,6 +167,8 @@ export default async function (req) {
       to: clean(p?.to, 10),
       evidence: clean(p?.evidence, 10),
     }));
+    const plan = summary.habitPlan && typeof summary.habitPlan === 'object' ? summary.habitPlan : null;
+    const habitPlan = plan ? { patternKey: clean(plan.patternKey, 40), habitText: clean(plan.habitText, 200) } : null;
     const rawAnswers = summary.patternAnswers && typeof summary.patternAnswers === 'object' ? summary.patternAnswers : {};
     const patternAnswers = Object.fromEntries(Object.entries(rawAnswers).slice(0, 10).filter(([k, v]) => patterns.some((p) => p.key === k) && ['yes', 'unsure', 'no'].includes(v)));
     const subscriptions = (Array.isArray(summary.subscriptions) ? summary.subscriptions : []).slice(0, 30).map((item) => ({
@@ -184,7 +187,7 @@ Rules:
 - Off-topic questions: one friendly line steering back to their ghosts.
 - Max 80 words, plain text, no markdown, no emojis.
 - Money patterns: describe each as "a common pattern", never "you have" or a diagnosis. Only patterns listed in the summary, with their totals exactly as given. Never estimate, project or add up a yearly figure: if asked, say you only use what's on their statement. When suggesting a habit, give one, written as "When X, I will Y". If the person answered "no" for a pattern, respect it. To show a pattern's details, use action 'open_pattern' with that pattern's key as biasKey.
-- Pick an action only when it clearly helps (e.g. user asks to write the Netflix email: action 'draft_email' with that leak's id). leakId must be an id from the summary.
+${guideKey === 'habit' ? `- You are the habit ghost: help with ONE small habit per answer, written as "When X, I will Y". Max 60 words. Never estimate savings (yearly or otherwise), never diagnose, never name financial products. To open their habit plan, use action 'open_habit' with a pattern key as biasKey.\n` : ''}- Pick an action only when it clearly helps (e.g. user asks to write the Netflix email: action 'draft_email' with that leak's id). leakId must be an id from the summary.
 
 Summary of the user's results:
 Total: $${amount(summary.total).toFixed(2)} in ${months} months
@@ -192,6 +195,7 @@ Leaks: ${JSON.stringify(leaks)}
 Subscriptions (not counted in the total): ${JSON.stringify(subscriptions)}
 Money patterns (from the app's maths): ${JSON.stringify(patterns)}
 The person said a pattern sounds like them (yes / unsure / no): ${JSON.stringify(patternAnswers)}
+Their current habit plan: ${JSON.stringify(habitPlan)}
 
 Recent conversation:
 ${history || '(none)'}
@@ -206,7 +210,8 @@ User: ${question}`,
     const leakId = leaks.some((leak) => leak.id === result?.leakId) ? result.leakId : null;
     let action = ACTIONS.includes(result?.action) ? result.action : 'none';
     if (['open_leak', 'draft_email', 'show_transactions'].includes(action) && !leakId) action = 'none';
-    const biasKey = action === 'open_pattern' && patterns.some((p) => p.key === result?.biasKey) ? result.biasKey : null;
+    const wantsKey = action === 'open_pattern' || action === 'open_habit';
+    const biasKey = wantsKey && patterns.some((p) => p.key === result?.biasKey) ? result.biasKey : null;
     if (action === 'open_pattern' && !biasKey) action = 'none';
     const chips = (Array.isArray(result?.chips) ? result.chips : []).slice(0, 3).map((chip) => clean(chip, 80)).filter(Boolean);
 

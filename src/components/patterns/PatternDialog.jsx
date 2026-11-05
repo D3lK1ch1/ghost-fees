@@ -23,7 +23,7 @@ const ANSWERS = [
   { key: 'no', label: 'No, something else' },
 ];
 
-function BeatButton({ pattern, leaks, onDraft, onTab }) {
+export function BeatButton({ pattern, leaks, onDraft, onTab }) {
   const first = leaks[0];
   const btn = 'inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground';
   if (!first) return null;
