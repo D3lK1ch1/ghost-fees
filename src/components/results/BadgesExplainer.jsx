@@ -13,10 +13,11 @@ export default function BadgesExplainer({ className = '', compact = false }) {
       <p className="mt-0.5 text-[14.5px] leading-snug text-muted-foreground">
         A bit of fun as you cancel. Each cancelled subscription goes on your Ghost List and these unlock along the way. They never change your numbers and you can share them.
       </p>
-      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-        {ALL.map((badge) => (
-          <li key={badge.key} className="flex items-start gap-3 rounded-2xl border border-border bg-background/40 px-3.5 py-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary/15 leading-none" aria-hidden="true">
+      {/* One line cascading down: a badge per row on a thin track, each fading in after the last. */}
+      <ul className="relative mt-3 flex max-w-2xl flex-col gap-2 before:absolute before:bottom-6 before:left-[25px] before:top-6 before:w-[2px] before:rounded-full before:bg-primary/25 before:content-['']">
+        {ALL.map((badge, index) => (
+          <li key={badge.key} className="team-cascade relative flex items-center gap-3 rounded-2xl border border-border bg-background/40 px-3.5 py-3" style={{ animationDelay: `${index * 110}ms` }}>
+            <span className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#2a1f33] leading-none ring-2 ring-primary/30" aria-hidden="true">
               <span className="block text-[19px] leading-none">{badge.emoji}</span>
             </span>
             <span className="min-w-0 flex-1">

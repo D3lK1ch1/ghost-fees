@@ -16,7 +16,7 @@ import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 // never a subscription. Founding ($5) only shows while real spots are left.
 const FEATURES = [
   { full: 'Uploads every month', body: 'Every bank and card, fair daily limit', free: '3 uploads' },
-  { full: 'All 6 ghost guides', body: 'Penny, Spooksworth, Gus, Cassy, Mo and Hattie', free: '1 try of one ghost' },
+  { full: 'All 7 ghost guides', body: 'Penny, Spooksworth, Gus, Cassy, Kit, Mo and Hattie', free: '1 try of one ghost' },
   { full: 'Cassy for every subscription', body: 'Real cancel page, steps, AU phone and hours', free: 'Cassy looks up 1 subscription' },
   { full: 'Ready cancel emails', body: 'Copy, paste, send', free: 'Ready cancel emails' },
   { full: 'Ghost List tracker', body: 'Requested, confirmed, still charging', free: 'Ghost List tracker' },

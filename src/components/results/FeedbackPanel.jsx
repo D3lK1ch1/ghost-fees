@@ -46,7 +46,7 @@ export default function FeedbackPanel({ usedSample = false, leaksFound = 0, year
 
   return (
     <section className="mt-10 rounded-[1.5rem] border border-white/[0.08] bg-card/70 p-5 sm:p-7">
-      <ChoiceGroup label={onHome ? 'Is it clear what Ghost Fees does?' : 'Did it find something real?'} options={['Yes', 'Kinda', 'No']} value={foundReal} onChange={setFoundReal} />
+      <ChoiceGroup label={onHome ? 'Is it clear what Ghost Fees does?' : 'Did it find something real?'} options={['Yes', 'Kinda', 'No']} labels={{ Kinda: 'Not sure' }} value={foundReal} onChange={setFoundReal} />
 
       {leaksFound > 0 && (
         <div className="mt-5">
@@ -74,7 +74,7 @@ export default function FeedbackPanel({ usedSample = false, leaksFound = 0, year
         />
       </label>
 
-      <ChoiceGroup label="Would you pay $10 once for Pro: scans every month, every ghost guide and the full PDF report?" options={['Yes', 'Maybe', 'No']} value={wouldPay} onChange={setWouldPay} />
+      <ChoiceGroup label="Would you pay $10 once for Pro: scans every month, every ghost guide and the full PDF report?" options={['Yes', 'Maybe', 'No']} labels={{ Maybe: 'Not sure' }} value={wouldPay} onChange={setWouldPay} />
       {!onHome && <p className="mt-1.5 text-[13px] text-muted-foreground">The full report is the <b className="text-foreground">Download PDF report</b> button under your total at the top of your results.</p>}
 
       <label className="mt-5 block">
