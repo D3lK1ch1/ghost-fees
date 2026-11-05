@@ -854,3 +854,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/leaks.js, src/components/patterns/PatternContext.jsx, PatternDialog.jsx, PatternsTab.jsx, WhenChart.jsx (slot), src/components/results/BiasLine.jsx, BiasChart.jsx, ResultsView.jsx
 - How to test: Try the sample on each theme: Money patterns tab shows $117 Denomination Effect, $113.94 Present Bias, $59.98 Ostrich Effect, $6.00 Status Quo Bias (sum $296.92); open Present Bias, tap Yes, Show on Ghosts tab filters to Streammax; open Ostrich Effect from its chip, tap No, its chip goes.
 - User feedback that drove this: Update Pack 9 parts 1 to 3. Idea from an earlier behavioural-finance project; all code and copy written new this week.
+
+### Pack 9 part 4: Graph 2, When it happened
+- What: in the Money patterns tab, a stacked bar chart of the leaked part of each charge by month (row.wastedAmount), one stack per pattern, so the months add up to the pattern totals (sample: 7 months, $296.92). Colour follows the pattern, not its rank: the first four slots of the validated dark palette, stacked in that order; all checks pass on the three themes' dark cards (lightness, chroma, CVD ΔE 8.4, normal-vision ΔE 19.8, contrast ≥ 3:1). More than four patterns fold into "Other". Legend, tooltip and a "See the numbers" table with month totals. "Charges by month. Past only, never a forecast." Hidden with one pattern or one month. Pattern charge counts now use the same leaked lines.
+- Files: src/components/patterns/WhenChart.jsx, src/lib/ghostFees/leaks.js (leakRows)
+- How to test: Try the sample, Money patterns tab: When it happened shows Mar to Sept; See the numbers month totals sum to $296.92.
+- User feedback that drove this: Update Pack 9 part 4

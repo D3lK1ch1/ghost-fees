@@ -99,6 +99,12 @@ export const BADGE_BIAS = {
 export const PATTERN_FOOTER_REF = 'Gollwitzer, P. M. (1999). Implementation intentions: Strong effects of simple plans. American Psychologist, 54(7), 493-503.';
 export const PATTERN_BY_KEY = Object.fromEntries(Object.entries(BADGE_BIAS).map(([badge, p]) => [p.key, { ...p, badge }]));
 
+// The statement lines that make up a leak, with the leaked part of each.
+export function leakRows(leak) {
+  const rows = (leak?.rows || []).filter((row) => Math.abs(Number(row.wastedAmount) || 0) > 0);
+  return rows.length ? rows : (leak?.rows || []).filter((row) => Math.abs(Number(row.amount) || 0) > 0);
+}
+
 // The bias for a leak, only when it is backed by charges on this statement.
 export function biasFor(leak) {
   return leak && (leak.rows || []).length > 0 ? BADGE_BIAS[leak.badge] || null : null;
@@ -113,8 +119,9 @@ export function biasGroups(leaks) {
     const group = groups.get(info.bias) || { ...info, badge: leak.badge, total: 0, charges: 0, dates: [], leakIds: [] };
     group.leakIds.push(leak.id);
     group.total += Number(leak.amount) || 0;
-    // Paid charges only: a trial's $0 start isn't a charge (matches "then 6 paid charges").
-    const paid = leak.rows.filter((row) => Math.abs(Number(row.amount) || 0) > 0);
+    // The charges that make up the leak (wastedAmount > 0): a trial's $0 start, the full
+    // first copy of a duplicate and the old part of a price rise aren't the leak.
+    const paid = leakRows(leak);
     group.charges += paid.length;
     paid.forEach((row) => row.date && group.dates.push(row.date));
     groups.set(info.bias, group);
