@@ -1,22 +1,23 @@
-import { Brain, Calculator, CalendarCheck, Mail, MessageCircle, Scissors, Trophy } from 'lucide-react';
+import { Brain, Calculator, CalendarCheck, Layers, Mail, MessageCircle, Scissors, Trophy } from 'lucide-react';
 import GhostMark from '@/components/site/GhostMark';
 import { GUIDES } from '@/lib/ghostFees/guides';
 import { GHOST_IT_MASCOT } from '@/lib/ghostFees/ghostItAgent';
 
-// Home page, under the stats: who does what. The six ghost guides in the app and
+// Home page, under the stats: who does what. The seven ghost guides in the app and
 // Ghost It, the chat agent in ASI:One. "Where's the different ghost agents?" (2 Nov)
 // Each agent: their colour ghost, a role icon, their job and what they actually do.
-const ICONS = { penny: Calculator, sir: Mail, gus: Trophy, cass: Scissors, mind: Brain, habit: CalendarCheck };
+const ICONS = { penny: Calculator, sir: Mail, gus: Trophy, cass: Scissors, bundle: Layers, mind: Brain, habit: CalendarCheck };
 const BLURBS = {
   penny: 'Adds up every charge and fee and shows the maths.',
   sir: 'Writes your cancel, refund and fee-waiver emails.',
   gus: 'Keeps score as you bust ghosts and sets goals.',
   cass: 'Finds the real cancel page, steps and phone number.',
+  bundle: 'Compares subscriptions that do the same job: keep the one you like most, rotate, or sort your AI tools by what you use them for and your budget.',
   mind: 'Explains the money pattern behind each ghost and one habit to beat it.',
   habit: 'Helps you keep one small money habit and checks in a week later.',
 };
 export const TEAM = [
-  ...['penny', 'sir', 'gus', 'cass', 'mind', 'habit'].map((key) => ({ key, ...GUIDES[key], Icon: ICONS[key], does: BLURBS[key] })),
+  ...['penny', 'sir', 'gus', 'cass', 'bundle', 'mind', 'habit'].map((key) => ({ key, ...GUIDES[key], Icon: ICONS[key], does: BLURBS[key] })),
   {
     key: 'ghostit',
     name: 'Ghost It',
@@ -33,7 +34,7 @@ export default function GhostTeam() {
   return (
     <section aria-label="Meet your ghost team" className="mx-auto mt-8 w-full max-w-4xl px-4">
       <p className="text-center text-[13.5px] font-bold uppercase tracking-[0.14em] text-primary">Meet your ghost team</p>
-      <p className="mt-1 text-center text-[15px] text-muted-foreground">Six ghost guides in the app, plus Ghost It in ASI:One.</p>
+      <p className="mt-1 text-center text-[15px] text-muted-foreground">Seven ghost guides in the app, plus Ghost It in ASI:One.</p>
       {/* One agent per row, cascading down the page (each fades in a beat after the last). */}
       <ul className="mx-auto mt-4 flex max-w-2xl flex-col gap-3">
         {TEAM.map((agent, index) => (

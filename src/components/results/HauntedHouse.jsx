@@ -406,7 +406,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
             {GUIDE_GROUPS.map((group, row) => (
             <div key={group.label} className={row ? 'mt-3' : 'mt-2'}>
             <p className="text-center text-[11px] font-bold uppercase tracking-[0.12em] text-[#e6defa]/70">{group.label}</p>
-            <div className={cn('mx-auto mt-1 grid items-start gap-1', group.keys.length > 2 ? 'grid-cols-4' : 'max-w-[50%] grid-cols-2')}>
+            <div className={cn('mx-auto mt-1 grid items-start gap-1', group.keys.length === 4 ? 'grid-cols-4' : group.keys.length === 3 ? 'max-w-[75%] grid-cols-3' : 'max-w-[50%] grid-cols-2')}>
               {group.keys.map((key) => {
                 const index = GUIDE_KEYS.indexOf(key);
                 const item = GUIDES[key];

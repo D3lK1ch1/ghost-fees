@@ -10,6 +10,8 @@ import { habitArt, readExPick } from '@/lib/ghostFees/habitArt';
 import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
+import KitPlanner from '@/components/guide/KitPlanner';
+import { parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
 import GhostMark from '@/components/site/GhostMark';
@@ -123,6 +125,17 @@ function answer(question, analysis, guideKey) {
   if (guideKey === 'mind' || guideKey === 'habit') {
     const own = guideKey === 'mind' ? moAnswer(text, analysis) : hattieAnswer(text, analysis);
     if (own) return own;
+  }
+  // Kit: double-ups, rotation and AI tools open his planner (rules, no AI).
+  const doubles = /consolidat|double|doubling|paying twice|rotat|which (one )?(should i|to) keep|too many|bundle|pick one|same thing|streaming|ai tools?|chatgpt|claude|midjourney|gemini|copilot|cursor/;
+  if (guideKey === 'bundle') {
+    const typed = parseTyped(question);
+    if (typed.length >= 2) return { reply: `Got ${typed.length} tools. Tick what you use AI for and pick a budget, and I'll keep the 2 or 3 that cover it.`, kit: 'ai', typed: question };
+    if (/\bai\b|chatgpt|claude|midjourney|gemini|copilot|cursor|tools?/.test(text)) return { reply: 'Tick what you use AI for and pick a budget. I only choose from tools you already pay for.', kit: 'ai' };
+    if (/rotat/.test(text)) return { reply: 'Rotating means one service a month: start one, cancel the last. Pick your favourite and tap Rotate, one a month. I can put every switch in your calendar.', kit: 'video' };
+    if (doubles.test(text)) return { reply: 'Here are your double-ups. Pick the one you use most and I\'ll show what to keep and cancel.', kit: 'video' };
+  } else if (doubles.test(text) && !/cancel|email|letter/.test(text)) {
+    return { reply: "That's Kit's job. He compares subscriptions that do the same thing and helps you keep one or rotate.", owner: 'bundle' };
   }
   // Another ghost's job: one line, then a chip that hands you to the right ghost.
   if (guideKey !== 'mind' && /pattern|bias|psycholog|brain|why do (i|my)|why does (this|it) keep|turn into charges/.test(text)) {
@@ -376,7 +389,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
       const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'gus', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, chips: [...hand, ...nextChips].slice(0, 4) });
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -386,7 +399,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
     // Free tier: one AI answer per ghost. The quick answers above are always free.
     const lockedReply = () => reply({
-      text: `That was my free answer. Unlock Ghost Fees once and all six of us will answer, within a fair daily limit. The quick questions below still work.`,
+      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit. The quick questions below still work.`,
       unlock: 'guide',
       chips: nextChips,
     });
@@ -466,7 +479,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               {GUIDE_GROUPS.map((group) => (
               <div key={group.label} className="mt-1.5">
               <p className="mb-0.5 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">{group.label}</p>
-              <div className="grid grid-cols-2 gap-1" role="group" aria-label={`${group.label}: pick a ghost guide`}>
+              <div className={cn('grid gap-1', group.keys.length === 3 ? 'grid-cols-3' : 'grid-cols-2')} role="group" aria-label={`${group.label}: pick a ghost guide`}>
                 {group.keys.map((key) => (
                   <button
                     key={key}
@@ -507,8 +520,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     'max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-relaxed',
                     message.role === 'user'
                       ? 'rounded-br-sm bg-primary font-semibold text-primary-foreground'
-                      : 'rounded-tl-sm bg-background text-foreground',
+                      : 'rounded-tl-sm border-l-[3px] bg-background text-foreground',
                   )}
+                  style={message.role === 'guide' && GUIDES[message.guide] ? { borderLeftColor: GUIDES[message.guide].color } : undefined}
                 >
                   {message.text}
                 </p>
@@ -516,6 +530,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
                   </button>
+                )}
+                {message.kit && (
+                  <KitPlanner compact subscriptions={analysis.subscriptions || []} initialTab={message.kit} initialTyped={message.typed || ''}
+                    onCancelHelp={(names) => reply({ text: `Cassy can find the official cancel page for ${names.join(' and ')}.`, chips: names.slice(0, 2).map((n) => `Cancel ${n}`).concat(handoffChip('cass')) })}
+                    className="mt-2 w-full" />
                 )}
                 {message.lookup && <CassLookup merchant={message.lookup.merchant} monthly={message.lookup.monthly} auto className="mt-2 w-full" />}
                 {message.action && (
