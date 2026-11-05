@@ -6,6 +6,9 @@ import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
 import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
 import { readHabit } from '@/lib/ghostFees/habitPlan';
+import { readExPick } from '@/lib/ghostFees/habitArt';
+import { useTheme } from '@/lib/ThemeContext';
+import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
@@ -36,8 +39,69 @@ function findLeak(text, leaks) {
     .some((word) => word.length > 3 && text.includes(word)));
 }
 
+const periodOf = (group) => (group.charges === 1 ? '1 charge' : `${group.charges} charges`);
+
+// Mo's quick answers: the money patterns, from biasGroups (the app's own maths).
+function moAnswer(text, analysis) {
+  const groups = biasGroups(analysis.leaks);
+  const top = groups[0];
+  if (!groups.length) {
+    if (/pattern|why|habit|trial|bias/.test(text)) return { reply: "None of these ghosts match a money pattern I know, so there's nothing to explain here. Penny can walk you through the fees." };
+    return null;
+  }
+  const named = groups.find((g) => text.includes(g.bias.toLowerCase()) || text.includes(g.badge.toLowerCase()));
+  if (/what (is|are) (a )?(money )?pattern|patterns\??$|explain .*pattern|mean/.test(text) && !named) {
+    const list = groups.map((g) => `${g.bias} (${money(g.total)})`).join(', ');
+    return {
+      reply: `A money pattern is a shortcut most brains take, studied by researchers. It isn't a flaw, it's how people work. Yours: ${list}. Tap one in Money patterns to see the research and one habit.`,
+      action: 'open_pattern', biasKey: top.key,
+    };
+  }
+  if (/trial/.test(text)) {
+    const trial = groups.find((g) => g.key === 'present_bias');
+    if (!trial) return { reply: "None of your ghosts are trials that turned paid, so Present Bias isn't one of yours this time." };
+    return { reply: `That's a common pattern called Present Bias (${shortCite(trial.cite)}). ${trial.what} ${trial.why} It cost you ${money(trial.total)} across ${periodOf(trial)}. The habit: ${trial.beat}`, action: 'open_pattern', biasKey: trial.key };
+  }
+  if (/habit|beat|stop|fix|do about/.test(text)) {
+    const g = named || top;
+    return { reply: `For ${g.bias}, one small habit: ${g.beat} Hattie can put it in your calendar and check in a week later.`, action: 'open_habit', biasKey: g.key };
+  }
+  if (named) {
+    return { reply: `${named.bias}: ${named.what} ${named.why} In your statement it's ${money(named.total)} across ${periodOf(named)}. Research: ${named.cite}.`, action: 'open_pattern', biasKey: named.key };
+  }
+  if (/most|biggest|largest|worst|top|costs?/.test(text)) {
+    return { reply: `${top.bias} is the biggest common pattern behind your ghosts: ${money(top.total)} across ${periodOf(top)}. ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
+  }
+  if (/why|pattern|bias|brain|psycholog/.test(text)) {
+    return { reply: `Your ghosts follow ${groups.length} common ${groups.length === 1 ? 'pattern' : 'patterns'}. The biggest is ${top.bias}: ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
+  }
+  return null;
+}
+
+// Hattie's quick answers: one small habit, from the pattern's own "beat it" line.
+function hattieAnswer(text, analysis) {
+  const groups = biasGroups(analysis.leaks);
+  const plan = readHabit();
+  const g = (plan && groups.find((item) => item.key === plan.patternKey)) || groups[0];
+  if (!g && !plan) return /habit|start|forget|smaller|plan/.test(text) ? { reply: 'No money patterns in this statement, so no habit needed. Nice work.' } : null;
+  if (/open|my (habit )?plan|calendar/.test(text)) {
+    return { reply: plan ? `Your habit: ${plan.habitText} It's in your plan, with a check-in a week after you start.` : `No habit picked yet. Start with this one: ${g.beat}`, action: 'open_habit', biasKey: g?.key };
+  }
+  if (/smaller|easier|too (hard|much|big)|tiny/.test(text)) {
+    return { reply: 'Make it so small it feels silly: do it just once this week, the next time it comes up. Habits take weeks of repeats to stick, and missing a day doesn\'t undo them.', action: 'open_habit', biasKey: g?.key };
+  }
+  if (/forget|forgot|remember|remind/.test(text)) {
+    return { reply: 'Tie it to something you already do, like checking your bank app on payday. Then save the plan: it goes in your calendar with a check-in a week later, so I remind you.', action: 'open_habit', biasKey: g?.key };
+  }
+  if (/habit|start|first|which|begin|pick/.test(text)) {
+    return { reply: `Start with your biggest pattern, ${g.bias} (${money(g.total)}). One habit: ${g.beat} Pick a start day and I'll put it in your calendar.`, action: 'open_habit', biasKey: g.key };
+  }
+  return null;
+}
+
 // Every answer is built in the browser from the scan results. No AI, nothing sent anywhere.
-function answer(question, analysis) {
+// Shared safety answers come first, then the chosen ghost's own speciality.
+function answer(question, analysis, guideKey) {
   const text = question.toLowerCase();
   const { leaks, total, monthSpan } = analysis;
   const months = `${monthsLabel(monthSpan)} months`;
@@ -53,8 +117,15 @@ function answer(question, analysis) {
   if (/\b(rent|groceries|grocery|transport|salary|wage|bills?)\b|not (here|there|shown|listed)/.test(text)) {
     return { reply: 'Rent, groceries, transport, transfers and pay are left out on purpose. They are normal spending, not leaks. I only flag bank fees, free trials that turned paid, duplicate charges and price rises.' };
   }
-  if (/stor|saved?|privacy|private|data|keep/.test(text)) {
+  if (/\b(stor(e|ed|ing|age)|saved?|privacy|private|data|keep (my|it|this)|delete)\b/.test(text)) {
     return { reply: 'CSVs are read in your browser and never leave it. PDFs are uploaded to private storage so they can be read. Your results and this chat are not saved either.' };
+  }
+  if (guideKey === 'mind' || guideKey === 'habit') {
+    const own = guideKey === 'mind' ? moAnswer(text, analysis) : hattieAnswer(text, analysis);
+    if (own) return own;
+  }
+  if (/work(ed)? out|how .*total|calculat/.test(text) && !mentioned) {
+    return { reply: `${money(total)} is every ghost added up: ${leaks.slice(0, 5).map((leak) => `${nameOf(leak)} ${money(leak.amount)}`).join(', ')}. Each card shows its own charges, line by line.` };
   }
   if (/creep|price (rise|increase)|went up|go up/.test(text)) {
     const creep = leaks.find((leak) => leak.priceRise);
@@ -89,7 +160,8 @@ function answer(question, analysis) {
   }
   if (/email|cancel|refund|waive|write|draft/.test(text)) {
     if (mentioned && !mentioned.action) return { reply: `${nameOf(mentioned)} doesn't need an email. It's one to keep an eye on.`, action: 'open_leak', leak: mentioned };
-    const leak = mentioned || leaks.find((item) => item.action);
+    const wanted = /refund/.test(text) ? 'refund' : /waive|bank/.test(text) ? 'waive' : /cancel/.test(text) ? 'cancel' : null;
+    const leak = mentioned || (wanted && leaks.find((item) => item.action === wanted)) || leaks.find((item) => item.action);
     if (!leak) return { reply: "None of these ghosts need an email. They're things to keep an eye on." };
     const kind = { cancel: 'a cancel email', refund: 'a refund request', waive: 'a request to waive the fee' }[leak.action];
     const about = leak.targets?.length
@@ -133,29 +205,10 @@ function summaryFor(analysis, patternAnswers = {}) {
   };
 }
 
-// The guide's own speciality questions come first, then the rest.
+// Each ghost offers only its own speciality questions, so it's obvious what it's for.
 function starterChips(analysis, guide) {
-  const biggest = analysis.leaks[0];
-  const all = [
-    'Make my goals',
-    'What should I do first?',
-    'Which ghost costs the most?',
-    'Set up reminders',
-    'Show all email templates',
-    biggest && `How did you work out ${nameOf(biggest)}?`,
-    'Write my first email',
-    'Is my data stored?',
-    'What is price creep?',
-    'Show me the haunted house',
-    'Why do my trials turn into charges?',
-    'Which pattern costs me most?',
-    'One habit for the biggest one?',
-    'Which habit should I start with?',
-    'Make my habit smaller',
-    'I keep forgetting, help',
-  ].filter(Boolean);
-  const own = (guide?.chips || []).filter((chip) => all.includes(chip));
-  return [...own, ...all.filter((chip) => !own.includes(chip))];
+  const own = guide?.chips || [];
+  return own.includes('Is my data stored?') ? own : [...own, 'Is my data stored?'];
 }
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
@@ -170,7 +223,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const guide = GUIDES[guideKey];
   const patterns = usePatterns();
   const chips = starterChips(analysis, guide);
-  const { leaks, total, monthSpan } = analysis;
+  const { leaks, monthSpan } = analysis;
 
   useEffect(() => {
     if (!open) return undefined;
@@ -184,33 +237,106 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
+  const { theme } = useTheme();
+  const hank = theme?.key === 'ex' && readExPick() === 'fine';
+  const focusRef = useRef(null);
+  const openerFor = (key) => {
+    const focus = focusRef.current;
+    focusRef.current = null;
+    return { role: 'guide', guide: key, ...opener(key, analysis, { answers: patterns?.answers || {}, plan: readHabit(), hank, focus }) };
+  };
+  const lastWith = (field) => [...messages].reverse().find((m) => m.role === 'guide' && m[field] != null);
+
+  // The openers' own chips are answered here, from the scan, with no AI.
+  const chipReply = (text) => {
+    const to = handoffKey(text);
+    if (to) { focusRef.current = lastWith('leak')?.leak || null; onGuide(to); return true; }
+    const months = `${monthsLabel(monthSpan)} months`;
+    const leak = lastWith('leak')?.leak;
+    if (text === CHIP.nextFee) {
+      const order = feeOrder(leaks);
+      const at = ((lastWith('feeIndex')?.feeIndex ?? -1) + 1) % order.length;
+      reply({ text: `${pennyLine(order[at], months)}\n\nNext fee, or get Spooksworth to write the ask?`, action: 'open_leak', leak: order[at], feeIndex: at, chips: [CHIP.nextFee, handoffChip('sir')] });
+      return true;
+    }
+    if ((text === CHIP.firmer || text === CHIP.friendlier) && leak) {
+      const line = text === CHIP.firmer
+        ? 'Add this line before you sign off: "Please confirm in writing within 5 business days."'
+        : 'Add this line before you sign off: "Thanks so much for your help with this."';
+      reply({ text: `${line} Open the email to paste it in.`, action: 'draft_email', leak, chips: [text === CHIP.firmer ? CHIP.friendlier : CHIP.firmer, handoffChip('cass')] });
+      return true;
+    }
+    if (text === CHIP.bust && leak) {
+      reply({ text: `Let's go! Cancel ${nameOf(leak)}, then mark it done on its card. Every ghost you clear goes on your score.`, action: 'open_leak', leak, chips: [handoffChip('sir'), handoffChip('cass'), CHIP.later] });
+      return true;
+    }
+    if (text === CHIP.later) {
+      const list = leaks.slice(0, 5).map((item, i) => `${i + 1}. ${nameOf(item)} ${money(item.amount)}`).join('\n');
+      reply({ text: `Your score sheet, biggest first:\n${list}\n\nOne at a time. You've got this.`, action: 'open_path', chips: [CHIP.bust] });
+      return true;
+    }
+    if (text === CHIP.worked) {
+      reply({ text: 'Nice work! Check your next statement to be sure the charge stopped. Want one small habit so it doesn\'t sneak back?', chips: [handoffChip('habit'), handoffChip('mind')] });
+      return true;
+    }
+    if (text === CHIP.notYet) {
+      reply({ text: 'No rush. If the steps didn\'t work, Spooksworth can write a cancel email for you to send instead.', chips: [handoffChip('sir')] });
+      return true;
+    }
+    if ([CHIP.yes, CHIP.unsure, CHIP.no].includes(text)) {
+      const biasKey = lastWith('biasKey')?.biasKey;
+      const value = { [CHIP.yes]: 'yes', [CHIP.unsure]: 'unsure', [CHIP.no]: 'no' }[text];
+      if (biasKey) patterns?.setAnswer?.(biasKey, value);
+      if (value === 'yes') {
+        reply({ text: 'Thanks for being honest. Lots of people say yes. Over to Hattie for one small habit.' });
+        setTimeout(() => onGuide('habit'), 400);
+      } else if (value === 'unsure') {
+        reply({ text: 'That\'s fine. Open the pattern to see the research, and decide later.', action: 'open_pattern', biasKey, chips: [handoffChip('habit')] });
+      } else {
+        reply({ text: 'Fair enough, I\'ll leave that one. Ask me about another ghost any time.', chips: guide.chips.slice(0, 3) });
+      }
+      return true;
+    }
+    if (START_CHIPS.includes(text)) {
+      reply({ text: `${text} it is. Open your plan, pick ${text.toLowerCase()} and save: it goes in your calendar with a check-in a week later.`, action: 'open_habit', biasKey: lastWith('biasKey')?.biasKey, chips: ['Make my habit smaller', 'I keep forgetting, help'] });
+      return true;
+    }
+    return false;
+  };
+
   const openPanel = () => {
     setOpen(true);
     trackEvent('guide_opened');
-    if (!messages.length) {
-      const first = leaks.length
-        ? `I found ${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'} that cost you ${money(total)} in ${monthsLabel(monthSpan)} months. I can make you a plan, set reminders, or write the emails. Where shall we start?`
-        : 'No ghosts in this statement. Ask me how Ghost Fees works.';
-      setMessages([{ role: 'guide', text: first, chips: chips.slice(0, 3) }]);
-    }
+    if (!messages.length) setMessages([openerFor(guideKey)]);
   };
+
+  // Switching ghost: the new one introduces itself and does its one job straight away.
+  const lastGuide = useRef(guideKey);
+  useEffect(() => {
+    if (lastGuide.current === guideKey) return;
+    lastGuide.current = guideKey;
+    if (!messages.length) return;
+    setMessages((current) => [...current, openerFor(guideKey)]);
+  }, [guideKey]);
 
   // Lets the page's "Ask a ghost" tab open the chat.
   useEffect(() => {
     if (openRequest) openPanel();
   }, [openRequest]);
 
-  const reply = (message) => setMessages((current) => [...current, { role: 'guide', ...message }]);
+  const reply = (message) => setMessages((current) => [...current, { role: 'guide', guide: guideKey, ...message }]);
 
   // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
   const ask = async (question) => {
     const text = question.trim().slice(0, MAX_INPUT);
     if (!text || thinking) return;
     trackEvent('guide_message');
-    const nextChips = chips.filter((chip) => chip !== text).slice(0, 3);
+    const nextChips = chips.filter((chip) => chip !== text).slice(0, 4);
     const history = messages.slice(-6).map((message) => ({ role: message.role, text: message.text }));
     setMessages((current) => [...current, { role: 'user', text }]);
     setInput('');
+
+    if (chipReply(text)) return;
 
     // Cassy: name a subscription (or ask about cancelling one) and she looks it up.
     const subs = [...(analysis.subscriptions || [])].sort((a, b) => b.monthly - a.monthly);
@@ -226,9 +352,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       return;
     }
 
-    const local = answer(text, analysis);
+    const local = answer(text, analysis, guideKey);
     if (local) {
-      reply({ text: local.reply, action: local.action, leak: local.leak, chips: nextChips });
+      const owner = { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'gus', open_pattern: 'mind', open_habit: 'habit' }[local.action];
+      const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -238,7 +366,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
     // Free tier: one AI answer per ghost. The quick answers above are always free.
     const lockedReply = () => reply({
-      text: `That was my free answer. Unlock Ghost Fees once and all four of us will answer, within a fair daily limit. The quick questions below still work.`,
+      text: `That was my free answer. Unlock Ghost Fees once and all six of us will answer, within a fair daily limit. The quick questions below still work.`,
       unlock: 'guide',
       chips: nextChips,
     });
@@ -265,7 +393,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const leak = leaks.find((item) => item.id === data.leakId);
       const action = ACTION_LABELS[data.action] && (leak || !['draft_email', 'open_leak', 'show_transactions'].includes(data.action)) ? data.action : null;
       const biasKey = (action === 'open_pattern' || action === 'open_habit') && PATTERN_BY_KEY[data.biasKey] ? data.biasKey : null;
-      reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: data.chips?.length ? data.chips.slice(0, 3) : nextChips });
+      const serverChips = data.chips?.length ? data.chips.slice(0, 3) : nextChips;
+      const hand = GUIDES[data.handoff] && data.handoff !== guideKey ? [handoffChip(data.handoff)] : [];
+      reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: [...hand, ...serverChips].slice(0, 4) });
     } catch {
       reply({ text: 'The spirits went quiet. Try again, or tap a question below.', chips: nextChips });
     } finally {
@@ -344,17 +474,17 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <X className="h-5 w-5" />
             </button>
           </div>
-          <div className="shrink-0 border-b border-border px-4 py-2.5">
-            <p className="text-[14px] leading-relaxed text-foreground">{guide.does}</p>
-            <p className="mt-0.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
-          </div>
+          <p className="shrink-0 border-b border-border px-4 py-1.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
 
           <div ref={listRef} aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {messages.map((message, index) => (
               <div key={index} className={cn('flex flex-col', message.role === 'user' ? 'items-end' : 'items-start')}>
+                {message.role === 'guide' && GUIDES[message.guide] && messages.slice(0, index).filter((m) => m.role === 'guide').at(-1)?.guide !== message.guide && (
+                  <span className="mb-1 ml-1 text-[12px] font-bold" style={{ color: GUIDES[message.guide].color }}>{GUIDES[message.guide].name.replace('Sir ', '')} · {GUIDES[message.guide].short}</span>
+                )}
                 <p
                   className={cn(
-                    'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-relaxed',
+                    'max-w-[85%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-[14.5px] leading-relaxed',
                     message.role === 'user'
                       ? 'rounded-br-sm bg-primary font-semibold text-primary-foreground'
                       : 'rounded-tl-sm bg-background text-foreground',
@@ -415,7 +545,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               value={input}
               maxLength={MAX_INPUT}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Ask about your ghosts"
+              placeholder={guide.ask || 'Ask about your ghosts'}
               className="min-w-0 flex-1 rounded-xl border border-border bg-background px-3 py-2.5 text-[14.5px] text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
             <button type="submit" aria-label="Send" className="rounded-xl bg-primary p-2.5 text-primary-foreground disabled:opacity-50" disabled={!input.trim() || thinking}>
