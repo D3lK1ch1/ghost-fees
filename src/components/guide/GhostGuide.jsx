@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Maximize2, Minimize2, Send, X } from 'lucide-react';
+import { KeyRound, Maximize2, Minimize2, Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
@@ -17,6 +17,8 @@ import MoExplainer from '@/components/guide/MoExplainer';
 import HabitCoach from '@/components/guide/HabitCoach';
 import CancelActions from '@/components/guide/CancelActions';
 import FeeCheck from '@/components/guide/FeeCheck';
+import OwnAIPanel from '@/components/guide/OwnAIPanel';
+import { askOwnAI, readOwnAI } from '@/lib/ghostFees/ownAI';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -342,6 +344,9 @@ const TEAM_ROUTES = {
   waive: ['penny', 'sir', 'habit', 'gus'],
   check: ['penny', 'bundle', 'cass', 'gus'],
 };
+// Team up, the whole job: every ghost in order, each doing its step (no AI needed).
+const FULL_ROUTE = ['penny', 'cass', 'sir', 'bundle', 'gus', 'mind', 'habit'];
+const FULL_JOBS = { penny: 'find your fees', cass: 'cancel what you don\'t use', sir: 'letters to get money back', bundle: 'sort the double-ups', gus: 'tick off what you busted', mind: 'why it happened', habit: 'one habit so they stay gone' };
 const STEP_JOBS = { penny: 'what the fee is', mind: 'why it happened', cass: 'cancel it', sir: 'the letter', habit: 'a habit so it stays gone', bundle: 'keep or rotate', gus: 'your score' };
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
@@ -351,6 +356,16 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const [team, setTeam] = useState([]);
   // A team mission: the route of ghosts for one ghost you're busting, and where you are.
   const [mission, setMission] = useState(null);
+  // The Team up note: how it works and that it's the longest route, before it starts.
+  const [teamIntro, setTeamIntro] = useState(false);
+  // Connect your own AI: the settings panel, and whether a key is set (unlimited answers).
+  const [ownPanel, setOwnPanel] = useState(false);
+  const [ownAI, setOwnAI] = useState(() => (typeof window === 'undefined' ? null : readOwnAI()));
+  useEffect(() => {
+    const on = () => setOwnAI(readOwnAI());
+    window.addEventListener('gf-own-ai', on);
+    return () => window.removeEventListener('gf-own-ai', on);
+  }, []);
   const [input, setInput] = useState('');
   // Each ghost has its own conversation ("its own window"): switching ghost shows that
   // ghost's chat, fresh the first time, and switching back brings the old one back.
@@ -482,6 +497,15 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     if (guideKey === route[0]) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
     else onGuide(route[0]);
   };
+  const startFull = () => {
+    setTeamIntro(false);
+    setMission({ full: true, route: FULL_ROUTE, at: 0 });
+    setTeam(FULL_ROUTE);
+    focusRef.current = null;
+    trackEvent('team_up_full');
+    if (guideKey === FULL_ROUTE[0]) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
+    else onGuide(FULL_ROUTE[0]);
+  };
   const stepMission = (to) => {
     if (!mission) return;
     const leak = leaks.find((item) => item.id === mission.leakId);
@@ -571,15 +595,31 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, fees: local.fees, feeFocus: local.feeFocus, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
+    // Their own Claude / OpenAI key: unlimited, straight from the browser, no Base44 credits.
+    if (ownAI) {
+      setThinking(true);
+      try {
+        const data = await askOwnAI({ guideKey, question: text, history, summary: summaryFor(analysis, patterns?.answers) });
+        const hand = GUIDES[data.handoff] && data.handoff !== guideKey ? [handoffChip(data.handoff)] : [];
+        reply({ text: String(data.reply || '').slice(0, 700), chips: [...hand, ...(Array.isArray(data.chips) ? data.chips.slice(0, 3) : nextChips)].slice(0, 4) });
+      } catch (error) {
+        const auth = /401|403|authentication|invalid.*key/i.test(`${error?.status || ''} ${error?.message || ''}`);
+        reply({ text: auth ? 'Your API key was not accepted. Check it, or remove it and use the free answers.' : 'Your AI did not answer just now. Try again, or tap a question at the top.', ownAI: true, chips: nextChips });
+      } finally {
+        setThinking(false);
+      }
+      return;
+    }
     if (aiCount >= MAX_AI_MESSAGES) {
-      reply({ text: "That's all my free AI answers for this visit. The questions at the top always work.", chips: nextChips });
+      reply({ text: "That's all my free AI answers for this visit. The questions at the top always work, or connect your own AI for unlimited answers.", ownAI: true, chips: nextChips });
       return;
     }
 
     // Free tier: one AI answer per ghost. The quick answers above are always free.
     const lockedReply = () => reply({
-      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit. The quick questions at the top still work.`,
+      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit, or connect your own AI. The quick questions at the top still work.`,
       unlock: 'guide',
+      ownAI: true,
       chips: nextChips,
     });
     if (!canAskGuide(guideKey)) {
@@ -654,6 +694,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
             </div>
+            <button type="button" onClick={() => setOwnPanel((v) => !v)} aria-label={ownAI ? 'Your own AI is connected' : 'Connect your own AI'} title={ownAI ? 'Using your own AI' : 'Connect your own AI (unlimited answers)'}
+              className={cn('rounded-full p-1.5 hover:bg-white/10', ownAI ? 'text-primary' : 'text-muted-foreground hover:text-foreground')}>
+              <KeyRound className="h-4 w-4" />
+            </button>
             <button type="button" onClick={() => setBig((b) => !b)} aria-label={big ? 'Make the chat smaller' : 'Make the chat bigger'} title={big ? 'Smaller' : 'Bigger'} className="hidden rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground sm:block">
               {big ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
@@ -688,21 +732,75 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     </button>
                   ))}
                   {group.keys.length < 4 && leaks[0] && (
-                    <button type="button" onClick={() => startMission(leaks[0])} aria-pressed={Boolean(mission)}
-                      title={`Team up: the right ghosts, in order, on ${leaks[0].title || leaks[0].merchant}`}
+                    <button type="button" onClick={() => setTeamIntro((v) => !v)} aria-pressed={Boolean(mission) || teamIntro} aria-expanded={teamIntro}
+                      title="Team up: every ghost in order, from finding your fees to one habit"
                       className={cn('flex min-w-0 flex-col items-center rounded-xl border border-dashed px-1 py-1 text-center transition-colors', mission ? 'border-transparent bg-primary text-primary-foreground' : 'border-white/25 bg-background text-foreground hover:border-white/50')}>
                       <span className="text-[12px] font-bold leading-tight">👻 Team up</span>
-                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', mission ? 'opacity-90' : 'opacity-75')}>All ghosts on one</span>
+                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', mission ? 'opacity-90' : 'opacity-75')}>Take me through it</span>
                     </button>
                   )}
                 </div>
               </div>
             ))}
           </div>
+          {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
+          {teamIntro && (
+            <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5 text-[13px]" role="region" aria-label="Team up">
+              <div className="flex items-center gap-2">
+                <p className="font-heading text-[14px] font-bold text-foreground">👻 Team up: we take you through it</p>
+                <button type="button" onClick={() => setTeamIntro(false)} aria-label="Close" className="ml-auto rounded-full p-1 text-muted-foreground hover:bg-white/10"><X className="h-4 w-4" /></button>
+              </div>
+              <ol className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-[12px] text-muted-foreground">
+                {FULL_ROUTE.map((key, i) => (
+                  <li key={key}><span className="font-bold" style={{ color: GUIDES[key].color }}>{i + 1}. {nameFor(key).replace('Sir ', '')}</span> {FULL_JOBS[key]}</li>
+                ))}
+              </ol>
+              <p className="mt-1.5 rounded-lg border border-amber-300/30 bg-amber-300/10 px-2 py-1.5 text-[12px] text-foreground">
+                ⚠️ This is the longest route and uses the most free AI answers if you ask questions on the way. Know what you need? Tap that ghost above instead, it's quicker.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Take me through everything →</button>
+                <button type="button" onClick={() => setTeamIntro(false)} className="rounded-full border border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground">I'll pick a ghost</button>
+                {!ownAI && (
+                  <button type="button" onClick={() => { setTeamIntro(false); setOwnPanel(true); }} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground">
+                    <KeyRound className="h-3.5 w-3.5" /> Use my own AI (no limit)
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
           {/* Ghost team. A mission shows the whole route for one ghost (✓ done, current
               highlighted) with Next; otherwise referrals build the chain; otherwise Team up. */}
           {(() => {
             const missionLeak = mission && leaks.find((item) => item.id === mission.leakId);
+            if (mission?.full) {
+              const here = mission.route[mission.at];
+              const prev = mission.route[mission.at - 1];
+              const next = mission.route[mission.at + 1];
+              return (
+                <div className="shrink-0 border-b border-border px-3 py-2" aria-label="Team up, step by step">
+                  <div className="flex items-center gap-2 text-[12px]">
+                    <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team up · step {mission.at + 1} of {mission.route.length}</span>
+                    <span className="font-bold text-foreground">{FULL_JOBS[here]}</span>
+                    <button type="button" onClick={() => { setMission(null); setTeam([]); }} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">End</button>
+                  </div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((mission.at + 1) / mission.route.length) * 100}%` }} />
+                  </div>
+                  <p className="mt-1 text-[12px] text-muted-foreground">Do this step with the buttons below, then tap Next. Skip any step you don't need.</p>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {prev && <button type="button" onClick={() => stepMission(prev)} className="rounded-full border border-border px-3 py-1 text-[12.5px] font-bold text-foreground">← Back</button>}
+                    {next ? (
+                      <button type="button" onClick={() => stepMission(next)} className="rounded-full px-3 py-1 text-[12.5px] font-bold text-[#1b1233]" style={{ background: GUIDES[next].color }}>
+                        Next: {nameFor(next).replace('Sir ', '')}, {FULL_JOBS[next]} →
+                      </button>
+                    ) : (
+                      <p className="self-center text-[12.5px] font-bold text-foreground">🎉 All done. Gus has your score.</p>
+                    )}
+                  </div>
+                </div>
+              );
+            }
             if (missionLeak) {
               const next = mission.route[mission.at + 1];
               return (
@@ -790,6 +888,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 >
                   {message.text}
                 </p>
+                {message.ownAI && !ownAI && (
+                  <button type="button" onClick={() => setOwnPanel(true)} className="mt-2 inline-flex items-center gap-1 rounded-full border border-primary px-3 py-1.5 text-[13px] font-bold text-primary">
+                    <KeyRound className="h-3.5 w-3.5" /> Connect your own AI
+                  </button>
+                )}
                 {message.unlock && (
                   <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
@@ -865,9 +968,14 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           {(() => {
             const left = Math.max(0, Math.min(MAX_AI_MESSAGES - aiCount, paid ? MAX_AI_MESSAGES : (canAskGuide(guideKey) ? 1 : 0)));
             return (
-              <p className={cn('shrink-0 border-t border-border px-3 py-1.5 text-[12px] font-semibold', left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
-                {left === 0 ? 'No free AI answers left for now. The quick questions at the top still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left · quick questions are unlimited`}
-              </p>
+              <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[12px]">
+                <span className={cn('font-semibold', !ownAI && left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
+                  {ownAI ? '✓ Unlimited answers with your own AI' : left === 0 ? 'No free AI answers left. Quick questions still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left · quick questions are unlimited`}
+                </span>
+                <button type="button" onClick={() => setOwnPanel((v) => !v)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border px-2 py-0.5 font-bold text-foreground hover:border-primary">
+                  <KeyRound className="h-3 w-3" /> {ownAI ? 'My AI' : 'Use my own Claude / ChatGPT'}
+                </button>
+              </div>
             );
           })()}
 
