@@ -10,18 +10,100 @@ export const PROVIDERS = {
   openai: { label: 'ChatGPT (OpenAI)', model: '', keyHint: 'sk-...', getKey: 'https://platform.openai.com/api-keys' },
 };
 
-export function readOwnAI() {
+// Key safety:
+// - The key is encrypted before it's saved (AES-GCM). The lock is a browser CryptoKey made
+//   non-extractable and kept in IndexedDB, so nobody (not even this code) can copy the lock
+//   out; storage only ever holds scrambled text plus the last 4 characters for display.
+// - The key's shape is checked, then the key is tested against the provider's free
+//   model list before it's saved, so only a working key is kept.
+// - It's only decrypted at the moment a question is sent, straight to the provider.
+const SHAPE = { anthropic: /^sk-ant-[A-Za-z0-9_-]{20,}$/, openai: /^sk-[A-Za-z0-9_-]{20,}$/ };
+export const maskKey = (last4) => `••••${last4 || ''}`;
+
+export function keyProblem(provider, key) {
+  const k = String(key || '').trim();
+  if (!k) return 'Paste your key first.';
+  if (/\s/.test(k)) return 'That has a space in it. Copy the key again.';
+  if (provider === 'openai' && k.startsWith('sk-ant-')) return 'That looks like a Claude key. Pick Claude instead.';
+  if (provider === 'anthropic' && !k.startsWith('sk-ant-')) return 'Claude keys start with sk-ant-. Copy it again.';
+  if (!SHAPE[provider].test(k)) return 'That doesn\'t look like a full key. Copy it again.';
+  return null;
+}
+
+// Test the key with the provider's model list (free, no tokens used).
+// Returns 'ok', 'bad' (key refused) or 'unknown' (couldn't reach them).
+export async function testKey(provider, key) {
+  const k = key.trim();
+  try {
+    const res = provider === 'anthropic'
+      ? await fetch('https://api.anthropic.com/v1/models?limit=1', { headers: { 'x-api-key': k, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' } })
+      : await fetch('https://api.openai.com/v1/models', { headers: { authorization: `Bearer ${k}` } });
+    if (res.ok) return 'ok';
+    return res.status === 401 || res.status === 403 ? 'bad' : 'unknown';
+  } catch {
+    return 'unknown';
+  }
+}
+
+// The lock: one non-extractable AES key per browser, kept in IndexedDB.
+function idb() {
+  return new Promise((resolve, reject) => {
+    const req = window.indexedDB.open('gf-own-ai', 1);
+    req.onupgradeneeded = () => req.result.createObjectStore('lock');
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function lock() {
+  const db = await idb();
+  const get = () => new Promise((resolve, reject) => {
+    const r = db.transaction('lock').objectStore('lock').get('k');
+    r.onsuccess = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+  });
+  let k = await get();
+  if (!k) {
+    k = await window.crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction('lock', 'readwrite');
+      tx.objectStore('lock').put(k, 'k');
+      tx.oncomplete = resolve;
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+  return k;
+}
+const toB64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const fromB64 = (str) => Uint8Array.from(atob(str), (c) => c.charCodeAt(0));
+
+function readRaw() {
   try {
     const raw = window.sessionStorage.getItem(KEY) || window.localStorage.getItem(KEY);
-    const parsed = raw ? JSON.parse(raw) : null;
-    return parsed?.key && PROVIDERS[parsed.provider] ? parsed : null;
+    return raw ? JSON.parse(raw) : null;
   } catch {
     return null;
   }
 }
 
-export function saveOwnAI({ provider, key, model, remember }) {
-  const value = JSON.stringify({ provider, key: key.trim(), model: (model || '').trim() || PROVIDERS[provider].model });
+// What the app may show: provider, model and the last 4. Never the key.
+export function readOwnAI() {
+  const parsed = readRaw();
+  if (parsed?.key) { clearOwnAI(false); return null; } // old plain-text save: wipe it
+  return parsed?.data && PROVIDERS[parsed.provider] ? { provider: parsed.provider, model: parsed.model, last4: parsed.last4 } : null;
+}
+
+async function unlockKey() {
+  const parsed = readRaw();
+  if (!parsed?.data) return null;
+  const plain = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(parsed.iv) }, await lock(), fromB64(parsed.data));
+  return new TextDecoder().decode(plain);
+}
+
+export async function saveOwnAI({ provider, key, model, remember }) {
+  const k = key.trim();
+  const iv = window.crypto.getRandomValues(new Uint8Array(12));
+  const data = await window.crypto.subtle.encrypt({ name: 'AES-GCM', iv }, await lock(), new TextEncoder().encode(k));
+  const value = JSON.stringify({ provider, model: (model || '').trim() || PROVIDERS[provider].model, last4: k.slice(-4), iv: toB64(iv), data: toB64(data) });
   try {
     window.sessionStorage.removeItem(KEY);
     window.localStorage.removeItem(KEY);
@@ -32,14 +114,14 @@ export function saveOwnAI({ provider, key, model, remember }) {
   window.dispatchEvent(new Event('gf-own-ai'));
 }
 
-export function clearOwnAI() {
+export function clearOwnAI(notify = true) {
   try {
     window.sessionStorage.removeItem(KEY);
     window.localStorage.removeItem(KEY);
   } catch {
     // ignore
   }
-  window.dispatchEvent(new Event('gf-own-ai'));
+  if (notify) window.dispatchEvent(new Event('gf-own-ai'));
 }
 
 // The same rules the Base44 guide function uses: the ghost's one job, facts from the
@@ -71,8 +153,10 @@ function parseReply(text) {
 }
 
 export async function askOwnAI({ guideKey, question, history = [], summary }) {
-  const own = readOwnAI();
-  if (!own) throw new Error('no-key');
+  const meta = readOwnAI();
+  const key = meta && await unlockKey().catch(() => null);
+  if (!meta || !key) throw new Error('no-key');
+  const own = { ...meta, key };
   const turns = history.slice(-6).map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: String(m.text || '').slice(0, 1500) })).filter((m) => m.content);
   while (turns.length && turns[0].role !== 'user') turns.shift();
   const messages = [...turns, { role: 'user', content: question }];
