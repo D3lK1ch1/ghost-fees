@@ -29,7 +29,7 @@ export const GUIDES = {
     does: 'Writes the polite letters: cancel, refund and fee-waiver emails, ready to send.',
     hello: "Good day. Sir Spooksworth, at your service. My one job: writing your letters, polite but firm.",
     ask: 'Ask Sir Spooksworth for a letter',
-    how: ['Pick a ghost.', 'I draft the cancel, refund or fee-waiver email with your dates and amounts.', 'You check it, then send it from your own email. Firmer or friendlier, your call.'],
+    how: ['I draft every letter you need: cancel, refund and fee-waiver emails, with your dates and amounts. No picking.', 'Tap Send in Outlook or Gmail and it opens ready to send from your own email.', 'I put a reminder in your calendar to check for a reply, and tick each step off your task list.'],
     chips: ['Write my first email', 'Show all email templates', 'Write a refund email', 'Ask the bank to waive a fee'],
     intro: (count, total) => `Good heavens. ${count} uninvited ${count === 1 ? 'guest' : 'guests'}, helping themselves to ${money(total)}.`,
     pick: (leak) => `Ah, ${leak.title || leak.merchant}. A ${leak.badge.toLowerCase()}, costing you ${money(leak.amount)}. Most impertinent.`,

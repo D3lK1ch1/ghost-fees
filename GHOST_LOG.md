@@ -1054,3 +1054,14 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/ExAct2.jsx, src/components/landing/ExHero.jsx, src/components/results/ProofDialog.jsx, src/components/results/FileErrors.jsx, src/pages/FeedbackAdmin.jsx, src/components/results/HauntedHouse.jsx, plus lint-comment tidy-ups (HomeTabs, PatternsTab, CassLookup, DoneLink, Tour)
 - How to test: npx eslint src gives 0 errors and 2 warnings. npm run build passes.
 - User feedback that drove this: "assess and do overall cleanup of the app".
+
+### Sir Spooksworth does the whole letter job, and a ghost team line shows who referred you
+- What:
+  - No more "pick a ghost". Spooksworth opens with every letter you need (5 on the sample: cancel Streammax, waive the account fee, Adobe refund, waive the late fee, cancel Spotify), biggest first. Each letter has: Read it (opens the email) · Send in Outlook · Gmail · Mail app (opens ready to send from your own email, nothing goes through Ghost Fees) · Remind me to check in 7 days (Google, Outlook or Apple / .ics, and it sets the task's due day) · Mark it worked.
+  - Each step ticks the same task list as the goal path and calendar (Read, Sent, Worked), shown on the letter as ✓ / ○.
+  - His "Write my first email" and similar answers carry the same buttons. His steps now read: I draft every letter, you tap Send in Outlook or Gmail, I remind you and tick it off.
+  - Ghost team: when ghosts pass you along ("Ask Spooksworth →", Mo's Yes to Hattie), a "Team on this" line under the picker shows the chain, e.g. Penny → Spooksworth → Cassy. Each name goes back to that ghost's window, and Clear hides it.
+  - The email builder moved to src/lib/ghostFees/emailDraft.js so the dialog and Spooksworth share one copy.
+- Files: src/lib/ghostFees/emailDraft.js (new), src/components/guide/LetterActions.jsx (new), src/components/results/LeakEmailDialog.jsx, src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost > Spooksworth: 5 letters. On Streammax tap Send in Outlook (Outlook opens the draft) and Mark it worked: it reads ✓ Read ✓ Sent ✓ Worked, and the goal path shows the same ticks. Penny > Ask Spooksworth → then Ask Cassy → gives "Team on this: Penny → Spooksworth → Cassy".
+- User feedback that drove this: "why do I need to pick ghosts, draft email and check that should be Sir Spooksworth's job and he should link the email to my Outlook to send... link to calendar and check list to remind me and tick off the task", "ghost team formed when necessary, a ghost referral system".

@@ -11,6 +11,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
+import LetterActions from '@/components/guide/LetterActions';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -284,6 +285,8 @@ function starterChips(analysis, guide) {
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
   const [open, setOpen] = useState(false);
   const [big, setBig] = useState(false); // expand button: nearly full screen
+  // Ghost team: the chain of ghosts that referred you on (Penny → Spooksworth → Cassy).
+  const [team, setTeam] = useState([]);
   const [input, setInput] = useState('');
   // Each ghost has its own conversation ("its own window"): switching ghost shows that
   // ghost's chat, fresh the first time, and switching back brings the old one back.
@@ -346,7 +349,12 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   // The openers' own chips are answered here, from the scan, with no AI.
   const chipReply = (text) => {
     const to = handoffKey(text);
-    if (to) { focusRef.current = lastWith('leak')?.leak || null; onGuide(to); return true; }
+    if (to) {
+      focusRef.current = lastWith('leak')?.leak || null;
+      setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== to), to].slice(-5));
+      onGuide(to);
+      return true;
+    }
     const months = `${monthsLabel(monthSpan)} months`;
     const leak = lastWith('leak')?.leak;
     if (text === CHIP.nextFee) {
@@ -385,6 +393,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       if (biasKey) patterns?.setAnswer?.(biasKey, value);
       if (value === 'yes') {
         reply({ text: `Thanks for being honest. Lots of people say yes. Over to ${nameFor('habit')} for one small habit.` });
+        setTeam((t) => [...(t.length ? t : ['mind']).filter((k) => k !== 'habit'), 'habit'].slice(-5));
         setTimeout(() => onGuide('habit'), 400);
       } else if (value === 'unsure') {
         reply({ text: 'That\'s fine. Open the pattern to see the research, and decide later.', action: 'open_pattern', biasKey, chips: [handoffChip('habit')] });
@@ -428,7 +437,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     if (openRequest) openPanel();
   }, [openRequest]);
 
-  const reply = (message) => setThread(guideKey, (current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He").replace("I'm Hattie", "I'm Hank") : message.text }]);
+  const withLetters = (message) => (guideKey === 'sir' && message.action === 'draft_email' && message.leak && !message.letters ? { ...message, letters: [message.leak.id], action: null } : message);
+  const reply = (raw) => { const message = withLetters(raw); return setThread(guideKey, (current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He").replace("I'm Hattie", "I'm Hank") : message.text }]); };
 
   // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
   const ask = async (question) => {
@@ -592,6 +602,22 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
           </div>
+          {team.length > 1 && (
+            <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border px-3 py-1.5 text-[12px]" aria-label="Your ghost team on this">
+              <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team on this</span>
+              {team.map((key, i) => (
+                <span key={key} className="inline-flex items-center gap-1">
+                  {i > 0 && <span aria-hidden="true" className="text-muted-foreground">→</span>}
+                  <button type="button" onClick={() => onGuide(key)} aria-pressed={guideKey === key}
+                    className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold', guideKey === key ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                    <span className="inline-block h-2 w-2 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
+                    {nameFor(key).replace('Sir ', '')}
+                  </button>
+                </span>
+              ))}
+              <button type="button" onClick={() => setTeam([])} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">Clear</button>
+            </div>
+          )}
           {/* Ready-made questions at the top, the conversation and typing box at the bottom
               (like most chat apps). Tap one, or type your own question below. */}
           <div className="flex shrink-0 flex-wrap gap-1.5 border-b border-border px-3 py-2" aria-label={`Quick questions for ${guideName}`}>
@@ -627,6 +653,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
                   </button>
+                )}
+                {message.letters?.length > 0 && (
+                  <LetterActions leaks={message.letters.map((id) => leaks.find((item) => item.id === id)).filter(Boolean)} onOpen={(leak) => onAction('draft_email', leak)} />
                 )}
                 {message.kit && index === lastKitIndex && (
                   <KitPlanner compact subscriptions={analysis.subscriptions || []} initialTab={message.kit} initialTyped={message.typed || ''}

@@ -73,12 +73,14 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     };
   }
   if (guideKey === 'sir') {
-    const target = (focus?.action && focus) || leaks.find((leak) => leak.action) || biggest;
-    const kind = { cancel: 'a cancel email', refund: 'a refund request', waive: 'a polite request to waive the fee' }[target.action] || 'a letter';
+    // Spooksworth does the whole letter job for every ghost that needs one: no picking.
+    const letters = leaks.filter((leak) => leak.action).slice(0, 6);
+    if (!letters.length) return { text: `${g.hello}\n\nNone of these ghosts need a letter. They're ones to keep an eye on.`, chips: [handoffChip('cass')] };
     return {
-      text: `${g.hello}\n\nI've drafted ${kind} for ${nameOf(target)} (${money(target.amount)}). Open it, check it, then send it from your own email.\n\nFirmer or friendlier?`,
-      action: 'draft_email', leak: target,
+      text: `${g.hello}\n\nI've drafted ${letters.length === 1 ? 'your letter' : `all ${letters.length} letters`}, biggest first. Send each from your own Outlook or Gmail, and I'll put a reminder in your calendar to check for a reply. Each step ticks off your task list.`,
+      letters: letters.map((leak) => leak.id),
       chips: [CHIP.firmer, CHIP.friendlier],
+      leak: letters[0],
     };
   }
   if (guideKey === 'gus') {
