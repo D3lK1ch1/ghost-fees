@@ -1247,3 +1247,8 @@ One entry per change. Newest at the bottom.
 - Why: final build plan, PR 2: honest labels before judging.
 - Note: the home scan line lives in StatsStrip.jsx and a second Ghost It button in GhostTeam.jsx (both on the home page), so those were changed instead of Landing.jsx. The feedback board ("7 testers") reads testerFeedback.json and is unchanged.
 - Files: src/pages/Progress.jsx, src/components/stats/StatsStrip.jsx, src/components/landing/GhostItOffer.jsx, src/components/landing/GhostTeam.jsx, src/data/changelog.json, README.md
+## Sat 7 Nov 2026: Build streak, 4 to 6 Nov
+- What: added the Build streak days on /progress for Wed 4 Nov (8 items), Thu 5 Nov (5) and Fri 6 Nov (6), same shape as the rest ({ date, title }), unique titles. Nothing else changed.
+- Why: final build plan, PR 1. The streak stopped at Tue 3 Nov.
+- Checked: build passes; local /progress ends with "Fri, 6 Nov · 6 shipped".
+- Files: src/data/shipped.json
