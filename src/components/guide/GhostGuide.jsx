@@ -695,10 +695,6 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
             </div>
-            <button type="button" onClick={() => setOwnPanel((v) => !v)} aria-label={ownAI ? 'Your own AI is connected' : 'Connect your own AI'} title={ownAI ? 'Using your own AI' : 'Connect your own AI (unlimited answers)'}
-              className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[12px] font-bold', ownAI ? 'border-primary text-primary' : 'border-border text-foreground hover:border-primary')}>
-              <KeyRound className="h-3.5 w-3.5" /> {ownAI ? 'My AI ✓' : 'Own AI'}
-            </button>
             <button type="button" onClick={() => setBig((b) => !b)} aria-label={big ? 'Make the chat smaller' : 'Make the chat bigger'} title={big ? 'Smaller' : 'Bigger'} className="hidden rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground sm:block">
               {big ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
@@ -744,6 +740,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
           </div>
+          <button type="button" onClick={() => setOwnPanel(true)}
+            className="flex shrink-0 items-center justify-center gap-1.5 border-b border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground hover:bg-white/5">
+            <KeyRound className="h-3.5 w-3.5 text-primary" />
+            {ownAI ? 'Using your own AI ✓' : 'Got your own AI? Connect Claude or ChatGPT'}
+          </button>
           {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
           {teamIntro && (
             <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5" role="region" aria-label="Team up">
@@ -974,9 +975,6 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 <span className={cn('font-semibold', !ownAI && left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
                   {ownAI ? '✓ Unlimited answers with your own AI' : left === 0 ? 'No free AI answers left. Quick questions still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left`}
                 </span>
-                <button type="button" onClick={() => setOwnPanel((v) => !v)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border px-2 py-0.5 font-bold text-foreground hover:border-primary">
-                  <KeyRound className="h-3 w-3" /> {ownAI ? 'My AI' : 'Own Claude / ChatGPT'}
-                </button>
               </div>
             );
           })()}

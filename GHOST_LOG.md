@@ -1187,3 +1187,9 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay: "list this 1-7 neater, cleaner, less texty and overwhelming."
 - Files: src/components/guide/GhostGuide.jsx
 - Also: the key icon in the chat header is now a labelled "🔑 Own AI" button (shows "My AI ✓" when connected), so people can find it.
+
+## Fri 6 Nov 2026: "Got your own AI?" popup, 3 steps
+- What: one "Got your own AI? Connect Claude or ChatGPT" button sits right under the ghost picker (the header and bottom-line buttons are gone). It opens a popup that guides you in 3 steps: Pick yours (Claude or ChatGPT), Get a key (opens their API keys page: sign in, Create key, copy), Paste it (and Connect). Much less text; the model box only shows for ChatGPT.
+- Why: Sanjay: "less wordy, put own AI button below ghosts, make a popup that guides you through and you can connect."
+- Checked in the local app: all 3 steps.
+- Files: src/components/guide/OwnAIPanel.jsx, src/components/guide/GhostGuide.jsx
