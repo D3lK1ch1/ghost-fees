@@ -1252,3 +1252,4 @@ One entry per change. Newest at the bottom.
 - Why: final build plan, PR 1. The streak stopped at Tue 3 Nov.
 - Checked: build passes; local /progress ends with "Fri, 6 Nov · 6 shipped".
 - Files: src/data/shipped.json
+- Also: Build streak gets a Sat 7 Nov day (6 shipped): new demo video (7:32), new full journey video (4:28), 6 new "You said, we changed" entries, GoldMind's simple pattern icons, Build streak up to date, honest labels. Sanjay asked to make clear the video updates were done today and to show the changes consistently.
