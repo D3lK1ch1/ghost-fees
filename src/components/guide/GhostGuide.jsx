@@ -347,6 +347,7 @@ const TEAM_ROUTES = {
 // Team up, the whole job: every ghost in order, each doing its step (no AI needed).
 const FULL_ROUTE = ['penny', 'cass', 'sir', 'bundle', 'gus', 'mind', 'habit'];
 const FULL_JOBS = { penny: 'find your fees', cass: 'cancel what you don\'t use', sir: 'letters to get money back', bundle: 'sort the double-ups', gus: 'tick off what you busted', mind: 'why it happened', habit: 'one habit so they stay gone' };
+const STEP_SHORT = { penny: 'fees', cass: 'cancel', sir: 'letters', bundle: 'doubles', gus: 'score', mind: 'why', habit: 'habit' };
 const STEP_JOBS = { penny: 'what the fee is', mind: 'why it happened', cass: 'cancel it', sir: 'the letter', habit: 'a habit so it stays gone', bundle: 'keep or rotate', gus: 'your score' };
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
@@ -745,25 +746,26 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           </div>
           {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
           {teamIntro && (
-            <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5 text-[13px]" role="region" aria-label="Team up">
-              <div className="flex items-center gap-2">
-                <p className="font-heading text-[14px] font-bold text-foreground">👻 Team up: we take you through it</p>
-                <button type="button" onClick={() => setTeamIntro(false)} aria-label="Close" className="ml-auto rounded-full p-1 text-muted-foreground hover:bg-white/10"><X className="h-4 w-4" /></button>
+            <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5" role="region" aria-label="Team up">
+              <div className="flex items-center justify-between">
+                <p className="font-heading text-[14px] font-bold text-foreground">👻 Team up: 7 steps, in order</p>
+                <button type="button" onClick={() => setTeamIntro(false)} aria-label="Close" className="rounded-full p-1 text-muted-foreground hover:bg-white/10"><X className="h-4 w-4" /></button>
               </div>
-              <ol className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-[12px] text-muted-foreground">
+              <ol className="mt-1.5 grid grid-cols-4 gap-1 sm:grid-cols-7">
                 {FULL_ROUTE.map((key, i) => (
-                  <li key={key}><span className="font-bold" style={{ color: GUIDES[key].color }}>{i + 1}. {nameFor(key).replace('Sir ', '')}</span> {FULL_JOBS[key]}</li>
+                  <li key={key} title={`${nameFor(key)}: ${FULL_JOBS[key]}`} className="flex flex-col items-center rounded-lg bg-white/[0.04] px-1 py-1 text-center">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-[#1b1233]" style={{ background: GUIDES[key].color }}>{i + 1}</span>
+                    <span className="mt-0.5 text-[11.5px] font-bold leading-tight text-foreground">{nameFor(key).replace('Sir ', '').replace('Spooksworth', 'Spooks')}</span>
+                    <span className="text-[10.5px] leading-tight text-muted-foreground">{STEP_SHORT[key]}</span>
+                  </li>
                 ))}
               </ol>
-              <p className="mt-1.5 rounded-lg border border-amber-300/30 bg-amber-300/10 px-2 py-1.5 text-[12px] text-foreground">
-                ⚠️ This is the longest route and uses the most free AI answers if you ask questions on the way. Know what you need? Tap that ghost above instead, it's quicker.
-              </p>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Take me through everything →</button>
-                <button type="button" onClick={() => setTeamIntro(false)} className="rounded-full border border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground">I'll pick a ghost</button>
+              <p className="mt-1.5 text-[12px] text-muted-foreground">⚠️ Longest route, uses the most AI answers. Know what you need? Tap that ghost.</p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Start →</button>
                 {!ownAI && (
-                  <button type="button" onClick={() => { setTeamIntro(false); setOwnPanel(true); }} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground">
-                    <KeyRound className="h-3.5 w-3.5" /> Use my own AI (no limit)
+                  <button type="button" onClick={() => { setTeamIntro(false); setOwnPanel(true); }} className="inline-flex items-center gap-1 text-[12.5px] font-bold text-foreground underline-offset-4 hover:underline">
+                    <KeyRound className="h-3.5 w-3.5" /> Own AI, no limit
                   </button>
                 )}
               </div>
@@ -787,7 +789,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
                     <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((mission.at + 1) / mission.route.length) * 100}%` }} />
                   </div>
-                  <p className="mt-1 text-[12px] text-muted-foreground">Do this step with the buttons below, then tap Next. Skip any step you don't need.</p>
+                  <p className="mt-1 text-[12px] text-muted-foreground">Use the buttons below, then Next. Skip any step.</p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {prev && <button type="button" onClick={() => stepMission(prev)} className="rounded-full border border-border px-3 py-1 text-[12.5px] font-bold text-foreground">← Back</button>}
                     {next ? (
@@ -859,7 +861,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           })()}
           {/* Ready-made questions at the top, the conversation and typing box at the bottom
               (like most chat apps). Tap one, or type your own question below. */}
-          <div className="flex shrink-0 flex-wrap gap-1.5 border-b border-border px-3 py-2" aria-label={`Quick questions for ${guideName}`}>
+          {!teamIntro && <div className="flex shrink-0 flex-wrap gap-1.5 border-b border-border px-3 py-2" aria-label={`Quick questions for ${guideName}`}>
             {quickChips.map((chip) => (
               <button key={chip} type="button" onClick={() => ask(chipLabel(chip))} disabled={thinking}
                 className="rounded-full border px-3 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:bg-white/5 disabled:opacity-50"
@@ -867,7 +869,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 {chipLabel(chip)}
               </button>
             ))}
-          </div>
+          </div>}
 
 
           <div ref={listRef} aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
@@ -970,10 +972,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             return (
               <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[12px]">
                 <span className={cn('font-semibold', !ownAI && left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
-                  {ownAI ? '✓ Unlimited answers with your own AI' : left === 0 ? 'No free AI answers left. Quick questions still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left · quick questions are unlimited`}
+                  {ownAI ? '✓ Unlimited answers with your own AI' : left === 0 ? 'No free AI answers left. Quick questions still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left`}
                 </span>
                 <button type="button" onClick={() => setOwnPanel((v) => !v)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border px-2 py-0.5 font-bold text-foreground hover:border-primary">
-                  <KeyRound className="h-3 w-3" /> {ownAI ? 'My AI' : 'Use my own Claude / ChatGPT'}
+                  <KeyRound className="h-3 w-3" /> {ownAI ? 'My AI' : 'Own Claude / ChatGPT'}
                 </button>
               </div>
             );

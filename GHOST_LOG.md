@@ -1181,3 +1181,8 @@ One entry per change. Newest at the bottom.
 - Own AI: brought back (undo of 5d6cf76 by the Base44 builder) because Sanjay asked for it under every ghost. The "free AI answers left" line under every ghost now has a "Use my own Claude / ChatGPT" button.
 - Checked in the local app on the sample statement: note, step 1 to step 2, key panel.
 - Files: src/components/guide/GhostGuide.jsx, OwnAIPanel.jsx, src/lib/ghostFees/ownAI.js
+
+## Fri 6 Nov 2026: Team up note, neater
+- What: the Team up note is now a row of 7 numbered ghost tiles (number, name, one word: fees, cancel, letters, doubles, score, why, habit), a one-line warning, and Start plus "Own AI, no limit". Quick questions hide while the note is open. The step bar and the answers-left line use fewer words.
+- Why: Sanjay: "list this 1-7 neater, cleaner, less texty and overwhelming."
+- Files: src/components/guide/GhostGuide.jsx
