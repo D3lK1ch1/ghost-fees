@@ -1194,3 +1194,9 @@ One entry per change. Newest at the bottom.
 - Checked in the local app: all 3 steps.
 - Files: src/components/guide/OwnAIPanel.jsx, src/components/guide/GhostGuide.jsx
 - Then: the limit and its fix now sit together in one row under the ghosts: "5 free AI answers left" on the left, a bigger outlined "🔑 Use your own AI" button on the right. The thin full-width strip, the bottom answers-left line and the duplicate "Own AI" link in the Team up note are gone, so there's one place for it.
+
+## Fri 6 Nov 2026: own AI keys checked, encrypted and masked
+- What: the "Got your own AI?" popup now checks the key before saving: shape first (Claude keys start sk-ant-, no spaces, full length, wrong provider caught), then a free test call to the provider's model list. A refused key is never saved ("Claude said no to that key"). A working key is saved encrypted (AES-GCM, with a non-extractable browser key in IndexedDB), so storage only holds scrambled text plus the last 4 characters. Connected shows "✓ Claude ••••wxyz". Old plain-text saves are wiped. A tip says to set a spend limit and delete the key any time.
+- Why: Sanjay: "properly checks so I don't have to worry about masking."
+- Checked in the local app with made-up keys: wrong shape caught, right-shape fake refused by Anthropic, storage holds no plain key, decrypt reaches Anthropic (401 for the fake), Remove clears it.
+- Files: src/lib/ghostFees/ownAI.js, src/components/guide/OwnAIPanel.jsx

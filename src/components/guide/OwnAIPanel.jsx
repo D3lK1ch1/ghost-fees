@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ExternalLink, KeyRound, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { PROVIDERS, clearOwnAI, readOwnAI, saveOwnAI } from '@/lib/ghostFees/ownAI';
+import { PROVIDERS, clearOwnAI, keyProblem, maskKey, readOwnAI, saveOwnAI, testKey } from '@/lib/ghostFees/ownAI';
 
 // "Got your own AI?": a 3-step popup to connect a Claude (Anthropic) or OpenAI API key
 // for unlimited ghost answers. The key stays in this browser and goes straight to the
@@ -18,7 +18,27 @@ export default function OwnAIPanel({ onClose }) {
   const [remember, setRemember] = useState(false);
   const p = PROVIDERS[provider];
   const brand = provider === 'anthropic' ? 'Claude' : 'ChatGPT';
-  const canSave = key.trim().length > 20 && (provider === 'anthropic' || model.trim());
+  const [checking, setChecking] = useState(false);
+  const [problem, setProblem] = useState(null);
+  const canSave = key.trim().length > 0 && (provider === 'anthropic' || model.trim()) && !checking;
+
+  // Shape check, then a free test call to the provider. Only a working key is saved.
+  const connect = async () => {
+    const bad = keyProblem(provider, key);
+    if (bad) { setProblem(bad); return; }
+    setProblem(null);
+    setChecking(true);
+    const result = await testKey(provider, key);
+    if (result === 'bad') {
+      setChecking(false);
+      setProblem(`${brand} said no to that key. Check it's active, or make a new one.`);
+      return;
+    }
+    await saveOwnAI({ provider, key, model, remember });
+    setKey('');
+    setChecking(false);
+    onClose?.();
+  };
 
   useEffect(() => {
     const onKey = (event) => { if (event.key === 'Escape') onClose?.(); };
@@ -41,7 +61,7 @@ export default function OwnAIPanel({ onClose }) {
 
         {current ? (
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-primary/15 px-3 py-1.5 font-bold text-foreground">✓ Connected: {PROVIDERS[current.provider].label}</span>
+            <span className="rounded-full bg-primary/15 px-3 py-1.5 font-bold text-foreground">✓ {PROVIDERS[current.provider].label} <span className="font-mono text-[12.5px] text-muted-foreground">{maskKey(current.last4)}</span></span>
             <button type="button" onClick={() => { clearOwnAI(); onClose?.(); }} className={cn(btn, 'border border-border text-foreground')}>Remove</button>
           </div>
         ) : (
@@ -76,16 +96,18 @@ export default function OwnAIPanel({ onClose }) {
                   </a>
                   <p className="mt-2 text-foreground">Sign in, tap <b>Create key</b>, copy it.</p>
                   <p className="mt-1 text-[12px] text-muted-foreground">A Plus or Pro plan isn&apos;t enough: you need an API key. You pay {provider === 'anthropic' ? 'Anthropic' : 'OpenAI'} a few cents for what you use.</p>
+                  <p className="mt-1 text-[12px] text-muted-foreground">💡 Tip: set a monthly spend limit there, and delete the key any time.</p>
                 </div>
               )}
               {step === 2 && (
                 <div className="space-y-2">
-                  <input type="password" autoComplete="off" autoFocus value={key} onChange={(e) => setKey(e.target.value)} placeholder={`Paste your key (${p.keyHint})`} aria-label="API key"
+                  <input type="password" autoComplete="off" spellCheck={false} autoFocus value={key} onChange={(e) => { setKey(e.target.value); setProblem(null); }} placeholder={`Paste your key (${p.keyHint})`} aria-label="API key"
                     className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-foreground outline-none focus:border-primary" />
                   {provider === 'openai' && (
                     <input value={model} onChange={(e) => setModel(e.target.value)} placeholder="Model name from your OpenAI account" aria-label="Model"
                       className="w-full rounded-lg border border-border bg-background px-2.5 py-2 text-foreground outline-none focus:border-primary" />
                   )}
+                  {problem && <p role="alert" className="text-[12.5px] font-semibold text-red-300">{problem}</p>}
                   <label className="flex items-center gap-2 text-[12.5px] text-muted-foreground">
                     <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4" />
                     Remember on this device
@@ -98,13 +120,13 @@ export default function OwnAIPanel({ onClose }) {
               {step > 0 && <button type="button" onClick={() => setStep(step - 1)} className={cn(btn, 'border border-border text-foreground')}>← Back</button>}
               {step === 1 && <button type="button" onClick={() => setStep(2)} className={cn(btn, 'ml-auto border border-primary text-foreground')}>I have my key →</button>}
               {step === 2 && (
-                <button type="button" disabled={!canSave} onClick={() => { saveOwnAI({ provider, key, model, remember }); setKey(''); onClose?.(); }}
-                  className={cn(btn, 'ml-auto bg-primary text-primary-foreground disabled:opacity-50')}>Connect</button>
+                <button type="button" disabled={!canSave} onClick={connect}
+                  className={cn(btn, 'ml-auto bg-primary text-primary-foreground disabled:opacity-50')}>{checking ? 'Checking your key…' : 'Check and connect'}</button>
               )}
             </div>
           </>
         )}
-        <p className="mt-3 text-[11.5px] text-muted-foreground">🔒 Your key stays in this browser. Ghost Fees never sees it.</p>
+        <p className="mt-3 text-[11.5px] text-muted-foreground">🔒 Checked, then saved encrypted in this browser. Only the last 4 are ever shown. Ghost Fees never sees it.</p>
       </div>
     </div>,
     document.body,
