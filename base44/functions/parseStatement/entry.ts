@@ -167,34 +167,7 @@ export default async function (req) {
     const type = head?.headers.get('content-type') || '';
     if (type && !/pdf|octet-stream/i.test(type)) return Response.json({ error: "This isn't a PDF." });
 
-    let endpoint = '';
-    try {
-      endpoint = secrets.get('PARSER_ENDPOINT') || '';
-    } catch {
-      endpoint = '';
-    }
-
-    // Optional: forward the PDF to an external parser (e.g. a Vercel /api/parse-data endpoint).
-    if (endpoint) {
-      const download = await fetch(signed_url, { signal: AbortSignal.timeout(20000) });
-      if (!download.ok) return Response.json({ error: `We couldn't open that ${bankName} statement.` });
-
-      const form = new FormData();
-      form.append('FILE', await download.blob(), 'statement.pdf');
-      if (bank) form.append('bank', bank);
-
-      const parsed = await fetch(endpoint, { method: 'POST', body: form, signal: AbortSignal.timeout(120000) });
-      const json = await parsed.json().catch(() => ({}));
-      if (!parsed.ok) {
-        return Response.json({ error: json?.error || `The ${bankName} parser could not read this file.` });
-      }
-      if (json?.error) return Response.json({ error: String(json.error) });
-
-      const rows = Array.isArray(json?.transactions) ? json.transactions.map(normalise).filter(Boolean) : [];
-      if (!rows.length) return Response.json({ error: `No transactions found in this ${bankName} statement.` });
-      return Response.json({ transactions: rows });
-    }
-
+    // Statements only ever go to Base44's AI. There is no external parser option.
     if (!(await takeDaily(base44, 'scan'))) {
       return Response.json({ error: 'Lots of scans today. Try again tomorrow, or upload a CSV instead.' });
     }

@@ -65,9 +65,8 @@ async function takeAnonymous(base44, kind) {
 }
 // ---- end free-tier block ----
 
+// Where Stripe sends people back to: only this app's own *.base44.app address or localhost.
 function safeOrigin(value) {
-  const fixed = secretOr('APP_URL');
-  if (fixed) return fixed.replace(/\/+$/, '');
   try {
     const url = new URL(String(value || ''));
     const local = url.protocol === 'http:' && ['localhost', '127.0.0.1'].includes(url.hostname);
