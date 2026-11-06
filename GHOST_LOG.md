@@ -1117,3 +1117,15 @@ One entry per change. Newest at the bottom.
 - Files: base44/functions/{askGhostGuide,findCancelInfo,parseStatement,kitResearch,allowance,createCheckout}/entry.ts (limits), base44/functions/{draftCancelEmail,summariseLeaks}/entry.ts (retired), src/components/guide/GhostGuide.jsx (MAX_AI_MESSAGES 5)
 - How to test: After Publish, the 6th AI answer in one visit says "That's all my spirit energy for now", and quick buttons keep working.
 - User feedback that drove this: "the agents burn my base44 credits, is there an option we can limit their calls" (picked Tight).
+### Team up: ghosts work as a visible team on one ghost; fewer preset buttons
+- What:
+  - "👻 Team up on Streammax" (your biggest ghost), or pick another ghost from "or another ghost", sits at the top of the chat. It forms the right team for that kind of ghost:
+    - Trial / cancel: Mo (why it happened) → Cassy (cancel it) → Spooksworth (the letter) → Hattie (a habit so it stays gone) → Gus (your score).
+    - Refund: Mo → Spooksworth → Hattie → Gus.
+    - Bank fee: Penny → Spooksworth → Hattie → Gus.
+    - Price rise: Penny → Kit → Cassy → Gus.
+  - The team line shows "Team on Streammax" and the whole route: ✓ on ghosts you've done, the current one highlighted, any name tappable, and a "Next: Cassy, cancel it →" button in the next ghost's colour, ending with "🎉 Team done. Gus has your score." End stops it. Every ghost on the team opens on that ghost: Mo explains its pattern, Cassy its cancel, Spooksworth puts its letter first, Penny its fee first, and Hattie plans for its pattern.
+  - Fewer buttons: three quick questions per ghost (was five), and "Is my data stored?" is no longer added to every ghost (the privacy line is in the footer).
+- Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js
+- How to test: Sample > Ask a ghost > 👻 Team up on Streammax. Next four times goes Mo → Cassy → Spooksworth → Hattie → Gus with ✓ ticks, ending in "Team done".
+- User feedback that drove this: "I do not see how the agents interact in a team, where's the create agent team. Maybe we can clean up some of the buttons and preset options".
