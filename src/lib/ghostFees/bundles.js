@@ -73,8 +73,9 @@ export const GHOST_PACKS = CATALOGUE.packs.map((pack) => ({
   key: pack,
   name: pack === 'Gym and Fitness' ? 'Gym & Fitness' : pack,
   emoji: CATALOGUE.packEmoji[pack] || '📦',
-  hunts: CATALOGUE.packHunts[pack] || '',
-  groups: pack === 'Tech Stack' ? ['ai', 'storage', 'design'] : BUNDLE_GROUPS.filter((g) => g.pack === pack && g.key !== 'ai').map((g) => g.key),
+  // The app shows monthly figures only, so Ghost It's "a year" wording becomes "a month".
+  hunts: (CATALOGUE.packHunts[pack] || '').replace(/ a year\b/g, ' a month'),
+  groups: pack === 'Tech Stack' ? ['ai', 'storage', 'design'] : pack === 'Gym and Fitness' ? ['gym'] : BUNDLE_GROUPS.filter((g) => g.pack === pack && g.key !== 'ai').map((g) => g.key),
 }));
 
 // The Ghost It service a merchant is (e.g. "NETFLIX.COM 866..." -> Netflix), or null.
@@ -362,4 +363,13 @@ export function organiseText(subscriptions = []) {
     return `${CATALOGUE.packEmoji[pack] || '📦'} ${label} (${money(sumMonthly(items))} a month): ${items.map((i) => `${i.name} ${money(i.monthly)}`).join(', ')}`;
   });
   return `Your ${subs.length} subscriptions, organised by Ghost Pack:\n\n${lines.join('\n')}\n\nAll together: ${money(sumMonthly(subs))} a month.`;
+}
+
+// Gym & Fitness: not a "two of the same" double, so Kit checks each membership instead:
+// what it costs a month (weekly prices converted) and whether you actually go.
+const GYM_RE = /GYM|FITNESS|FITLIFE|ANYTIME|GOODLIFE|JETTS|F45|PILATES|YOGA|CROSSFIT|PELOTON|STRAVA|CLASSPASS|VIRGIN ACTIVE|SNAP FITNESS/i;
+export function gymItems(subscriptions = []) {
+  return subscriptions
+    .filter((s) => serviceFor(s.merchant)?.key === 'gym' || GYM_RE.test(s.merchant || ''))
+    .map((s) => ({ ...s, name: s.name || s.merchant }));
 }

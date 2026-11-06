@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { trackEvent } from '@/lib/session';
 import {
-  AI_NEEDS, GENRES, GHOST_PACKS, TYPICAL_NOTE, aiPlan, aiToolFor, priceText, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
+  AI_NEEDS, GENRES, GHOST_PACKS, gymItems, TYPICAL_NOTE, aiPlan, aiToolFor, priceText, bundleGroups, mergeSubs, downloadRotation, isSampleService, itemLine, keepPlan, needList, parseTyped, researchVerdict, rotationPlan, splitShows, sumMonthly,
 } from '@/lib/ghostFees/bundles';
 
 const KIT = '#7fd1ff';
@@ -205,7 +205,8 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
   // Kit can sort every Ghost It pack, not only what the statement shows.
   const [typed, setTyped] = useState(initialTyped);
   const typedSubs = useMemo(() => parseTyped(typed), [typed]);
-  const groups = useMemo(() => bundleGroups(mergeSubs(subscriptions, typedSubs)), [subscriptions, typedSubs]);
+  const allSubs = useMemo(() => mergeSubs(subscriptions, typedSubs), [subscriptions, typedSubs]);
+  const groups = useMemo(() => bundleGroups(allSubs), [allSubs]);
   const aiTools = groups.find((g) => g.key === 'ai')?.items || typedSubs.filter((t) => aiToolFor(t.merchant));
   const tabs = [...groups.filter((g) => g.key !== 'ai'), { key: 'ai', label: 'AI tools', emoji: '🤖' }];
   const [tab, setTab] = useState(tabs.some((t) => t.key === initialTab) ? initialTab : (tabs[0]?.key || 'ai'));
@@ -234,6 +235,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
       <div className={cn('grid grid-cols-2 gap-1.5 sm:grid-cols-3', !compact && 'mt-2')} role="tablist" aria-label="Ghost Packs">
         {GHOST_PACKS.map((pack) => {
           const found = groups.filter((g) => pack.groups.includes(g.key) && (g.key !== 'ai' || aiTools.length >= 2));
+          const gyms = pack.key === 'Gym and Fitness' ? gymItems(allSubs) : [];
           const count = found.reduce((n, g) => n + g.items.length, 0);
           const on = pack.groups.includes(tab);
           const open = pack.groups.length > 0;
@@ -244,7 +246,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
               className={cn('rounded-xl border px-2.5 py-2 text-left transition-colors disabled:opacity-60', on ? 'border-[#7fd1ff] bg-[#7fd1ff]/10' : 'border-border bg-background/50 hover:border-[#7fd1ff]/50')}>
               <span className="block text-[13.5px] font-bold text-foreground">{pack.emoji} {pack.name}</span>
               <span className={cn('block text-[12px] leading-tight', count ? 'font-semibold' : 'text-muted-foreground')} style={count ? { color: KIT } : undefined}>
-                {count ? `${count} doubled · ${money(sumMonthly(found.flatMap((g) => g.items)))} a month` : open ? 'Nothing doubled yet' : 'Ask Ghost It about weekly costs'}
+                {pack.key === 'Gym and Fitness' ? (gyms.length ? `${gyms.length} ${gyms.length === 1 ? 'membership' : 'memberships'} · ${money(sumMonthly(gyms))} a month` : 'No gym found yet') : count ? `${count} doubled · ${money(sumMonthly(found.flatMap((g) => g.items)))} a month` : open ? 'Nothing doubled yet' : ''}
               </span>
             </button>
           );
@@ -348,6 +350,31 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
               {mode === 'keep' && <CancelSteps items={keep.cancel} onDecide={onDecide} onCancelHelp={onCancelHelp} onOpenEmail={onOpenEmail} done={done} setDone={setDone} />}
             </>
           )}
+        </div>
+      )}
+
+      {tab === 'gym' && (
+        <div className="mt-3">
+          {gymItems(allSubs).length === 0 ? (
+            <p className="text-[14px] text-muted-foreground">No gym or fitness membership on this statement. Paying one weekly? Type it above, like &quot;gym $25 a week&quot;, and I&apos;ll show what it costs a month.</p>
+          ) : gymItems(allSubs).map((item) => (
+            <div key={item.name} className="mt-2 rounded-xl border border-border bg-background/50 p-2.5 text-[13.5px]">
+              <p className="font-bold text-foreground">{item.name} <span className="font-semibold text-muted-foreground">{priceText(item)}{item.monthly ? ' a month' : ''}</span></p>
+              <p className="mt-1 font-bold text-foreground">Been this month?</p>
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                <Pill on={fav[`gym:${item.name}`] === 'yes'} onClick={() => setFav((f) => ({ ...f, [`gym:${item.name}`]: 'yes' }))}>Yes, I go</Pill>
+                <Pill on={fav[`gym:${item.name}`] === 'no'} onClick={() => setFav((f) => ({ ...f, [`gym:${item.name}`]: 'no' }))}>Not much</Pill>
+              </div>
+              {fav[`gym:${item.name}`] === 'yes' && <p className="mt-1.5 text-muted-foreground">Then it&apos;s earning its keep. Keep it, and check again in a few months.</p>}
+              {fav[`gym:${item.name}`] === 'no' && (
+                <>
+                  <p className="mt-1.5 text-foreground">Ask about a <span className="font-bold">pause or freeze</span> first. Many gyms offer one, sometimes for a small fee, so you keep your rate for when you go back. If not, cancel it here:</p>
+                  <CancelActions item={{ id: item.id ?? item.name, merchant: item.merchant || item.name, title: item.name, monthly: item.monthly }} goalId={item.id != null ? `sub:${item.id}` : `kit:${item.name}`}
+                    onOpenEmail={onOpenEmail} onLookup={onCancelHelp ? () => onCancelHelp([item.name]) : undefined} accent={KIT} compact />
+                </>
+              )}
+            </div>
+          ))}
         </div>
       )}
 

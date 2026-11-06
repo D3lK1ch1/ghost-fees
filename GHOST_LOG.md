@@ -1144,3 +1144,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/guides.js, src/components/landing/GhostTeam.jsx
 - How to test: Ask a ghost > Cassy shows "Cassy · Cancellation specialist".
 - User feedback that drove this: "Cassy label her cancellation specialist".
+
+### Kit's Gym & Fitness pack works (it was greyed out)
+- What: The Gym & Fitness pack card was greyed out with "Ask Ghost It about weekly costs" and did nothing, because gyms aren't "two of the same" doubles like streaming. It now opens a gym screen. Each gym or fitness membership on the statement (or typed, e.g. "gym $25 a week", converted to a month) shows with "Been this month?". "Yes, I go" keeps it. "Not much" suggests asking about a pause or freeze first, then gives the full cancel buttons (cancel page or Cassy's lookup, email, I cancelled it, check it stopped). The card reads "1 membership · $45.00 a month" on the sample. The pack line says "what a weekly membership really costs a month" (monthly only, not a year).
+- Files: src/lib/ghostFees/bundles.js (gymItems, pack text), src/components/guide/KitPlanner.jsx
+- How to test: Ask a ghost > Kit > Gym & Fitness shows Fitlife Gym $45.00 a month. Not much gives the pause tip and the cancel buttons.
+- User feedback that drove this: "why is gym unselectable, that should be explained".
