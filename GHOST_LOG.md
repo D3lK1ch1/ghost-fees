@@ -1228,3 +1228,8 @@ One entry per change. Newest at the bottom.
 - What: the money patterns popup now uses Sanjay's own drawings from the GoldMind app (~/GoldMind/Bias Lessons): Denomination Effect (paying with coins at a counter), Ostrich Effect (avoiding the banking app on the couch), Mental Accounting (the dog and the money jars). Shown bigger on a light tile with a gentle bob. Present Bias, Status Quo Bias and Pain of Paying have no GoldMind lesson yet, so they keep the animated emoji; all tiles are the same size.
 - Images resized to 360px PNGs with transparent backgrounds (the Mental Accounting scene had a fake checkered background baked in, so the jars nudge image is used).
 - Files: public/patterns/*.png, src/components/patterns/PatternsPopup.jsx
+
+## Sat 7 Nov 2026: demo video swapped to the web version
+- What: the Demo card now plays ghost-fees-demo-web.mp4 (7:32, the web-ready export of v7) instead of ghost-fees-demo-v7.mp4, which is removed. Promo, the 60-second feedback video and The full journey are unchanged: ghost-fees-promo.mp4 and ghost-fees-journey-web.mp4 aren't on this Mac yet.
+- Why: Sanjay's video table: Demo, replace with ghost-fees-demo-web.mp4.
+- Files: public/videos/ghost-fees-demo-web.mp4, src/data/videos.js
