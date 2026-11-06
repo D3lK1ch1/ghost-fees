@@ -150,16 +150,20 @@ export function GhostButton({ children, onClick, className = '', delay }) {
 }
 
 // The phone-sized screen every scene sits in.
-export function Screen({ children, background, className = '', stars = true, maxY = 100 }) {
-  return (
+// silver: the screen sits in the silver phone (every scene except one that already has
+// a silver phone inside it, like the Exes group chat).
+export function Screen({ children, background, className = '', stars = true, maxY = 100, silver = true }) {
+  const inner = (
     <div
-      className={`ex-root relative mx-auto flex w-full max-w-[390px] flex-col overflow-hidden rounded-[30px] ${className}`}
-      style={{ background: background || C.bg, minHeight: 760, boxShadow: '0 24px 70px rgba(0,0,0,0.45)', border: `1px solid ${C.line}` }}
+      className={`ex-root relative flex w-full flex-col overflow-hidden ${silver ? '' : 'mx-auto max-w-[390px] rounded-[30px]'} ${className}`}
+      style={silver ? { background: background || C.bg, minHeight: 746, borderRadius: 40 } : { background: background || C.bg, minHeight: 760, boxShadow: '0 24px 70px rgba(0,0,0,0.45)', border: `1px solid ${C.line}` }}
     >
       {stars && <Stars maxY={maxY} />}
+      {silver && <div aria-hidden="true" className="h-6 shrink-0" />}
       {children}
     </div>
   );
+  return silver ? <SilverPhone width={402}>{inner}</SilverPhone> : inner;
 }
 
 // The silver phone from design screen Ex3Reveal: brushed-metal edge, side buttons,

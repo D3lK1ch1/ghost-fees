@@ -90,7 +90,7 @@ export default function ExJourney({ theme, analysis, fileName, avatarFor, onSeeA
         >
           {scene === 'scan' && <ExScanChat pick={pick} pickKey={pickKey} count={leaks.length} fileName={fileName} sample={fileName === 'sample-statement.csv'} onUpload={onUpload} onNext={() => go('reveal')} />}
           {scene === 'reveal' && (
-            <Screen className="px-4 pb-6 pt-5">
+            <Screen silver={false} className="px-4 pb-6 pt-5">
               <ExStory theme={theme} subscriptions={subscriptions} avatarFor={avatarFor} onSkip={() => go('moving')} onMoveOn={() => go('moving')} />
             </Screen>
           )}
