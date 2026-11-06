@@ -696,8 +696,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </p>
             </div>
             <button type="button" onClick={() => setOwnPanel((v) => !v)} aria-label={ownAI ? 'Your own AI is connected' : 'Connect your own AI'} title={ownAI ? 'Using your own AI' : 'Connect your own AI (unlimited answers)'}
-              className={cn('rounded-full p-1.5 hover:bg-white/10', ownAI ? 'text-primary' : 'text-muted-foreground hover:text-foreground')}>
-              <KeyRound className="h-4 w-4" />
+              className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[12px] font-bold', ownAI ? 'border-primary text-primary' : 'border-border text-foreground hover:border-primary')}>
+              <KeyRound className="h-3.5 w-3.5" /> {ownAI ? 'My AI ✓' : 'Own AI'}
             </button>
             <button type="button" onClick={() => setBig((b) => !b)} aria-label={big ? 'Make the chat smaller' : 'Make the chat bigger'} title={big ? 'Smaller' : 'Bigger'} className="hidden rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground sm:block">
               {big ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}

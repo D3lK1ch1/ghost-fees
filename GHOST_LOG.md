@@ -1186,3 +1186,4 @@ One entry per change. Newest at the bottom.
 - What: the Team up note is now a row of 7 numbered ghost tiles (number, name, one word: fees, cancel, letters, doubles, score, why, habit), a one-line warning, and Start plus "Own AI, no limit". Quick questions hide while the note is open. The step bar and the answers-left line use fewer words.
 - Why: Sanjay: "list this 1-7 neater, cleaner, less texty and overwhelming."
 - Files: src/components/guide/GhostGuide.jsx
+- Also: the key icon in the chat header is now a labelled "🔑 Own AI" button (shows "My AI ✓" when connected), so people can find it.
