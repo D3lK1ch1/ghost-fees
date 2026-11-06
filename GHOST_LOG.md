@@ -1218,3 +1218,8 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay: "move the Team up button to the first, before the other AI options."
 - Checked in the local app.
 - Files: src/components/guide/GhostGuide.jsx
+
+## Fri 6 Nov 2026: new demo video (v7)
+- What: the Demo video is now ghost-fees-demo-v7.mp4 (7:32, 1080p), on the Media page and the "Watch the full demo" button (its time label updates itself to 7:32). The old 2:05 walkthrough file stays in public/videos, unused, until Sanjay says to delete it.
+- Why: Sanjay made a new demo video and asked to put it in.
+- Files: public/videos/ghost-fees-demo-v7.mp4, src/data/videos.js
