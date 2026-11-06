@@ -10,6 +10,10 @@ const EMAIL_SCHEMA = {
 };
 
 export default async function (req) {
+  // Retired (6 Nov): the app no longer uses this, and it had no limits, so it could be
+  // called directly and spend AI credits. It now answers without calling the AI.
+  return Response.json({ error: 'This feature has moved into the app.' }, { status: 410 });
+  // eslint-disable-next-line no-unreachable
   try {
     const base44 = createClientFromRequest(req);
     const payload = await req.json().catch(() => ({}));

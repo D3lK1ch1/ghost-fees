@@ -16,7 +16,7 @@ const TICKET_MINUTES = 15;
 // Only counters and salted one-way hashes are stored, on the Allowance entity.
 const FREE_SCANS = 3; // 3 free statement uploads (one upload = up to 6 files). The sample never counts.
 const FREE_CASS = 1; // Cassy looks up one subscription for free
-const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
+const ANON_DAILY = { guide: 150, cass: 25 }; // ceiling for everyone not signed in, per UTC day
 const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind', 'habit', 'bundle'];
 
 function secretOr(name, fallback = '') {
