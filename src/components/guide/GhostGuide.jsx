@@ -25,7 +25,7 @@ import GhostMark from '@/components/site/GhostMark';
 import { useAllowance } from '@/lib/AllowanceContext';
 
 const MAX_INPUT = 500;
-const MAX_AI_MESSAGES = 20;
+const MAX_AI_MESSAGES = 5; // AI answers per visit; built-in answers and buttons are always free
 const NO_MESSAGES = [];
 
 const ACTION_LABELS = {

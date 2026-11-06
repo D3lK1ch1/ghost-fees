@@ -1111,3 +1111,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/LetterActions.jsx
 - How to test: Sample > Ask a ghost > Spooksworth shows 5 numbered lines with #1 open. Read the draft shows the email. Send in Gmail opens Gmail with it filled in.
 - User feedback that drove this: "where's his draft email and connect to email where you link Outlook or Gmail to send it directly", "can we make it cleaner like list 1-5".
+
+### Tight AI limits during the hackathon, and two old AI functions switched off
+- What: Base44 AI credits now have tight daily limits. Ghost AI answers drop from 1,000 to 200 a day, Cassy and Kit web searches from 100 to 30, and PDF scans from 100 to 40. Visitors who aren't signed in drop from 400 to 150 ghost answers and from 60 to 25 searches a day. Each visitor gets up to 5 AI answers per visit (was 20). Paid ceilings are unchanged. Built-in answers, openers and every button stay free and unlimited (no AI call). The old draftCancelEmail and summariseLeaks functions weren't used by the app any more but had no limits, so anyone calling them directly could spend credits. They now return "moved into the app" without calling the AI (files kept).
+- Files: base44/functions/{askGhostGuide,findCancelInfo,parseStatement,kitResearch,allowance,createCheckout}/entry.ts (limits), base44/functions/{draftCancelEmail,summariseLeaks}/entry.ts (retired), src/components/guide/GhostGuide.jsx (MAX_AI_MESSAGES 5)
+- How to test: After Publish, the 6th AI answer in one visit says "That's all my spirit energy for now", and quick buttons keep working.
+- User feedback that drove this: "the agents burn my base44 credits, is there an option we can limit their calls" (picked Tight).

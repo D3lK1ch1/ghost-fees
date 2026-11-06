@@ -28,7 +28,7 @@ const RESULT_SCHEMA = {
 // Only counters and salted one-way hashes are stored, on the Allowance entity.
 const FREE_SCANS = 3; // 3 free statement uploads (one upload = up to 6 files). The sample never counts.
 const FREE_CASS = 1; // Cassy looks up one subscription for free
-const ANON_DAILY = { guide: 400, cass: 60 }; // ceiling for everyone not signed in, per UTC day
+const ANON_DAILY = { guide: 150, cass: 25 }; // ceiling for everyone not signed in, per UTC day
 const GUIDE_KEYS = ['penny', 'sir', 'gus', 'cass', 'mind', 'habit', 'bundle'];
 
 function secretOr(name, fallback = '') {
@@ -82,7 +82,7 @@ async function takeAnonymous(base44, kind) {
 // (signed in or not) share one pool, people who paid share a bigger *_paid pool,
 // admins skip it. Paying doesn't buy Base44 credits, so paid can't be unlimited.
 // Not isUnlimited(): during the beta that is true for everyone.
-const DAILY_AI = { scan: 100, guide_all: 1000, cass_all: 100, scan_paid: 300, guide_all_paid: 3000, cass_all_paid: 300 };
+const DAILY_AI = { scan: 40, guide_all: 200, cass_all: 30, scan_paid: 300, guide_all_paid: 3000, cass_all_paid: 300 }; // tight during the hackathon (6 Nov)
 
 async function dailyTier(base44) {
   const user = await currentUser(base44);
