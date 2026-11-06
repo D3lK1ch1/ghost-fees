@@ -1207,3 +1207,9 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay asked for bigger buttons and a popup with the patterns, animated icons, and how each pattern relates to the fees.
 - Checked in the local app on the sample statement.
 - Files: src/components/patterns/PatternsPopup.jsx, src/components/results/ResultsView.jsx, src/index.css
+
+## Fri 6 Nov 2026: Team up comes first
+- What: Team up is now a full-width button at the top of the chat, above the ghosts ("👻 Team up · take me through it, step by step"). Tapping it opens the 7-step note right under it. The Plan row now has Kit, Mo and Hattie as three wider tiles.
+- Why: Sanjay: "move the Team up button to the first, before the other AI options."
+- Checked in the local app.
+- Files: src/components/guide/GhostGuide.jsx
