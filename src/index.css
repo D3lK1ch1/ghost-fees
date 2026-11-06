@@ -130,3 +130,18 @@ body {
 }
 h1, h2, h3, .font-heading { letter-spacing: -0.015em; text-wrap: balance; }
 p, li { text-wrap: pretty; }
+
+/* Money patterns popup: one small animation per pattern icon. */
+@keyframes pxTilt { 0%, 100% { transform: rotate(-12deg); } 50% { transform: rotate(12deg); } }
+@keyframes pxSpin { 0% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+@keyframes pxBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes pxPeek { 0%, 60%, 100% { transform: translateY(0) scale(1); } 75% { transform: translateY(3px) scale(0.9); } }
+@keyframes pxWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+@keyframes pxPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+.px-tilt { animation: pxTilt 2.2s ease-in-out infinite; }
+.px-spin { animation: pxSpin 2.6s linear infinite; }
+.px-bob { animation: pxBob 2s ease-in-out infinite; }
+.px-peek { animation: pxPeek 2.4s ease-in-out infinite; }
+.px-wiggle { animation: pxWiggle 1.8s ease-in-out infinite; }
+.px-pulse { animation: pxPulse 1.6s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .px-tilt, .px-spin, .px-bob, .px-peek, .px-wiggle, .px-pulse { animation: none; } }
