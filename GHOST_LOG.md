@@ -1208,6 +1208,11 @@ One entry per change. Newest at the bottom.
 - Checked in the local app on the sample statement.
 - Files: src/components/patterns/PatternsPopup.jsx, src/components/results/ResultsView.jsx, src/index.css
 
+## Fri 6 Nov 2026: every My Ex Ghosted Me screen in the silver phone
+- What: the Ex theme's phone screens (Moving on, Inbox zero, blocked chats, glow-up plan, weekend, check-in, splurge, "comes back") were plain rounded boxes; only the scan screen used the silver phone from the design (brushed-metal edge, side buttons, camera pill). Now every screen sits in the same silver phone. The "Unread messages" screen keeps its plain card, and its Exes group chat phone is now the real silver phone instead of a flat grey gradient, so there's never a phone inside a phone.
+- Why: Sanjay: a phone in My Ex Ghosted Me wasn't formatted as the silver phone.
+- Checked in the local app: Unread messages and Moving on.
+- Files: src/components/ex/ExKit.jsx, src/components/ex/ExJourney.jsx, src/components/results/ExStory.jsx
 ## Fri 6 Nov 2026: Team up comes first
 - What: Team up is now a full-width button at the top of the chat, above the ghosts ("👻 Team up · take me through it, step by step"). Tapping it opens the 7-step note right under it. The Plan row now has Kit, Mo and Hattie as three wider tiles.
 - Why: Sanjay: "move the Team up button to the first, before the other AI options."

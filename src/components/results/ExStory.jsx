@@ -5,6 +5,7 @@ import { money } from '@/lib/ghostFees/format';
 import { useSavedChoice } from '@/hooks/use-saved-choice';
 import { EX_GHOST_KEY, EX_GHOSTS, EX_PICKS, EX_SHOUT_BUBBLE, exAvatar } from '@/lib/ghostFees/exArt';
 import GhostTip from './GhostTip';
+import { SilverPhone } from '@/components/ex/ExKit';
 
 // My Ex Ghosted Me: "Unread messages from your exes", laid out like the Ex3Reveal
 // design: a shocked ghost and shout bubble, then a phone showing The Exes group chat
@@ -65,11 +66,9 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
       </div>
 
       {/* The phone */}
-      <div className="mx-auto mt-4 w-full max-w-[340px] rounded-[48px] bg-gradient-to-b from-[#f2f2f5] via-[#b9b9c2] to-[#e9e9ee] p-[5px] shadow-[0_24px_60px_rgba(0,0,0,0.45)]">
-        <div className="rounded-[43px] bg-[#141218] px-3 pb-3 pt-3">
-          <div className="mx-auto h-6 w-28 rounded-full bg-black" aria-hidden="true" />
-
-          <div className="mt-3 flex items-center gap-2.5 border-b border-white/10 px-1 pb-3">
+      <SilverPhone width={340} className="mt-4">
+        <div className="bg-[#141218] px-3 pb-3 pt-12">
+          <div className="flex items-center gap-2.5 border-b border-white/10 px-1 pb-3">
             <div className="flex -space-x-3">
               {shown.slice(0, 3).map((item) => (
                 <img key={item.id} src={avatar(item.merchant)} alt="" width={36} height={36} className="object-contain h-9 w-9" />
@@ -111,7 +110,7 @@ export default function ExStory({ theme, subscriptions = [], onSkip, onMoveOn, a
           </div>
           <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-white/50" aria-hidden="true" />
         </div>
-      </div>
+      </SilverPhone>
 
       {monthly > 0 && (
         <motion.div {...enter(shown.length)} className="mt-5 rounded-[22px] border border-[#5ee6c8]/60 bg-[#173b33] px-5 py-4 text-[15px] leading-relaxed text-white">
