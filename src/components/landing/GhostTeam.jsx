@@ -13,7 +13,7 @@ const BLURBS = {
   penny: 'Adds up every charge and fee and shows the maths.',
   sir: 'Writes your cancel, refund and fee-waiver emails.',
   gus: 'Keeps score as you bust ghosts and sets goals.',
-  cass: 'Finds the real cancel page, steps and phone number.',
+  cass: 'Your cancellation specialist: the real cancel page, steps and phone number, then proof you cancelled and a check it stopped.',
   bundle: 'Researches and optimises your subscriptions: checks where your shows stream, compares cost against what you use, then keep one, rotate or cancel.',
   mind: 'Explains the money pattern behind each ghost and one habit to beat it.',
   habit: 'Helps you keep one small money habit and checks in a week later.',

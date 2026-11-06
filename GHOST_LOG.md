@@ -1138,3 +1138,9 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/ownAI.js (new), src/components/guide/OwnAIPanel.jsx (new), src/components/guide/GhostGuide.jsx, package.json (@anthropic-ai/sdk)
 - How to test: Ask a ghost > 🔑 > Claude > paste a key > Use my AI. Typed questions are answered by your Claude. Tested locally with a fake key and a faked Anthropic reply: the request went to api.anthropic.com with the browser-access header, the summary was in the system prompt, the reply rendered with its Ask Spooksworth → handoff, and the key was kept in session storage only.
 - User feedback that drove this: "is there an option we can limit their calls then have an add your own agent connector... where they can attach their Claude or ChatGPT", "isn't it good competition show, limits and it has some free then connect your own".
+
+### Cassy is the cancellation specialist
+- What: Cassy's label is now "Cancellation specialist" in the chat header (was "Helps you cancel") and "Cancel specialist" in the picker (was "How to cancel"). Her hello is "I'm Cassy, your cancellation specialist. Calm and practical. My one job: showing you exactly how to cancel, and making sure it sticks." The home page team reads "Your cancellation specialist: the real cancel page, steps and phone number, then proof you cancelled and a check it stopped."
+- Files: src/lib/ghostFees/guides.js, src/components/landing/GhostTeam.jsx
+- How to test: Ask a ghost > Cassy shows "Cassy · Cancellation specialist".
+- User feedback that drove this: "Cassy label her cancellation specialist".

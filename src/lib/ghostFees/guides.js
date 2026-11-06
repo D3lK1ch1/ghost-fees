@@ -56,13 +56,13 @@ export const GUIDES = {
   },
   cass: {
     name: 'Cassy',
-    role: 'the cancel ghost',
+    role: 'the cancellation specialist',
     bonus: true, // bonus assistant: looks things up online
     color: '#f2a65a',
-    job: 'Helps you cancel',
-    short: 'How to cancel',
+    job: 'Cancellation specialist',
+    short: 'Cancel specialist',
     does: 'Searches the official site for the cancel link, the steps and the phone number, then drafts the email.',
-    hello: "I'm Cassy, calm and practical. My one job: showing you exactly how to cancel.",
+    hello: "I'm Cassy, your cancellation specialist. Calm and practical. My one job: showing you exactly how to cancel, and making sure it sticks.",
     ask: 'Name a subscription to cancel',
     how: ['Name a subscription.', 'I give the official cancel page and steps (checked ones only, never guessed).', 'No checked page? I search their official site for it and the phone number.'],
     chips: ['How do I cancel my biggest one?', 'Find a phone number', 'Write my cancel email'],
