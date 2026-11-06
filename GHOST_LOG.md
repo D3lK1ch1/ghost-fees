@@ -1229,6 +1229,11 @@ One entry per change. Newest at the bottom.
 - Images resized to 360px PNGs with transparent backgrounds (the Mental Accounting scene had a fake checkered background baked in, so the jars nudge image is used).
 - Files: public/patterns/*.png, src/components/patterns/PatternsPopup.jsx
 
+## Sat 7 Nov 2026: pattern icons are GoldMind's simple Learn-tab icons
+- What: the money patterns popup now uses the same simple icons as the GoldMind app's Learn tab, not the lesson scenes: Present Bias (NOW stopwatch), Denomination Effect (note = coins), Status Quo Bias (armchair), Ostrich Effect (ostrich), Mental Accounting (labelled jars). White tiles like the Learn cards, gentle bob. Pain of Paying has no GoldMind icon yet, so it keeps the animated 💳.
+- Why: Sanjay: "one simple icon, no lessons or dog", with a screenshot of the Learn tab.
+- Source: ~/GoldMind/GoldMind Assets.xcassets (<Bias>Icon.imageset), resized to 256px PNG.
+- Files: public/patterns/*.png, src/components/patterns/PatternsPopup.jsx
 ## Sat 7 Nov 2026: demo video swapped to the web version
 - What: the Demo card now plays ghost-fees-demo-web.mp4 (7:32, the web-ready export of v7) instead of ghost-fees-demo-v7.mp4, which is removed. Promo, the 60-second feedback video and The full journey are unchanged: ghost-fees-promo.mp4 and ghost-fees-journey-web.mp4 aren't on this Mac yet.
 - Why: Sanjay's video table: Demo, replace with ghost-fees-demo-web.mp4.

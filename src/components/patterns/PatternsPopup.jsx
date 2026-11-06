@@ -3,8 +3,8 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { biasGroups } from '@/lib/ghostFees/leaks';
 import { money } from '@/lib/ghostFees/format';
 
-// One animated icon per pattern. Drawn art lives at public/patterns/<key>.png (from the
-// GoldMind app's bias lessons); patterns without a PNG show the animated emoji.
+// One animated icon per pattern. Drawn art lives at public/patterns/<key>.png (the simple
+// bias icons from the GoldMind app's Learn tab); patterns without a PNG show the animated emoji.
 export const PATTERN_ICONS = {
   present_bias: { emoji: '⏳', anim: 'px-tilt', tint: '#c4b5fd' },
   denomination: { emoji: '🪙', anim: 'px-spin', tint: '#fcd34d' },
@@ -14,15 +14,15 @@ export const PATTERN_ICONS = {
   pain_of_paying: { emoji: '💳', anim: 'px-pulse', tint: '#fdba74' },
 };
 
-const HAS_ART = new Set(['denomination', 'ostrich', 'mental_accounting']);
+const HAS_ART = new Set(['present_bias', 'denomination', 'status_quo', 'ostrich', 'mental_accounting']);
 
 function PatternIcon({ patternKey }) {
   const icon = PATTERN_ICONS[patternKey] || { emoji: '🧠', anim: 'px-bob', tint: '#c4f06c' };
   const [img, setImg] = useState(HAS_ART.has(patternKey));
-  // Drawn art (from the GoldMind bias lessons) sits bigger on a light tile with a gentle
+  // The GoldMind icon sits bigger on a light tile with a gentle
   // bob; the emoji fallback keeps its own little animation.
   return img ? (
-    <span className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f6f1e7] p-1" aria-hidden="true">
+    <span className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white p-1.5" aria-hidden="true">
       <img src={`/patterns/${patternKey}.png`} alt="" className="px-bob h-full w-full object-contain" onError={() => setImg(false)} />
     </span>
   ) : (
