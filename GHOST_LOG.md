@@ -1253,3 +1253,4 @@ One entry per change. Newest at the bottom.
 - Checked: build passes; local /progress ends with "Fri, 6 Nov · 6 shipped".
 - Files: src/data/shipped.json
 - Also: Build streak gets a Sat 7 Nov day (6 shipped): new demo video (7:32), new full journey video (4:28), 6 new "You said, we changed" entries, GoldMind's simple pattern icons, Build streak up to date, honest labels. Sanjay asked to make clear the video updates were done today and to show the changes consistently.
+- Also: every Build streak day now shows its real merged PR count from GitHub (Melbourne time): 31 Oct 8, 1 Nov 12, 2 Nov 65, 3 Nov 29, 4 Nov 30, 5 Nov 23, 6 Nov 26, 7 Nov 6 so far (src/data/mergedPrs.json), with one line saying where the numbers come from. Tue 3 Nov showed only 1 item though 29 PRs merged that day, so 8 real highlights from those PRs were added. Sanjay: "show the changes consistently, in a real manner, because I've been working every day."
