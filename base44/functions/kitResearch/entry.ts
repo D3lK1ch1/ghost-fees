@@ -21,8 +21,11 @@ function secretOr(name, fallback = '') {
   }
 }
 
+// No public fallback: if QUOTA_SECRET isn't set, use a random key made when the function
+// starts, so nobody can forge tickets from the code. Set QUOTA_SECRET for stable counts.
+const RANDOM_FALLBACK = `${crypto.randomUUID()}${crypto.randomUUID()}`;
 async function hmac(text) {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secretOr('QUOTA_SECRET', 'ghost-fees-unset')), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode((secretOr('QUOTA_SECRET') || RANDOM_FALLBACK)), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(text));
   return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, '0')).join('').slice(0, 32);
 }

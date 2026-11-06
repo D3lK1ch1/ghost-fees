@@ -1155,3 +1155,8 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/calendarSync.js (addGhostReminder), src/components/guide/FeeCheck.jsx, src/components/guide/CancelActions.jsx, src/components/guide/LetterActions.jsx
 - How to test: Penny > Check next statement on the Monthly Account Fee. The Calendar tab task "Ask the bank to waive the Monthly Account Fee" shows "Do it on" 30 days from today. With Sync on, the event also appears in the synced calendar after its next refresh.
 - User feedback that drove this: screenshot of the "Check Monthly Account Fee is gone" Google event: "will this show up in the platform calendar".
+
+### Security: no public fallback for the free-scan signing key
+- What: The security scan flagged (Critical + Medium) that free-scan tickets and counters were signed with a fallback written in the code ("ghost-fees-unset") whenever QUOTA_SECRET wasn't set. Anyone reading the code could have forged tickets for unlimited free scans. Now, without QUOTA_SECRET, each function uses a random key made when it starts, so tickets can't be forged. Setting QUOTA_SECRET in Base44 Secrets keeps counts stable across restarts (recommended). The other "exposed secrets" warnings (APP_URL, PARSER_ENDPOINT, SLACK_WEBHOOK_URL) are optional settings that aren't set and are only read on the server, never returned or logged. The Stripe key is only used in server functions.
+- Files: base44/functions/{allowance,askGhostGuide,kitResearch,createCheckout,findCancelInfo,parseStatement}/entry.ts
+- User feedback that drove this: Base44 security scan (Critical "HMAC helper falls back to the public...", Medium "Scan-quota tickets are signed with a...").
