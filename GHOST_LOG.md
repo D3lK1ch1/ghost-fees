@@ -1175,3 +1175,9 @@ One entry per change. Newest at the bottom.
 - What: tapping "All fees" in Penny's table opens (or hides) "Each fee in detail", with a "Tap for each fee in detail" hint. Tapping any fee row opens the detail and scrolls to that fee.
 - Why: Sanjay tapped "All fees" and nothing happened; it looked like a button.
 - Files: src/components/guide/FeeCheck.jsx
+
+## Fri 6 Nov 2026: Team up takes you through the whole job; own AI is back
+- What: the Team up tile ("Take me through it") opens a short note: the 7 steps in order (Penny finds your fees, Cassy cancels, Spooksworth's letters, Kit's double-ups, Gus's score, Mo's why, Hattie's habit), a warning that it's the longest route and uses the most free AI answers, and three choices: Take me through everything, I'll pick a ghost, Use my own AI. The walkthrough shows "Step 2 of 7", a progress bar, Back and Next; each step opens that ghost doing its job with its buttons (built-in, no AI).
+- Own AI: brought back (undo of 5d6cf76 by the Base44 builder) because Sanjay asked for it under every ghost. The "free AI answers left" line under every ghost now has a "Use my own Claude / ChatGPT" button.
+- Checked in the local app on the sample statement: note, step 1 to step 2, key panel.
+- Files: src/components/guide/GhostGuide.jsx, OwnAIPanel.jsx, src/lib/ghostFees/ownAI.js

@@ -344,6 +344,9 @@ const TEAM_ROUTES = {
   waive: ['penny', 'sir', 'habit', 'gus'],
   check: ['penny', 'bundle', 'cass', 'gus'],
 };
+// Team up, the whole job: every ghost in order, each doing its step (no AI needed).
+const FULL_ROUTE = ['penny', 'cass', 'sir', 'bundle', 'gus', 'mind', 'habit'];
+const FULL_JOBS = { penny: 'find your fees', cass: 'cancel what you don\'t use', sir: 'letters to get money back', bundle: 'sort the double-ups', gus: 'tick off what you busted', mind: 'why it happened', habit: 'one habit so they stay gone' };
 const STEP_JOBS = { penny: 'what the fee is', mind: 'why it happened', cass: 'cancel it', sir: 'the letter', habit: 'a habit so it stays gone', bundle: 'keep or rotate', gus: 'your score' };
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
@@ -353,6 +356,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const [team, setTeam] = useState([]);
   // A team mission: the route of ghosts for one ghost you're busting, and where you are.
   const [mission, setMission] = useState(null);
+  // The Team up note: how it works and that it's the longest route, before it starts.
+  const [teamIntro, setTeamIntro] = useState(false);
   // Connect your own AI: the settings panel, and whether a key is set (unlimited answers).
   const [ownPanel, setOwnPanel] = useState(false);
   const [ownAI, setOwnAI] = useState(() => (typeof window === 'undefined' ? null : readOwnAI()));
@@ -491,6 +496,15 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     trackEvent('team_up');
     if (guideKey === route[0]) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
     else onGuide(route[0]);
+  };
+  const startFull = () => {
+    setTeamIntro(false);
+    setMission({ full: true, route: FULL_ROUTE, at: 0 });
+    setTeam(FULL_ROUTE);
+    focusRef.current = null;
+    trackEvent('team_up_full');
+    if (guideKey === FULL_ROUTE[0]) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
+    else onGuide(FULL_ROUTE[0]);
   };
   const stepMission = (to) => {
     if (!mission) return;
@@ -718,11 +732,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     </button>
                   ))}
                   {group.keys.length < 4 && leaks[0] && (
-                    <button type="button" onClick={() => startMission(leaks[0])} aria-pressed={Boolean(mission)}
-                      title={`Team up: the right ghosts, in order, on ${leaks[0].title || leaks[0].merchant}`}
+                    <button type="button" onClick={() => setTeamIntro((v) => !v)} aria-pressed={Boolean(mission) || teamIntro} aria-expanded={teamIntro}
+                      title="Team up: every ghost in order, from finding your fees to one habit"
                       className={cn('flex min-w-0 flex-col items-center rounded-xl border border-dashed px-1 py-1 text-center transition-colors', mission ? 'border-transparent bg-primary text-primary-foreground' : 'border-white/25 bg-background text-foreground hover:border-white/50')}>
                       <span className="text-[12px] font-bold leading-tight">👻 Team up</span>
-                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', mission ? 'opacity-90' : 'opacity-75')}>All ghosts on one</span>
+                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', mission ? 'opacity-90' : 'opacity-75')}>Take me through it</span>
                     </button>
                   )}
                 </div>
@@ -730,10 +744,63 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             ))}
           </div>
           {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
+          {teamIntro && (
+            <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5 text-[13px]" role="region" aria-label="Team up">
+              <div className="flex items-center gap-2">
+                <p className="font-heading text-[14px] font-bold text-foreground">👻 Team up: we take you through it</p>
+                <button type="button" onClick={() => setTeamIntro(false)} aria-label="Close" className="ml-auto rounded-full p-1 text-muted-foreground hover:bg-white/10"><X className="h-4 w-4" /></button>
+              </div>
+              <ol className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-[12px] text-muted-foreground">
+                {FULL_ROUTE.map((key, i) => (
+                  <li key={key}><span className="font-bold" style={{ color: GUIDES[key].color }}>{i + 1}. {nameFor(key).replace('Sir ', '')}</span> {FULL_JOBS[key]}</li>
+                ))}
+              </ol>
+              <p className="mt-1.5 rounded-lg border border-amber-300/30 bg-amber-300/10 px-2 py-1.5 text-[12px] text-foreground">
+                ⚠️ This is the longest route and uses the most free AI answers if you ask questions on the way. Know what you need? Tap that ghost above instead, it's quicker.
+              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Take me through everything →</button>
+                <button type="button" onClick={() => setTeamIntro(false)} className="rounded-full border border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground">I'll pick a ghost</button>
+                {!ownAI && (
+                  <button type="button" onClick={() => { setTeamIntro(false); setOwnPanel(true); }} className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground">
+                    <KeyRound className="h-3.5 w-3.5" /> Use my own AI (no limit)
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
           {/* Ghost team. A mission shows the whole route for one ghost (✓ done, current
               highlighted) with Next; otherwise referrals build the chain; otherwise Team up. */}
           {(() => {
             const missionLeak = mission && leaks.find((item) => item.id === mission.leakId);
+            if (mission?.full) {
+              const here = mission.route[mission.at];
+              const prev = mission.route[mission.at - 1];
+              const next = mission.route[mission.at + 1];
+              return (
+                <div className="shrink-0 border-b border-border px-3 py-2" aria-label="Team up, step by step">
+                  <div className="flex items-center gap-2 text-[12px]">
+                    <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team up · step {mission.at + 1} of {mission.route.length}</span>
+                    <span className="font-bold text-foreground">{FULL_JOBS[here]}</span>
+                    <button type="button" onClick={() => { setMission(null); setTeam([]); }} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">End</button>
+                  </div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${((mission.at + 1) / mission.route.length) * 100}%` }} />
+                  </div>
+                  <p className="mt-1 text-[12px] text-muted-foreground">Do this step with the buttons below, then tap Next. Skip any step you don't need.</p>
+                  <div className="mt-1.5 flex flex-wrap gap-1.5">
+                    {prev && <button type="button" onClick={() => stepMission(prev)} className="rounded-full border border-border px-3 py-1 text-[12.5px] font-bold text-foreground">← Back</button>}
+                    {next ? (
+                      <button type="button" onClick={() => stepMission(next)} className="rounded-full px-3 py-1 text-[12.5px] font-bold text-[#1b1233]" style={{ background: GUIDES[next].color }}>
+                        Next: {nameFor(next).replace('Sir ', '')}, {FULL_JOBS[next]} →
+                      </button>
+                    ) : (
+                      <p className="self-center text-[12.5px] font-bold text-foreground">🎉 All done. Gus has your score.</p>
+                    )}
+                  </div>
+                </div>
+              );
+            }
             if (missionLeak) {
               const next = mission.route[mission.at + 1];
               return (
@@ -901,9 +968,14 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
           {(() => {
             const left = Math.max(0, Math.min(MAX_AI_MESSAGES - aiCount, paid ? MAX_AI_MESSAGES : (canAskGuide(guideKey) ? 1 : 0)));
             return (
-              <p className={cn('shrink-0 border-t border-border px-3 py-1.5 text-[12px] font-semibold', left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
-                {left === 0 ? 'No free AI answers left for now. The quick questions at the top still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left · quick questions are unlimited`}
-              </p>
+              <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[12px]">
+                <span className={cn('font-semibold', !ownAI && left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
+                  {ownAI ? '✓ Unlimited answers with your own AI' : left === 0 ? 'No free AI answers left. Quick questions still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left · quick questions are unlimited`}
+                </span>
+                <button type="button" onClick={() => setOwnPanel((v) => !v)} className="inline-flex shrink-0 items-center gap-1 rounded-full border border-border px-2 py-0.5 font-bold text-foreground hover:border-primary">
+                  <KeyRound className="h-3 w-3" /> {ownAI ? 'My AI' : 'Use my own Claude / ChatGPT'}
+                </button>
+              </div>
             );
           })()}
 
