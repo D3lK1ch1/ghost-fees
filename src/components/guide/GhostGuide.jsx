@@ -359,7 +359,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const messages = threads[guideKey] || NO_MESSAGES;
   const [thinking, setThinking] = useState(false);
   const [aiCount, setAiCount] = useState(0);
-  const { canAskGuide, markGuide, openPaywall } = useAllowance();
+  const { paid, canAskGuide, markGuide, openPaywall } = useAllowance();
   const inputRef = useRef(null);
   const listRef = useRef(null);
   const guide = GUIDES[guideKey];
@@ -861,9 +861,19 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             )}
           </div>
 
+          {/* How many AI answers are left, so the limit is never a surprise. */}
+          {(() => {
+            const left = Math.max(0, Math.min(MAX_AI_MESSAGES - aiCount, paid ? MAX_AI_MESSAGES : (canAskGuide(guideKey) ? 1 : 0)));
+            return (
+              <p className={cn('shrink-0 border-t border-border px-3 py-1.5 text-[12px] font-semibold', left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
+                {left === 0 ? 'No free AI answers left for now. The quick questions at the top still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left · quick questions are unlimited`}
+              </p>
+            );
+          })()}
+
           <form
             onSubmit={(event) => { event.preventDefault(); ask(input); }}
-            className="flex shrink-0 items-center gap-2 border-t border-border px-3 py-3"
+            className="flex shrink-0 items-center gap-2 px-3 pb-3 pt-1.5"
           >
             <label htmlFor="guide-input" className="sr-only">Ask your ghost guide</label>
             <input
