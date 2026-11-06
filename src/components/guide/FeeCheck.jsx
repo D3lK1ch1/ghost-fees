@@ -1,6 +1,8 @@
 import { CalendarPlus } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
 import { googleCalendarUrl } from '@/lib/ghostFees/reminder';
+import { useGoalTasks } from '@/lib/ghostFees/goalTasks';
+import { addGhostReminder } from '@/lib/ghostFees/calendarSync';
 
 const PENNY = '#5ee6c8';
 
@@ -49,6 +51,7 @@ const inDays = (n) => {
 // Penny the fee detective: each fee with why, how to stop it, can you get it back, and
 // the buttons to act on it (Spooksworth's letter, a reminder to check next statement).
 export default function FeeCheck({ fees, onLetter }) {
+  const { setDue } = useGoalTasks();
   if (!fees?.length) return null;
   return (
     <ul className="mt-2 w-full space-y-2">
@@ -71,7 +74,7 @@ export default function FeeCheck({ fees, onLetter }) {
                   Get the {leak.action === 'refund' ? 'refund' : 'waiver'} letter: Spooksworth →
                 </button>
               )}
-              <a href={googleCalendarUrl(check)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground hover:border-white/40">
+              <a href={googleCalendarUrl(check)} target="_blank" rel="noreferrer" onClick={() => addGhostReminder({ goalId: leak.id, task: check, setDue })} className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground hover:border-white/40">
                 <CalendarPlus className="h-3.5 w-3.5" /> Check next statement
               </a>
             </div>

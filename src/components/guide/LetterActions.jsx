@@ -6,6 +6,7 @@ import { buildEmail, composeLinks } from '@/lib/ghostFees/emailDraft';
 import { GOAL_KINDS, useGoalTasks } from '@/lib/ghostFees/goalTasks';
 import { downloadTask, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ghostFees/reminder';
 import { trackEvent } from '@/lib/session';
+import { addGhostReminder } from '@/lib/ghostFees/calendarSync';
 
 const SIR = '#b18cff';
 const nameOf = (leak) => leak.title || leak.merchant;
@@ -46,7 +47,7 @@ export default function LetterActions({ leaks, onOpen }) {
         const done = ticks[leak.id] || {};
         const check = { title: `👻 Check ${leak.title || leak.merchant} replied`, details: `You sent: ${email.subject}. ${GOAL_KINDS[kind].steps[2]}.\n\nFrom Sir Spooksworth, Ghost Fees.`, date: inDays(7) };
         const sent = () => { tick(leak.id, 0, true); tick(leak.id, 1, true); trackEvent('sir_send'); };
-        const remind = () => setDue(leak.id, check.date);
+        const remind = () => addGhostReminder({ goalId: leak.id, task: check, setDue });
         const btn = 'inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:border-[#b18cff]';
         return (
           <li key={leak.id} className={cn('rounded-xl border bg-background/50 text-[13.5px]', openId === leak.id ? 'border-[#b18cff]/60' : 'border-border')}>

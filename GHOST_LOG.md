@@ -1150,3 +1150,8 @@ One entry per change. Newest at the bottom.
 - Files: src/lib/ghostFees/bundles.js (gymItems, pack text), src/components/guide/KitPlanner.jsx
 - How to test: Ask a ghost > Kit > Gym & Fitness shows Fitlife Gym $45.00 a month. Not much gives the pause tip and the cancel buttons.
 - User feedback that drove this: "why is gym unselectable, that should be explained".
+### Ghost reminders show on the app's calendar, and go into your synced calendar automatically
+- What: Every ghost reminder button now does two things. (1) It sets that task's "Do it on" day on the Calendar tab's task list. Penny's "Check next statement" didn't before; Spooksworth's and Cassy's already did. (2) If you turned on "Sync to my calendar" on the Calendar tab, the reminder goes straight into your real Google, Outlook or Apple calendar through your private feed, with no extra Save. Without sync, the Google / Outlook / Apple buttons still add it to that calendar as before.
+- Files: src/lib/ghostFees/calendarSync.js (addGhostReminder), src/components/guide/FeeCheck.jsx, src/components/guide/CancelActions.jsx, src/components/guide/LetterActions.jsx
+- How to test: Penny > Check next statement on the Monthly Account Fee. The Calendar tab task "Ask the bank to waive the Monthly Account Fee" shows "Do it on" 30 days from today. With Sync on, the event also appears in the synced calendar after its next refresh.
+- User feedback that drove this: screenshot of the "Check Monthly Account Fee is gone" Google event: "will this show up in the platform calendar".
