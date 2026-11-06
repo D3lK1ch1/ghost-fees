@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { money } from '@/lib/ghostFees/format';
 import changelog from '@/data/changelog.json';
 import shipped from '@/data/shipped.json';
+import mergedPrs from '@/data/mergedPrs.json';
 
 // Day 1 of Stranger Builds is Sat 31 Oct 2026 (Melbourne).
 const DAY_ONE = new Date(2026, 9, 31);
@@ -130,10 +131,11 @@ export default function Progress() {
 
         <section className="mt-10" aria-label="Build streak">
           <h2 className="font-heading text-[20px] font-semibold text-foreground">Build streak</h2>
+          <p className="mt-1 text-[13.5px] text-muted-foreground">Every day since 31 Oct. Highlights from each day, and how many pull requests were merged that day (counted from GitHub).</p>
           <div className="mt-3 space-y-4">
             {Object.entries(byDay).map(([date, items]) => (
               <div key={date}>
-                <div className="text-[13px] font-bold text-primary">{niceDate(date)} · {items.length} shipped</div>
+                <div className="text-[13px] font-bold text-primary">{niceDate(date)} · {items.length} shipped{mergedPrs[date] ? <span className="font-semibold text-muted-foreground"> · {mergedPrs[date]} merged PRs</span> : null}</div>
                 <ul className="mt-1.5 space-y-1">
                   {items.map((item) => (
                     <li key={item.title} className="flex items-start gap-2 text-[14.5px] text-foreground">
