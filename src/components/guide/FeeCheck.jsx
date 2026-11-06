@@ -1,4 +1,5 @@
-import { CalendarPlus } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { CalendarPlus, ChevronDown } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
 import { leakRows } from '@/lib/ghostFees/leaks';
 import { googleCalendarUrl } from '@/lib/ghostFees/reminder';
@@ -55,6 +56,18 @@ const inDays = (n) => {
 // gets its own reply); no focus shows all three.
 export default function FeeCheck({ fees, onLetter, onTeamUp, focus = null }) {
   const { setDue } = useGoalTasks();
+  const [showDetail, setShowDetail] = useState(Boolean(focus));
+  const detailRef = useRef(null);
+  // Tap a fee (or All fees) in the table: open the detail and scroll to it.
+  const openDetail = (id, toggle = false) => {
+    const next = toggle ? !showDetail : true;
+    setShowDetail(next);
+    if (!next) return;
+    requestAnimationFrame(() => {
+      const target = (id && detailRef.current?.querySelector(`[data-fee="${id}"]`)) || detailRef.current;
+      target?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  };
   if (!fees?.length) return null;
   const total = fees.reduce((sum, f) => sum + (Number(f.amount) || 0), 0);
   const askable = fees.filter((f) => f.action && f.action !== 'cancel');
@@ -79,7 +92,7 @@ export default function FeeCheck({ fees, onLetter, onTeamUp, focus = null }) {
               const t = typeOf(leak);
               const times = leakRows(leak).length;
               return (
-                <tr key={leak.id} className="border-t border-border align-top">
+                <tr key={leak.id} onClick={() => openDetail(leak.id)} className="cursor-pointer border-t border-border align-top hover:bg-white/[0.04]" title="Tap for this fee in detail">
                   <td className="px-2 py-1.5"><span className="block font-bold text-foreground">{leak.title || leak.merchant}</span><span className="text-[11px] text-muted-foreground">{t.kind}</span></td>
                   <td className="px-2 py-1.5 text-foreground">{times ? `${times}×` : '-'}</td>
                   <td className="px-2 py-1.5 text-right font-bold text-foreground">{money(leak.amount)}</td>
@@ -87,8 +100,13 @@ export default function FeeCheck({ fees, onLetter, onTeamUp, focus = null }) {
                 </tr>
               );
             })}
-            <tr className="border-t border-border" style={{ background: `${PENNY}0d` }}>
-              <td className="px-2 py-1.5 font-bold text-foreground" colSpan={2}>All fees</td>
+            <tr onClick={() => openDetail(null, true)} className="cursor-pointer border-t border-border hover:bg-white/[0.04]" style={{ background: `${PENNY}0d` }}>
+              <td className="px-2 py-1.5 font-bold text-foreground" colSpan={2}>
+                <button type="button" aria-expanded={showDetail} className="inline-flex items-center gap-1 font-bold text-foreground">
+                  All fees <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showDetail ? 'rotate-180' : ''}`} />
+                </button>
+                <span className="block text-[11px] font-semibold" style={{ color: PENNY }}>{showDetail ? 'Hide detail' : 'Tap for each fee in detail'}</span>
+              </td>
               <td className="px-2 py-1.5 text-right font-bold text-foreground">{money(total)}</td>
               <td className="px-2 py-1.5 text-[11.5px] text-muted-foreground">{askable.length ? `${money(askTotal)} worth asking for` : ''}</td>
             </tr>
@@ -115,14 +133,14 @@ export default function FeeCheck({ fees, onLetter, onTeamUp, focus = null }) {
       </div>
 
       {/* 3. The detail for each fee, folded away until wanted. */}
-      <details className="mt-2" open={Boolean(focus)}>
+      <details ref={detailRef} className="mt-2" open={showDetail} onToggle={(e) => setShowDetail(e.currentTarget.open)}>
         <summary className="cursor-pointer text-[12.5px] font-bold text-foreground">Each fee in detail</summary>
     <ul className="mt-2 w-full space-y-2">
       {fees.map((leak) => {
         const t = typeOf(leak);
         const check = { title: `👻 Check ${leak.title || leak.merchant} is gone`, details: 'Look at your new statement: is the fee still there? If so, ask again or use the waiver letter from Ghost Fees.', date: inDays(30) };
         return (
-          <li key={leak.id} className="rounded-xl border p-2.5 text-[13.5px]" style={{ borderColor: `${PENNY}55`, background: `${PENNY}0d` }}>
+          <li key={leak.id} data-fee={leak.id} className="rounded-xl border p-2.5 text-[13.5px]" style={{ borderColor: `${PENNY}55`, background: `${PENNY}0d` }}>
             <div className="flex items-baseline justify-between gap-2">
               <p className="font-bold text-foreground">{leak.title || leak.merchant}</p>
               <span className="shrink-0 text-[12.5px] font-semibold text-muted-foreground">{money(leak.amount)}</span>

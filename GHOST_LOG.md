@@ -1170,3 +1170,8 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay asked to fill the gap where the limit was a surprise.
 - Note: the Connect your own AI panel was removed on main by the Base44 builder (5d6cf76), so this line has no key button. Ask before adding it back.
 - Files: src/components/guide/GhostGuide.jsx
+
+## Fri 6 Nov 2026: Penny's fee table opens the detail
+- What: tapping "All fees" in Penny's table opens (or hides) "Each fee in detail", with a "Tap for each fee in detail" hint. Tapping any fee row opens the detail and scrolls to that fee.
+- Why: Sanjay tapped "All fees" and nothing happened; it looked like a button.
+- Files: src/components/guide/FeeCheck.jsx
