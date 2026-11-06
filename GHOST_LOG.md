@@ -1228,3 +1228,9 @@ One entry per change. Newest at the bottom.
 - What: the money patterns popup now uses Sanjay's own drawings from the GoldMind app (~/GoldMind/Bias Lessons): Denomination Effect (paying with coins at a counter), Ostrich Effect (avoiding the banking app on the couch), Mental Accounting (the dog and the money jars). Shown bigger on a light tile with a gentle bob. Present Bias, Status Quo Bias and Pain of Paying have no GoldMind lesson yet, so they keep the animated emoji; all tiles are the same size.
 - Images resized to 360px PNGs with transparent backgrounds (the Mental Accounting scene had a fake checkered background baked in, so the jars nudge image is used).
 - Files: public/patterns/*.png, src/components/patterns/PatternsPopup.jsx
+
+## Sat 7 Nov 2026: pattern icons are GoldMind's simple Learn-tab icons
+- What: the money patterns popup now uses the same simple icons as the GoldMind app's Learn tab, not the lesson scenes: Present Bias (NOW stopwatch), Denomination Effect (note = coins), Status Quo Bias (armchair), Ostrich Effect (ostrich), Mental Accounting (labelled jars). White tiles like the Learn cards, gentle bob. Pain of Paying has no GoldMind icon yet, so it keeps the animated 💳.
+- Why: Sanjay: "one simple icon, no lessons or dog", with a screenshot of the Learn tab.
+- Source: ~/GoldMind/GoldMind Assets.xcassets (<Bias>Icon.imageset), resized to 256px PNG.
+- Files: public/patterns/*.png, src/components/patterns/PatternsPopup.jsx
