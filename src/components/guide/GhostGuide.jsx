@@ -12,6 +12,7 @@ import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
 import LetterActions from '@/components/guide/LetterActions';
+import BustPlan from '@/components/guide/BustPlan';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -135,8 +136,8 @@ function answer(question, analysis, guideKey) {
     ['cass', /cancel|phone number|unsubscribe/],
     ['mind', /pattern|bias|psycholog|why (do|does) (i|this|it)/],
     ['habit', /\bhabits?\b|remind me to|stick to/],
-    ['bundle', /double|consolidat|rotat|optimi|streaming|ai tools?|organi[sz]|collat|too many|subscriptions?/],
-    ['gus', /goals?|progress|score|motivat|plan of attack/],
+    ['bundle', /double|consolidat|rotat|optimi|streaming|ai tools?|organi[sz]|collat|too many|subscriptions?|renewals?/],
+    ['gus', /goals?|progress|score|motivat|plan of attack|bust/],
     ['penny', /fees?|totals?|charges?|how much|price (rise|creep)|work(ed)? out/],
   ];
   const owner = TOPICS.find(([, re]) => re.test(text))?.[0] || null;
@@ -206,6 +207,12 @@ function answer(question, analysis, guideKey) {
       leak: creep,
     };
   }
+  if (guideKey === 'gus' && /who (helps|does)|teammate|team/.test(text)) {
+    return { reply: "Here's the team:\nPenny: what a fee is and how a total adds up.\nSpooksworth: writes and sends your emails.\nCassy: the provider's cancel page and phone number.\nKit: subscriptions that double up, keep or rotate.\nMo: why it happened.\nHattie: one habit so it doesn't come back.\nMe: the plan and the score." , bust: true };
+  }
+  if (guideKey === 'gus' && /bust|goals?|first|start|what (should|do) i|plan|how|next|score|progress|help/.test(text) && !/email|letter|write|draft/.test(text)) {
+    return { reply: 'Here\'s your bust plan. Each ghost has the button that busts it and the teammate who helps. Hit Busted it when it\'s done and your score goes up.', bust: true };
+  }
   if (/goals?|steps?|first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text) && !/email|letter|write|draft|cancel/.test(text)) {
     const verb = { cancel: 'Cancel', refund: 'Get a refund for', waive: 'Ask the bank to waive' };
     const goals = leaks.slice(0, 4).map((item, i) => `${i + 1}. ${verb[item.action] || 'Check'} ${nameOf(item)} (${money(item.amount)})`);
@@ -217,7 +224,7 @@ function answer(question, analysis, guideKey) {
       action: leaks.length ? 'open_path' : 'open_calendar',
     };
   }
-  if (/remind|calendar|renew/.test(text)) {
+  if (/remind|calendar|renew/.test(text) && guideKey !== 'habit') {
     return { reply: 'The calendar shows the days ghosts charged you, plus your next subscription charges. Tap Remind me, or Add all, to put reminders in your own calendar 2 days before each charge.', action: 'open_calendar' };
   }
   if (/templates?|all (the )?emails|every email/.test(text)) {
@@ -477,9 +484,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     const local = answer(text, analysis, guideKey);
     if (local) {
       const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
-      const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'gus', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
+      const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'bundle', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, chips: [...hand, ...nextChips].slice(0, 4) });
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -653,6 +660,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
                   </button>
+                )}
+                {message.bust && index === messages.map((m) => Boolean(m.bust)).lastIndexOf(true) && (
+                  <BustPlan leaks={leaks} onOpenEmail={(leak) => onAction('draft_email', leak)} onOpenPath={() => onAction('open_path')}
+                    onHandoff={(key, leak) => { focusRef.current = leak; setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== key), key].slice(-5)); onGuide(key); }} />
                 )}
                 {message.letters?.length > 0 && (
                   <LetterActions leaks={message.letters.map((id) => leaks.find((item) => item.id === id)).filter(Boolean)} onOpen={(leak) => onAction('draft_email', leak)} />

@@ -84,10 +84,11 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     };
   }
   if (guideKey === 'gus') {
+    // Gus the bust coach: the score, then each ghost with how to bust it and who helps.
     return {
-      text: `${g.hello}\n\n${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}, ${money(total)}. Biggest first: ${nameOf(biggest)}, ${money(biggest.amount)}.\n\nBust it?`,
-      action: 'open_leak', leak: biggest,
-      chips: [CHIP.bust, CHIP.later],
+      text: `${g.hello}\n\n${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}, ${money(total)} on the line. Here's the bust plan, biggest first. Tap the button on each one, grab a teammate if you need one, then hit Busted it.`,
+      bust: true,
+      chips: [],
     };
   }
   if (guideKey === 'cass') {
