@@ -89,7 +89,15 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     };
   }
   if (guideKey === 'cass') {
-    const target = (focus?.action === 'cancel' && focus) || leaks.find((leak) => leak.action === 'cancel') || biggest;
+    // Prefer one with a checked cancel page (the handed-over ghost first), then the biggest
+    // subscription that has one, so the opener is useful straight away.
+    const hasLink = (item) => Boolean(cancelInfo(item.merchant || nameOf(item)).url);
+    const subsWithLink = [...(analysis.subscriptions || [])].sort((a, b) => b.monthly - a.monthly).filter(hasLink);
+    const target = (focus?.action === 'cancel' && focus)
+      || leaks.find((leak) => leak.action === 'cancel' && hasLink(leak))
+      || subsWithLink[0]
+      || leaks.find((leak) => leak.action === 'cancel')
+      || biggest;
     const info = cancelInfo(target.merchant || nameOf(target));
     const how = info.url ? `Official page: ${info.url}\nSteps: ${info.steps}` : info.steps;
     return {

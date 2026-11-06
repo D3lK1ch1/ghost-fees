@@ -11,6 +11,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { CHIP, START_CHIPS, feeOrder, handoffChip, handoffKey, opener, pennyLine, shortCite } from '@/lib/ghostFees/guideOpeners';
 import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
+import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
 import { trackEvent } from '@/lib/session';
@@ -150,7 +151,7 @@ function answer(question, analysis, guideKey) {
       return { reply: `${/can you help|could you help/.test(text) ? 'Yes! ' : ''}Here's how I optimise your subscriptions:\n${steps}${plan ? `\n\nOn this statement:\n${plan.replace("Here's your consolidation plan, pack by pack:\n\n", '')}` : ''}`, kit: 'video' };
     }
     const yes = /can you help|could you help|are you able/.test(text) ? 'Yes, I can help with that. ' : '';
-    return { reply: `${yes}${g.hello}\n\nHow I do it:\n${steps}\n\nTap a question below to start.` };
+    return { reply: `${yes}${g.hello}\n\nHow I do it:\n${steps}\n\nTap a question at the top, or ask me anything here.` };
   }
   if (guideKey === 'mind' || guideKey === 'habit') {
     const own = guideKey === 'mind' ? moAnswer(text, analysis) : hattieAnswer(text, analysis);
@@ -297,6 +298,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const guide = GUIDES[guideKey];
   const patterns = usePatterns();
   const chips = starterChips(analysis, guide);
+  const quickChips = chips.slice(0, 5);
   const { leaks, monthSpan } = analysis;
 
   useEffect(() => {
@@ -447,7 +449,15 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       return word.length > 2 && text.toUpperCase().includes(word.toUpperCase());
     });
     const wantsCancel = guideKey === 'cass' || /\bcancel|phone number|contact\b/i.test(text);
-    const target = named || (guideKey === 'cass' && /biggest|phone|cancel email|cancel/i.test(text) ? subs[0] : null);
+    // "My biggest one": the biggest subscription with a checked cancel page, so Cassy can
+    // answer straight away (made-up sample names like Fitlife Gym can't be confirmed).
+    const biggestKnown = subs.find((item) => cancelInfo(item.merchant).url) || subs[0];
+    const target = named || (guideKey === 'cass' && /biggest|phone|cancel email|cancel/i.test(text) ? biggestKnown : null);
+    const checked = target && cancelInfo(target.merchant);
+    if (wantsCancel && target && checked?.url && !/phone|number|call/i.test(text)) {
+      reply({ text: `${checked.name}: ${money(target.monthly || 0)} a month.\n\nTo cancel: ${checked.steps}\nOfficial page: ${checked.url}\n\n${APP_STORE_NOTE}`, chips: [`Find ${checked.name}'s phone number`, handoffChip('sir'), ...nextChips].slice(0, 4) });
+      return;
+    }
     if (wantsCancel && target) {
       trackEvent('cass_lookup');
       reply({ text: `Looking up ${target.merchant} on their official site...`, lookup: { merchant: target.merchant, monthly: target.monthly || 0 }, chips: nextChips });
@@ -469,7 +479,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
 
     // Free tier: one AI answer per ghost. The quick answers above are always free.
     const lockedReply = () => reply({
-      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit. The quick questions below still work.`,
+      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit. The quick questions at the top still work.`,
       unlock: 'guide',
       chips: nextChips,
     });
@@ -484,7 +494,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const response = await base44.functions.invoke('askGhostGuide', { guide: guideKey, question: text, history, summary: summaryFor(analysis, patterns?.answers) });
       const data = response?.data || {};
       if (data.locked) {
-        if (data.reason === 'busy') reply({ text: 'Lots of ghost hunters at once. Sign in, or try again soon. The quick questions below still work.', chips: nextChips });
+        if (data.reason === 'busy') reply({ text: 'Lots of ghost hunters at once. Sign in, or try again soon. The quick questions at the top still work.', chips: nextChips });
         else {
           markGuide(guideKey);
           lockedReply();
@@ -500,7 +510,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const hand = GUIDES[data.handoff] && data.handoff !== guideKey ? [handoffChip(data.handoff)] : [];
       reply({ text: data.reply, action: action === 'open_pattern' && !biasKey ? null : action, leak, biasKey, chips: [...hand, ...serverChips].slice(0, 4) });
     } catch {
-      reply({ text: 'The spirits went quiet. Try again, or tap a question below.', chips: nextChips });
+      reply({ text: 'The spirits went quiet. Try again, or tap a question at the top.', chips: nextChips });
     } finally {
       setThinking(false);
     }
@@ -582,7 +592,18 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
           </div>
-          <p className="shrink-0 border-b border-border px-4 py-1.5 text-[12.5px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved.</p>
+          {/* Ready-made questions at the top, the conversation and typing box at the bottom
+              (like most chat apps). Tap one, or type your own question below. */}
+          <div className="flex shrink-0 flex-wrap gap-1.5 border-b border-border px-3 py-2" aria-label={`Quick questions for ${guideName}`}>
+            {quickChips.map((chip) => (
+              <button key={chip} type="button" onClick={() => ask(chipLabel(chip))} disabled={thinking}
+                className="rounded-full border px-3 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:bg-white/5 disabled:opacity-50"
+                style={{ borderColor: `${guide.color}88` }}>
+                {chipLabel(chip)}
+              </button>
+            ))}
+          </div>
+
 
           <div ref={listRef} aria-live="polite" className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4">
             {/* Kit's planner shows once, under his latest reply, so the chat doesn't repeat it. */}
@@ -622,9 +643,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     {ACTION_LABELS[message.action]}
                   </button>
                 )}
-                {index === messages.length - 1 && message.chips?.length > 0 && (
+                {index === messages.length - 1 && message.chips?.some((chip) => !quickChips.includes(chip)) && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    {message.chips.map((chip) => (
+                    {message.chips.filter((chip) => !quickChips.includes(chip)).map((chip) => (
                       <button
                         key={chip}
                         type="button"
@@ -649,18 +670,6 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             )}
           </div>
 
-          {/* Always-there quick questions for this ghost: tap one, or type your own below. */}
-          {messages.length > 0 && (
-            <div className="flex shrink-0 gap-1.5 overflow-x-auto border-t border-border px-3 pt-2 [scrollbar-width:none]" aria-label={`Quick questions for ${guideName}`}>
-              {chips.slice(0, 5).map((chip) => (
-                <button key={chip} type="button" onClick={() => ask(chipLabel(chip))} disabled={thinking}
-                  className="shrink-0 rounded-full border px-3 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:bg-white/5 disabled:opacity-50"
-                  style={{ borderColor: `${guide.color}88` }}>
-                  {chipLabel(chip)}
-                </button>
-              ))}
-            </div>
-          )}
           <form
             onSubmit={(event) => { event.preventDefault(); ask(input); }}
             className="flex shrink-0 items-center gap-2 border-t border-border px-3 py-3"
@@ -679,7 +688,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <Send className="h-4 w-4" />
             </button>
           </form>
-          <p className="px-4 pb-3 text-center text-[12px] text-muted-foreground">Factual information only, not financial advice.</p>
+          <p className="px-4 pb-3 text-center text-[12px] text-muted-foreground">Your guide sees your results, not your statement. Nothing is saved. Factual information only, not financial advice.</p>
         </div>
       )}
     </>
