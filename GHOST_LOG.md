@@ -1234,3 +1234,4 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay's video table: Demo, replace with ghost-fees-demo-web.mp4.
 - Files: public/videos/ghost-fees-demo-web.mp4, src/data/videos.js
 - Then (same day): Demo now uses the smaller export Sanjay sent (19 MB, same 7:32, file still named ghost-fees-demo-web.mp4, loads much faster than 45 MB). The Stranger Builds hackathon feedback video is the new cut (2:16, replaces the 58-second one; same file name, cache-busted with ?v=4); its labels now say "in 2 minutes" on the card, /media and /progress. Promo and The full journey unchanged.
+- Then: The full journey is the newest cut (4:28, replaces the 3:09 one; same file name, cache-busted with ?v=4); its card says "4 minutes".
