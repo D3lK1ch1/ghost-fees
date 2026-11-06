@@ -28,6 +28,7 @@ import { biasFor, biasGroups } from '@/lib/ghostFees/leaks';
 import { PatternContext } from '@/components/patterns/PatternContext';
 import PatternDialog from '@/components/patterns/PatternDialog';
 import PatternsTab from '@/components/patterns/PatternsTab';
+import PatternsPopup from '@/components/patterns/PatternsPopup';
 import { GHOST_IT_CHAT } from '@/lib/ghostFees/ghostItAgent';
 import ExTabScreens from '@/components/ex/ExTabScreens';
 import XmasTabScreens from '@/components/xmas/XmasTabScreens';
@@ -125,6 +126,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
   const [patternAnswers, setPatternAnswers] = useState({});
   const [habitRequest, setHabitRequest] = useState(null);
   const patternCount = biasGroups(leaks).length;
+  const [patternsOpen, setPatternsOpen] = useState(false);
   // 💔 only: one photo avatar per ex, the same on every screen.
   const [exPick] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const avatarFor = useMemo(
@@ -327,7 +329,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               <ReportButton analysis={analysis} usedSample={usedSample} />
               {!exStory && <TourButton name="results" label="New here? Take the tour" className="ml-2 mt-3" />}
               {patternCount >= 2 && (
-                <button type="button" onClick={() => setTab('patterns')} className="mt-3 block text-left text-[14.5px] text-foreground/90 underline-offset-4 hover:underline">
+                <button type="button" onClick={() => setPatternsOpen(true)} className="mt-3 block text-left text-[14.5px] text-foreground/90 underline-offset-4 hover:underline">
                   Most of it comes from {patternCount} money patterns. <span className="font-semibold text-primary">See why →</span>
                 </button>
               )}
@@ -420,10 +422,13 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               {theme.key === 'christmas' && <XmasTabScreens tab={tab} leaks={leaks} subscriptions={subscriptions} total={total} cleared={cleared} />}
 
               {tab === 'ghosts' && patternCount > 0 && (
-                <button type="button" onClick={() => setTab('patterns')} className="mt-3 text-left text-[14.5px] text-foreground/90 underline-offset-4 hover:underline">
-                  <span aria-hidden="true">🧠 </span>{patternCount} money {patternCount === 1 ? 'pattern' : 'patterns'} behind these ghosts. <span className="font-semibold text-primary">See why →</span>
+                <button type="button" onClick={() => setPatternsOpen(true)}
+                  className="mt-3 inline-flex items-center gap-2.5 rounded-2xl border border-primary/50 bg-primary/10 px-4 py-2.5 text-left text-[15px] font-bold text-foreground transition-colors hover:bg-primary/20">
+                  <span aria-hidden="true" className="px-bob inline-block text-[22px]">🧠</span>
+                  <span>{patternCount} money {patternCount === 1 ? 'pattern' : 'patterns'} behind these ghosts<span className="block text-[12.5px] font-semibold text-primary">Tap to see why →</span></span>
                 </button>
               )}
+              <PatternsPopup open={patternsOpen} onOpenChange={setPatternsOpen} leaks={leaks} onSeeAll={() => setTab('patterns')} />
               {tab === 'patterns' && <PatternsTab leaks={leaks} total={total} subscriptions={subscriptions} cancelSubs={cancelSubs} usedSample={usedSample} onDraft={openEmail} onTab={setTab} habitRequest={habitRequest} />}
               {tab === 'ghosts' && (
                 <LeakFilter leaks={leaks} type={activeLeakType} sort={leakSort} onType={setLeakType} onSort={setLeakSort} />
