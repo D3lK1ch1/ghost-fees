@@ -1054,3 +1054,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/ex/ExAct2.jsx, src/components/landing/ExHero.jsx, src/components/results/ProofDialog.jsx, src/components/results/FileErrors.jsx, src/pages/FeedbackAdmin.jsx, src/components/results/HauntedHouse.jsx, plus lint-comment tidy-ups (HomeTabs, PatternsTab, CassLookup, DoneLink, Tour)
 - How to test: npx eslint src gives 0 errors and 2 warnings. npm run build passes.
 - User feedback that drove this: "assess and do overall cleanup of the app".
+
+### Typos no longer derail the ghosts; "optimise my subscriptions" goes to Kit from any ghost
+- What: Penny answered "how cna you help me optuik mise my subscription can you stuyd all of them" with Gus's goals list. Fast-typing slips (cna, teh, yuo, stuyd, optuik mise, subscriptioms, reaserhc) are now tidied before the ghosts match a question, and "subtotal" stays "subtotal". Any ghost other than Kit now hands "optimise / study / go through / compare / organise my subscriptions" to Kit ("That's Kit's job...", Ask Kit →) before the goals answer can catch it.
+- Files: src/components/guide/GhostGuide.jsx
+- How to test: Penny > type the exact message above. You get "That's Kit's job..." with Ask Kit →.
+- User feedback that drove this: screenshot of Penny's goals answer to "how can you help me optimise my subscription can you study all of them".

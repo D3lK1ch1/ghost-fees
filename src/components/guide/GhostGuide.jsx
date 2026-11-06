@@ -105,8 +105,12 @@ function hattieAnswer(text, analysis) {
 
 // Every answer is built in the browser from the scan results. No AI, nothing sent anywhere.
 // Shared safety answers come first, then the chosen ghost's own speciality.
+// Common fast-typing slips, so "how cna you help me optuik mise" still routes right.
+const TYPOS = [[/\bcna\b/g, 'can'], [/\bteh\b/g, 'the'], [/\byuo\b/g, 'you'], [/\bstuyd\b/g, 'study'], [/opt\w*\s?mi[sz]e?/g, 'optimise'], [/\bsub\w*(scr|crip|ript)\w*/g, 'subscriptions'], [/\bsubs\b/g, 'subscriptions'], [/reaser\w*|reserach\w*|reseach\w*/g, 'research']];
+const tidy = (q) => TYPOS.reduce((t, [re, fix]) => t.replace(re, fix), q.toLowerCase());
+
 function answer(question, analysis, guideKey) {
-  const text = question.toLowerCase();
+  const text = tidy(question);
   const { leaks, total, monthSpan } = analysis;
   const months = `${monthsLabel(monthSpan)} months`;
   const biggest = leaks[0];
@@ -186,6 +190,9 @@ function answer(question, analysis, guideKey) {
     }
   } else if ((doubles.test(text) || /collat|organi[sz]|optimi|(sort|tidy|manage|review|audit) (out )?(all )?my subscriptions/.test(text)) && !/cancel|email|letter/.test(text)) {
     return { reply: "That's Kit's job. He compares subscriptions that do the same thing and helps you keep one or rotate.", owner: 'bundle' };
+  }
+  if (guideKey !== 'bundle' && /subscriptions/.test(text) && /optimi|study|go through|look at|all of them|all my|research|compare|sort|organi|collat|help/.test(text) && !/cancel|email|letter/.test(text)) {
+    return { reply: "That's Kit's job. He researches and optimises all your subscriptions: finds double-ups, compares cost against what you use, then helps you keep one, rotate or cancel.", owner: 'bundle' };
   }
   // Another ghost's job: one line, then a chip that hands you to the right ghost.
   if (guideKey !== 'mind' && /pattern|bias|psycholog|brain|why do (i|my)|why does (this|it) keep|turn into charges/.test(text)) {
