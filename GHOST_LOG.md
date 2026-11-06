@@ -1193,3 +1193,4 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay: "less wordy, put own AI button below ghosts, make a popup that guides you through and you can connect."
 - Checked in the local app: all 3 steps.
 - Files: src/components/guide/OwnAIPanel.jsx, src/components/guide/GhostGuide.jsx
+- Then: the limit and its fix now sit together in one row under the ghosts: "5 free AI answers left" on the left, a bigger outlined "🔑 Use your own AI" button on the right. The thin full-width strip, the bottom answers-left line and the duplicate "Own AI" link in the Team up note are gone, so there's one place for it.

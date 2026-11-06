@@ -740,11 +740,23 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
           </div>
-          <button type="button" onClick={() => setOwnPanel(true)}
-            className="flex shrink-0 items-center justify-center gap-1.5 border-b border-border px-3 py-1.5 text-[12.5px] font-bold text-foreground hover:bg-white/5">
-            <KeyRound className="h-3.5 w-3.5 text-primary" />
-            {ownAI ? 'Using your own AI ✓' : 'Got your own AI? Connect Claude or ChatGPT'}
-          </button>
+          {/* The AI limit and its fix together: how many free AI answers are left, and the
+              button to use your own Claude or ChatGPT instead. */}
+          {(() => {
+            const left = Math.max(0, Math.min(MAX_AI_MESSAGES - aiCount, paid ? MAX_AI_MESSAGES : (canAskGuide(guideKey) ? 1 : 0)));
+            return (
+              <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border px-3 py-2">
+                <span className={cn('text-[13px] font-semibold', !ownAI && left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
+                  {ownAI ? '✓ Unlimited answers' : left === 0 ? 'No free AI answers left' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left`}
+                </span>
+                <button type="button" onClick={() => setOwnPanel(true)}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-primary/60 bg-primary/10 px-3.5 py-1.5 text-[13.5px] font-bold text-foreground transition-colors hover:bg-primary/20">
+                  <KeyRound className="h-4 w-4 text-primary" />
+                  {ownAI ? 'Your AI is on' : 'Use your own AI'}
+                </button>
+              </div>
+            );
+          })()}
           {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
           {teamIntro && (
             <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5" role="region" aria-label="Team up">
@@ -764,11 +776,6 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <p className="mt-1.5 text-[12px] text-muted-foreground">⚠️ Longest route, uses the most AI answers. Know what you need? Tap that ghost.</p>
               <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
                 <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Start →</button>
-                {!ownAI && (
-                  <button type="button" onClick={() => { setTeamIntro(false); setOwnPanel(true); }} className="inline-flex items-center gap-1 text-[12.5px] font-bold text-foreground underline-offset-4 hover:underline">
-                    <KeyRound className="h-3.5 w-3.5" /> Own AI, no limit
-                  </button>
-                )}
               </div>
             </div>
           )}
@@ -967,21 +974,9 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             )}
           </div>
 
-          {/* How many AI answers are left, so the limit is never a surprise. */}
-          {(() => {
-            const left = Math.max(0, Math.min(MAX_AI_MESSAGES - aiCount, paid ? MAX_AI_MESSAGES : (canAskGuide(guideKey) ? 1 : 0)));
-            return (
-              <div className="flex shrink-0 items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[12px]">
-                <span className={cn('font-semibold', !ownAI && left === 0 ? 'text-foreground' : 'text-muted-foreground')}>
-                  {ownAI ? '✓ Unlimited answers with your own AI' : left === 0 ? 'No free AI answers left. Quick questions still work.' : `${left} free AI ${left === 1 ? 'answer' : 'answers'} left`}
-                </span>
-              </div>
-            );
-          })()}
-
           <form
             onSubmit={(event) => { event.preventDefault(); ask(input); }}
-            className="flex shrink-0 items-center gap-2 px-3 pb-3 pt-1.5"
+            className="flex shrink-0 items-center gap-2 border-t border-border px-3 py-3"
           >
             <label htmlFor="guide-input" className="sr-only">Ask your ghost guide</label>
             <input
