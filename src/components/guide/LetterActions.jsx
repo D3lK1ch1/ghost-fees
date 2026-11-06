@@ -1,4 +1,5 @@
-import { CalendarPlus, Check, Mail, Send } from 'lucide-react';
+import { useState } from 'react';
+import { CalendarPlus, Check, ChevronDown, Mail, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { buildEmail, composeLinks } from '@/lib/ghostFees/emailDraft';
@@ -32,10 +33,13 @@ const inDays = (n) => {
 // step off the same task list as the goal path and calendar (steps: open, send, check).
 export default function LetterActions({ leaks, onOpen }) {
   const { ticks, tick, setDue } = useGoalTasks();
+  // A clean numbered list: one line per letter, tap to open it. One open at a time,
+  // starting with the first letter that isn't sent yet.
+  const [openId, setOpenId] = useState(() => (leaks || []).find((l) => !ticks[l.id]?.[1])?.id ?? leaks?.[0]?.id);
   if (!leaks?.length) return null;
   return (
-    <ul className="mt-2 w-full space-y-2">
-      {leaks.map((leak) => {
+    <ol className="mt-2 w-full space-y-1.5">
+      {leaks.map((leak, index) => {
         const email = buildEmail(leak);
         const links = composeLinks(email);
         const kind = GOAL_KINDS[leak.action] ? leak.action : 'check';
@@ -45,10 +49,23 @@ export default function LetterActions({ leaks, onOpen }) {
         const remind = () => setDue(leak.id, check.date);
         const btn = 'inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:border-[#b18cff]';
         return (
-          <li key={leak.id} className="rounded-xl border border-border bg-background/50 p-2.5 text-[13.5px]">
-            <div className="flex items-baseline justify-between gap-2">
-              <p className="font-bold text-foreground">{GOAL_KINDS[kind].label(leak.title || leak.merchant)}</p>
+          <li key={leak.id} className={cn('rounded-xl border bg-background/50 text-[13.5px]', openId === leak.id ? 'border-[#b18cff]/60' : 'border-border')}>
+            <button type="button" onClick={() => setOpenId(openId === leak.id ? null : leak.id)} aria-expanded={openId === leak.id}
+              className="flex w-full items-center gap-2 px-2.5 py-2 text-left">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[12px] font-bold text-[#1b1233]" style={{ background: done[1] ? SIR : `${SIR}88` }}>{done[1] ? '✓' : index + 1}</span>
+              <span className={cn('min-w-0 flex-1 truncate font-bold', done[2] ? 'text-muted-foreground line-through' : 'text-foreground')}>{GOAL_KINDS[kind].label(leak.title || leak.merchant)}</span>
               <span className="shrink-0 text-[12.5px] font-semibold text-muted-foreground">{money(leak.amount)}</span>
+              <span className="shrink-0 text-[11.5px] font-bold" style={{ color: SIR }}>{done[2] ? 'Done' : done[1] ? 'Sent' : ''}</span>
+              <ChevronDown className={cn('h-4 w-4 shrink-0 text-muted-foreground transition-transform', openId === leak.id && 'rotate-180')} />
+            </button>
+            {openId === leak.id && (
+            <div className="border-t border-border px-2.5 pb-2.5 pt-1">
+            {/* Send first: opens your own Outlook or Gmail with the letter filled in, ready to send. */}
+            <div className="mt-1.5 flex flex-wrap gap-1.5">
+              <a className={cn(btn, 'border-transparent text-[#1b1233]')} style={{ background: SIR }} href={links.outlook} target="_blank" rel="noreferrer" onClick={sent}><Send className="h-3.5 w-3.5" /> Send in Outlook</a>
+              <a className={cn(btn, 'border-transparent text-[#1b1233]')} style={{ background: SIR }} href={links.gmail} target="_blank" rel="noreferrer" onClick={sent}><Send className="h-3.5 w-3.5" /> Send in Gmail</a>
+              <a className={btn} href={links.mail} onClick={sent}>Mail app</a>
+              <button type="button" className={btn} onClick={() => { tick(leak.id, 0, true); onOpen?.(leak); }}><Mail className="h-3.5 w-3.5" /> Edit it</button>
             </div>
             {/* The outline: who it goes to, the subject, and what it asks for. */}
             <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-[12.5px]">
@@ -59,19 +76,17 @@ export default function LetterActions({ leaks, onOpen }) {
               <dt className="font-bold text-muted-foreground">Asks for</dt>
               <dd className="text-foreground">{ASKS[kind](leak)}</dd>
             </dl>
+            <details className="mt-1.5 rounded-lg bg-background/60 px-2.5 py-1.5" onToggle={(e) => e.currentTarget.open && tick(leak.id, 0, true)}>
+              <summary className="cursor-pointer text-[12.5px] font-bold text-foreground">Read the draft</summary>
+              <p className="mt-1 whitespace-pre-wrap text-[12.5px] leading-relaxed text-foreground/85">{email.body}</p>
+            </details>
             <p className="mt-1 text-[12px] text-muted-foreground">
               {[['Read', done[0]], ['Sent', done[1]], ['Worked', done[2]]].map(([label, on], i) => (
                 <span key={label} className={cn(on && 'font-bold', i && 'ml-2')} style={on ? { color: SIR } : undefined}>{on ? '✓' : '○'} {label}</span>
               ))}
             </p>
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              <button type="button" className={btn} onClick={() => { tick(leak.id, 0, true); onOpen?.(leak); }}><Mail className="h-3.5 w-3.5" /> Read it</button>
-              <a className={btn} href={links.outlook} target="_blank" rel="noreferrer" onClick={sent}><Send className="h-3.5 w-3.5" /> Send in Outlook</a>
-              <a className={btn} href={links.gmail} target="_blank" rel="noreferrer" onClick={sent}>Gmail</a>
-              <a className={btn} href={links.mail} onClick={sent}>Mail app</a>
-            </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"><CalendarPlus className="h-3.5 w-3.5" /> Remind me to check in 7 days:</span>
+              <span className="inline-flex items-center gap-1 text-[12px] font-semibold text-muted-foreground"><CalendarPlus className="h-3.5 w-3.5" /> Remind me in 7 days:</span>
               <a className={btn} href={googleCalendarUrl(check)} target="_blank" rel="noreferrer" onClick={remind}>Google</a>
               <a className={btn} href={outlookCalendarUrl(check)} target="_blank" rel="noreferrer" onClick={remind}>Outlook</a>
               <button type="button" className={btn} onClick={() => { downloadTask(check); remind(); }}>Apple / .ics</button>
@@ -80,9 +95,11 @@ export default function LetterActions({ leaks, onOpen }) {
                 <Check className="h-3.5 w-3.5" /> {done[2] ? 'It worked' : 'Mark it worked'}
               </button>
             </div>
+            </div>
+            )}
           </li>
         );
       })}
-    </ul>
+    </ol>
   );
 }
