@@ -35,7 +35,7 @@ export default function GhostItOffer({ className = '' }) {
             rel="noopener noreferrer"
             className="group inline-flex items-center gap-1 rounded-full bg-[#8FB8FF] px-4 py-2 text-[14.5px] font-bold text-[#0f1730] transition-transform hover:-translate-y-0.5"
           >
-            Try it in ASI:One <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+            Try Ghost It (beta) <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
           </a>
           <Link to="/ghostit" className="text-[14px] font-semibold text-foreground/80 underline-offset-4 hover:text-foreground hover:underline">How it works</Link>
         </span>

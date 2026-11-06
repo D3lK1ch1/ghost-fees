@@ -1242,8 +1242,14 @@ One entry per change. Newest at the bottom.
 - Then: The full journey is the newest cut (4:28, replaces the 3:09 one; same file name, cache-busted with ?v=4); its card says "4 minutes".
 - Final (checked against Sanjay's list and the Downloads timestamps): only two videos change. Demo = ghost-fees-demo-v7.mp4, the newest v7 download (7 Nov 09:12, 19 MB, 7:32, the one with no false flag), uploaded over the old file with ?v=2 on its src; the interim demo-web file is dropped. Full journey = the new 4:28 cut (7 Nov 09:19). The 60-second journey goes back to the original 58-second file and its "60 seconds" labels; Promo unchanged (the 1:04 promo is left out on purpose: different style, demo data).
 
+## Sat 7 Nov 2026: honest labels
+- What: copy only. /progress scoreboard: "scans run (includes the sample)", "said it found something real (yes or kinda)", and "visit" (singular) when the Ghost It agent count is 1. Home stats line: "... scans run on Ghost Fees so far (includes the sample)". Home Ghost It buttons: "Try Ghost It (beta)" (links unchanged). "The web app link doesn't work for me" is labelled as from a Slack user, not a portal tester, on /progress and in the README.
+- Why: final build plan, PR 2: honest labels before judging.
+- Note: the home scan line lives in StatsStrip.jsx and a second Ghost It button in GhostTeam.jsx (both on the home page), so those were changed instead of Landing.jsx. The feedback board ("7 testers") reads testerFeedback.json and is unchanged.
+- Files: src/pages/Progress.jsx, src/components/stats/StatsStrip.jsx, src/components/landing/GhostItOffer.jsx, src/components/landing/GhostTeam.jsx, src/data/changelog.json, README.md
 ## Sat 7 Nov 2026: Build streak, 4 to 6 Nov
 - What: added the Build streak days on /progress for Wed 4 Nov (8 items), Thu 5 Nov (5) and Fri 6 Nov (6), same shape as the rest ({ date, title }), unique titles. Nothing else changed.
 - Why: final build plan, PR 1. The streak stopped at Tue 3 Nov.
 - Checked: build passes; local /progress ends with "Fri, 6 Nov · 6 shipped".
 - Files: src/data/shipped.json
+- Also: Build streak gets a Sat 7 Nov day (6 shipped): new demo video (7:32), new full journey video (4:28), 6 new "You said, we changed" entries, GoldMind's simple pattern icons, Build streak up to date, honest labels. Sanjay asked to make clear the video updates were done today and to show the changes consistently.
