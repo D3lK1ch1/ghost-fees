@@ -1079,3 +1079,8 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/MoExplainer.jsx (new), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx
 - How to test: Sample > Ask a ghost > Mo. The Present Bias card animates in 4 steps, and Read the paper opens doi.org/10.1257/aer.89.1.103.
 - User feedback that drove this: "spread out the text on Mo, could he integrate some animated little explanations... integrate some facts to make people care about the psychology".
+### Typos no longer derail the ghosts; "optimise my subscriptions" goes to Kit from any ghost
+- What: Penny answered "how cna you help me optuik mise my subscription can you stuyd all of them" with Gus's goals list. Fast-typing slips (cna, teh, yuo, stuyd, optuik mise, subscriptioms, reaserhc) are now tidied before the ghosts match a question, and "subtotal" stays "subtotal". Any ghost other than Kit now hands "optimise / study / go through / compare / organise my subscriptions" to Kit ("That's Kit's job...", Ask Kit →) before the goals answer can catch it.
+- Files: src/components/guide/GhostGuide.jsx
+- How to test: Penny > type the exact message above. You get "That's Kit's job..." with Ask Kit →.
+- User feedback that drove this: screenshot of Penny's goals answer to "how can you help me optimise my subscription can you study all of them".
