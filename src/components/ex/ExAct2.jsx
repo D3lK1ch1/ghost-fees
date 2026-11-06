@@ -242,7 +242,7 @@ export function ExWeekend({ pick, pickKey, glow, biggest, onNext, preview = fals
 }
 
 // Design screen Ex11Checkin: next month, Tilly (EX_CONTACT) checks the exes stayed blocked.
-export function ExCheckin({ pick, pickKey, blockedCount, onUpload, onSeeAll }) {
+export function ExCheckin({ pickKey, blockedCount, onUpload, onSeeAll }) {
   const them = { background: C.card, borderRadius: '20px 20px 20px 6px' };
   return (
     <Screen stars={false}>
@@ -286,7 +286,6 @@ export function ExSplurge({ pick, subscriptions, avatarFor }) {
   const total = top.reduce((sum, item) => sum + item.monthly * 12, 0);
   const fund = top.filter((item) => blocked.has(item.id)).reduce((sum, item) => sum + item.monthly * 12, 0);
   const full = top.length > 0 && top.every((item) => blocked.has(item.id));
-  const pct = total > 0 ? Math.min(100, (fund / total) * 100) : 0;
   const [lead, shine] = pick.splurgeTitle;
 
   if (party) {

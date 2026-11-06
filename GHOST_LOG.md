@@ -1047,3 +1047,10 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guideOpeners.js
 - How to test: Sample > Ask a ghost. All 7 ghosts show the quick row above the chat, with no repeated buttons under replies. Cassy > How do I cancel my biggest one? gives Netflix's steps and official page straight away.
 - User feedback that drove this: "users would expect pre-determined prompts at the top and chat at the bottom... check other agents while there".
+
+### Clean-up pass
+- What: Lint across the app is down from 12 warnings to 2 (both in the Base44 sign-in page, left alone): unused props and variables removed (ExAct2, ExHero, ProofDialog) and stale lint comments cleared. The upload-error screen used a long dash between the file name and the message. It's now a colon (no-em-dash rule), and the admin feedback page's blank marker is now a plain dash. The Haunted House guide menus no longer carry the old image stub. Every page loads with no app errors (home, progress, upgrade, media, privacy, ghostit, about). The only console errors are local-dev Base44 app-state 404s that don't happen on the live site.
+- Not changed (needs your OK): six components and one data file that nothing uses any more: landing/StatementCard, landing/HowItWorks, scan/UploadPanel, results/ResultSection, results/SummaryCard, results/ResultRow and lib/ghostFees/jollysTable.json. The main JavaScript bundle is over Vite's 500 KB warning size. Splitting it by page would speed up first load, but it's a bigger change.
+- Files: src/components/ex/ExAct2.jsx, src/components/landing/ExHero.jsx, src/components/results/ProofDialog.jsx, src/components/results/FileErrors.jsx, src/pages/FeedbackAdmin.jsx, src/components/results/HauntedHouse.jsx, plus lint-comment tidy-ups (HomeTabs, PatternsTab, CassLookup, DoneLink, Tour)
+- How to test: npx eslint src gives 0 errors and 2 warnings. npm run build passes.
+- User feedback that drove this: "assess and do overall cleanup of the app".

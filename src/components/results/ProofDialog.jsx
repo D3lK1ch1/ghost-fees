@@ -229,8 +229,8 @@ export function useCancelProof({ saveLabel, onSaved } = {}) {
     if (onlyProof && !proof) return;
     const saved = apply(sub, proof);
     if (!saved && proof?.shot) {
-      // eslint-disable-next-line no-unused-vars
-      const { shot, ...rest } = proof;
+      const rest = { ...proof };
+      delete rest.shot;
       apply(sub, rest);
       toast({ title: 'Screenshot not kept', description: 'Your browser storage is full, so we kept the rest of your proof. Keep the screenshot in your photos.' });
     } else if (onlyProof) {

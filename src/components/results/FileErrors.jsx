@@ -14,7 +14,7 @@ export default function FileErrors({ errors = [] }) {
         {errors.map((error, index) => (
           <li key={`${error.name}-${index}`} className="text-[13.5px] leading-relaxed text-muted-foreground">
             <span className="font-semibold text-foreground/90">{error.name}</span>
-            {' — '}
+            {': '}
             {error.message}
           </li>
         ))}
