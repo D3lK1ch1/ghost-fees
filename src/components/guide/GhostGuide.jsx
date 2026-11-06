@@ -182,7 +182,10 @@ function answer(question, analysis, guideKey) {
   }
   if (guideKey === 'penny' && /why (do|am) i (pay|paying|charged)|get (my )?(fees? |money )?back|refund|stop (these|the|my)? ?fees?|avoid|fees?\b.*\b(mean|for)|what (are|is) (these|this|my) fees?|help/.test(text) && !/subscriptions|cancel|email|letter/.test(text)) {
     const fees = leaks.filter((leak) => /fee|surcharge|interest|borrow/i.test(leak.badge || ''));
-    if (fees.length) return { reply: 'Here\'s each fee: why you pay it, how to stop it, and whether you can get it back.', fees: fees.map((f) => f.id) };
+    // Each question gets its own answer, not the same cards again.
+    const feeFocus = /get (my )?(fees? |money )?back|refund/.test(text) ? 'back' : /stop|avoid/.test(text) ? 'stop' : /why|mean|for\b/.test(text) ? 'why' : null;
+    const intro = { back: 'Yes, often. Here\'s your chance of getting each one back, and the letter to ask:', stop: 'Here\'s how to stop each fee from coming back:', why: 'Here\'s why you pay each one:' }[feeFocus] || 'Here\'s each fee: why you pay it, how to stop it, and whether you can get it back.';
+    if (fees.length) return { reply: intro, fees: fees.map((f) => f.id), feeFocus };
   }
   if (about.test(text) && GUIDES[guideKey]?.how && !/collat|organi[sz]|\blist\b|consolidat|cancel (my|the|it)|email|letter/.test(text.replace(/^(yes|so)\b/, ''))) {
     const g = GUIDES[guideKey];
@@ -575,7 +578,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
       const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'bundle', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, fees: local.fees, chips: [...hand, ...nextChips].slice(0, 4) });
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, fees: local.fees, feeFocus: local.feeFocus, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     // Their own Claude / OpenAI key: unlimited, straight from the browser, no Base44 credits.
@@ -694,7 +697,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             {GUIDE_GROUPS.map((group) => (
               <div key={group.label} className="flex items-stretch gap-1">
                 <span className="flex w-8 shrink-0 items-center text-[9.5px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{group.label.replace('Your ', '')}</span>
-                <div className={cn('grid flex-1 gap-1', group.keys.length === 4 ? 'grid-cols-4' : 'grid-cols-3')}>
+                <div className="grid flex-1 grid-cols-4 gap-1">
                   {group.keys.map((key) => (
                     <button
                       key={key}
@@ -714,6 +717,14 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                       <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
                     </button>
                   ))}
+                  {group.keys.length < 4 && leaks[0] && (
+                    <button type="button" onClick={() => startMission(leaks[0])} aria-pressed={Boolean(mission)}
+                      title={`Team up: the right ghosts, in order, on ${leaks[0].title || leaks[0].merchant}`}
+                      className={cn('flex min-w-0 flex-col items-center rounded-xl border border-dashed px-1 py-1 text-center transition-colors', mission ? 'border-transparent bg-primary text-primary-foreground' : 'border-white/25 bg-background text-foreground hover:border-white/50')}>
+                      <span className="text-[12px] font-bold leading-tight">👻 Team up</span>
+                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', mission ? 'opacity-90' : 'opacity-75')}>All ghosts on one</span>
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -729,7 +740,12 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 <div className="shrink-0 border-b border-border px-3 py-2" aria-label="Your ghost team on this">
                   <div className="flex items-center gap-2 text-[12px]">
                     <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team on {missionLeak.title || missionLeak.merchant}</span>
-                    <button type="button" onClick={() => { setMission(null); setTeam([]); }} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">End</button>
+                    <select aria-label="Team up on another ghost" value="" onChange={(e) => { const leak = leaks.find((item) => item.id === e.target.value); if (leak) startMission(leak); }}
+                      className="ml-auto rounded-lg border border-border bg-background px-1.5 py-0.5 text-[12px] text-foreground">
+                      <option value="">Another ghost</option>
+                      {leaks.filter((leak) => leak.id !== missionLeak.id).slice(0, 8).map((leak) => <option key={leak.id} value={leak.id}>{leak.title || leak.merchant}</option>)}
+                    </select>
+                    <button type="button" onClick={() => { setMission(null); setTeam([]); }} className="text-muted-foreground underline-offset-2 hover:underline">End</button>
                   </div>
                   <ol className="mt-1 flex flex-wrap items-center gap-1 text-[12px]">
                     {mission.route.map((key, i) => (
@@ -772,23 +788,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 </div>
               );
             }
-            const target = leaks[0];
-            if (!target) return null;
-            return (
-              <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border px-3 py-2 text-[12.5px]">
-                <button type="button" onClick={() => startMission(target)} className="rounded-full bg-white/10 px-3 py-1 font-bold text-foreground hover:bg-white/15">
-                  👻 Team up on {target.title || target.merchant}
-                </button>
-                <label className="inline-flex items-center gap-1 text-muted-foreground">
-                  or
-                  <select aria-label="Team up on another ghost" value="" onChange={(e) => { const leak = leaks.find((item) => item.id === e.target.value); if (leak) startMission(leak); }}
-                    className="rounded-lg border border-border bg-background px-1.5 py-0.5 text-[12.5px] text-foreground">
-                    <option value="">another ghost</option>
-                    {leaks.slice(1, 8).map((leak) => <option key={leak.id} value={leak.id}>{leak.title || leak.merchant}</option>)}
-                  </select>
-                </label>
-              </div>
-            );
+            return null;
           })()}
           {/* Ready-made questions at the top, the conversation and typing box at the bottom
               (like most chat apps). Tap one, or type your own question below. */}
@@ -836,7 +836,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     onAskMo={(key) => { focusRef.current = leaks.find((l) => biasFor(l)?.key === key) || null; setTeam((t) => [...(t.length ? t : ['habit']).filter((k) => k !== 'mind'), 'mind'].slice(-5)); onGuide('mind'); }} />
                 )}
                 {message.explain && (
-                  <MoExplainer biasKey={message.explain} group={biasGroups(leaks).find((g) => g.key === message.explain)} />
+                  <MoExplainer biasKey={message.explain} group={biasGroups(leaks).find((g) => g.key === message.explain)} leaks={leaks} />
                 )}
                 {message.after && <p className="mt-2 rounded-2xl bg-background px-3.5 py-2 text-[14.5px] font-semibold text-foreground">{message.after}</p>}
                 {message.bust && index === messages.map((m) => Boolean(m.bust)).lastIndexOf(true) && (
@@ -844,7 +844,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     onHandoff={(key, leak) => { focusRef.current = leak; setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== key), key].slice(-5)); onGuide(key); }} />
                 )}
                 {message.fees?.length > 0 && (
-                  <FeeCheck fees={message.fees.map((id) => leaks.find((item) => item.id === id)).filter(Boolean)}
+                  <FeeCheck fees={message.fees.map((id) => leaks.find((item) => item.id === id)).filter(Boolean)} focus={message.feeFocus || null} onTeamUp={(leak) => startMission(leak)}
                     onLetter={(leak) => { focusRef.current = leak; setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== 'sir'), 'sir'].slice(-5)); onGuide('sir'); }} />
                 )}
                 {message.cancel && (

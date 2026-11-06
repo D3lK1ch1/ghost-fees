@@ -13,7 +13,7 @@ export const GUIDES = {
     hello: "Hi, I'm Penny, the fee detective. My one job: telling you what your statement can't. Why you pay each fee, how to stop it, and whether you can get it back.",
     ask: 'Ask Penny about a fee or total',
     how: ['I find every fee on your statement: bank fees, late fees, surcharges and interest.', 'For each one I tell you why you pay it, how to stop it, and whether you can get it back.', 'One tap gets Spooksworth\'s waiver letter, and I remind you to check your next statement.'],
-    chips: ['Why do I pay these fees?', 'Can I get my fees back?', 'How did you work out the total?'],
+    chips: ['Why do I pay these fees?', 'Can I get my fees back?', 'How do I stop these fees?'],
     intro: (count, total) => `${count} ${count === 1 ? 'ghost' : 'ghosts'} on file, ${money(total)} all up. Let's tidy the books, one room at a time.`,
     pick: (leak) => `${leak.title || leak.merchant}: ${money(leak.amount)}, filed under ${leak.badge.toLowerCase()}.`,
     room: (label, count, amount) => `${label}: ${count} ${count === 1 ? 'ghost' : 'ghosts'}, ${money(amount)} between them. Details are below.`,
