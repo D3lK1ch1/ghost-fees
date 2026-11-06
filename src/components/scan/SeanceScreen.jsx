@@ -51,9 +51,12 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', leaks = null
   // Smallest ghost first so the running total climbs.
   const ordered = leaks ? [...leaks].sort((a, b) => a.amount - b.amount) : null;
   const count = ordered ? ordered.length : 0;
+  // Results arriving must re-run the effect too: with 0 ghosts, count stays 0, so
+  // without this a slow PDF scan with no ghosts never called onDone (stuck screen).
+  const ready = Boolean(ordered);
 
   useEffect(() => {
-    if (line < 2 || !ordered) return undefined;
+    if (line < 2 || !ready) return undefined;
     if (!count || reducedMotion()) {
       done.current?.();
       return undefined;
@@ -69,7 +72,7 @@ export default function SeanceScreen({ lastLine = 'Ghost detected', leaks = null
       }
     }, TICK_MS);
     return () => clearInterval(timer);
-  }, [line, count]);
+  }, [line, count, ready]);
 
   const running = ordered && tick >= 0 ? ordered.slice(0, tick + 1).reduce((sum, leak) => sum + leak.amount, 0) : 0;
   const current = ordered && tick >= 0 ? ordered[tick] : null;
