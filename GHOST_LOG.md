@@ -1200,3 +1200,16 @@ One entry per change. Newest at the bottom.
 - Why: Sanjay: "properly checks so I don't have to worry about masking."
 - Checked in the local app with made-up keys: wrong shape caught, right-shape fake refused by Anthropic, storage holds no plain key, decrypt reaches Anthropic (401 for the fake), Remove clears it.
 - Files: src/lib/ghostFees/ownAI.js, src/components/guide/OwnAIPanel.jsx
+
+## Fri 6 Nov 2026: money patterns popup with animated icons
+- What: "4 money patterns behind these ghosts" is now a bigger button (🧠, "Tap to see why →"). It opens a popup: each pattern with its own animated icon (hourglass tilts, coin spins, armchair bobs, see-no-evil peeks, jar wiggles, card pulses), what it costs you, one plain line on what it is, and "In your fees:" with the ghosts it's behind. A button goes to the full Money patterns tab (research and a habit for each). The "Most of it comes from N patterns" link opens the same popup. Animations stop with reduced motion.
+- Drawn icons: drop PNGs at public/patterns/<key>.png and they replace the emoji automatically. ChatGPT prompts for all 6 are in ghost-fees-evidence/drafts/chatgpt_pattern_icons.txt.
+- Why: Sanjay asked for bigger buttons and a popup with the patterns, animated icons, and how each pattern relates to the fees.
+- Checked in the local app on the sample statement.
+- Files: src/components/patterns/PatternsPopup.jsx, src/components/results/ResultsView.jsx, src/index.css
+
+## Fri 6 Nov 2026: Team up comes first
+- What: Team up is now a full-width button at the top of the chat, above the ghosts ("👻 Team up · take me through it, step by step"). Tapping it opens the 7-step note right under it. The Plan row now has Kit, Mo and Hattie as three wider tiles.
+- Why: Sanjay: "move the Team up button to the first, before the other AI options."
+- Checked in the local app.
+- Files: src/components/guide/GhostGuide.jsx
