@@ -66,7 +66,8 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
 
   if (guideKey === 'penny') {
     // Penny the fee detective: what the statement can't say about each fee.
-    const fees = leaks.filter((leak) => /fee|surcharge|interest|borrow/i.test(leak.badge || ''));
+    const isFee = (leak) => /fee|surcharge|interest|borrow/i.test(leak.badge || '');
+    const fees = [...(focus && isFee(focus) ? [focus] : []), ...leaks.filter((leak) => isFee(leak) && leak.id !== focus?.id)];
     if (!fees.length) return { text: `${g.hello}\n\nGood news: no bank fees, surcharges or interest on this statement.`, chips: [handoffChip('bundle')] };
     return {
       text: `${g.hello}\n\nYou paid ${fees.length} ${fees.length === 1 ? 'kind of fee' : 'kinds of fees'}, ${money(fees.reduce((sum, f) => sum + (Number(f.amount) || 0), 0))} in ${months}. Here's what each one is really about:`,
@@ -76,7 +77,8 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
   }
   if (guideKey === 'sir') {
     // Spooksworth does the whole letter job for every ghost that needs one: no picking.
-    const letters = leaks.filter((leak) => leak.action).slice(0, 6);
+    // A team mission (or handoff) puts that ghost's letter first.
+    const letters = [...(focus?.action ? [focus] : []), ...leaks.filter((leak) => leak.action && leak.id !== focus?.id)].slice(0, 6);
     if (!letters.length) return { text: `${g.hello}\n\nNone of these ghosts need a letter. They're ones to keep an eye on.`, chips: [handoffChip('cass')] };
     return {
       text: `${g.hello}\n\nI've drafted ${letters.length === 1 ? 'your letter' : `all ${letters.length} letters`}, biggest first:\n${letters.map((leak, i) => `${i + 1}. ${{ cancel: 'Cancel', refund: 'Refund from', waive: 'Waive fee:', check: 'Check' }[leak.action] || 'Letter:'} ${nameOf(leak)} (${money(leak.amount)})`).join('\n')}\n\nEach one shows who it goes to and what it asks for. Send it from your own Outlook or Gmail, and I'll remind you to check for a reply.`,

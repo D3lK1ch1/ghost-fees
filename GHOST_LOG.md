@@ -1111,3 +1111,16 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/LetterActions.jsx
 - How to test: Sample > Ask a ghost > Spooksworth shows 5 numbered lines with #1 open. Read the draft shows the email. Send in Gmail opens Gmail with it filled in.
 - User feedback that drove this: "where's his draft email and connect to email where you link Outlook or Gmail to send it directly", "can we make it cleaner like list 1-5".
+
+### Team up: ghosts work as a visible team on one ghost; fewer preset buttons
+- What:
+  - "👻 Team up on Streammax" (your biggest ghost), or pick another ghost from "or another ghost", sits at the top of the chat. It forms the right team for that kind of ghost:
+    - Trial / cancel: Mo (why it happened) → Cassy (cancel it) → Spooksworth (the letter) → Hattie (a habit so it stays gone) → Gus (your score).
+    - Refund: Mo → Spooksworth → Hattie → Gus.
+    - Bank fee: Penny → Spooksworth → Hattie → Gus.
+    - Price rise: Penny → Kit → Cassy → Gus.
+  - The team line shows "Team on Streammax" and the whole route: ✓ on ghosts you've done, the current one highlighted, any name tappable, and a "Next: Cassy, cancel it →" button in the next ghost's colour, ending with "🎉 Team done. Gus has your score." End stops it. Every ghost on the team opens on that ghost: Mo explains its pattern, Cassy its cancel, Spooksworth puts its letter first, Penny its fee first, and Hattie plans for its pattern.
+  - Fewer buttons: three quick questions per ghost (was five), and "Is my data stored?" is no longer added to every ghost (the privacy line is in the footer).
+- Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js
+- How to test: Sample > Ask a ghost > 👻 Team up on Streammax. Next four times goes Mo → Cassy → Spooksworth → Hattie → Gus with ✓ ticks, ending in "Team done".
+- User feedback that drove this: "I do not see how the agents interact in a team, where's the create agent team. Maybe we can clean up some of the buttons and preset options".

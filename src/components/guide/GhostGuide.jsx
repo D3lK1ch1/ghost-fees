@@ -327,16 +327,27 @@ function summaryFor(analysis, patternAnswers = {}) {
 }
 
 // Each ghost offers only its own speciality questions, so it's obvious what it's for.
+// Three questions per ghost, its own job only (privacy is in the footer, not on every ghost).
 function starterChips(analysis, guide) {
-  const own = guide?.chips || [];
-  return own.includes('Is my data stored?') ? own : [...own, 'Is my data stored?'];
+  return (guide?.chips || []).slice(0, 3);
 }
+
+// Team up: the right ghosts, in order, for the kind of ghost you're busting.
+const TEAM_ROUTES = {
+  cancel: ['mind', 'cass', 'sir', 'habit', 'gus'],
+  refund: ['mind', 'sir', 'habit', 'gus'],
+  waive: ['penny', 'sir', 'habit', 'gus'],
+  check: ['penny', 'bundle', 'cass', 'gus'],
+};
+const STEP_JOBS = { penny: 'what the fee is', mind: 'why it happened', cass: 'cancel it', sir: 'the letter', habit: 'a habit so it stays gone', bundle: 'keep or rotate', gus: 'your score' };
 
 export default function GhostGuide({ analysis, guideKey, onGuide, onAction, openRequest = 0 }) {
   const [open, setOpen] = useState(false);
   const [big, setBig] = useState(false); // expand button: nearly full screen
   // Ghost team: the chain of ghosts that referred you on (Penny → Spooksworth → Cassy).
   const [team, setTeam] = useState([]);
+  // A team mission: the route of ghosts for one ghost you're busting, and where you are.
+  const [mission, setMission] = useState(null);
   const [input, setInput] = useState('');
   // Each ghost has its own conversation ("its own window"): switching ghost shows that
   // ghost's chat, fresh the first time, and switching back brings the old one back.
@@ -351,7 +362,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const guide = GUIDES[guideKey];
   const patterns = usePatterns();
   const chips = starterChips(analysis, guide);
-  const quickChips = chips.slice(0, 5);
+  const quickChips = chips.slice(0, 3);
   const { leaks, monthSpan } = analysis;
 
   useEffect(() => {
@@ -457,6 +468,25 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       return true;
     }
     return false;
+  };
+
+  const startMission = (leak) => {
+    const route = TEAM_ROUTES[leak.action] || TEAM_ROUTES.check;
+    setMission({ leakId: leak.id, route, at: 0 });
+    setTeam(route);
+    focusRef.current = leak;
+    trackEvent('team_up');
+    if (guideKey === route[0]) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
+    else onGuide(route[0]);
+  };
+  const stepMission = (to) => {
+    if (!mission) return;
+    const leak = leaks.find((item) => item.id === mission.leakId);
+    const at = mission.route.indexOf(to);
+    setMission({ ...mission, at });
+    focusRef.current = leak || null;
+    if (to === guideKey) setThread(guideKey, (current) => [...current, openerFor(guideKey)]);
+    else onGuide(to);
   };
 
   const openPanel = () => {
@@ -658,22 +688,77 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
           </div>
-          {team.length > 1 && (
-            <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border px-3 py-1.5 text-[12px]" aria-label="Your ghost team on this">
-              <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team on this</span>
-              {team.map((key, i) => (
-                <span key={key} className="inline-flex items-center gap-1">
-                  {i > 0 && <span aria-hidden="true" className="text-muted-foreground">→</span>}
-                  <button type="button" onClick={() => onGuide(key)} aria-pressed={guideKey === key}
-                    className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold', guideKey === key ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:text-foreground')}>
-                    <span className="inline-block h-2 w-2 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
-                    {nameFor(key).replace('Sir ', '')}
-                  </button>
-                </span>
-              ))}
-              <button type="button" onClick={() => setTeam([])} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">Clear</button>
-            </div>
-          )}
+          {/* Ghost team. A mission shows the whole route for one ghost (✓ done, current
+              highlighted) with Next; otherwise referrals build the chain; otherwise Team up. */}
+          {(() => {
+            const missionLeak = mission && leaks.find((item) => item.id === mission.leakId);
+            if (missionLeak) {
+              const next = mission.route[mission.at + 1];
+              return (
+                <div className="shrink-0 border-b border-border px-3 py-2" aria-label="Your ghost team on this">
+                  <div className="flex items-center gap-2 text-[12px]">
+                    <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team on {missionLeak.title || missionLeak.merchant}</span>
+                    <button type="button" onClick={() => { setMission(null); setTeam([]); }} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">End</button>
+                  </div>
+                  <ol className="mt-1 flex flex-wrap items-center gap-1 text-[12px]">
+                    {mission.route.map((key, i) => (
+                      <li key={key} className="inline-flex items-center gap-1">
+                        {i > 0 && <span aria-hidden="true" className="text-muted-foreground">→</span>}
+                        <button type="button" onClick={() => stepMission(key)} aria-current={i === mission.at ? 'step' : undefined}
+                          title={STEP_JOBS[key]}
+                          className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold', i === mission.at ? 'bg-white/15 text-foreground' : i < mission.at ? 'text-foreground/80' : 'text-muted-foreground hover:text-foreground')}>
+                          <span className="inline-block h-2 w-2 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
+                          {i < mission.at ? '✓ ' : ''}{nameFor(key).replace('Sir ', '')}
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                  {next ? (
+                    <button type="button" onClick={() => stepMission(next)} className="mt-1.5 rounded-full px-3 py-1 text-[12.5px] font-bold text-[#1b1233]" style={{ background: GUIDES[next].color }}>
+                      Next: {nameFor(next).replace('Sir ', '')}, {STEP_JOBS[next]} →
+                    </button>
+                  ) : (
+                    <p className="mt-1.5 text-[12.5px] font-bold text-foreground">🎉 Team done. Gus has your score.</p>
+                  )}
+                </div>
+              );
+            }
+            if (team.length > 1) {
+              return (
+                <div className="flex shrink-0 flex-wrap items-center gap-1 border-b border-border px-3 py-1.5 text-[12px]" aria-label="Your ghost team on this">
+                  <span className="font-bold uppercase tracking-[0.1em] text-muted-foreground">Team on this</span>
+                  {team.map((key, i) => (
+                    <span key={key} className="inline-flex items-center gap-1">
+                      {i > 0 && <span aria-hidden="true" className="text-muted-foreground">→</span>}
+                      <button type="button" onClick={() => onGuide(key)} aria-pressed={guideKey === key}
+                        className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-bold', guideKey === key ? 'bg-white/10 text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                        <span className="inline-block h-2 w-2 rounded-full" style={{ background: GUIDES[key].color }} aria-hidden="true" />
+                        {nameFor(key).replace('Sir ', '')}
+                      </button>
+                    </span>
+                  ))}
+                  <button type="button" onClick={() => setTeam([])} className="ml-auto text-muted-foreground underline-offset-2 hover:underline">Clear</button>
+                </div>
+              );
+            }
+            const target = leaks[0];
+            if (!target) return null;
+            return (
+              <div className="flex shrink-0 flex-wrap items-center gap-1.5 border-b border-border px-3 py-2 text-[12.5px]">
+                <button type="button" onClick={() => startMission(target)} className="rounded-full bg-white/10 px-3 py-1 font-bold text-foreground hover:bg-white/15">
+                  👻 Team up on {target.title || target.merchant}
+                </button>
+                <label className="inline-flex items-center gap-1 text-muted-foreground">
+                  or
+                  <select aria-label="Team up on another ghost" value="" onChange={(e) => { const leak = leaks.find((item) => item.id === e.target.value); if (leak) startMission(leak); }}
+                    className="rounded-lg border border-border bg-background px-1.5 py-0.5 text-[12.5px] text-foreground">
+                    <option value="">another ghost</option>
+                    {leaks.slice(1, 8).map((leak) => <option key={leak.id} value={leak.id}>{leak.title || leak.merchant}</option>)}
+                  </select>
+                </label>
+              </div>
+            );
+          })()}
           {/* Ready-made questions at the top, the conversation and typing box at the bottom
               (like most chat apps). Tap one, or type your own question below. */}
           <div className="flex shrink-0 flex-wrap gap-1.5 border-b border-border px-3 py-2" aria-label={`Quick questions for ${guideName}`}>
@@ -711,7 +796,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   </button>
                 )}
                 {message.coach && index === messages.map((m) => Boolean(m.coach)).lastIndexOf(true) && (
-                  <HabitCoach leaks={leaks} hank={hank} prefer={Object.keys(patterns?.answers || {}).find((k) => patterns.answers[k] === 'yes') || null} onOpenHabit={(key) => run({ action: 'open_habit', biasKey: key })}
+                  <HabitCoach leaks={leaks} hank={hank} prefer={(mission && biasFor(leaks.find((item) => item.id === mission.leakId) || {})?.key) || Object.keys(patterns?.answers || {}).find((k) => patterns.answers[k] === 'yes') || null} onOpenHabit={(key) => run({ action: 'open_habit', biasKey: key })}
                     onAskMo={(key) => { focusRef.current = leaks.find((l) => biasFor(l)?.key === key) || null; setTeam((t) => [...(t.length ? t : ['habit']).filter((k) => k !== 'mind'), 'mind'].slice(-5)); onGuide('mind'); }} />
                 )}
                 {message.explain && (
