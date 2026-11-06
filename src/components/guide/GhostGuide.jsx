@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Maximize2, Minimize2, Send, X } from 'lucide-react';
+import { KeyRound, Maximize2, Minimize2, Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
@@ -17,6 +17,8 @@ import MoExplainer from '@/components/guide/MoExplainer';
 import HabitCoach from '@/components/guide/HabitCoach';
 import CancelActions from '@/components/guide/CancelActions';
 import FeeCheck from '@/components/guide/FeeCheck';
+import OwnAIPanel from '@/components/guide/OwnAIPanel';
+import { askOwnAI, readOwnAI } from '@/lib/ghostFees/ownAI';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -351,6 +353,14 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
   const [team, setTeam] = useState([]);
   // A team mission: the route of ghosts for one ghost you're busting, and where you are.
   const [mission, setMission] = useState(null);
+  // Connect your own AI: the settings panel, and whether a key is set (unlimited answers).
+  const [ownPanel, setOwnPanel] = useState(false);
+  const [ownAI, setOwnAI] = useState(() => (typeof window === 'undefined' ? null : readOwnAI()));
+  useEffect(() => {
+    const on = () => setOwnAI(readOwnAI());
+    window.addEventListener('gf-own-ai', on);
+    return () => window.removeEventListener('gf-own-ai', on);
+  }, []);
   const [input, setInput] = useState('');
   // Each ghost has its own conversation ("its own window"): switching ghost shows that
   // ghost's chat, fresh the first time, and switching back brings the old one back.
@@ -571,15 +581,31 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, fees: local.fees, feeFocus: local.feeFocus, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
+    // Their own Claude / OpenAI key: unlimited, straight from the browser, no Base44 credits.
+    if (ownAI) {
+      setThinking(true);
+      try {
+        const data = await askOwnAI({ guideKey, question: text, history, summary: summaryFor(analysis, patterns?.answers) });
+        const hand = GUIDES[data.handoff] && data.handoff !== guideKey ? [handoffChip(data.handoff)] : [];
+        reply({ text: String(data.reply || '').slice(0, 700), chips: [...hand, ...(Array.isArray(data.chips) ? data.chips.slice(0, 3) : nextChips)].slice(0, 4) });
+      } catch (error) {
+        const auth = /401|403|authentication|invalid.*key/i.test(`${error?.status || ''} ${error?.message || ''}`);
+        reply({ text: auth ? 'Your API key was not accepted. Check it, or remove it and use the free answers.' : 'Your AI did not answer just now. Try again, or tap a question at the top.', ownAI: true, chips: nextChips });
+      } finally {
+        setThinking(false);
+      }
+      return;
+    }
     if (aiCount >= MAX_AI_MESSAGES) {
-      reply({ text: "That's all my free AI answers for this visit. The questions at the top always work.", chips: nextChips });
+      reply({ text: "That's all my free AI answers for this visit. The questions at the top always work, or connect your own AI for unlimited answers.", ownAI: true, chips: nextChips });
       return;
     }
 
     // Free tier: one AI answer per ghost. The quick answers above are always free.
     const lockedReply = () => reply({
-      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit. The quick questions at the top still work.`,
+      text: `That was my free answer. Unlock Ghost Fees once and all seven of us will answer, within a fair daily limit, or connect your own AI. The quick questions at the top still work.`,
       unlock: 'guide',
+      ownAI: true,
       chips: nextChips,
     });
     if (!canAskGuide(guideKey)) {
@@ -654,6 +680,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 {guide.bonus && <span className="ml-1.5 rounded-full px-1.5 align-[2px] text-[9.5px] font-black uppercase text-[#1b1233]" style={{ background: guide.color }}>Bonus assistant</span>}
               </p>
             </div>
+            <button type="button" onClick={() => setOwnPanel((v) => !v)} aria-label={ownAI ? 'Your own AI is connected' : 'Connect your own AI'} title={ownAI ? 'Using your own AI' : 'Connect your own AI (unlimited answers)'}
+              className={cn('rounded-full p-1.5 hover:bg-white/10', ownAI ? 'text-primary' : 'text-muted-foreground hover:text-foreground')}>
+              <KeyRound className="h-4 w-4" />
+            </button>
             <button type="button" onClick={() => setBig((b) => !b)} aria-label={big ? 'Make the chat smaller' : 'Make the chat bigger'} title={big ? 'Smaller' : 'Bigger'} className="hidden rounded-full p-1.5 text-muted-foreground hover:bg-white/10 hover:text-foreground sm:block">
               {big ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
             </button>
@@ -699,6 +729,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               </div>
             ))}
           </div>
+          {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
           {/* Ghost team. A mission shows the whole route for one ghost (✓ done, current
               highlighted) with Next; otherwise referrals build the chain; otherwise Team up. */}
           {(() => {
@@ -790,6 +821,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                 >
                   {message.text}
                 </p>
+                {message.ownAI && !ownAI && (
+                  <button type="button" onClick={() => setOwnPanel(true)} className="mt-2 inline-flex items-center gap-1 rounded-full border border-primary px-3 py-1.5 text-[13px] font-bold text-primary">
+                    <KeyRound className="h-3.5 w-3.5" /> Connect your own AI
+                  </button>
+                )}
                 {message.unlock && (
                   <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
