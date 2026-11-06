@@ -2,7 +2,6 @@
 // for unlimited ghost answers. The key stays in THIS browser only (session by default,
 // this device if they tick "remember") and requests go straight from the browser to
 // Anthropic or OpenAI. Ghost Fees and Base44 never see or store the key.
-import Anthropic from '@anthropic-ai/sdk';
 import { GUIDES } from './guides';
 
 const KEY = 'gf_own_ai';
@@ -79,17 +78,27 @@ export async function askOwnAI({ guideKey, question, history = [], summary }) {
   const messages = [...turns, { role: 'user', content: question }];
   const system = systemPrompt(guideKey, summary);
 
+  // Claude: Anthropic's Messages API, called straight from the browser.
   if (own.provider === 'anthropic') {
-    const client = new Anthropic({ apiKey: own.key, dangerouslyAllowBrowser: true });
-    const response = await client.messages.create({
-      model: own.model || PROVIDERS.anthropic.model,
-      max_tokens: 2000,
-      output_config: { effort: 'low' }, // short chat answers
-      system,
-      messages,
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': own.key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: own.model || PROVIDERS.anthropic.model,
+        max_tokens: 2000,
+        system,
+        messages,
+      }),
     });
-    if (response.stop_reason === 'refusal') return { reply: "I can't help with that one. Try asking about your fees or subscriptions.", chips: [], handoff: 'none' };
-    const text = response.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
+    if (!res.ok) throw new Error(`anthropic-${res.status}`);
+    const data = await res.json();
+    if (data?.stop_reason === 'refusal') return { reply: "I can't help with that one. Try asking about your fees or subscriptions.", chips: [], handoff: 'none' };
+    const text = (data?.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('');
     return parseReply(text);
   }
 
