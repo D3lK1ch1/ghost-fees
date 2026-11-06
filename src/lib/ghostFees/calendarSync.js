@@ -94,3 +94,11 @@ export function feedLinks(token) {
     apple: webcal,
   };
 }
+
+// A ghost's reminder button: put it on the app's task list (the goal's "Do it on" day)
+// and, if the person turned on "Sync to my calendar", straight into their real calendar
+// through the private feed. Never fails the button if the feed can't be reached.
+export function addGhostReminder({ goalId, task, setDue }) {
+  if (goalId && setDue) setDue(goalId, task.date);
+  if (loadSync()) syncEvents([taskEvent(task)]).catch(() => {});
+}

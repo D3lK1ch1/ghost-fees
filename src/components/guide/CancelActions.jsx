@@ -6,6 +6,7 @@ import { downloadTask, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ghost
 import { useGhostList } from '@/hooks/use-ghost-list';
 import { useCancelProof } from '@/components/results/ProofDialog';
 import { trackEvent } from '@/lib/session';
+import { addGhostReminder } from '@/lib/ghostFees/calendarSync';
 
 const inDays = (n) => {
   const d = new Date();
@@ -28,7 +29,7 @@ export default function CancelActions({ item, goalId, onOpenEmail, onLookup, acc
   const done = ticks[id] || {};
   const name = info.url ? info.name : (item.title || item.merchant);
   const check = { title: `👻 Check ${name} stopped charging`, details: `You cancelled ${name}. Look at your statement: if it charged again, use your proof in Ghost Fees.\n\nFrom Cassy, Ghost Fees.`, date: inDays(7) };
-  const remind = () => setDue(id, check.date);
+  const remind = () => addGhostReminder({ goalId: id, task: check, setDue });
   const btn = 'inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground transition-colors hover:border-white/40';
   const leakLike = { id, merchant: item.merchant, title: item.title || item.merchant, monthly: item.monthly, amount: item.amount ?? item.monthly, action: 'cancel', badge: item.badge || 'Subscription' };
   return (
