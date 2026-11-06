@@ -500,7 +500,7 @@ export default function ResultsView({ analysis, usedSample, onRestart, onSample 
               )}
               {tab === 'calendar' && (
                 <>
-                  <GoalTasks leaks={leaks} subscriptions={subscriptions} cancelSubs={cancelSubs} cleared={cleared} onClearedChange={setCleared} remindersDone={remindersDone} onRemindersDone={setRemindersDone} onOpenPath={() => setTab('path')} />
+                  <GoalTasks leaks={leaks} subscriptions={subscriptions} cancelSubs={cancelSubs} cleared={cleared} onClearedChange={setCleared} remindersDone={remindersDone} onRemindersDone={setRemindersDone} onOpenPath={() => setTab('path')} onDraft={openEmail} />
                   <HauntedCalendar leaks={leaks} subscriptions={subscriptions} avatarFor={avatarFor} />
                   <button type="button" onClick={() => setTab('patterns')} className="mt-5 text-left text-[14.5px] text-foreground/90 underline-offset-4 hover:underline">
                     <span aria-hidden="true">📈 </span>The future spend chart is in Money patterns, with the other graphs. <span className="font-semibold text-primary">Open it →</span>

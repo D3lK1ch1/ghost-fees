@@ -4,17 +4,20 @@ import { GOAL_KINDS, buildGoals, goalAsTask, useGoalTasks } from '@/lib/ghostFee
 import { downloadTask, googleCalendarUrl } from '@/lib/ghostFees/reminder';
 import CollapseCard from '@/components/site/CollapseCard';
 import { cn } from '@/lib/utils';
+import CancelActions from '@/components/guide/CancelActions';
+import LetterActions from '@/components/guide/LetterActions';
 
 // Calendar tab: every goal from the goal path as a checklist with a day (3 Nov: "under
 // calendar should be a checklist of tasks that come from goals"). Same ticks and dates
 // as the goal path, so tick it in either place.
 const nice = (iso) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
 
-export default function GoalTasks({ leaks, subscriptions, cancelSubs = [], cleared = [], onClearedChange, remindersDone, onRemindersDone, onOpenPath }) {
+// onDraft(leak): opens the email. Each task also gets the same buttons the ghosts use.
+export default function GoalTasks({ leaks, subscriptions, cancelSubs = [], cleared = [], onClearedChange, remindersDone, onRemindersDone, onOpenPath, onDraft }) {
   const goals = buildGoals({ leaks, subscriptions, cancelSubs, cleared, remindersDone });
   const { ticks, due, tick, setDue } = useGoalTasks();
   if (!goals.length) return null;
-  const left = goals.filter((goal) => !goal.done);
+  const left = goals.filter((goal) => !(goal.done || [0, 1, 2].every((i) => ticks[goal.id]?.[i])));
   const order = [...goals].sort((a, b) => Number(a.done) - Number(b.done) || (due[a.id] || '9999').localeCompare(due[b.id] || '9999'));
   const setDone = (goal, done) => {
     if (goal.id === 'reminders') return onRemindersDone?.(done);
@@ -32,16 +35,18 @@ export default function GoalTasks({ leaks, subscriptions, cancelSubs = [], clear
         {order.map((goal) => {
           const steps = GOAL_KINDS[goal.kind].steps;
           const date = due[goal.id];
+          // Done when ticked here, or when all three steps were done from a ghost's buttons.
+          const isDone = goal.done || [0, 1, 2].every((i) => ticks[goal.id]?.[i]);
           return (
-            <li key={goal.id} className={cn('rounded-2xl border px-4 py-3', goal.done ? 'border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.05]' : 'border-border bg-background/40')}>
+            <li key={goal.id} className={cn('rounded-2xl border px-4 py-3', isDone ? 'border-[#5ee6c8]/30 bg-[#5ee6c8]/[0.05]' : 'border-border bg-background/40')}>
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <label className="flex min-w-0 flex-1 items-center gap-2.5">
-                  <input type="checkbox" checked={goal.done} onChange={(event) => setDone(goal, event.target.checked)} className="h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" />
-                  <span className={cn('text-[15px] font-bold', goal.done ? 'text-muted-foreground line-through' : 'text-foreground')}>{goal.label}</span>
+                  <input type="checkbox" checked={isDone} onChange={(event) => setDone(goal, event.target.checked)} className="h-5 w-5 shrink-0 accent-[hsl(var(--primary))]" />
+                  <span className={cn('text-[15px] font-bold', isDone ? 'text-muted-foreground line-through' : 'text-foreground')}>{goal.label}</span>
                 </label>
                 <span className="text-[13.5px] font-bold text-primary">{goal.monthly ? `${money(goal.monthly)}/mo` : goal.save ? `saves ${money(goal.save)}` : ''}</span>
               </div>
-              {!goal.done && (
+              {!isDone && (
                 <>
                   <ul className="mt-2 space-y-1 pl-7">
                     {steps.map((step, i) => (
@@ -53,6 +58,14 @@ export default function GoalTasks({ leaks, subscriptions, cancelSubs = [], clear
                       </li>
                     ))}
                   </ul>
+                  {goal.leak && (goal.kind === 'cancel' || goal.kind === 'refund' || goal.kind === 'waive') && (
+                    <details className="mt-2 pl-7">
+                      <summary className="cursor-pointer text-[13px] font-bold text-primary">Do it now: {goal.kind === 'cancel' ? 'cancel page, email, proof' : 'send the email, remind me'}</summary>
+                      {goal.kind === 'cancel'
+                        ? <CancelActions item={{ id: goal.leak.id, merchant: goal.leak.merchant, title: goal.leak.title, monthly: goal.leak.monthly, amount: goal.leak.amount, badge: goal.leak.badge }} goalId={goal.id} onOpenEmail={onDraft} compact />
+                        : <LetterActions leaks={[{ ...goal.leak, id: goal.id }]} onOpen={onDraft} />}
+                    </details>
+                  )}
                   <div className="mt-2.5 flex flex-wrap items-center gap-2 pl-7">
                     <label className="flex items-center gap-1.5 text-[13px] font-bold text-muted-foreground">
                       📅 Do it on

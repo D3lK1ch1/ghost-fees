@@ -65,11 +65,13 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
   if (!biggest && guideKey !== 'bundle') return { text: `${g.hello} No ghosts in this statement, so nothing to do. Nice.`, chips: [] };
 
   if (guideKey === 'penny') {
-    const fee = feeOrder(leaks)[0];
+    // Penny the fee detective: what the statement can't say about each fee.
+    const fees = leaks.filter((leak) => /fee|surcharge|interest|borrow/i.test(leak.badge || ''));
+    if (!fees.length) return { text: `${g.hello}\n\nGood news: no bank fees, surcharges or interest on this statement.`, chips: [handoffChip('bundle')] };
     return {
-      text: `${g.hello}\n\nYour biggest fee: ${pennyLine(fee, months)}\n\nNext fee, or get Spooksworth to write the ask?`,
-      action: 'open_leak', leak: fee, feeIndex: 0,
-      chips: [CHIP.nextFee, handoffChip('sir')],
+      text: `${g.hello}\n\nYou paid ${fees.length} ${fees.length === 1 ? 'kind of fee' : 'kinds of fees'}, ${money(fees.reduce((sum, f) => sum + (Number(f.amount) || 0), 0))} in ${months}. Here's what each one is really about:`,
+      fees: fees.map((f) => f.id),
+      chips: [],
     };
   }
   if (guideKey === 'sir') {
@@ -77,7 +79,7 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     const letters = leaks.filter((leak) => leak.action).slice(0, 6);
     if (!letters.length) return { text: `${g.hello}\n\nNone of these ghosts need a letter. They're ones to keep an eye on.`, chips: [handoffChip('cass')] };
     return {
-      text: `${g.hello}\n\nI've drafted ${letters.length === 1 ? 'your letter' : `all ${letters.length} letters`}, biggest first. Send each from your own Outlook or Gmail, and I'll put a reminder in your calendar to check for a reply. Each step ticks off your task list.`,
+      text: `${g.hello}\n\nI've drafted ${letters.length === 1 ? 'your letter' : `all ${letters.length} letters`}, biggest first:\n${letters.map((leak, i) => `${i + 1}. ${{ cancel: 'Cancel', refund: 'Refund from', waive: 'Waive fee:', check: 'Check' }[leak.action] || 'Letter:'} ${nameOf(leak)} (${money(leak.amount)})`).join('\n')}\n\nEach one shows who it goes to and what it asks for. Send it from your own Outlook or Gmail, and I'll remind you to check for a reply.`,
       letters: letters.map((leak) => leak.id),
       chips: [CHIP.firmer, CHIP.friendlier],
       leak: letters[0],
@@ -102,12 +104,12 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
       || leaks.find((leak) => leak.action === 'cancel')
       || biggest;
     const info = cancelInfo(target.merchant || nameOf(target));
-    const how = info.url ? `Official page: ${info.url}\nSteps: ${info.steps}` : info.steps;
+    const isLeak = leaks.includes(target);
     return {
-      text: `${g.hello}\n\nTo cancel ${nameOf(target)}:\n${how}\n\nDid it work?`,
-      leak: target,
-      // No checked link: offer a live lookup on their official site (uses Cassy's free answer).
-      chips: [CHIP.worked, CHIP.notYet, ...(info.url ? [] : [`Look up ${target.merchant || nameOf(target)}`])],
+      text: `${g.hello}\n\nTo cancel ${info.url ? info.name : nameOf(target)}${info.url ? `: ${info.steps}` : ': no checked cancel page yet, so I can look it up on their official site.'}\n\nUse the buttons below, then tell me if it worked.`,
+      leak: isLeak ? target : null,
+      cancel: { item: { id: target.id, merchant: target.merchant || nameOf(target), title: nameOf(target), monthly: target.monthly, amount: target.amount, badge: target.badge }, goalId: isLeak ? target.id : `sub:${target.id}` },
+      chips: [CHIP.worked, CHIP.notYet],
     };
   }
   if (guideKey === 'bundle') {
