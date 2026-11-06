@@ -15,6 +15,8 @@ import LetterActions from '@/components/guide/LetterActions';
 import BustPlan from '@/components/guide/BustPlan';
 import MoExplainer from '@/components/guide/MoExplainer';
 import HabitCoach from '@/components/guide/HabitCoach';
+import CancelActions from '@/components/guide/CancelActions';
+import FeeCheck from '@/components/guide/FeeCheck';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -175,6 +177,10 @@ function answer(question, analysis, guideKey) {
   }
   if (guideKey === 'habit' && /improv|strateg|spending|track|better|stop doing|patterns?|bias|cost/.test(text) && !/collat|organi[sz]|cancel|email/.test(text)) {
     return { reply: 'Here\'s your plan, building on what Mo found: the pattern costing you most, strategies for it, one habit, and your tracker.', coach: true };
+  }
+  if (guideKey === 'penny' && /why (do|am) i (pay|paying|charged)|get (my )?(fees? |money )?back|refund|stop (these|the|my)? ?fees?|avoid|fees?\b.*\b(mean|for)|what (are|is) (these|this|my) fees?|help/.test(text) && !/subscriptions|cancel|email|letter/.test(text)) {
+    const fees = leaks.filter((leak) => /fee|surcharge|interest|borrow/i.test(leak.badge || ''));
+    if (fees.length) return { reply: 'Here\'s each fee: why you pay it, how to stop it, and whether you can get it back.', fees: fees.map((f) => f.id) };
   }
   if (about.test(text) && GUIDES[guideKey]?.how && !/collat|organi[sz]|\blist\b|consolidat|cancel (my|the|it)|email|letter/.test(text.replace(/^(yes|so)\b/, ''))) {
     const g = GUIDES[guideKey];
@@ -481,7 +487,11 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     if (openRequest) openPanel();
   }, [openRequest]);
 
-  const withLetters = (message) => (guideKey === 'sir' && message.action === 'draft_email' && message.leak && !message.letters ? { ...message, letters: [message.leak.id], action: null } : message);
+  const withLetters = (message) => {
+    if (guideKey === 'sir' && message.action === 'draft_email' && message.leak && !message.letters) return { ...message, letters: [message.leak.id], action: null };
+    // Penny: a fee she explains gets the waive / refund letter buttons right there.
+    return message;
+  };
   const reply = (raw) => { const message = withLetters(raw); return setThread(guideKey, (current) => [...current, { role: 'guide', guide: guideKey, ...message, text: hank ? String(message.text).replace("Hattie's job. She", "Hank's job. He").replace("I'm Hattie", "I'm Hank") : message.text }]); };
 
   // Common questions are answered instantly in the browser. Anything else goes to the AI guide.
@@ -510,7 +520,8 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
     const target = named || (guideKey === 'cass' && /biggest|phone|cancel email|cancel/i.test(clean) ? biggestKnown : null);
     const checked = target && cancelInfo(target.merchant);
     if (wantsCancel && target && checked?.url && !/phone|number|call/i.test(clean)) {
-      reply({ text: `${checked.name}: ${money(target.monthly || 0)} a month.\n\nTo cancel: ${checked.steps}\nOfficial page: ${checked.url}\n\n${APP_STORE_NOTE}`, chips: [`Find ${checked.name}'s phone number`, handoffChip('sir'), ...nextChips].slice(0, 4) });
+      const isLeak = leaks.includes(target);
+      reply({ text: `${checked.name}: ${money(target.monthly || target.amount || 0)} a month.\n\nTo cancel: ${checked.steps}\n\n${APP_STORE_NOTE}`, cancel: { item: { id: target.id, merchant: target.merchant, title: target.title || target.merchant, monthly: target.monthly, amount: target.amount, badge: target.badge }, goalId: isLeak ? target.id : `sub:${target.id}` }, chips: [`Find ${checked.name}'s phone number`, handoffChip('sir'), ...nextChips].slice(0, 4) });
       return;
     }
     if (wantsCancel && target) {
@@ -524,7 +535,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
       const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'bundle', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, chips: [...hand, ...nextChips].slice(0, 4) });
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, fees: local.fees, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -711,11 +722,20 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <BustPlan leaks={leaks} onOpenEmail={(leak) => onAction('draft_email', leak)} onOpenPath={() => onAction('open_path')}
                     onHandoff={(key, leak) => { focusRef.current = leak; setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== key), key].slice(-5)); onGuide(key); }} />
                 )}
+                {message.fees?.length > 0 && (
+                  <FeeCheck fees={message.fees.map((id) => leaks.find((item) => item.id === id)).filter(Boolean)}
+                    onLetter={(leak) => { focusRef.current = leak; setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== 'sir'), 'sir'].slice(-5)); onGuide('sir'); }} />
+                )}
+                {message.cancel && (
+                  <CancelActions item={message.cancel.item} goalId={message.cancel.goalId} accent={GUIDES[message.guide]?.color}
+                    onOpenEmail={(leak) => onAction('draft_email', leak)}
+                    onLookup={(item) => reply({ text: `Looking up ${item.merchant} on their official site...`, lookup: { merchant: item.merchant, monthly: item.monthly || 0 } })} />
+                )}
                 {message.letters?.length > 0 && (
                   <LetterActions leaks={message.letters.map((id) => leaks.find((item) => item.id === id)).filter(Boolean)} onOpen={(leak) => onAction('draft_email', leak)} />
                 )}
                 {message.kit && index === lastKitIndex && (
-                  <KitPlanner compact subscriptions={analysis.subscriptions || []} initialTab={message.kit} initialTyped={message.typed || ''}
+                  <KitPlanner compact subscriptions={analysis.subscriptions || []} initialTab={message.kit} initialTyped={message.typed || ''} onOpenEmail={(leak) => onAction('draft_email', leak)}
                     onCancelHelp={(names) => reply({ text: `Cassy can find the official cancel page for ${names.join(' and ')}.`, chips: names.slice(0, 2).map((n) => `Cancel ${n}`).concat(handoffChip('cass')) })}
                     className="mt-2 w-full" />
                 )}

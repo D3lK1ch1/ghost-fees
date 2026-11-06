@@ -128,7 +128,7 @@ export default function SubscriptionsSection({ subscriptions, leaks = [], answer
       )}
 
       {/* Kit, the bundle ghost: keep one, rotate the rest, or sort AI tools (6 Nov). */}
-      <KitPlanner subscriptions={subscriptions} onDecide={(item, key) => { const sub = subscriptions.find((x) => x.id === item.id); if (sub) answer(sub, key === 'cancel' ? 'no' : 'yes'); }} className="mt-3" />
+      <KitPlanner subscriptions={subscriptions} onOpenEmail={onDraftCancel ? (leak) => { const sub = subscriptions.find((x) => `sub:${x.id}` === leak.id || x.merchant === leak.merchant); if (sub) onDraftCancel(sub); } : undefined} onDecide={(item, key) => { const sub = subscriptions.find((x) => x.id === item.id); if (sub) answer(sub, key === 'cancel' ? 'no' : 'yes'); }} className="mt-3" />
 
       {ghosts.length === 0 && <BadgesExplainer compact className="mt-3" />}
       <GhostList items={ghosts} onStatus={setStatus} onRemove={removeGhost} onAddProof={proof.addProof} overlapIds={overlapIds} priceRiseIds={priceRiseIds} />

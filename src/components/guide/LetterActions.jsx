@@ -7,6 +7,20 @@ import { downloadTask, googleCalendarUrl, outlookCalendarUrl } from '@/lib/ghost
 import { trackEvent } from '@/lib/session';
 
 const SIR = '#b18cff';
+const nameOf = (leak) => leak.title || leak.merchant;
+// Who each letter goes to, and what it asks for, so the outline is clear before you open it.
+const RECIPIENT = {
+  cancel: (leak) => `${nameOf(leak)} customer support (their help or contact page)`,
+  refund: (leak) => `${nameOf(leak)} customer support`,
+  waive: () => 'Your bank (secure message in the app, or their complaints email)',
+  check: (leak) => `${nameOf(leak)} customer support`,
+};
+const ASKS = {
+  cancel: (leak) => `Cancel now, confirm it in writing${/trial/i.test(leak.badge || '') ? ', and refund the charges since the trial ended' : ''}.`,
+  refund: (leak) => `Refund ${money(leak.amount)} of extra charges, and confirm by email.`,
+  waive: (leak) => `Refund ${money(leak.amount)} in fees within 14 days, or a fee-free account.`,
+  check: () => 'Explain the price rise, or cancel.',
+};
 const inDays = (n) => {
   const d = new Date();
   d.setDate(d.getDate() + n);
@@ -36,7 +50,16 @@ export default function LetterActions({ leaks, onOpen }) {
               <p className="font-bold text-foreground">{GOAL_KINDS[kind].label(leak.title || leak.merchant)}</p>
               <span className="shrink-0 text-[12.5px] font-semibold text-muted-foreground">{money(leak.amount)}</span>
             </div>
-            <p className="mt-0.5 text-[12px] text-muted-foreground">
+            {/* The outline: who it goes to, the subject, and what it asks for. */}
+            <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 text-[12.5px]">
+              <dt className="font-bold text-muted-foreground">To</dt>
+              <dd className="text-foreground">{RECIPIENT[kind](leak)}</dd>
+              <dt className="font-bold text-muted-foreground">Subject</dt>
+              <dd className="text-foreground">{email.subject}</dd>
+              <dt className="font-bold text-muted-foreground">Asks for</dt>
+              <dd className="text-foreground">{ASKS[kind](leak)}</dd>
+            </dl>
+            <p className="mt-1 text-[12px] text-muted-foreground">
               {[['Read', done[0]], ['Sent', done[1]], ['Worked', done[2]]].map(([label, on], i) => (
                 <span key={label} className={cn(on && 'font-bold', i && 'ml-2')} style={on ? { color: SIR } : undefined}>{on ? '✓' : '○'} {label}</span>
               ))}

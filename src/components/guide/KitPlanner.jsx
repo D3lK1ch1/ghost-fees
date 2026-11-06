@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
-import { CalendarPlus, Check, ExternalLink, Loader2, Search, X } from 'lucide-react';
+import { CalendarPlus, Check, Loader2, Search, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useAllowance } from '@/lib/AllowanceContext';
-import { cancelInfo } from '@/lib/ghostFees/cancelLinks';
+import CancelActions from '@/components/guide/CancelActions';
 import { cn } from '@/lib/utils';
 import { money } from '@/lib/ghostFees/format';
 import { trackEvent } from '@/lib/session';
@@ -34,32 +34,29 @@ function Row({ keep, name, price, note, item }) {
 
 // "Make it happen": each one to cancel gets its checked cancel link and steps (never a
 // guessed link), Cassy for the rest, and a button that marks it Cancelling in the list.
-function CancelSteps({ items, onDecide, onCancelHelp, done, setDone }) {
+function CancelSteps({ items, onDecide, onCancelHelp, onOpenEmail, done, setDone }) {
   if (!items.length) return null;
   return (
     <ul className="mt-2 space-y-2">
       {items.map((item) => {
-        const info = cancelInfo(item.merchant || item.name);
         const marked = done.includes(item.name);
         return (
-          <li key={item.name} className="rounded-xl border border-border bg-background/50 p-2.5 text-[13.5px]">
+          <li key={item.name} className="text-[13.5px]">
             <p className="font-bold text-foreground">Cancel {item.name} <span className="font-semibold text-muted-foreground">({priceText(item)}{item.monthly ? ' a month' : ''})</span></p>
             {isSampleService(item.name)
-              ? <p className="mt-0.5 text-muted-foreground">Streammax is a made-up service in the sample, so there's nothing to cancel.</p>
-              : info.url
-                ? <p className="mt-0.5 text-muted-foreground">{info.steps} <a href={info.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-0.5 font-bold text-foreground underline-offset-4 hover:underline">Official cancel page <ExternalLink className="h-3 w-3" /></a></p>
-                : <p className="mt-0.5 text-muted-foreground">No checked cancel link yet. {onCancelHelp ? 'Cassy can look it up.' : 'Search their official site for "cancel subscription".'}</p>}
-            <div className="mt-1.5 flex flex-wrap gap-1.5">
-              {onDecide && item.id != null && !isSampleService(item.name) && (
-                <button type="button" disabled={marked} onClick={() => { onDecide(item, 'cancel'); setDone((d) => [...d, item.name]); }}
-                  className="rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground disabled:opacity-60">
-                  {marked ? '✓ On my Cancelling list' : 'Add to my Cancelling list'}
-                </button>
+              ? <p className="mt-0.5 text-muted-foreground">Streammax is a made-up service in the sample, so there&apos;s nothing to cancel.</p>
+              : (
+                <>
+                  <CancelActions item={{ id: item.id ?? item.name, merchant: item.merchant || item.name, title: item.name, monthly: item.monthly }} goalId={item.id != null ? `sub:${item.id}` : `kit:${item.name}`}
+                    onOpenEmail={onOpenEmail} onLookup={onCancelHelp ? () => onCancelHelp([item.name]) : undefined} accent={KIT} compact />
+                  {onDecide && item.id != null && (
+                    <button type="button" disabled={marked} onClick={() => { onDecide(item, 'cancel'); setDone((d) => [...d, item.name]); }}
+                      className="mt-1.5 rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground disabled:opacity-60">
+                      {marked ? '✓ On my Cancelling list' : 'Add to my Cancelling list'}
+                    </button>
+                  )}
+                </>
               )}
-              {onCancelHelp && !info.url && !isSampleService(item.name) && (
-                <button type="button" onClick={() => onCancelHelp([item.name])} className="rounded-full border border-border px-2.5 py-1 text-[12.5px] font-bold text-foreground">Ask Cassy to find it</button>
-              )}
-            </div>
           </li>
         );
       })}
@@ -69,7 +66,7 @@ function CancelSteps({ items, onDecide, onCancelHelp, done, setDone }) {
 
 // Kit's research: what you like, where it streams (web search, sources shown), then a
 // cost-benefit table and a keep / rotate verdict worked out by rules from it.
-function KitResearch({ group, onDecide, onCancelHelp, compact = false }) {
+function KitResearch({ group, onDecide, onCancelHelp, onOpenEmail, compact = false }) {
   const { openPaywall } = useAllowance();
   const [genres, setGenres] = useState([]);
   const [showsText, setShowsText] = useState('');
@@ -194,7 +191,7 @@ function KitResearch({ group, onDecide, onCancelHelp, compact = false }) {
             </>
           )}
           {verdict.mode === 'none' && <p className="mt-1 text-[14px] text-muted-foreground">None of your services has what you listed. Pick your favourite below instead.</p>}
-          {verdict.cancel.length > 0 && <CancelSteps items={verdict.cancel} onDecide={onDecide} onCancelHelp={onCancelHelp} done={done} setDone={setDone} />}
+          {verdict.cancel.length > 0 && <CancelSteps items={verdict.cancel} onDecide={onDecide} onCancelHelp={onCancelHelp} onOpenEmail={onOpenEmail} done={done} setDone={setDone} />}
         </div>
       )}
     </div>
@@ -203,7 +200,7 @@ function KitResearch({ group, onDecide, onCancelHelp, compact = false }) {
 
 // Kit's planner: pick a group of double-ups, then keep one or rotate (streaming, food,
 // gaming), or tick what you use AI for and a budget (AI tools). Rules only, no AI.
-export default function KitPlanner({ subscriptions = [], compact = false, initialTab, initialTyped = '', onCancelHelp, onDecide, className = '' }) {
+export default function KitPlanner({ subscriptions = [], compact = false, initialTab, initialTyped = '', onCancelHelp, onDecide, onOpenEmail, className = '' }) {
   // Anything typed ("Netflix $19, ChatGPT $30") joins the statement's subscriptions, so
   // Kit can sort every Ghost It pack, not only what the statement shows.
   const [typed, setTyped] = useState(initialTyped);
@@ -302,7 +299,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
               {group.tips.map((tip) => <li key={tip}>💡 {tip}</li>)}
             </ul>
           )}
-          {group.key === 'video' && <KitResearch key={group.key} group={group} onDecide={onDecide} onCancelHelp={onCancelHelp} compact={compact} />}
+          {group.key === 'video' && <KitResearch key={group.key} group={group} onDecide={onDecide} onCancelHelp={onCancelHelp} onOpenEmail={onOpenEmail} compact={compact} />}
           <p className={cn('text-[14px] font-bold text-foreground', group.key === 'video' && 'mt-3')}>{group.key === 'video' ? 'Or just pick the one you watch most:' : group.ask}</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {group.items.map((item) => <Pill key={item.name} on={fav[tab] === item.name} onClick={() => pickFav(item.name)}>{item.name}</Pill>)}
@@ -348,7 +345,7 @@ export default function KitPlanner({ subscriptions = [], compact = false, initia
                   <p className="mt-1 text-[12.5px] text-muted-foreground">A reminder 2 days before each switch, so you cancel before it renews.</p>
                 </div>
               )}
-              {mode === 'keep' && <CancelSteps items={keep.cancel} onDecide={onDecide} onCancelHelp={onCancelHelp} done={done} setDone={setDone} />}
+              {mode === 'keep' && <CancelSteps items={keep.cancel} onDecide={onDecide} onCancelHelp={onCancelHelp} onOpenEmail={onOpenEmail} done={done} setDone={setDone} />}
             </>
           )}
         </div>

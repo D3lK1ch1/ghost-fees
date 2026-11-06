@@ -236,7 +236,12 @@ export function rotationIcs(plan, today = new Date()) {
     const prev = plan.months[i - 1]?.item;
     const end = new Date(date); end.setDate(end.getDate() + 1);
     const title = prev ? `Kit: switch from ${prev.name} to ${item.name}` : `Kit: ${item.name} month starts`;
-    const details = prev ? `Cancel ${prev.name} today, then start ${item.name}. One at a time.` : `Keep ${item.name} this month. Cancel the others before they renew.`;
+    // Each switch day carries the checked cancel page for the one you're leaving.
+    const prevLink = prev ? cancelInfo(prev.merchant || prev.name) : null;
+    const others = plan.months.filter((_, k) => k !== i).map((m) => m.item).filter((x) => cancelInfo(x.merchant || x.name).url);
+    const details = prev
+      ? `Cancel ${prev.name} today${prevLink?.url ? ` (${prevLink.url})` : ''}, then start ${item.name}. One at a time.`
+      : `Keep ${item.name} this month. Cancel the others before they renew${others.length ? `: ${others.map((x) => `${x.name} ${cancelInfo(x.merchant || x.name).url}`).join(' ')}` : '.'}`;
     return [
       'BEGIN:VEVENT', `UID:kit-${ymd(date)}-${i}@ghostfees`, `DTSTAMP:${stamp}`,
       `DTSTART;VALUE=DATE:${ymd(date)}`, `DTEND;VALUE=DATE:${ymd(end)}`,
