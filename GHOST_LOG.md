@@ -1073,3 +1073,9 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/BustPlan.jsx (new), src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js, src/components/guide/GhostGuide.jsx
 - How to test: Sample > Ask a ghost > Gus. Busted it on Streammax gives 1 of 5 and $113.94 sorted. Monthly Account Fee > "Spooksworth: waiver email →" opens Spooksworth with "Team on this: Gus → Spooksworth".
 - User feedback that drove this: "Gus doesn't help much except navigate goal path, he should explain how to bust and refer other ghosts", "there's a bit overlap in agents, can we help them differentiate more".
+
+### Mo explains with a little animated card instead of a block of text
+- What: Mo's explanation is now a card that builds up one step at a time: the pattern name with an evidence badge (Strong / Good evidence), its one-line quote, "In your statement: $113.94 across 6 charges", then 🎯 What happens → 🧠 Why your brain does it → 💡 How to beat it → 📚 The research (the full paper reference and a Read the paper link to its DOI). It ends with "It's a common pattern, not a flaw. Most people do this." Then "Sound like you?" sits on its own line above Yes / Not sure / Not me. Every fact comes from the app's checked pattern data (citations verified with Crossref), nothing new or invented. With reduced motion, the steps simply appear. His answers about a pattern ("Why do my trials turn into charges?", "Which pattern costs me most?", a named pattern) use the same card.
+- Files: src/components/guide/MoExplainer.jsx (new), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost > Mo. The Present Bias card animates in 4 steps, and Read the paper opens doi.org/10.1257/aer.89.1.103.
+- User feedback that drove this: "spread out the text on Mo, could he integrate some animated little explanations... integrate some facts to make people care about the psychology".

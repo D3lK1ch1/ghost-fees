@@ -13,6 +13,7 @@ import CassLookup from '@/components/results/CassLookup';
 import KitPlanner from '@/components/guide/KitPlanner';
 import LetterActions from '@/components/guide/LetterActions';
 import BustPlan from '@/components/guide/BustPlan';
+import MoExplainer from '@/components/guide/MoExplainer';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -66,17 +67,17 @@ function moAnswer(text, analysis) {
   if (/trial/.test(text)) {
     const trial = groups.find((g) => g.key === 'present_bias');
     if (!trial) return { reply: "None of your ghosts are trials that turned paid, so Present Bias isn't one of yours this time." };
-    return { reply: `That's a common pattern called Present Bias (${shortCite(trial.cite)}). ${trial.what} ${trial.why} It cost you ${money(trial.total)} across ${periodOf(trial)}. The habit: ${trial.beat}`, action: 'open_pattern', biasKey: trial.key };
+    return { reply: `Your trials that turned into charges follow a common pattern called Present Bias. It cost you ${money(trial.total)} across ${periodOf(trial)}.`, explain: trial.key, action: 'open_pattern', biasKey: trial.key };
   }
   if (/habit|beat|stop|fix|do about/.test(text)) {
     const g = named || top;
     return { reply: `For ${g.bias}, one small habit: ${g.beat} Hattie can put it in your calendar and check in a week later.`, action: 'open_habit', biasKey: g.key };
   }
   if (named) {
-    return { reply: `${named.bias}: ${named.what} ${named.why} In your statement it's ${money(named.total)} across ${periodOf(named)}. Research: ${named.cite}.`, action: 'open_pattern', biasKey: named.key };
+    return { reply: `Here's ${named.bias}, step by step:`, explain: named.key, action: 'open_pattern', biasKey: named.key };
   }
   if (/most|biggest|largest|worst|top|costs?/.test(text) && !/ghost|fee|charge|subscription/.test(text)) {
-    return { reply: `${top.bias} is the biggest common pattern behind your ghosts: ${money(top.total)} across ${periodOf(top)}. ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
+    return { reply: `${top.bias} is the biggest common pattern behind your ghosts: ${money(top.total)} across ${periodOf(top)}.`, explain: top.key, action: 'open_pattern', biasKey: top.key };
   }
   if (/why|pattern|bias|brain|psycholog/.test(text)) {
     return { reply: `Your ghosts follow ${groups.length} common ${groups.length === 1 ? 'pattern' : 'patterns'}. The biggest is ${top.bias}: ${top.line} (${shortCite(top.cite)})`, action: 'open_pattern', biasKey: top.key };
@@ -486,7 +487,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
       const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'bundle', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, chips: [...hand, ...nextChips].slice(0, 4) });
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -661,6 +662,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                     Unlock all ghosts
                   </button>
                 )}
+                {message.explain && (
+                  <MoExplainer biasKey={message.explain} group={biasGroups(leaks).find((g) => g.key === message.explain)} />
+                )}
+                {message.after && <p className="mt-2 rounded-2xl bg-background px-3.5 py-2 text-[14.5px] font-semibold text-foreground">{message.after}</p>}
                 {message.bust && index === messages.map((m) => Boolean(m.bust)).lastIndexOf(true) && (
                   <BustPlan leaks={leaks} onOpenEmail={(leak) => onAction('draft_email', leak)} onOpenPath={() => onAction('open_path')}
                     onHandoff={(key, leak) => { focusRef.current = leak; setTeam((t) => [...(t.length ? t : [guideKey]).filter((k) => k !== key), key].slice(-5)); onGuide(key); }} />

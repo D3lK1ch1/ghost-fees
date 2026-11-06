@@ -128,7 +128,9 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     if (!withPattern) return { text: `${g.hello}\n\nNone of these ghosts match a common money pattern I know. Penny can walk you through the fees.`, chips: [handoffChip('penny')] };
     const info = biasFor(withPattern);
     return {
-      text: `${g.hello}\n\n${nameOf(withPattern)}: ${withPattern.reason.charAt(0).toLowerCase()}${withPattern.reason.slice(1)} That's a common pattern called ${info.bias}: ${info.line.charAt(0).toLowerCase()}${info.line.slice(1)} (${shortCite(info.cite)})\n\nSound like you?`,
+      text: `${g.hello}\n\n${nameOf(withPattern)}: ${withPattern.reason.charAt(0).toLowerCase()}${withPattern.reason.slice(1)}\n\nThat's a common pattern called ${info.bias}. Here's how it works:`,
+      explain: info.key,
+      after: 'Sound like you?',
       action: 'open_pattern', biasKey: info.key,
       chips: [CHIP.yes, CHIP.unsure, CHIP.no],
     };
