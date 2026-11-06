@@ -1129,3 +1129,12 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/GhostGuide.jsx, src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js
 - How to test: Sample > Ask a ghost > 👻 Team up on Streammax. Next four times goes Mo → Cassy → Spooksworth → Hattie → Gus with ✓ ticks, ending in "Team done".
 - User feedback that drove this: "I do not see how the agents interact in a team, where's the create agent team. Maybe we can clean up some of the buttons and preset options".
+
+### Connect your own AI: free answers stay limited, your own Claude or OpenAI key is unlimited
+- What: A 🔑 button in the chat header (and a "Connect your own AI" button when free answers run out) opens a small panel. Pick Claude (Anthropic) or ChatGPT (OpenAI), paste your API key, and choose the model (Claude defaults to claude-opus-5-5; for OpenAI you type the model your account uses). Optionally tick "Remember on this device".
+  - The key stays in this browser only: session storage by default, or this device if ticked. Ghost answers then go straight from the browser to Anthropic (official @anthropic-ai/sdk, browser mode) or OpenAI. Ghost Fees and Base44 never see or store the key, and no Base44 credits are used. The chat skips the free limits while a key is set.
+  - Same rules as the Base44 guide: each ghost's one job, facts from the results summary only (never the statement), no financial advice, handoffs to the right ghost. "Remove my key" clears it.
+  - Notes in the panel: a ChatGPT Plus or Claude Pro subscription doesn't include an API key, and Get a key links to each provider's key page.
+- Files: src/lib/ghostFees/ownAI.js (new), src/components/guide/OwnAIPanel.jsx (new), src/components/guide/GhostGuide.jsx, package.json (@anthropic-ai/sdk)
+- How to test: Ask a ghost > 🔑 > Claude > paste a key > Use my AI. Typed questions are answered by your Claude. Tested locally with a fake key and a faked Anthropic reply: the request went to api.anthropic.com with the browser-access header, the summary was in the system prompt, the reply rendered with its Ask Spooksworth → handoff, and the key was kept in session storage only.
+- User feedback that drove this: "is there an option we can limit their calls then have an add your own agent connector... where they can attach their Claude or ChatGPT", "isn't it good competition show, limits and it has some free then connect your own".
