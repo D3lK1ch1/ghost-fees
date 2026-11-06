@@ -1223,3 +1223,8 @@ One entry per change. Newest at the bottom.
 - What: the Demo video is now ghost-fees-demo-v7.mp4 (7:32, 1080p), on the Media page and the "Watch the full demo" button (its time label updates itself to 7:32). The old 2:05 walkthrough file stays in public/videos, unused, until Sanjay says to delete it.
 - Why: Sanjay made a new demo video and asked to put it in.
 - Files: public/videos/ghost-fees-demo-v7.mp4, src/data/videos.js
+
+## Fri 6 Nov 2026: pattern art from GoldMind's bias lessons
+- What: the money patterns popup now uses Sanjay's own drawings from the GoldMind app (~/GoldMind/Bias Lessons): Denomination Effect (paying with coins at a counter), Ostrich Effect (avoiding the banking app on the couch), Mental Accounting (the dog and the money jars). Shown bigger on a light tile with a gentle bob. Present Bias, Status Quo Bias and Pain of Paying have no GoldMind lesson yet, so they keep the animated emoji; all tiles are the same size.
+- Images resized to 360px PNGs with transparent backgrounds (the Mental Accounting scene had a fake checkered background baked in, so the jars nudge image is used).
+- Files: public/patterns/*.png, src/components/patterns/PatternsPopup.jsx

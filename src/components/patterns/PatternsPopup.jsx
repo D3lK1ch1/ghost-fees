@@ -3,8 +3,8 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { biasGroups } from '@/lib/ghostFees/leaks';
 import { money } from '@/lib/ghostFees/format';
 
-// One animated icon per pattern. A drawn icon can replace the emoji later: drop a PNG at
-// public/patterns/<key>.png and it's used automatically (the emoji stays as the fallback).
+// One animated icon per pattern. Drawn art lives at public/patterns/<key>.png (from the
+// GoldMind app's bias lessons); patterns without a PNG show the animated emoji.
 export const PATTERN_ICONS = {
   present_bias: { emoji: '⏳', anim: 'px-tilt', tint: '#c4b5fd' },
   denomination: { emoji: '🪙', anim: 'px-spin', tint: '#fcd34d' },
@@ -14,16 +14,20 @@ export const PATTERN_ICONS = {
   pain_of_paying: { emoji: '💳', anim: 'px-pulse', tint: '#fdba74' },
 };
 
+const HAS_ART = new Set(['denomination', 'ostrich', 'mental_accounting']);
+
 function PatternIcon({ patternKey }) {
   const icon = PATTERN_ICONS[patternKey] || { emoji: '🧠', anim: 'px-bob', tint: '#c4f06c' };
-  const [img, setImg] = useState(true);
-  return (
-    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ background: `${icon.tint}26` }} aria-hidden="true">
-      {img ? (
-        <img src={`/patterns/${patternKey}.png`} alt="" className={`h-10 w-10 object-contain ${icon.anim}`} onError={() => setImg(false)} />
-      ) : (
-        <span className={`inline-block text-[26px] ${icon.anim}`}>{icon.emoji}</span>
-      )}
+  const [img, setImg] = useState(HAS_ART.has(patternKey));
+  // Drawn art (from the GoldMind bias lessons) sits bigger on a light tile with a gentle
+  // bob; the emoji fallback keeps its own little animation.
+  return img ? (
+    <span className="flex h-[72px] w-[72px] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#f6f1e7] p-1" aria-hidden="true">
+      <img src={`/patterns/${patternKey}.png`} alt="" className="px-bob h-full w-full object-contain" onError={() => setImg(false)} />
+    </span>
+  ) : (
+    <span className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-2xl" style={{ background: `${icon.tint}26` }} aria-hidden="true">
+      <span className={`inline-block text-[34px] ${icon.anim}`}>{icon.emoji}</span>
     </span>
   );
 }
