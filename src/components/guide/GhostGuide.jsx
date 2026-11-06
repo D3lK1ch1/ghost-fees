@@ -3,7 +3,7 @@ import { Maximize2, Minimize2, Send, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { GUIDES, GUIDE_GROUPS } from '@/lib/ghostFees/guides';
-import { biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
+import { biasFor, biasGroups, PATTERN_BY_KEY } from '@/lib/ghostFees/leaks';
 import { usePatterns } from '@/components/patterns/PatternContext';
 import { readHabit } from '@/lib/ghostFees/habitPlan';
 import { readExPick } from '@/lib/ghostFees/habitArt';
@@ -14,6 +14,7 @@ import KitPlanner from '@/components/guide/KitPlanner';
 import LetterActions from '@/components/guide/LetterActions';
 import BustPlan from '@/components/guide/BustPlan';
 import MoExplainer from '@/components/guide/MoExplainer';
+import HabitCoach from '@/components/guide/HabitCoach';
 import { APP_STORE_NOTE, cancelInfo } from '@/lib/ghostFees/cancelLinks';
 import { aiToolFor, bundleGroups, consolidationPlan, consolidationText, mergeSubs, organiseText, parseTyped } from '@/lib/ghostFees/bundles';
 import { base44 } from '@/api/base44Client';
@@ -110,7 +111,29 @@ function hattieAnswer(text, analysis) {
 // Shared safety answers come first, then the chosen ghost's own speciality.
 // Common fast-typing slips, so "how cna you help me optuik mise" still routes right.
 const TYPOS = [[/\bcna\b/g, 'can'], [/\bteh\b/g, 'the'], [/\byuo\b/g, 'you'], [/\bstuyd\b/g, 'study'], [/opt\w*\s?mi[sz]e?/g, 'optimise'], [/\bsub\w*(scr|crip|ript)\w*/g, 'subscriptions'], [/\bsubs\b/g, 'subscriptions'], [/reaser\w*|reserach\w*|reseach\w*/g, 'research']];
-const tidy = (q) => TYPOS.reduce((t, [re, fix]) => t.replace(re, fix), q.toLowerCase());
+// Fuzzy fix, like most chat models: a word one letter off (two for long words) from a
+// word the ghosts know is read as that word ("cancle" -> cancel, "stratgies" -> strategies).
+const VOCAB = ['subscriptions', 'subscription', 'optimise', 'optimize', 'cancel', 'cancelled', 'email', 'emails', 'letter', 'letters', 'refund', 'waive', 'habit', 'habits', 'pattern', 'patterns', 'research', 'streaming', 'rotate', 'rotation', 'consolidate', 'organise', 'organize', 'collate', 'reminder', 'reminders', 'remind', 'calendar', 'progress', 'goals', 'strategies', 'strategy', 'improve', 'spending', 'compare', 'double', 'doubles', 'bust', 'score', 'budget', 'renewal', 'renewals', 'trial', 'trials', 'charges', 'charge', 'fees', 'total', 'price', 'creep', 'netflix', 'spotify', 'youtube', 'disney', 'stan', 'adobe', 'chatgpt', 'claude', 'privacy', 'stored', 'help', 'what', 'which', 'should', 'could', 'would', 'how', 'why', 'happen', 'happened', 'money', 'save', 'saving', 'explain', 'write', 'draft', 'phone', 'number', 'first', 'biggest', 'most', 'costs', 'track', 'tracker', 'start', 'smaller', 'forgetting', 'teammate', 'everything', 'study', 'review', 'manage', 'tidy'];
+const VOCAB_SET = new Set([...VOCAB, 'store', 'stores', 'share', 'shared', 'stare', 'scare', 'trail', 'treat', 'other', 'there', 'where', 'these', 'those', 'their', 'month', 'weeks', 'alone', 'start', 'stack', 'chart', 'charm', 'hello', 'thank', 'thanks', 'great', 'stuff', 'state', 'statement']);
+function close(a, b, max) {
+  if (Math.abs(a.length - b.length) > max) return false;
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j += 1) d[0][j] = j;
+  for (let i = 1; i <= a.length; i += 1) {
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+    }
+  }
+  return d[a.length][b.length] <= max;
+}
+const fixWord = (w) => {
+  if (w.length < 5 || VOCAB_SET.has(w) || /\d/.test(w)) return w;
+  const max = w.length >= 8 ? 2 : 1;
+  return VOCAB.find((v) => v[0] === w[0] && close(w, v, max)) || VOCAB.find((v) => close(w, v, max)) || w;
+};
+const tidy = (q) => TYPOS.reduce((t, [re, fix]) => t.replace(re, fix), q.toLowerCase()).replace(/[a-z]+/g, fixWord);
 
 function answer(question, analysis, guideKey) {
   const text = tidy(question);
@@ -149,6 +172,9 @@ function answer(question, analysis, guideKey) {
   if (/can (you|kit|penny|mo|hattie|gus|cassy) help|could you help|are you able to|do you do/.test(text) && owner && owner !== guideKey) {
     const o = GUIDES[owner];
     return { reply: `Not me, but ${o.name} can. ${o.does}`, owner };
+  }
+  if (guideKey === 'habit' && /improv|strateg|spending|track|better|stop doing|patterns?|bias|cost/.test(text) && !/collat|organi[sz]|cancel|email/.test(text)) {
+    return { reply: 'Here\'s your plan, building on what Mo found: the pattern costing you most, strategies for it, one habit, and your tracker.', coach: true };
   }
   if (about.test(text) && GUIDES[guideKey]?.how && !/collat|organi[sz]|\blist\b|consolidat|cancel (my|the|it)|email|letter/.test(text.replace(/^(yes|so)\b/, ''))) {
     const g = GUIDES[guideKey];
@@ -221,7 +247,10 @@ function answer(question, analysis, guideKey) {
   if (guideKey === 'gus' && /bust|goals?|first|start|what (should|do) i|plan|how|next|score|progress|help/.test(text) && !/email|letter|write|draft/.test(text)) {
     return { reply: 'Here\'s your bust plan. Each ghost has the button that busts it and the teammate who helps. Hit Busted it when it\'s done and your score goes up.', bust: true };
   }
-  if (/goals?|steps?|first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text) && !/email|letter|write|draft|cancel/.test(text)) {
+  if (guideKey === 'habit' && /improv|strateg|spend|plan|help|habit|track|better|stop|how|tips?|pattern|bias|cost/.test(text)) {
+    return { reply: 'Here\'s your plan, building on what Mo found: the pattern costing you most, strategies for it, one habit, and your tracker.', coach: true };
+  }
+  if (/goals?|steps?|first|start|what (should|do) i|plan|improve|tips?|help me|next/.test(text) && !/email|letter|write|draft|cancel/.test(text) && guideKey !== 'habit' && guideKey !== 'mind') {
     const verb = { cancel: 'Cancel', refund: 'Get a refund for', waive: 'Ask the bank to waive' };
     const goals = leaks.slice(0, 4).map((item, i) => `${i + 1}. ${verb[item.action] || 'Check'} ${nameOf(item)} (${money(item.amount)})`);
     const more = leaks.length > 4 ? ` Plus ${leaks.length - 4} more.` : '';
@@ -473,13 +502,14 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const word = String(item.merchant || '').split(/\s+/)[0];
       return word.length > 2 && text.toUpperCase().includes(word.toUpperCase());
     });
-    const wantsCancel = guideKey === 'cass' || /\bcancel|phone number|contact\b/i.test(text);
+    const clean = tidy(text);
+    const wantsCancel = guideKey === 'cass' || /\bcancel|phone number|contact\b/i.test(clean);
     // "My biggest one": the biggest subscription with a checked cancel page, so Cassy can
     // answer straight away (made-up sample names like Fitlife Gym can't be confirmed).
     const biggestKnown = subs.find((item) => cancelInfo(item.merchant).url) || subs[0];
-    const target = named || (guideKey === 'cass' && /biggest|phone|cancel email|cancel/i.test(text) ? biggestKnown : null);
+    const target = named || (guideKey === 'cass' && /biggest|phone|cancel email|cancel/i.test(clean) ? biggestKnown : null);
     const checked = target && cancelInfo(target.merchant);
-    if (wantsCancel && target && checked?.url && !/phone|number|call/i.test(text)) {
+    if (wantsCancel && target && checked?.url && !/phone|number|call/i.test(clean)) {
       reply({ text: `${checked.name}: ${money(target.monthly || 0)} a month.\n\nTo cancel: ${checked.steps}\nOfficial page: ${checked.url}\n\n${APP_STORE_NOTE}`, chips: [`Find ${checked.name}'s phone number`, handoffChip('sir'), ...nextChips].slice(0, 4) });
       return;
     }
@@ -494,7 +524,7 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
       const pennyish = /total|work(ed)? out|calculat|cost(s)? the most|creep|price/.test(text.toLowerCase()) ? 'penny' : null;
       const owner = local.owner || { draft_email: 'sir', open_emails: 'sir', open_path: 'gus', open_house: 'gus', open_calendar: 'bundle', open_pattern: 'mind', open_habit: 'habit' }[local.action] || pennyish;
       const hand = owner && owner !== guideKey ? [handoffChip(owner)] : [];
-      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, chips: [...hand, ...nextChips].slice(0, 4) });
+      reply({ text: local.reply, action: local.action, leak: local.leak, biasKey: local.biasKey, kit: local.kit, typed: local.typed, bust: local.bust, explain: local.explain, coach: local.coach, chips: [...hand, ...nextChips].slice(0, 4) });
       return;
     }
     if (aiCount >= MAX_AI_MESSAGES) {
@@ -668,6 +698,10 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                   <button type="button" onClick={() => openPaywall(message.unlock)} className="mt-2 rounded-full bg-primary px-3 py-1.5 text-[13.5px] font-bold text-primary-foreground">
                     Unlock all ghosts
                   </button>
+                )}
+                {message.coach && index === messages.map((m) => Boolean(m.coach)).lastIndexOf(true) && (
+                  <HabitCoach leaks={leaks} hank={hank} prefer={Object.keys(patterns?.answers || {}).find((k) => patterns.answers[k] === 'yes') || null} onOpenHabit={(key) => run({ action: 'open_habit', biasKey: key })}
+                    onAskMo={(key) => { focusRef.current = leaks.find((l) => biasFor(l)?.key === key) || null; setTeam((t) => [...(t.length ? t : ['habit']).filter((k) => k !== 'mind'), 'mind'].slice(-5)); onGuide('mind'); }} />
                 )}
                 {message.explain && (
                   <MoExplainer biasKey={message.explain} group={biasGroups(leaks).find((g) => g.key === message.explain)} />

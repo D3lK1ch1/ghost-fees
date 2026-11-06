@@ -136,14 +136,14 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     };
   }
   if (guideKey === 'habit') {
-    const pattern = habitPattern(analysis, answers, plan);
+    // Hattie builds on Mo: what each pattern costs, strategies for it, one habit, tracked.
     const hello = hank ? g.hello.replace("I'm Hattie", "I'm Hank") : g.hello;
-    if (!pattern) return { text: `${hello}\n\nNo money patterns in this statement, so no habit needed.`, chips: [] };
-    const habit = plan && plan.patternKey === pattern.key ? plan.habitText : pattern.beat;
+    const top = biasGroups(leaks)[0];
+    if (!top) return { text: `${hello}\n\nNo money patterns in this statement, so no habit needed.`, chips: [] };
     return {
-      text: `${hello}\n\nFor ${pattern.bias}, one small habit:\n"${habit}"\n\nWhen do you want to start?`,
-      action: 'open_habit', biasKey: pattern.key,
-      chips: START_CHIPS,
+      text: `${hello}\n\nMo found why your ghosts happen. I'll help you do something about it. Your costliest pattern is ${top.bias} (${money(top.total)}). Here's the plan:`,
+      coach: true,
+      chips: [],
     };
   }
   return { text: g.hello, chips: g.chips };

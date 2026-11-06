@@ -1084,3 +1084,11 @@ One entry per change. Newest at the bottom.
 - Files: src/components/guide/GhostGuide.jsx
 - How to test: Penny > type the exact message above. You get "That's Kit's job..." with Ask Kit →.
 - User feedback that drove this: screenshot of Penny's goals answer to "how can you help me optimise my subscription can you study all of them".
+
+### Hattie builds on Mo, and every ghost reads reasonable typos
+- What:
+  - Hattie: her opener and her answers to "improve my spending", "strategies", "track" and "patterns" show a coaching card that picks up where Mo left off. (1) Building on Mo: every pattern ranked by what it costs you, with bars, starting with the one you told Mo "sounds like me" (or the costliest), plus Ask Mo why →. (2) Three practical strategies for that pattern. (3) Your one habit. (4) Track it: start date, weeks kept as a 4-week bar, check-in due, and Set my start day / Open my habit plan, with the verified notes (Dai, Milkman & Riis, 2014; Lally et al., 2010). Before, she could answer with Gus's goals list.
+  - Typos: like most chat models, a word one letter off (two for long words), including swapped letters, is read as the word the ghosts know ("cancle", "emial", "patern", "stratgies", "optmise", "subscritpions", "renwals"). Common words are protected ("store" stays "store"). Cassy's cancel check uses it too.
+- Files: src/components/guide/HabitCoach.jsx (new), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx
+- How to test: Mo > Yes, sounds like me > Hattie's card starts on Present Bias. Hattie: "how can you help me improve my spending". Cassy: "how do i cancle netflix" gives Netflix's cancel page. Spooksworth: "write my emial". Penny: "can you optmise my subscritpions" gives Ask Kit →.
+- User feedback that drove this: "Hattie not responding properly... she should build on Mo... explain what bias is costing the most money and then help come up with strategies and ways to habit track", "the agents should be able to read typos that are reasonable like one letter messed up".
