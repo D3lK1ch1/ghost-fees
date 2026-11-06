@@ -6,8 +6,6 @@ import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { BADGE_TONES } from '@/lib/ghostFees/leaks';
 import { GUIDES, GUIDE_GROUPS, GUIDE_KEYS } from '@/lib/ghostFees/guides';
 
-// Small coloured ghosts for every guide, the same as the chat picker.
-const guideArt = () => null;
 import { hourlyFromMonthly, hoursOfWork } from '@/lib/ghostFees/hours';
 import GhostMark from '@/components/site/GhostMark';
 import HouseGhost from './HouseGhost';
@@ -421,9 +419,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   >
                     <GhostTip label={`${item.name} · ${item.job}`} detail={item.does}>
                       <span className="block animate-float" style={{ color: item.color, animationDelay: `${index * 0.5}s` }}>
-                        {guideArt(key)
-                          ? <img src={guideArt(key)} alt="" width={44} height={44} className={cn('h-11 w-11 object-contain', chosen && 'drop-shadow-[0_0_12px_currentColor]')} />
-                          : <GhostMark className={cn('h-11 w-11', chosen && 'drop-shadow-[0_0_12px_currentColor]')} eyeColor="#1a1230" />}
+                        <GhostMark className={cn('h-11 w-11', chosen && 'drop-shadow-[0_0_12px_currentColor]')} eyeColor="#1a1230" />
                       </span>
                     </GhostTip>
                     <span
@@ -560,9 +556,7 @@ export default function HauntedHouse({ leaks, onDraft, monthlyIncome, guideKey =
                   )}
                 >
                   <span className="block" style={{ color: GUIDES[key].color }}>
-                    {guideArt(key)
-                      ? <img src={guideArt(key)} alt="" width={28} height={28} className="h-7 w-7 object-contain" />
-                      : <GhostMark className="h-7 w-7" eyeColor="#1a1230" />}
+                    <GhostMark className="h-7 w-7" eyeColor="#1a1230" />
                   </span>
                 </button>
               ))}

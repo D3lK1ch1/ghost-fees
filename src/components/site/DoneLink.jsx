@@ -25,7 +25,7 @@ export default function DoneLink() {
     if (known) proof.ask({ id, merchant: known.merchant, monthly: known.monthly });
     else setMissing(true);
     // Read once, on arrival.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []);
 
   return (

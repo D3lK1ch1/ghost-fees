@@ -104,7 +104,7 @@ export default function FeedbackAdmin() {
                           {row.found_real || 'no answer'}
                         </span>
                         <span className="rounded-full bg-white/[0.06] px-2 py-0.5">
-                          would pay: {row.would_pay || '—'}
+                          would pay: {row.would_pay || '-'}
                         </span>
                         <span>{row.leaks_found || 0} leaks · {money(row.yearly_total)} found</span>
                         {row.builder_name && <span>builder: {row.builder_name}</span>}

@@ -55,7 +55,7 @@ export default function CassLookup({ merchant, monthly, auto = false, plain = fa
   };
   useEffect(() => {
     if (auto && state === 'idle') look();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [auto, merchant]);
 
   if (state === 'locked') {

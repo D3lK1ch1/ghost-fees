@@ -23,7 +23,7 @@ const SPARKS = [
 // Ex1Landing): logo, the chosen ghost with a thought cloud, Choose your ghost, then a
 // left-aligned two-tone headline and two full-width buttons. The pick only changes
 // the art and words, never the scan.
-export default function ExHero({ theme, onSample, onUpload }) {
+export default function ExHero({ onSample, onUpload }) {
   const { charging } = useAllowance();
   const [pickKey, setPickKey] = useSavedChoice(EX_GHOST_KEY, EX_GHOSTS, 'heartbroken');
   const pick = EX_PICKS[pickKey];

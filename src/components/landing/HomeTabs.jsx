@@ -9,7 +9,7 @@ export default function HomeTabs({ tabs }) {
   const [active, setActive] = useState(tabs.some((tab) => tab.key === fromHash) ? fromHash : tabs[0]?.key);
   useEffect(() => {
     if (tabs.some((tab) => tab.key === fromHash)) document.querySelector('[data-tour="hometabs"]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);  
   // Other parts of the page can open a tab (e.g. "Check typical prices").
   useEffect(() => {
     const open = (event) => {

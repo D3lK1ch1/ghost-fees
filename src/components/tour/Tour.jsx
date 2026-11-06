@@ -31,7 +31,7 @@ export default function Tour({ name, steps, ready = true, auto = false, onFinish
   useEffect(() => {
     if (!starting) return;
     setLive(steps.filter((item) => document.querySelector(`[data-tour="${item.target}"]`)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [starting]);
   const active = ready && step >= 0 && step < live.length;
   const [spot, setSpot] = useState(null); // the target's place on screen

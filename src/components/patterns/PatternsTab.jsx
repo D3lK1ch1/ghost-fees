@@ -34,7 +34,7 @@ export default function PatternsTab({ leaks, total, subscriptions = [], cancelSu
   const habitRef = useRef(null);
   const [habitPick, setHabitPick] = useState(null);
   const habitName = habitGhost(theme.key, readExPick()).name;
-  useEffect(() => { if (habitRequest) toHabit(habitRequest.key || groups[0]?.key); }, [habitRequest]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (habitRequest) toHabit(habitRequest.key || groups[0]?.key); }, [habitRequest]);  
   const toHabit = (key) => {
     setHabitPick(key);
     setTimeout(() => habitRef.current?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }), 60);
