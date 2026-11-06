@@ -1241,3 +1241,9 @@ One entry per change. Newest at the bottom.
 - Then (same day): Demo now uses the smaller export Sanjay sent (19 MB, same 7:32, file still named ghost-fees-demo-web.mp4, loads much faster than 45 MB). The Stranger Builds hackathon feedback video is the new cut (2:16, replaces the 58-second one; same file name, cache-busted with ?v=4); its labels now say "in 2 minutes" on the card, /media and /progress. Promo and The full journey unchanged.
 - Then: The full journey is the newest cut (4:28, replaces the 3:09 one; same file name, cache-busted with ?v=4); its card says "4 minutes".
 - Final (checked against Sanjay's list and the Downloads timestamps): only two videos change. Demo = ghost-fees-demo-v7.mp4, the newest v7 download (7 Nov 09:12, 19 MB, 7:32, the one with no false flag), uploaded over the old file with ?v=2 on its src; the interim demo-web file is dropped. Full journey = the new 4:28 cut (7 Nov 09:19). The 60-second journey goes back to the original 58-second file and its "60 seconds" labels; Promo unchanged (the 1:04 promo is left out on purpose: different style, demo data).
+
+## Sat 7 Nov 2026: Build streak, 4 to 6 Nov
+- What: added the Build streak days on /progress for Wed 4 Nov (8 items), Thu 5 Nov (5) and Fri 6 Nov (6), same shape as the rest ({ date, title }), unique titles. Nothing else changed.
+- Why: final build plan, PR 1. The streak stopped at Tue 3 Nov.
+- Checked: build passes; local /progress ends with "Fri, 6 Nov · 6 shipped".
+- Files: src/data/shipped.json
