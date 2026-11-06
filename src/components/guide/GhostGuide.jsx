@@ -702,13 +702,43 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
               <X className="h-5 w-5" />
             </button>
           </div>
+          {/* Team up first: the guided route through every ghost, then the note when tapped. */}
+          {leaks[0] && (
+            <div className="shrink-0 px-3 pt-2">
+              <button type="button" onClick={() => setTeamIntro((v) => !v)} aria-pressed={Boolean(mission) || teamIntro} aria-expanded={teamIntro}
+                className={cn('flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-[14px] font-bold transition-colors', mission || teamIntro ? 'border-transparent bg-primary text-primary-foreground' : 'border-dashed border-white/30 bg-background text-foreground hover:border-white/60')}>
+                <span aria-hidden="true">👻</span> Team up <span className={cn('font-semibold', mission || teamIntro ? 'opacity-90' : 'text-muted-foreground')}>· take me through it, step by step</span>
+              </button>
+            </div>
+          )}
+          {teamIntro && (
+            <div className="mx-3 mt-1.5 shrink-0 rounded-xl border border-border bg-background/70 px-3 py-2.5" role="region" aria-label="Team up">
+              <div className="flex items-center justify-between">
+                <p className="font-heading text-[14px] font-bold text-foreground">7 steps, in order</p>
+                <button type="button" onClick={() => setTeamIntro(false)} aria-label="Close" className="rounded-full p-1 text-muted-foreground hover:bg-white/10"><X className="h-4 w-4" /></button>
+              </div>
+              <ol className="mt-1.5 grid grid-cols-4 gap-1 sm:grid-cols-7">
+                {FULL_ROUTE.map((key, i) => (
+                  <li key={key} title={`${nameFor(key)}: ${FULL_JOBS[key]}`} className="flex flex-col items-center rounded-lg bg-white/[0.04] px-1 py-1 text-center">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-[#1b1233]" style={{ background: GUIDES[key].color }}>{i + 1}</span>
+                    <span className="mt-0.5 text-[11.5px] font-bold leading-tight text-foreground">{nameFor(key).replace('Sir ', '').replace('Spooksworth', 'Spooks')}</span>
+                    <span className="text-[10.5px] leading-tight text-muted-foreground">{STEP_SHORT[key]}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-1.5 text-[12px] text-muted-foreground">⚠️ Longest route, uses the most AI answers. Know what you need? Tap that ghost.</p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Start →</button>
+              </div>
+            </div>
+          )}
           {/* Full-width picker: each ghost's name and a 3-4 word job, so people know which
               to pick. Each ghost opens its own conversation. */}
           <div className="shrink-0 space-y-1 border-b border-border px-3 pb-2 pt-1" role="group" aria-label="Pick your ghost guide">
             {GUIDE_GROUPS.map((group) => (
               <div key={group.label} className="flex items-stretch gap-1">
                 <span className="flex w-8 shrink-0 items-center text-[9.5px] font-bold uppercase tracking-[0.1em] text-muted-foreground">{group.label.replace('Your ', '')}</span>
-                <div className="grid flex-1 grid-cols-4 gap-1">
+                <div className="grid flex-1 gap-1" style={{ gridTemplateColumns: `repeat(${group.keys.length}, minmax(0, 1fr))` }}>
                   {group.keys.map((key) => (
                     <button
                       key={key}
@@ -728,14 +758,6 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
                       <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', guideKey === key ? 'opacity-90' : 'opacity-75')}>{GUIDES[key].short}</span>
                     </button>
                   ))}
-                  {group.keys.length < 4 && leaks[0] && (
-                    <button type="button" onClick={() => setTeamIntro((v) => !v)} aria-pressed={Boolean(mission) || teamIntro} aria-expanded={teamIntro}
-                      title="Team up: every ghost in order, from finding your fees to one habit"
-                      className={cn('flex min-w-0 flex-col items-center rounded-xl border border-dashed px-1 py-1 text-center transition-colors', mission ? 'border-transparent bg-primary text-primary-foreground' : 'border-white/25 bg-background text-foreground hover:border-white/50')}>
-                      <span className="text-[12px] font-bold leading-tight">👻 Team up</span>
-                      <span className={cn('mt-0.5 text-[11px] font-semibold leading-tight', mission ? 'opacity-90' : 'opacity-75')}>Take me through it</span>
-                    </button>
-                  )}
                 </div>
               </div>
             ))}
@@ -758,27 +780,6 @@ export default function GhostGuide({ analysis, guideKey, onGuide, onAction, open
             );
           })()}
           {ownPanel && <OwnAIPanel onClose={() => setOwnPanel(false)} />}
-          {teamIntro && (
-            <div className="shrink-0 border-b border-border bg-background/70 px-3 py-2.5" role="region" aria-label="Team up">
-              <div className="flex items-center justify-between">
-                <p className="font-heading text-[14px] font-bold text-foreground">👻 Team up: 7 steps, in order</p>
-                <button type="button" onClick={() => setTeamIntro(false)} aria-label="Close" className="rounded-full p-1 text-muted-foreground hover:bg-white/10"><X className="h-4 w-4" /></button>
-              </div>
-              <ol className="mt-1.5 grid grid-cols-4 gap-1 sm:grid-cols-7">
-                {FULL_ROUTE.map((key, i) => (
-                  <li key={key} title={`${nameFor(key)}: ${FULL_JOBS[key]}`} className="flex flex-col items-center rounded-lg bg-white/[0.04] px-1 py-1 text-center">
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-black text-[#1b1233]" style={{ background: GUIDES[key].color }}>{i + 1}</span>
-                    <span className="mt-0.5 text-[11.5px] font-bold leading-tight text-foreground">{nameFor(key).replace('Sir ', '').replace('Spooksworth', 'Spooks')}</span>
-                    <span className="text-[10.5px] leading-tight text-muted-foreground">{STEP_SHORT[key]}</span>
-                  </li>
-                ))}
-              </ol>
-              <p className="mt-1.5 text-[12px] text-muted-foreground">⚠️ Longest route, uses the most AI answers. Know what you need? Tap that ghost.</p>
-              <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
-                <button type="button" onClick={startFull} className="rounded-full bg-primary px-3 py-1.5 text-[12.5px] font-bold text-primary-foreground">Start →</button>
-              </div>
-            </div>
-          )}
           {/* Ghost team. A mission shows the whole route for one ghost (✓ done, current
               highlighted) with Next; otherwise referrals build the chain; otherwise Team up. */}
           {(() => {
