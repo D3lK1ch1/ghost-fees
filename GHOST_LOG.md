@@ -1055,8 +1055,40 @@ One entry per change. Newest at the bottom.
 - How to test: npx eslint src gives 0 errors and 2 warnings. npm run build passes.
 - User feedback that drove this: "assess and do overall cleanup of the app".
 
+### Sir Spooksworth does the whole letter job, and a ghost team line shows who referred you
+- What:
+  - No more "pick a ghost". Spooksworth opens with every letter you need (5 on the sample: cancel Streammax, waive the account fee, Adobe refund, waive the late fee, cancel Spotify), biggest first. Each letter has: Read it (opens the email) · Send in Outlook · Gmail · Mail app (opens ready to send from your own email, nothing goes through Ghost Fees) · Remind me to check in 7 days (Google, Outlook or Apple / .ics, and it sets the task's due day) · Mark it worked.
+  - Each step ticks the same task list as the goal path and calendar (Read, Sent, Worked), shown on the letter as ✓ / ○.
+  - His "Write my first email" and similar answers carry the same buttons. His steps now read: I draft every letter, you tap Send in Outlook or Gmail, I remind you and tick it off.
+  - Ghost team: when ghosts pass you along ("Ask Spooksworth →", Mo's Yes to Hattie), a "Team on this" line under the picker shows the chain, e.g. Penny → Spooksworth → Cassy. Each name goes back to that ghost's window, and Clear hides it.
+  - The email builder moved to src/lib/ghostFees/emailDraft.js so the dialog and Spooksworth share one copy.
+- Files: src/lib/ghostFees/emailDraft.js (new), src/components/guide/LetterActions.jsx (new), src/components/results/LeakEmailDialog.jsx, src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost > Spooksworth: 5 letters. On Streammax tap Send in Outlook (Outlook opens the draft) and Mark it worked: it reads ✓ Read ✓ Sent ✓ Worked, and the goal path shows the same ticks. Penny > Ask Spooksworth → then Ask Cassy → gives "Team on this: Penny → Spooksworth → Cassy".
+- User feedback that drove this: "why do I need to pick ghosts, draft email and check that should be Sir Spooksworth's job and he should link the email to my Outlook to send... link to calendar and check list to remind me and tick off the task", "ghost team formed when necessary, a ghost referral system".
+
+### Gus becomes the bust coach; clearer jobs for every ghost
+- What:
+  - Gus opens with a bust plan: "🏆 Score: 0 of 5 busted", a progress bar ("$0.00 of $296.92 sorted") and "Next up: Streammax". Each ghost gets "How to bust it" (cancel / refund / waive / price rise), the button that does it (Cancel on {provider} when the link is checked, Open the email), the teammate who helps ("Cassy: cancel page →", "Spooksworth: cancel email →", "Penny: what this fee is →", "Kit: keep or rotate →", which hand over with that ghost and grow the team line), and Busted it (ticks the same task list as the goal path, and the score goes up). "What do I bust first?", "Show my score" and "Who helps with what?" all answer with the plan or the team.
+  - Clearer jobs. Gus is the coach (order, score, referrals) and no longer does goals text or renewal reminders. Renewal reminders move to Kit ("Remind me before renewals"). Picker subtitle: Gus "Bust coach".
+- Files: src/components/guide/BustPlan.jsx (new), src/lib/ghostFees/guideOpeners.js, src/lib/ghostFees/guides.js, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost > Gus. Busted it on Streammax gives 1 of 5 and $113.94 sorted. Monthly Account Fee > "Spooksworth: waiver email →" opens Spooksworth with "Team on this: Gus → Spooksworth".
+- User feedback that drove this: "Gus doesn't help much except navigate goal path, he should explain how to bust and refer other ghosts", "there's a bit overlap in agents, can we help them differentiate more".
+
+### Mo explains with a little animated card instead of a block of text
+- What: Mo's explanation is now a card that builds up one step at a time: the pattern name with an evidence badge (Strong / Good evidence), its one-line quote, "In your statement: $113.94 across 6 charges", then 🎯 What happens → 🧠 Why your brain does it → 💡 How to beat it → 📚 The research (the full paper reference and a Read the paper link to its DOI). It ends with "It's a common pattern, not a flaw. Most people do this." Then "Sound like you?" sits on its own line above Yes / Not sure / Not me. Every fact comes from the app's checked pattern data (citations verified with Crossref), nothing new or invented. With reduced motion, the steps simply appear. His answers about a pattern ("Why do my trials turn into charges?", "Which pattern costs me most?", a named pattern) use the same card.
+- Files: src/components/guide/MoExplainer.jsx (new), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx
+- How to test: Sample > Ask a ghost > Mo. The Present Bias card animates in 4 steps, and Read the paper opens doi.org/10.1257/aer.89.1.103.
+- User feedback that drove this: "spread out the text on Mo, could he integrate some animated little explanations... integrate some facts to make people care about the psychology".
 ### Typos no longer derail the ghosts; "optimise my subscriptions" goes to Kit from any ghost
 - What: Penny answered "how cna you help me optuik mise my subscription can you stuyd all of them" with Gus's goals list. Fast-typing slips (cna, teh, yuo, stuyd, optuik mise, subscriptioms, reaserhc) are now tidied before the ghosts match a question, and "subtotal" stays "subtotal". Any ghost other than Kit now hands "optimise / study / go through / compare / organise my subscriptions" to Kit ("That's Kit's job...", Ask Kit →) before the goals answer can catch it.
 - Files: src/components/guide/GhostGuide.jsx
 - How to test: Penny > type the exact message above. You get "That's Kit's job..." with Ask Kit →.
 - User feedback that drove this: screenshot of Penny's goals answer to "how can you help me optimise my subscription can you study all of them".
+
+### Hattie builds on Mo, and every ghost reads reasonable typos
+- What:
+  - Hattie: her opener and her answers to "improve my spending", "strategies", "track" and "patterns" show a coaching card that picks up where Mo left off. (1) Building on Mo: every pattern ranked by what it costs you, with bars, starting with the one you told Mo "sounds like me" (or the costliest), plus Ask Mo why →. (2) Three practical strategies for that pattern. (3) Your one habit. (4) Track it: start date, weeks kept as a 4-week bar, check-in due, and Set my start day / Open my habit plan, with the verified notes (Dai, Milkman & Riis, 2014; Lally et al., 2010). Before, she could answer with Gus's goals list.
+  - Typos: like most chat models, a word one letter off (two for long words), including swapped letters, is read as the word the ghosts know ("cancle", "emial", "patern", "stratgies", "optmise", "subscritpions", "renwals"). Common words are protected ("store" stays "store"). Cassy's cancel check uses it too.
+- Files: src/components/guide/HabitCoach.jsx (new), src/lib/ghostFees/guideOpeners.js, src/components/guide/GhostGuide.jsx
+- How to test: Mo > Yes, sounds like me > Hattie's card starts on Present Bias. Hattie: "how can you help me improve my spending". Cassy: "how do i cancle netflix" gives Netflix's cancel page. Spooksworth: "write my emial". Penny: "can you optmise my subscritpions" gives Ask Kit →.
+- User feedback that drove this: "Hattie not responding properly... she should build on Mo... explain what bias is costing the most money and then help come up with strategies and ways to habit track", "the agents should be able to read typos that are reasonable like one letter messed up".

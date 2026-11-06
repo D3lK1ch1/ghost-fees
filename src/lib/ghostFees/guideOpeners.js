@@ -73,19 +73,22 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     };
   }
   if (guideKey === 'sir') {
-    const target = (focus?.action && focus) || leaks.find((leak) => leak.action) || biggest;
-    const kind = { cancel: 'a cancel email', refund: 'a refund request', waive: 'a polite request to waive the fee' }[target.action] || 'a letter';
+    // Spooksworth does the whole letter job for every ghost that needs one: no picking.
+    const letters = leaks.filter((leak) => leak.action).slice(0, 6);
+    if (!letters.length) return { text: `${g.hello}\n\nNone of these ghosts need a letter. They're ones to keep an eye on.`, chips: [handoffChip('cass')] };
     return {
-      text: `${g.hello}\n\nI've drafted ${kind} for ${nameOf(target)} (${money(target.amount)}). Open it, check it, then send it from your own email.\n\nFirmer or friendlier?`,
-      action: 'draft_email', leak: target,
+      text: `${g.hello}\n\nI've drafted ${letters.length === 1 ? 'your letter' : `all ${letters.length} letters`}, biggest first. Send each from your own Outlook or Gmail, and I'll put a reminder in your calendar to check for a reply. Each step ticks off your task list.`,
+      letters: letters.map((leak) => leak.id),
       chips: [CHIP.firmer, CHIP.friendlier],
+      leak: letters[0],
     };
   }
   if (guideKey === 'gus') {
+    // Gus the bust coach: the score, then each ghost with how to bust it and who helps.
     return {
-      text: `${g.hello}\n\n${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}, ${money(total)}. Biggest first: ${nameOf(biggest)}, ${money(biggest.amount)}.\n\nBust it?`,
-      action: 'open_leak', leak: biggest,
-      chips: [CHIP.bust, CHIP.later],
+      text: `${g.hello}\n\n${leaks.length} ${leaks.length === 1 ? 'ghost' : 'ghosts'}, ${money(total)} on the line. Here's the bust plan, biggest first. Tap the button on each one, grab a teammate if you need one, then hit Busted it.`,
+      bust: true,
+      chips: [],
     };
   }
   if (guideKey === 'cass') {
@@ -125,20 +128,22 @@ export function opener(guideKey, analysis, { answers = {}, plan = null, hank = f
     if (!withPattern) return { text: `${g.hello}\n\nNone of these ghosts match a common money pattern I know. Penny can walk you through the fees.`, chips: [handoffChip('penny')] };
     const info = biasFor(withPattern);
     return {
-      text: `${g.hello}\n\n${nameOf(withPattern)}: ${withPattern.reason.charAt(0).toLowerCase()}${withPattern.reason.slice(1)} That's a common pattern called ${info.bias}: ${info.line.charAt(0).toLowerCase()}${info.line.slice(1)} (${shortCite(info.cite)})\n\nSound like you?`,
+      text: `${g.hello}\n\n${nameOf(withPattern)}: ${withPattern.reason.charAt(0).toLowerCase()}${withPattern.reason.slice(1)}\n\nThat's a common pattern called ${info.bias}. Here's how it works:`,
+      explain: info.key,
+      after: 'Sound like you?',
       action: 'open_pattern', biasKey: info.key,
       chips: [CHIP.yes, CHIP.unsure, CHIP.no],
     };
   }
   if (guideKey === 'habit') {
-    const pattern = habitPattern(analysis, answers, plan);
+    // Hattie builds on Mo: what each pattern costs, strategies for it, one habit, tracked.
     const hello = hank ? g.hello.replace("I'm Hattie", "I'm Hank") : g.hello;
-    if (!pattern) return { text: `${hello}\n\nNo money patterns in this statement, so no habit needed.`, chips: [] };
-    const habit = plan && plan.patternKey === pattern.key ? plan.habitText : pattern.beat;
+    const top = biasGroups(leaks)[0];
+    if (!top) return { text: `${hello}\n\nNo money patterns in this statement, so no habit needed.`, chips: [] };
     return {
-      text: `${hello}\n\nFor ${pattern.bias}, one small habit:\n"${habit}"\n\nWhen do you want to start?`,
-      action: 'open_habit', biasKey: pattern.key,
-      chips: START_CHIPS,
+      text: `${hello}\n\nMo found why your ghosts happen. I'll help you do something about it. Your costliest pattern is ${top.bias} (${money(top.total)}). Here's the plan:`,
+      coach: true,
+      chips: [],
     };
   }
   return { text: g.hello, chips: g.chips };
