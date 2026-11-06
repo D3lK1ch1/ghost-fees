@@ -76,12 +76,12 @@ export default function Progress() {
         <FeedbackBoard />
 
         <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
-          <Stat label="statements scanned" value={stats ? stats.scans : '...'} />
+          <Stat label="scans run (includes the sample)" value={stats ? stats.scans : '...'} />
           <Stat label="found on real statements (from feedback)" value={stats?.foundOnRealStatements != null ? `${money(stats.foundOnRealStatements)}/yr` : null} />
           <Stat label="feedback responses" value={stats ? stats.feedback : '...'} />
-          <Stat label='said it found something real' value={stats?.foundSomethingReal} />
+          <Stat label='said it found something real (yes or kinda)' value={stats?.foundSomethingReal} />
           <Stat label="would pay" value={stats?.wouldPay} />
-          <Stat label="visits from the Ghost It agent" value={stats?.agentVisits} />
+          <Stat label={stats?.agentVisits === 1 ? 'visit from the Ghost It agent' : 'visits from the Ghost It agent'} value={stats?.agentVisits} />
         </section>
 
         {/* Our users vs the research (aggregate, 3+ real scans). */}

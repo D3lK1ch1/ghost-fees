@@ -70,7 +70,7 @@ export default function GhostTeam({ onAsk }) {
               </span>
               <span className="mt-1 block text-[15px] leading-snug text-muted-foreground">{agent.does}</span>
             </span>
-                  <span className="hidden shrink-0 text-[13.5px] font-bold sm:block" style={{ color: agent.color }}>{agent.key === 'ghostit' ? 'Open in ASI:One →' : `Chat with ${agent.name.replace('Sir ', '')} →`}</span>
+                  <span className="hidden shrink-0 text-[13.5px] font-bold sm:block" style={{ color: agent.color }}>{agent.key === 'ghostit' ? 'Try Ghost It (beta) →' : `Chat with ${agent.name.replace('Sir ', '')} →`}</span>
                 </>
               );
               return agent.key === 'ghostit'

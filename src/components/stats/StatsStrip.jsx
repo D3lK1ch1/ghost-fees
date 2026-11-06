@@ -37,7 +37,7 @@ export default function StatsStrip() {
       </ul>
       {scans > 0 && (
         <p className="mt-5 text-center text-[13.5px] text-muted-foreground">
-          <b className="text-foreground">{scans.toLocaleString('en-AU')}</b> scans run on Ghost Fees so far. <Link to="/progress" className="font-bold text-primary underline-offset-4 hover:underline">See live progress</Link>
+          <b className="text-foreground">{scans.toLocaleString('en-AU')}</b> scans run on Ghost Fees so far (includes the sample). <Link to="/progress" className="font-bold text-primary underline-offset-4 hover:underline">See live progress</Link>
         </p>
       )}
     </section>
