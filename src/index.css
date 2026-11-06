@@ -102,6 +102,12 @@
 @keyframes teamCascade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 .team-cascade { animation: teamCascade 0.5s ease-out both; }
 @media (prefers-reduced-motion: reduce) { .team-cascade { animation: none; } }
+/* Mo's timeline: the line draws down as the charges appear (6 Nov). */
+@keyframes growDown { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.grow-down { transform-origin: top; animation: growDown 2.4s ease-out both; }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.6); } 70% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+.pop-in { animation: popIn 0.45s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .grow-down, .pop-in { animation: none; } }
 
 /* Clean type (3 Nov): Inter for everything but the logo. Headings are semibold, not
    bold, and nothing goes heavier than 700, so text never looks chunky. */

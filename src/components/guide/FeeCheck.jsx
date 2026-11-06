@@ -1,5 +1,6 @@
 import { CalendarPlus } from 'lucide-react';
 import { money } from '@/lib/ghostFees/format';
+import { leakRows } from '@/lib/ghostFees/leaks';
 import { googleCalendarUrl } from '@/lib/ghostFees/reminder';
 import { useGoalTasks } from '@/lib/ghostFees/goalTasks';
 import { addGhostReminder } from '@/lib/ghostFees/calendarSync';
@@ -10,37 +11,37 @@ const PENNY = '#5ee6c8';
 // and whether you can get it back. General guidance about common fee types, no product
 // names and no numbers beyond the statement's own.
 const FEE_TYPES = [
-  { match: /monthly|account (keeping )?fee|maintenance|service fee|account fee/i, kind: 'Account-keeping fee',
+  { match: /monthly|account (keeping )?fee|maintenance|service fee|account fee/i, kind: 'Account-keeping fee', odds: 'Often', next: 'Ask to waive, or move to a fee-free account',
     why: 'A flat monthly charge for having the account. Many everyday accounts charge nothing, or waive it if you meet a condition like a monthly deposit.',
     stop: 'Ask your bank what makes the fee go away, or whether they have a fee-free everyday account you can move to.',
     back: 'Worth asking: banks often refund recent account fees when you ask politely.' },
-  { match: /late|overdue/i, kind: 'Late payment fee',
+  { match: /late|overdue/i, kind: 'Late payment fee', odds: 'Often (first time)', next: 'Ask to refund, then set up autopay',
     why: 'Charged when a payment (often a credit card or bill minimum) lands after the due date.',
     stop: 'Set up an automatic payment for at least the minimum, or a reminder 3 days before the due date.',
     back: 'A first late fee is often refunded if you ask and you are usually on time.' },
-  { match: /overdra|dishonou?r|overdrawn|insufficient|returned/i, kind: 'Overdrawn / dishonour fee',
+  { match: /overdra|dishonou?r|overdrawn|insufficient|returned/i, kind: 'Overdrawn / dishonour fee', odds: 'Sometimes', next: 'Ask to refund, turn on low-balance alerts',
     why: 'Charged when a payment goes out and there is not enough money in the account.',
     stop: 'Turn on a low-balance alert in your bank app, and move direct debits to just after payday.',
     back: 'Ask, especially if it happened once. Banks can refund these.' },
-  { match: /atm|withdrawal/i, kind: 'ATM fee',
+  { match: /atm|withdrawal/i, kind: 'ATM fee', odds: 'Rarely', next: 'Use your own bank\'s ATMs',
     why: 'Charged for using another bank\'s ATM, or an ATM overseas.',
     stop: 'Use your own bank\'s ATMs, or take cash out at the checkout when you shop.',
     back: 'Rarely refunded, so this one is about avoiding it next time.' },
-  { match: /foreign|international|overseas|\bfx\b|currency|conversion/i, kind: 'Foreign transaction fee',
+  { match: /foreign|international|overseas|\bfx\b|currency|conversion/i, kind: 'Foreign transaction fee', odds: 'Rarely', next: 'Check your card\'s foreign fee before you pay',
     why: 'A percentage added when you pay in another currency, including some overseas online shops.',
     stop: 'Check your card\'s foreign fee before you travel or shop overseas sites, and pay in the local currency when asked.',
     back: 'Usually not refunded, so plan the card you use next time.' },
-  { match: /interest|cash advance/i, kind: 'Interest / cash advance',
+  { match: /interest|cash advance/i, kind: 'Interest / cash advance', odds: 'Rarely', next: 'Pay the full balance by the due date',
     why: 'Charged when a card balance is not paid in full, or when you take cash out on a credit card.',
     stop: 'Pay the full balance by the due date where you can, and avoid cash out on a credit card.',
     back: 'Interest is rarely refunded, but ask if it came from a mistake.' },
-  { match: /surcharge|card fee|merchant fee/i, kind: 'Card surcharge',
+  { match: /surcharge|card fee|merchant fee/i, kind: 'Card surcharge', odds: 'Sometimes', next: 'Ask for a way to pay with no surcharge',
     why: 'Some shops add a fee for paying by card.',
     stop: 'Ask if another way to pay has no surcharge, or pay where none is charged.',
     back: 'Ask the shop if the surcharge looked higher than the card actually costs them.' },
 ];
 const typeOf = (leak) => FEE_TYPES.find((t) => t.match.test(`${leak.title || ''} ${leak.merchant || ''} ${leak.badge || ''}`))
-  || { kind: leak.badge || 'Fee', why: 'A charge your bank or a company added on top of what you bought.', stop: 'Ask them what the fee is for and how to avoid it.', back: 'It never hurts to ask for a refund once.' };
+  || { kind: leak.badge || 'Fee', odds: 'Worth asking', next: 'Ask what it is for', why: 'A charge your bank or a company added on top of what you bought.', stop: 'Ask them what the fee is for and how to avoid it.', back: 'It never hurts to ask for a refund once.' };
 
 const inDays = (n) => {
   const d = new Date();
@@ -50,10 +51,72 @@ const inDays = (n) => {
 
 // Penny the fee detective: each fee with why, how to stop it, can you get it back, and
 // the buttons to act on it (Spooksworth's letter, a reminder to check next statement).
-export default function FeeCheck({ fees, onLetter }) {
+// focus: 'why' | 'stop' | 'back' shows only that answer for each fee (so each question
+// gets its own reply); no focus shows all three.
+export default function FeeCheck({ fees, onLetter, onTeamUp, focus = null }) {
   const { setDue } = useGoalTasks();
   if (!fees?.length) return null;
+  const total = fees.reduce((sum, f) => sum + (Number(f.amount) || 0), 0);
+  const askable = fees.filter((f) => f.action && f.action !== 'cancel');
+  const askTotal = askable.reduce((sum, f) => sum + (Number(f.amount) || 0), 0);
+  const stopLines = [...new Set(fees.map((f) => typeOf(f).stop))].slice(0, 2);
+  const col = focus === 'why' ? 'Why' : focus === 'stop' ? 'How to stop it' : 'Get it back?';
   return (
+    <div className="mt-2 w-full">
+      {/* 1. Everything in one table, so the numbers make sense at a glance. */}
+      <div className="overflow-hidden rounded-xl border" style={{ borderColor: `${PENNY}55` }}>
+        <table className="w-full text-left text-[12.5px]">
+          <thead style={{ background: `${PENNY}1a` }}>
+            <tr className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <th className="px-2 py-1.5 font-bold">Fee</th>
+              <th className="px-2 py-1.5 font-bold">Charged</th>
+              <th className="px-2 py-1.5 text-right font-bold">Total</th>
+              <th className="px-2 py-1.5 font-bold">{col}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {fees.map((leak) => {
+              const t = typeOf(leak);
+              const times = leakRows(leak).length;
+              return (
+                <tr key={leak.id} className="border-t border-border align-top">
+                  <td className="px-2 py-1.5"><span className="block font-bold text-foreground">{leak.title || leak.merchant}</span><span className="text-[11px] text-muted-foreground">{t.kind}</span></td>
+                  <td className="px-2 py-1.5 text-foreground">{times ? `${times}×` : '-'}</td>
+                  <td className="px-2 py-1.5 text-right font-bold text-foreground">{money(leak.amount)}</td>
+                  <td className="px-2 py-1.5 text-foreground">{focus === 'why' ? t.why.split('.')[0] : focus === 'stop' ? t.next : <span className="font-bold" style={{ color: /Often/.test(t.odds) ? PENNY : undefined }}>{t.odds}</span>}</td>
+                </tr>
+              );
+            })}
+            <tr className="border-t border-border" style={{ background: `${PENNY}0d` }}>
+              <td className="px-2 py-1.5 font-bold text-foreground" colSpan={2}>All fees</td>
+              <td className="px-2 py-1.5 text-right font-bold text-foreground">{money(total)}</td>
+              <td className="px-2 py-1.5 text-[11.5px] text-muted-foreground">{askable.length ? `${money(askTotal)} worth asking for` : ''}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* 2. What to do next, in order, with the team that helps. */}
+      <div className="mt-2 rounded-xl border border-border bg-background/50 p-2.5 text-[13px]">
+        <p className="text-[12px] font-bold uppercase tracking-wide" style={{ color: PENNY }}>What to do next</p>
+        <ol className="mt-1 list-decimal space-y-1 pl-4 text-foreground">
+          {askable.length > 0 && <li>Ask for {money(askTotal)} back: Spooksworth writes {askable.length === 1 ? 'the letter' : askable.length === 2 ? 'both letters' : `all ${askable.length} letters`} to your bank.</li>}
+          <li>Stop them coming back: {stopLines.join(' ')}</li>
+          <li>Check your next statement in a month, and tick it off.</li>
+        </ol>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {askable.length > 0 && (
+            <button type="button" onClick={() => onLetter?.(askable[0])} className="rounded-full px-2.5 py-1 text-[12.5px] font-bold text-[#06231c]" style={{ background: PENNY }}>
+              Write the {askable.length === 1 ? 'letter' : 'letters'}: Spooksworth →
+            </button>
+          )}
+          {onTeamUp && <button type="button" onClick={() => onTeamUp(askable[0] || fees[0])} className="rounded-full border border-dashed border-white/30 px-2.5 py-1 text-[12.5px] font-bold text-foreground">👻 Team up on fees</button>}
+        </div>
+      </div>
+
+      {/* 3. The detail for each fee, folded away until wanted. */}
+      <details className="mt-2" open={Boolean(focus)}>
+        <summary className="cursor-pointer text-[12.5px] font-bold text-foreground">Each fee in detail</summary>
     <ul className="mt-2 w-full space-y-2">
       {fees.map((leak) => {
         const t = typeOf(leak);
@@ -65,9 +128,9 @@ export default function FeeCheck({ fees, onLetter }) {
               <span className="shrink-0 text-[12.5px] font-semibold text-muted-foreground">{money(leak.amount)}</span>
             </div>
             <p className="text-[12px] font-bold uppercase tracking-wide" style={{ color: PENNY }}>{t.kind}</p>
-            <p className="mt-1 text-foreground"><span className="font-bold">Why you pay it: </span>{t.why}</p>
-            <p className="mt-0.5 text-foreground"><span className="font-bold">How to stop it: </span>{t.stop}</p>
-            <p className="mt-0.5 text-foreground"><span className="font-bold">Can you get it back? </span>{t.back}</p>
+            {(!focus || focus === 'why') && <p className="mt-1 text-foreground"><span className="font-bold">Why you pay it: </span>{t.why}</p>}
+            {(!focus || focus === 'stop') && <p className="mt-0.5 text-foreground"><span className="font-bold">How to stop it: </span>{t.stop}</p>}
+            {(!focus || focus === 'back') && <p className="mt-0.5 text-foreground"><span className="font-bold">Can you get it back? </span>{t.back}</p>}
             <div className="mt-1.5 flex flex-wrap gap-1.5">
               {leak.action && leak.action !== 'cancel' && (
                 <button type="button" onClick={() => onLetter?.(leak)} className="rounded-full px-2.5 py-1 text-[12.5px] font-bold text-[#06231c]" style={{ background: PENNY }}>
@@ -82,5 +145,7 @@ export default function FeeCheck({ fees, onLetter }) {
         );
       })}
     </ul>
+      </details>
+    </div>
   );
 }
