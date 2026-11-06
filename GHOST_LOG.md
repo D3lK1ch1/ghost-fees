@@ -1139,6 +1139,17 @@ One entry per change. Newest at the bottom.
 - How to test: Ask a ghost > 🔑 > Claude > paste a key > Use my AI. Typed questions are answered by your Claude. Tested locally with a fake key and a faked Anthropic reply: the request went to api.anthropic.com with the browser-access header, the summary was in the system prompt, the reply rendered with its Ask Spooksworth → handoff, and the key was kept in session storage only.
 - User feedback that drove this: "is there an option we can limit their calls then have an add your own agent connector... where they can attach their Claude or ChatGPT", "isn't it good competition show, limits and it has some free then connect your own".
 
+### Cassy is the cancellation specialist
+- What: Cassy's label is now "Cancellation specialist" in the chat header (was "Helps you cancel") and "Cancel specialist" in the picker (was "How to cancel"). Her hello is "I'm Cassy, your cancellation specialist. Calm and practical. My one job: showing you exactly how to cancel, and making sure it sticks." The home page team reads "Your cancellation specialist: the real cancel page, steps and phone number, then proof you cancelled and a check it stopped."
+- Files: src/lib/ghostFees/guides.js, src/components/landing/GhostTeam.jsx
+- How to test: Ask a ghost > Cassy shows "Cassy · Cancellation specialist".
+- User feedback that drove this: "Cassy label her cancellation specialist".
+
+### Kit's Gym & Fitness pack works (it was greyed out)
+- What: The Gym & Fitness pack card was greyed out with "Ask Ghost It about weekly costs" and did nothing, because gyms aren't "two of the same" doubles like streaming. It now opens a gym screen. Each gym or fitness membership on the statement (or typed, e.g. "gym $25 a week", converted to a month) shows with "Been this month?". "Yes, I go" keeps it. "Not much" suggests asking about a pause or freeze first, then gives the full cancel buttons (cancel page or Cassy's lookup, email, I cancelled it, check it stopped). The card reads "1 membership · $45.00 a month" on the sample. The pack line says "what a weekly membership really costs a month" (monthly only, not a year).
+- Files: src/lib/ghostFees/bundles.js (gymItems, pack text), src/components/guide/KitPlanner.jsx
+- How to test: Ask a ghost > Kit > Gym & Fitness shows Fitlife Gym $45.00 a month. Not much gives the pause tip and the cancel buttons.
+- User feedback that drove this: "why is gym unselectable, that should be explained".
 ### Ghost reminders show on the app's calendar, and go into your synced calendar automatically
 - What: Every ghost reminder button now does two things. (1) It sets that task's "Do it on" day on the Calendar tab's task list. Penny's "Check next statement" didn't before; Spooksworth's and Cassy's already did. (2) If you turned on "Sync to my calendar" on the Calendar tab, the reminder goes straight into your real Google, Outlook or Apple calendar through your private feed, with no extra Save. Without sync, the Google / Outlook / Apple buttons still add it to that calendar as before.
 - Files: src/lib/ghostFees/calendarSync.js (addGhostReminder), src/components/guide/FeeCheck.jsx, src/components/guide/CancelActions.jsx, src/components/guide/LetterActions.jsx
