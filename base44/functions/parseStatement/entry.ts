@@ -172,12 +172,22 @@ export default async function (req) {
       return Response.json({ error: 'Lots of scans today. Try again tomorrow, or upload a CSV instead.' });
     }
 
-    const extracted = await base44.asServiceRole.integrations.Core.InvokeLLM({
+    const request = {
       prompt: `Extract every transaction from this ${bankName} bank statement, across all pages. date as YYYY-MM-DD (work out the year from the statement period and year headings). description = the merchant or payee text, short, without "EFFECTIVE DATE" text. amount = signed AUD, withdrawals/debits negative, deposits/credits positive. Skip opening balance, closing balance, totals and fee summary rows.`,
       file_urls: [signed_url],
       response_json_schema: TRANSACTION_SCHEMA,
-      model: 'gemini_3_flash',
-    });
+    };
+    // gemini_3_flash was the fastest accurate model in testing (6 Nov), but it's an older
+    // alias Base44 could retire. If it fails fast, retry once on Base44's default model.
+    // A slow failure isn't retried: it would spend credits twice and pass the 120s limit.
+    const started = Date.now();
+    let extracted;
+    try {
+      extracted = await base44.asServiceRole.integrations.Core.InvokeLLM({ ...request, model: 'gemini_3_flash' });
+    } catch (error) {
+      if (Date.now() - started > 30000) throw error;
+      extracted = await base44.asServiceRole.integrations.Core.InvokeLLM(request);
+    }
 
     const rows = Array.isArray(extracted?.transactions) ? extracted.transactions : [];
 
