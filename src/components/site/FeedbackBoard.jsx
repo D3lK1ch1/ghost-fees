@@ -74,7 +74,7 @@ export default function FeedbackBoard() {
         <div>
           <h2 id="feedback-board" className="text-[18px] font-semibold text-foreground">Feedback board</h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Every review left on the Stranger Builds hackathon platform, in the tester's words. {feedback.length} testers · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
+            Every review left on the Stranger Builds hackathon platform (testers are anonymous there), in the tester's words. Slack messages are listed after them, by name. {feedback.length} testers · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
           </p>
         </div>
         <a href="#leave-review" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground">
@@ -106,8 +106,8 @@ export default function FeedbackBoard() {
 
       {slack.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-[16px] font-semibold text-foreground">From Slack</h3>
-          <p className="mt-1 text-[14px] text-muted-foreground">Builders and mentors in the Stranger Builds Slack. Not counted in the {feedback.length} platform reviews above.</p>
+          <h3 className="text-[16px] font-semibold text-foreground">From the Stranger Builds Slack · {slack.length} messages</h3>
+          <p className="mt-1 text-[14px] text-muted-foreground">Builders and mentors who messaged us in the hackathon Slack, named as they appear there. Not counted in the {feedback.length} anonymous platform reviews above.</p>
           <ul className="mt-3 space-y-3">
             {slack.map((item, index) => (
               <li key={`${item.date}-${index}`} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">

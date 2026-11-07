@@ -87,15 +87,15 @@ Our own testing is listed separately at the end and is never counted as feedback
 
 ### Stranger Builds Slack: 5 messages
 
-Not counted in the 7 platform reviews. Shown the same way as on /progress.
+Builders and mentors who messaged us in the Stranger Builds Slack, named as they appear there. Not counted in the 7 anonymous platform reviews.
 
 | # | Date | Who | They said | What we changed | Proof |
 |---|---|---|---|---|---|
 | 1 | 2 Nov | Raj (Fetch.ai mentor) · Ghost It | "The response is not very clear on what it's trying to do. I didn't understand why it calculated $276 a year." | Every reply now says what it did, shows the maths line by line ($8.99/mo x 12 = $107.88/yr) and the exact next step, with ASI:One cards. Lists typed without commas now work. | Ghost It [f627886](https://github.com/D3lK1ch1/ghost-fees/commit/f627886) · [51c3645](https://github.com/D3lK1ch1/ghost-fees/commit/51c3645) |
-| 2 | 2 Nov | Slack user · Ghost Fees | "The web app link doesn't work for me." | Links now go on their own line in our posts and the app link shows a preview card. /try is one link for the whole test. | [#51](https://github.com/D3lK1ch1/ghost-fees/pull/51) · [#146](https://github.com/D3lK1ch1/ghost-fees/pull/146) |
+| 2 | 2 Nov | Kimberley (Stranger Builds builder) · Ghost Fees | "The web app link doesn't work for me." | Links now go on their own line in our posts and the app link shows a preview card. /try is one link for the whole test. | [#51](https://github.com/D3lK1ch1/ghost-fees/pull/51) · [#146](https://github.com/D3lK1ch1/ghost-fees/pull/146) |
 | 3 | 4 Nov | Raj (Fetch.ai mentor) · Ghost It | "The link 'copy and open ghost it' is taking to mobile app, I would suggest you to point it to our web app. Instead of asking to type consolidate, you could have a button for consolidate." | Phones now open the ASI:One web chat instead of the app, and every Ghost It reply has tap buttons: Consolidate, Get pack, Ghost one, Scan my statement, Mark ghosted. | [#118](https://github.com/D3lK1ch1/ghost-fees/pull/118) · [#119](https://github.com/D3lK1ch1/ghost-fees/pull/119) · [#123](https://github.com/D3lK1ch1/ghost-fees/pull/123) |
 | 4 | 4 Nov | Kingan (Tool Offer agent builder) · Ghost It | "Show the evidence. The buyer approves every payment. The agent never spends money on its own." | Every Ghost It result shows exactly what you typed next to the maths. Nothing counts as cancelled until you tap Mark ghosted. A trust line says Ghost It never touches your bank, cards or money. | [#124](https://github.com/D3lK1ch1/ghost-fees/pull/124) · [#142](https://github.com/D3lK1ch1/ghost-fees/pull/142) |
-| 5 | 7 Nov | Slack builder · Ghost Fees | "The total looked final while it was still counting up." | The big total now says Adding it up... while it counts, and Final total once it settles. | [#200](https://github.com/D3lK1ch1/ghost-fees/pull/200) |
+| 5 | 7 Nov | Diana (Stranger Builds builder) · Ghost Fees | "The total looked final while it was still counting up." | The big total now says Adding it up... while it counts, and Final total once it settles. | [#200](https://github.com/D3lK1ch1/ghost-fees/pull/200) |
 
 In-app feedback form (separate again): 12 responses, 8 said it found something real (yes or kinda), 1 would pay. Live counts on /progress.
 
