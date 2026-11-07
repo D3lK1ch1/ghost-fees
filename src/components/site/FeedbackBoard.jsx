@@ -1,4 +1,4 @@
-import { ChevronDown, ExternalLink, MessageSquarePlus } from 'lucide-react';
+import { ChevronDown, ExternalLink, MessageSquarePlus, Star } from 'lucide-react';
 import FeedbackPanel from '@/components/results/FeedbackPanel';
 import feedback from '@/data/testerFeedback.json';
 import changelog from '@/data/changelog.json';
@@ -72,7 +72,14 @@ function Labels({ source, about, date, who, score }) {
           <span className="text-[11.5px] uppercase tracking-wide text-[#5ee6c8]">About</span> {about}
         </span>
       )}
-      {score ? <span className="rounded-lg border-2 border-white/30 px-2.5 py-1 text-[14px] font-bold text-foreground">Score {score}/5</span> : null}
+      {score ? (
+        <span className="inline-flex items-center gap-1.5 rounded-lg border-2 border-white/30 px-2.5 py-1 text-[14px] font-bold text-foreground" aria-label={`Would recommend it: ${score} of 5`}>
+          <span className="inline-flex gap-0.5" aria-hidden="true">
+            {[1, 2, 3, 4, 5].map((i) => <Star key={i} className={i <= score ? 'h-4 w-4 fill-primary text-primary' : 'h-4 w-4 text-white/25'} />)}
+          </span>
+          {score}/5
+        </span>
+      ) : null}
       <span className="w-full text-[13.5px] text-muted-foreground">{fmt(date)} · {who}</span>
     </div>
   );

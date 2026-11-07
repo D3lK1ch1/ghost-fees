@@ -1310,3 +1310,8 @@ One entry per change. Newest at the bottom.
 - Why: the user asked for bigger, outlined labels that make clear where feedback came from and what it relates to.
 - Files: src/components/site/FeedbackBoard.jsx, src/data/testerFeedback.json, src/data/changelog.json
 - Also: the labels now read "FROM Hackathon portal review" or "FROM Hackathon Slack message", with "ABOUT ..." next to them (Slack topics name the product, e.g. "Ghost Fees: the total"). The Slack section heading is "Hackathon Slack messages", the same size as the board heading.
+
+## 2026-11-08: stars back on the portal reviews
+- What: each Hackathon portal review shows its score as 5 stars plus "4/5" in the score label. Slack messages still have no score.
+- Why: the user asked for the stars back on the reviews that scored the app.
+- Files: src/components/site/FeedbackBoard.jsx
