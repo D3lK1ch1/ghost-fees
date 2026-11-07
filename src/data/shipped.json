@@ -410,5 +410,17 @@
   {
     "date": "2026-11-08",
     "title": "Scoreboard: numbers from the Duck's reviews only"
+  },
+  {
+    "date": "2026-11-08",
+    "title": "Feedback cards tidied: FROM and ABOUT labels, stars, and the original feedback photos on each card"
+  },
+  {
+    "date": "2026-11-08",
+    "title": "Videos tidied: the old 60-second video is gone; the promo, the 7:32 demo and the 4:28 full journey stay"
+  },
+  {
+    "date": "2026-11-08",
+    "title": "Ghost It: a retry note when a reply stays processing (Slack feedback)"
   }
 ]

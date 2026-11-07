@@ -8,7 +8,7 @@ Find the subscriptions and bank fees you forgot in one bank statement, then canc
 
 | What | Where |
 |---|---|
-| Every review in the reviewer's words, and what we changed | [Feedback evidence](#feedback-evidence-7-platform-reviews-and-5-slack-messages) below and [/progress](https://hunt-ghost-fees.base44.app/progress) |
+| Every review in the reviewer's words, and what we changed | [Feedback evidence](#feedback-evidence-7-platform-reviews-and-6-slack-messages) below and [/progress](https://hunt-ghost-fees.base44.app/progress) |
 | What we built each day and why | [`GHOST_LOG.md`](GHOST_LOG.md) |
 | Every change as a pull request | [Closed PRs](https://github.com/D3lK1ch1/ghost-fees/pulls?q=is%3Apr+is%3Aclosed) (200+, 31 Oct to 8 Nov) |
 | Who built it, and every name in the git history | [`CONTRIBUTORS.md`](CONTRIBUTORS.md) |
@@ -92,7 +92,7 @@ The Ghost It uAgent lives in [`agent/`](agent/) with its full history (v1 to v13
 
 Since 5 Nov it runs **self-hosted with an Agentverse mailbox**, not on Agentverse hosting: hosted replies were held about 40 seconds, past ASI:One's wait, so nothing showed. To run it on any always-on Linux machine, see [`agent/deploy/SELF_HOSTING.md`](agent/deploy/SELF_HOSTING.md) (systemd service, private settings file, one-command updates). Secrets (the agent seed, Stripe keys) live only in that private file, never in this repo.
 
-## Feedback evidence: 7 platform reviews and 5 Slack messages
+## Feedback evidence: 7 platform reviews and 6 Slack messages
 
 Every piece of outside feedback, word for word, with what we changed and the merged PRs that prove it. The same list, with a **Show the evidence** drop-down on each, is at https://hunt-ghost-fees.base44.app/progress#feedback
 
@@ -110,7 +110,7 @@ Our own testing is listed separately at the end and is never counted as feedback
 | 6 | 1 Nov · 4/5 | One change: "There is some inconsistency regarding the text alignment, especially on the footer." · Treat: "I really like the playful Halloween theme and colours. I also like the overall idea of the app." | The footer is centred and the same width as the page, with bigger text. The page links moved to a proper nav bar at the top. | [#11](https://github.com/D3lK1ch1/ghost-fees/pull/11) · [#128](https://github.com/D3lK1ch1/ghost-fees/pull/128) |
 | 7 | 2 Nov · 3/5 | One change: "Make the value statement clear from the start and make it more concise on certain pages." · Trick: "I was quite overwhelmed at the beginning with the visuals and it took a lot of scrolling to digest the content on each page, which made it hard to understand what I was seeing." · Treat: "I really loved the themes and cute characters!" | Every page now opens with one plain line (Find the subscriptions you forgot. Cancel them in one click.), three steps and one button before any art. Results sit in tabs and drop-downs, sections fold away and the tour is opt-in. | [#118](https://github.com/D3lK1ch1/ghost-fees/pull/118) · [#128](https://github.com/D3lK1ch1/ghost-fees/pull/128) · [#131](https://github.com/D3lK1ch1/ghost-fees/pull/131) |
 
-### Stranger Builds Slack: 5 messages
+### Stranger Builds Slack: 6 messages
 
 Not counted in the 7 platform reviews. Shown the same way as on /progress.
 
@@ -121,6 +121,7 @@ Not counted in the 7 platform reviews. Shown the same way as on /progress.
 | 3 | 4 Nov | Raj (Fetch.ai mentor) · Ghost It | "Currently the link “copy and open ghost it” is taking to mobile app, I would suggest you to point it to our web app ... for example your agent asks to type consolidate, instead you could have a button for consolidate or any other options you want to give so that users can just tap on that instead of having to type. If possible try adding more functionality." | Phones now open the ASI:One web chat instead of the app, and every Ghost It reply has tap buttons: Consolidate, Get pack, Ghost one, Scan my statement, Mark ghosted. | [#118](https://github.com/D3lK1ch1/ghost-fees/pull/118) · [#119](https://github.com/D3lK1ch1/ghost-fees/pull/119) · [#123](https://github.com/D3lK1ch1/ghost-fees/pull/123) |
 | 4 | 4 Nov | Kingan (Tool Offer agent builder) · Ghost It | "...to evaluate claims against evidence rather than simply trusting what an AI says it did. And on the payment side, my agent doesn’t get to spend anyone’s money independently. The buyer explicitly approves the transaction." | Every Ghost It result shows exactly what you typed next to the maths. Nothing counts as cancelled until you tap Mark ghosted. A trust line says Ghost It never touches your bank, cards or money. | [#124](https://github.com/D3lK1ch1/ghost-fees/pull/124) · [#142](https://github.com/D3lK1ch1/ghost-fees/pull/142) |
 | 5 | 7 Nov | Diana (Slack builder) · Ghost Fees | "The animated total briefly looked like a final result while it was still counting up. ... I’d add “Adding it up...” while the number animates, then show the final total once it settles." | The big total now says Adding it up... while it counts, and Final total once it settles. | [#200](https://github.com/D3lK1ch1/ghost-fees/pull/200) |
+| 6 | 7 Nov | Thạch (Slack builder) · Ghost It | "I tested the newer website-linked agent with fictional subscription prices ... My agent request stayed processing during this session; the website CSV scan worked separately." | The Ghost It button now says replies can take up to a minute and to send again if it stays processing. The statement scan works without it. | [#212](https://github.com/D3lK1ch1/ghost-fees/pull/212) |
 
 Numbers on /progress (reviews, average score, acted on) come only from the 7 Trick or Feedback reviews in the Stranger Builds portal.
 

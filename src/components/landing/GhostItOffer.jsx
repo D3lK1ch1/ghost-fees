@@ -39,6 +39,8 @@ export default function GhostItOffer({ className = '' }) {
           </a>
           <Link to="/ghostit" className="text-[14px] font-semibold text-foreground/80 underline-offset-4 hover:text-foreground hover:underline">How it works</Link>
         </span>
+        {/* Thach (Slack, 7 Nov): the agent stayed "processing" with no answer; explain timeouts and retry. */}
+        <span className="mt-2 block text-[13px] text-muted-foreground">Beta: Ghost It can take up to a minute to reply in ASI:One. Still processing? Send your message again. The statement scan here works without it.</span>
       </span>
     </div>
   );
