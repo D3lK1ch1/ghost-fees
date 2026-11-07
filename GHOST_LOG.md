@@ -1320,3 +1320,8 @@ One entry per change. Newest at the bottom.
 - What: the screenshot of the original feedback now sits on the card itself, under the quotes, with the caption "The original, as left in the hackathon portal" (or "hackathon Slack"), instead of being hidden inside Show the evidence. 5 cards have one: the 2 Nov, 1 Nov and 31 Oct (scrub) portal reviews, Raj 2 Nov and Kimberley.
 - Why: the user couldn't see the photos on the live site because they were inside a closed drop-down.
 - Files: src/components/site/FeedbackBoard.jsx
+
+## 2026-11-08: all Slack feedback has its photo; exact words; one video on /progress
+- What: screenshots of Diana's (7 Nov), Raj's (4 Nov) and Kingan's (4 Nov) Slack messages added, so all 5 Slack messages show the original. Their quotes on the site and in the README are now their exact words from Slack (with "..." where we skip). /progress shows only the 4-minute full journey video; the 60-second one is gone from that page (still on Media).
+- Why: the user asked for photo proof on every Slack message and to keep only the 4-minute video under progress.
+- Files: public/feedback/slack-diana-7nov.jpg, slack-raj-4nov.jpg, slack-kingan-4nov.jpg, src/data/changelog.json, README.md, src/pages/Progress.jsx
