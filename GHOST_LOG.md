@@ -1284,3 +1284,18 @@ One entry per change. Newest at the bottom.
 - What: the README opens with what Ghost Fees is, a /try link, a "For judges: where to look" table (feedback evidence, /progress, GHOST_LOG, closed PRs, CONTRIBUTORS) and what it does in 5 steps; the Base44 setup moves under "Run locally". Slack feedback shows names: Diana (Slack builder) and Kimberley (Slack), as Raj and Kingan already were. The 7 Trick or Feedback reviews are labelled "A hackathon builder (anonymous) · Trick or Feedback", and the board says the platform keeps reviewers anonymous.
 - Why: proof screenshots show Slack names, so the site matches; judges get one place to start.
 - Files: README.md, src/components/site/FeedbackBoard.jsx, src/data/changelog.json
+
+## 2026-11-08: where the numbers come from
+- What: a "Where these numbers come from" drop-down under the Feedback board header (7 reviews from the platform, the average of the 7 recommend scores listed, 7 of 7 acted on, Slack counted separately) and under the scoreboard (how scans, feedback responses, found something real, would pay, found on real statements and Ghost It visits are each counted). It says plainly that home-page answers to "Is it clear what Ghost Fees does?" share the same field and count towards "found something real".
+- Why: the user asked to show where every number comes from.
+- Files: src/components/site/FeedbackBoard.jsx, src/pages/Progress.jsx
+
+## 2026-11-08: scoreboard from the Duck's reviews only
+- What: the scoreboard now shows only numbers from the 7 Trick or Feedback reviews in the Stranger Builds portal (reviews from the Duck, average score, reviews acted on) plus scans run, with one plain line saying where they come from. The in-app form numbers, Ghost It visits and both "Where these numbers come from" drop-downs are gone; nothing is counted from Slack. README matches.
+- Why: the user asked for the numbers to come from the Duck's portal feedback only, none from Slack, and to look clean.
+- Files: src/pages/Progress.jsx, src/components/site/FeedbackBoard.jsx, README.md
+
+## 2026-11-08: loose ends before submission
+- What: Build streak brought up to date: Sat 7 Nov now shows 8 merged PRs (was 6) and 3 more highlights (Adding it up..., CONTRIBUTORS.md, review labels); new Sun 8 Nov day with 3 highlights and its PR count. "Copy today's update" now says the Duck's review numbers instead of in-app form counts. A stale code comment fixed.
+- Why: a final sweep for anything missed.
+- Files: src/data/mergedPrs.json, src/data/shipped.json, src/pages/Progress.jsx, src/components/site/FeedbackBoard.jsx

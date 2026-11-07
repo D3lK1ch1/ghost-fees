@@ -9,7 +9,7 @@ const slack = changelog.filter((item) => item.source === 'Slack');
 
 // /progress: every Stranger Builds "Trick or Feedback" review, in the tester's own words
 // (spelling fixed only), with what we changed because of it (4 Nov). Testers are
-// anonymous on Stranger Builds, so each one is just "A tester". Slack feedback is listed
+// anonymous on Stranger Builds, so each one is "A hackathon builder (anonymous)". Slack feedback is listed
 // after them under "From Slack". Ends with "Please leave a
 // review": the same feedback form as home and results, so there is one form, not two.
 const fmt = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });

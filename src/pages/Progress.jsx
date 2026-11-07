@@ -9,6 +9,9 @@ import { money } from '@/lib/ghostFees/format';
 import changelog from '@/data/changelog.json';
 import shipped from '@/data/shipped.json';
 import mergedPrs from '@/data/mergedPrs.json';
+import reviews from '@/data/testerFeedback.json';
+
+const reviewAvg = reviews.reduce((sum, item) => sum + item.rating, 0) / reviews.length;
 
 // Day 1 of Stranger Builds is Sat 31 Oct 2026 (Melbourne).
 const DAY_ONE = new Date(2026, 9, 31);
@@ -54,7 +57,7 @@ export default function Progress() {
   const latestChange = (realChanges[realChanges.length - 1]?.changed || realChanges[realChanges.length - 1]?.change) || shipped[shipped.length - 1]?.title || '';
   const byDay = shipped.reduce((days, item) => ({ ...days, [item.date]: [...(days[item.date] || []), item] }), {});
 
-  const update = `Day ${dayNumber()} of Stranger Builds: ${stats?.scans ?? 0} scans, ${stats?.feedback ?? 0} feedback. Changed: ${latestChange}. hunt-ghost-fees.base44.app`;
+  const update = `Day ${dayNumber()} of Stranger Builds: ${reviews.length} reviews from the Duck, ${reviews.filter((item) => item.did).length} of ${reviews.length} acted on. Changed: ${latestChange}. hunt-ghost-fees.base44.app`;
   const copyUpdate = async () => {
     try {
       await navigator.clipboard.writeText(update);
@@ -76,14 +79,15 @@ export default function Progress() {
         <WatchVideos keys={['journey', 'journeyFull']} id="how-far" title="Stranger Builds hackathon feedback" subtitle="Ghost Fees" line="The 60-second version first, then the full journey. Every review is on the board below." />
         <FeedbackBoard />
 
-        <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-3" aria-label="Scoreboard">
+        <section className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4" aria-label="Scoreboard">
+          <Stat label="reviews from the Duck" value={reviews.length} />
+          <Stat label="average score, out of 5" value={reviewAvg.toFixed(1)} />
+          <Stat label="reviews acted on" value={`${reviews.filter((item) => item.did).length} of ${reviews.length}`} />
           <Stat label="scans run (includes the sample)" value={stats ? stats.scans : '...'} />
-          <Stat label="found on real statements (from feedback)" value={stats?.foundOnRealStatements != null ? `${money(stats.foundOnRealStatements)}/yr` : null} />
-          <Stat label="feedback responses" value={stats ? stats.feedback : '...'} />
-          <Stat label='said it found something real (yes or kinda)' value={stats?.foundSomethingReal} />
-          <Stat label="would pay" value={stats?.wouldPay} />
-          <Stat label={stats?.agentVisits === 1 ? 'visit from the Ghost It agent' : 'visits from the Ghost It agent'} value={stats?.agentVisits} />
         </section>
+        <p className="mt-2 text-[13px] text-muted-foreground">
+          Reviews and scores come from Trick or Feedback in the Stranger Builds portal, where the Duck sends another builder to try our app. Scans are counted by the app.
+        </p>
 
         {/* Our users vs the research (aggregate, 3+ real scans). */}
         <section className="mt-6 rounded-3xl border border-border bg-card p-4" aria-label="Our users vs the research">

@@ -122,7 +122,7 @@ Not counted in the 7 platform reviews. Shown the same way as on /progress.
 | 4 | 4 Nov | Kingan (Tool Offer agent builder) · Ghost It | "Show the evidence. The buyer approves every payment. The agent never spends money on its own." | Every Ghost It result shows exactly what you typed next to the maths. Nothing counts as cancelled until you tap Mark ghosted. A trust line says Ghost It never touches your bank, cards or money. | [#124](https://github.com/D3lK1ch1/ghost-fees/pull/124) · [#142](https://github.com/D3lK1ch1/ghost-fees/pull/142) |
 | 5 | 7 Nov | Diana (Slack builder) · Ghost Fees | "The total looked final while it was still counting up." | The big total now says Adding it up... while it counts, and Final total once it settles. | [#200](https://github.com/D3lK1ch1/ghost-fees/pull/200) |
 
-In-app feedback form (separate again): 12 responses, 8 said it found something real (yes or kinda), 1 would pay. Live counts on /progress.
+Numbers on /progress (reviews, average score, acted on) come only from the 7 Trick or Feedback reviews in the Stranger Builds portal.
 
 ### Our own testing (not counted as feedback)
 | 5 Nov | Team, testing Ghost It in ASI:One | Replies and buttons never showed. | Found the cause in the logs: hosted replies were held ~40 s, past ASI:One's ~30 s wait. Moved Ghost It to a self-run mailbox agent; replies with cards and buttons in under 8 s. | PR #147 · PR #148 · PR #149 · ~/ghost-fees-evidence/STATUS_2026-11-04.md |
