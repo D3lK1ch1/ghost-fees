@@ -1,10 +1,16 @@
 import { MessageSquarePlus, Star } from 'lucide-react';
 import FeedbackPanel from '@/components/results/FeedbackPanel';
 import feedback from '@/data/testerFeedback.json';
+import changelog from '@/data/changelog.json';
+
+// Feedback from the Stranger Builds Slack, labelled apart from the platform reviews
+// so the platform count above stays exactly what testers left there.
+const slack = changelog.filter((item) => item.source === 'Slack');
 
 // /progress: every Stranger Builds "Trick or Feedback" review, in the tester's own words
 // (spelling fixed only), with what we changed because of it (4 Nov). Testers are
-// anonymous on Stranger Builds, so each one is just "A tester". Ends with "Please leave a
+// anonymous on Stranger Builds, so each one is just "A tester". Slack feedback is listed
+// after them under "From Slack". Ends with "Please leave a
 // review": the same feedback form as home and results, so there is one form, not two.
 const fmt = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
 
@@ -34,7 +40,7 @@ export default function FeedbackBoard() {
         <div>
           <h2 id="feedback-board" className="text-[18px] font-semibold text-foreground">Feedback board</h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Every review from Stranger Builds testers, in their words. {feedback.length} testers · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
+            Every review left on the Stranger Builds hackathon platform, in the tester's words. {feedback.length} testers · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
           </p>
         </div>
         <a href="#leave-review" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground">
@@ -46,7 +52,7 @@ export default function FeedbackBoard() {
         {feedback.map((item, index) => (
           <li key={index} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
             <div className="flex items-center justify-between gap-2 text-[12.5px] text-muted-foreground">
-              <span>{fmt(item.date)} · A tester</span>
+              <span>{fmt(item.date)} · A tester · <span className="font-semibold text-foreground/80">From the Stranger Builds platform</span></span>
               <Stars n={item.rating} />
             </div>
             <div className="mt-2 space-y-1.5">
@@ -62,6 +68,26 @@ export default function FeedbackBoard() {
           </li>
         ))}
       </ul>
+
+      {slack.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-[16px] font-semibold text-foreground">From Slack</h3>
+          <p className="mt-1 text-[14px] text-muted-foreground">Builders and mentors in the Stranger Builds Slack. Not counted in the {feedback.length} platform reviews above.</p>
+          <ul className="mt-3 space-y-3">
+            {slack.map((item, index) => (
+              <li key={`${item.date}-${index}`} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
+                <div className="text-[12.5px] text-muted-foreground">
+                  {fmt(item.date)} · {item.who} · <span className="font-semibold text-foreground/80">From Slack</span> · {item.product}
+                </div>
+                <p className="mt-2 text-[14px] leading-snug text-foreground/90">&ldquo;{item.said}&rdquo;</p>
+                <p className="mt-3 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[14px] leading-snug text-foreground">
+                  <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.changed}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div id="leave-review" className="mt-8 scroll-mt-24 rounded-3xl border border-primary/30 bg-primary/[0.04] p-5">
         <h3 className="text-[18px] font-semibold text-foreground">Please leave a review</h3>

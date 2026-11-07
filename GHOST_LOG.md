@@ -1259,3 +1259,8 @@ One entry per change. Newest at the bottom.
 - What: the big total now says "Adding it up..." while it counts and "Final total" once it settles (results page and the guess reveal). New CONTRIBUTORS.md: the team (Delia and Bella), the timeline from the Base44 template, and what each git name is.
 - Why: Diana (Slack): "the total looked final while counting up". The submission links to CONTRIBUTORS.md so judges can see who built it.
 - Files: src/components/GhostAnimations.jsx, src/components/results/LeakTotal.jsx, src/components/results/GuessReveal.jsx, CONTRIBUTORS.md
+
+## 2026-11-07: every piece of feedback says where it came from
+- What: every "You said, we changed" entry now has a source: From Slack, From the Stranger Builds platform, or Our own testing. The Feedback board labels each platform review "From the Stranger Builds platform" and adds a "From Slack" list (Diana, Raj, Kingan, the Slack user) that is not counted in the 7 platform reviews. Diana's Slack feedback is added. "A Fetch.ai mentor" is now "Raj (Fetch.ai mentor)", matching his other entry.
+- Why: the user asked that all Slack feedback sits under Feedback, labelled as from Slack or from the hackathon platform.
+- Files: src/data/changelog.json, src/components/site/FeedbackBoard.jsx, src/pages/Progress.jsx, src/pages/Evidence.jsx
