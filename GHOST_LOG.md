@@ -1304,3 +1304,8 @@ One entry per change. Newest at the bottom.
 - What: "Show the evidence" now shows a screenshot of the original feedback where we saved one: 3 Trick or Feedback reviews (2 Nov, 1 Nov, 31 Oct scrub) and 2 Slack messages (Raj 2 Nov, Kimberley). Each opens full size. Platform reviews show a plain "Score 4/5" (and "Would recommend it: 4 of 5" in the evidence) instead of stars; Slack messages have no score.
 - Why: the user asked for the actual feedback photos as evidence, not only PR links, and for scores only on the Duck's reviews.
 - Files: public/feedback/*.jpg, src/data/testerFeedback.json, src/data/changelog.json, src/components/site/FeedbackBoard.jsx
+
+## 2026-11-08: clear labels on every piece of feedback
+- What: every feedback card starts with big outlined labels: where it came from ("Trick or Feedback · Stranger Builds portal" or "Slack · Ghost Fees / Ghost It"), what it is about (e.g. "About: Privacy: hiding numbers", "About: Footer and menu") and, for the Duck's reviews only, "Score 4/5". The date and who sit under them. "Show the evidence" is bigger.
+- Why: the user asked for bigger, outlined labels that make clear where feedback came from and what it relates to.
+- Files: src/components/site/FeedbackBoard.jsx, src/data/testerFeedback.json, src/data/changelog.json
