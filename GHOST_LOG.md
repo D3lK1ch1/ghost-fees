@@ -1330,3 +1330,8 @@ One entry per change. Newest at the bottom.
 - What: one type scale across /progress: section headings 24px bold, body and quotes 15 to 15.5px with relaxed line height, labels (One change, Trick, Treat) on their own line above each quote, roomier cards (more padding, more space between cards and sections), clearer "From" tags and bigger Build streak text.
 - Why: the user asked to tidy text spacing, size and readability overall.
 - Files: src/components/site/FeedbackBoard.jsx, src/pages/Progress.jsx
+
+## 2026-11-08: demo video on the home page
+- What: the home page now shows the full demo (7:32, "See it work: the full demo") under the 90-second promo, in every theme.
+- Why: the user asked for the demo, and the promo too, on the home page.
+- Files: src/components/landing/ValueLine.jsx
