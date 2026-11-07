@@ -1274,3 +1274,8 @@ One entry per change. Newest at the bottom.
 - What: the 7 Nov Slack feedback is credited to "Slack builder" instead of a first name, on the site and in the repo notes.
 - Why: not naming the reviewer publicly.
 - Files: src/data/changelog.json, src/components/GhostAnimations.jsx, GHOST_LOG.md
+
+## 2026-11-08: feedback evidence for judges
+- What: every feedback card on /progress#feedback has a "Show the evidence" drop-down: where it was left, the date (and score for platform reviews), and links to the merged PRs (or Ghost It commits) that made the change. The README's "8 rounds" table is replaced by the 7 Stranger Builds platform reviews word for word and the 5 Slack messages, each with its proof links, plus the in-app form numbers.
+- Why: so judges can check every piece of feedback and its change in one place.
+- Files: src/components/site/FeedbackBoard.jsx, src/data/testerFeedback.json, src/data/changelog.json, README.md

@@ -1,4 +1,4 @@
-import { MessageSquarePlus, Star } from 'lucide-react';
+import { ChevronDown, ExternalLink, MessageSquarePlus, Star } from 'lucide-react';
 import FeedbackPanel from '@/components/results/FeedbackPanel';
 import feedback from '@/data/testerFeedback.json';
 import changelog from '@/data/changelog.json';
@@ -13,6 +13,40 @@ const slack = changelog.filter((item) => item.source === 'Slack');
 // after them under "From Slack". Ends with "Please leave a
 // review": the same feedback form as home and results, so there is one form, not two.
 const fmt = (iso) => new Date(`${iso}T12:00:00`).toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short' });
+
+const REPO = 'https://github.com/D3lK1ch1/ghost-fees';
+
+// "Show the evidence": where the feedback was left, and the merged PRs (or agent commits)
+// that made the change, each linking to GitHub so a judge can check it.
+function Evidence({ where, date, rating, prs = [], commits = [] }) {
+  return (
+    <details className="group mt-2 rounded-xl border border-white/[0.08] bg-white/[0.02]">
+      <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-foreground/90 [&::-webkit-details-marker]:hidden">
+        <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
+        Show the evidence
+      </summary>
+      <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pb-3 text-[13px]">
+        <dt className="text-muted-foreground">Where</dt>
+        <dd className="text-foreground">{where}</dd>
+        <dt className="text-muted-foreground">Date</dt>
+        <dd className="text-foreground">{fmt(date)}{rating ? ` · ${rating} of 5` : ''}</dd>
+        <dt className="text-muted-foreground">Proof</dt>
+        <dd className="flex flex-wrap gap-x-3 gap-y-1">
+          {prs.map((n) => (
+            <a key={n} href={`${REPO}/pull/${n}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#5ee6c8] underline-offset-4 hover:underline">
+              PR #{n} <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            </a>
+          ))}
+          {commits.map((c) => (
+            <a key={c} href={`${REPO}/commit/${c}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-[#5ee6c8] underline-offset-4 hover:underline">
+              Ghost It commit {c} <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            </a>
+          ))}
+        </dd>
+      </dl>
+    </details>
+  );
+}
 
 function Stars({ n }) {
   return (
@@ -65,6 +99,7 @@ export default function FeedbackBoard() {
                 <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.did}
               </p>
             )}
+            <Evidence where="Stranger Builds platform, Trick or Feedback review" date={item.date} rating={item.rating} prs={item.prs} />
           </li>
         ))}
       </ul>
@@ -83,6 +118,7 @@ export default function FeedbackBoard() {
                 <p className="mt-3 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[14px] leading-snug text-foreground">
                   <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.changed}
                 </p>
+                <Evidence where={item.where || 'Stranger Builds Slack'} date={item.date} prs={item.prs} commits={item.commits} />
               </li>
             ))}
           </ul>
