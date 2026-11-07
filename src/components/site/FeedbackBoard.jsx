@@ -82,19 +82,6 @@ export default function FeedbackBoard() {
         </a>
       </div>
 
-      <details className="group mt-3 rounded-xl border border-white/[0.08] bg-white/[0.02]">
-        <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-foreground/90 [&::-webkit-details-marker]:hidden">
-          <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
-          Where these numbers come from
-        </summary>
-        <ul className="list-disc space-y-1 px-3 pb-3 pl-8 text-[13px] leading-snug text-muted-foreground">
-          <li><b className="text-foreground">{feedback.length} reviews:</b> every review on our project in the Stranger Builds platform (My doors, Feedback on your project). We copied each one here word for word.</li>
-          <li><b className="text-foreground">{avg.toFixed(1)} of 5:</b> the average of their &ldquo;Would recommend it&rdquo; scores: {feedback.map((item) => item.rating).join(', ')}.</li>
-          <li><b className="text-foreground">{feedback.filter((item) => item.did).length} of {feedback.length} acted on:</b> each review has a &ldquo;What we changed&rdquo;, and Show the evidence links the merged PRs on GitHub.</li>
-          {slack.length > 0 && <li><b className="text-foreground">{slack.length} Slack messages</b> (below) are counted separately, not in these numbers.</li>}
-        </ul>
-      </details>
-
       <ul className="mt-3 space-y-3">
         {feedback.map((item, index) => (
           <li key={index} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
