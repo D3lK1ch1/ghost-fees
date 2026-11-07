@@ -21,7 +21,7 @@ const REPO = 'https://github.com/D3lK1ch1/ghost-fees';
 function Evidence({ where, date, rating, photo, prs = [], commits = [] }) {
   return (
     <details className="group mt-2 rounded-xl border border-white/[0.08] bg-white/[0.02]">
-      <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-foreground/90 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2.5 text-[14.5px] font-bold text-foreground [&::-webkit-details-marker]:hidden">
         <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
         Show the evidence
       </summary>
@@ -59,6 +59,25 @@ function Evidence({ where, date, rating, photo, prs = [], commits = [] }) {
   );
 }
 
+// Big, outlined labels at the top of each card: where the feedback came from, and
+// what part of the app it is about.
+function Labels({ source, about, date, who, score }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="inline-flex items-center gap-1.5 rounded-lg border-2 border-primary/70 bg-primary/10 px-2.5 py-1 text-[14px] font-bold text-foreground">
+        <span className="text-[11.5px] uppercase tracking-wide text-primary">From</span> {source}
+      </span>
+      {about && (
+        <span className="inline-flex items-center gap-1.5 rounded-lg border-2 border-[#5ee6c8]/70 bg-[#5ee6c8]/10 px-2.5 py-1 text-[14px] font-bold text-foreground">
+          <span className="text-[11.5px] uppercase tracking-wide text-[#5ee6c8]">About</span> {about}
+        </span>
+      )}
+      {score ? <span className="rounded-lg border-2 border-white/30 px-2.5 py-1 text-[14px] font-bold text-foreground">Score {score}/5</span> : null}
+      <span className="w-full text-[13.5px] text-muted-foreground">{fmt(date)} · {who}</span>
+    </div>
+  );
+}
+
 function Line({ label, text }) {
   if (!text) return null;
   return (
@@ -88,10 +107,7 @@ export default function FeedbackBoard() {
       <ul className="mt-3 space-y-3">
         {feedback.map((item, index) => (
           <li key={index} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
-            <div className="flex items-center justify-between gap-2 text-[12.5px] text-muted-foreground">
-              <span>{fmt(item.date)} · A hackathon builder (anonymous) · <span className="font-semibold text-foreground/80">Trick or Feedback</span></span>
-              <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[12px] font-semibold text-foreground">Score {item.rating}/5</span>
-            </div>
+            <Labels source="Hackathon portal review" about={item.about} date={item.date} who="A hackathon builder (anonymous)" score={item.rating} />
             <div className="mt-2 space-y-1.5">
               <Line label="One change" text={item.change} />
               <Line label="Trick" text={item.trick} />
@@ -109,14 +125,12 @@ export default function FeedbackBoard() {
 
       {slack.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-[16px] font-semibold text-foreground">From Slack</h3>
+          <h3 className="text-[18px] font-semibold text-foreground">Hackathon Slack messages</h3>
           <p className="mt-1 text-[14px] text-muted-foreground">Builders and mentors in the Stranger Builds Slack. Not counted in the {feedback.length} platform reviews above.</p>
           <ul className="mt-3 space-y-3">
             {slack.map((item, index) => (
               <li key={`${item.date}-${index}`} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
-                <div className="text-[12.5px] text-muted-foreground">
-                  {fmt(item.date)} · {item.who} · <span className="font-semibold text-foreground/80">From Slack</span> · {item.product}
-                </div>
+                <Labels source="Hackathon Slack message" about={item.about} date={item.date} who={item.who} />
                 <p className="mt-2 text-[14px] leading-snug text-foreground/90">&ldquo;{item.said}&rdquo;</p>
                 <p className="mt-3 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[14px] leading-snug text-foreground">
                   <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.changed}
