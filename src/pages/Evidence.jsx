@@ -153,7 +153,7 @@ export default function Evidence() {
               <tbody>
                 {CHANGELOG.map((row) => (
                   <tr key={row.said} className="border-t border-white/[0.06] first:border-0 align-top">
-                    <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{row.date}<br />{row.who}<br /><b className="text-foreground">{row.product}</b></td>
+                    <td className="whitespace-nowrap px-3 py-2 text-muted-foreground">{row.date}<br />{row.who}{row.source && row.source !== row.who ? ` (${row.source})` : ''}<br /><b className="text-foreground">{row.product}</b></td>
                     <td className="px-3 py-2 italic">&ldquo;{row.said}&rdquo;</td>
                     <td className="px-3 py-2">{row.changed}</td>
                   </tr>

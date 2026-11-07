@@ -115,7 +115,10 @@ export default function Progress() {
           <ul className="mt-3 space-y-3">
             {changelog.map((item, index) => (
               <li key={`${item.date}-${index}`} className={`rounded-2xl border px-4 py-3 ${item.example ? 'border-dashed border-[#ffc27a]/60 bg-[#ffc27a]/[0.06]' : 'border-border bg-card/70'}`}>
-                <div className="text-[12.5px] font-bold text-muted-foreground">{niceDate(item.date)}{item.who ? ` · ${item.who}` : ''}</div>
+                <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-muted-foreground">
+                  <span>{niceDate(item.date)}{item.who ? ` · ${item.who}` : ''}</span>
+                  {item.source && item.source !== item.who && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11.5px] text-foreground">From {item.source}</span>}
+                </div>
                 <p className="mt-1 text-[14px] italic text-foreground">&ldquo;{item.said || item.quote}&rdquo;</p>
                 <p className="mt-1 text-[14px] text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.changed || item.change}</p>
                 {(item.beforeImg || item.afterImg) && (
