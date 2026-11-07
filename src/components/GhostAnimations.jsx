@@ -84,7 +84,7 @@ export function ScanScreen({ lastLine = 'Ghost detected', onDone, onCancel }) {
 
 // Counts up in whole dollars, then settles on the exact cents.
 // status: shows "Adding it up..." while counting and "Final total" once it settles,
-// so a number mid-count never looks final (Diana, Slack feedback).
+// so a number mid-count never looks final (Slack feedback).
 export function CountUp({ value, duration = COUNT_MS, status = false }) {
   const [shown, setShown] = useState(0);
   const [finished, setFinished] = useState(false);
