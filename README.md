@@ -1,4 +1,29 @@
-# Base44 Project
+# Ghost Fees
+
+Find the subscriptions and bank fees you forgot in one bank statement, then cancel them. Built on Base44 by Delia and Bella for Stranger Builds (31 Oct to 8 Nov 2026).
+
+**Try it (no login, no upload):** https://hunt-ghost-fees.base44.app/try, then tap *Try the sample*.
+
+## For judges: where to look
+
+| What | Where |
+|---|---|
+| Every review in the reviewer's words, and what we changed | [Feedback evidence](#feedback-evidence-7-platform-reviews-and-5-slack-messages) below and [/progress](https://hunt-ghost-fees.base44.app/progress) |
+| What we built each day and why | [`GHOST_LOG.md`](GHOST_LOG.md) |
+| Every change as a pull request | [Closed PRs](https://github.com/D3lK1ch1/ghost-fees/pulls?q=is%3Apr+is%3Aclosed) (200+, 31 Oct to 8 Nov) |
+| Who built it, and every name in the git history | [`CONTRIBUTORS.md`](CONTRIBUTORS.md) |
+
+## What it does
+
+1. **Find:** reads a CSV (in your browser, never uploaded) or PDF and lists every subscription, bank fee, trial that turned paid, double-up and price rise, with the transactions behind each.
+2. **Cancel:** the official cancel page, steps and phone number; ready cancel, refund and fee-waiver emails; a calendar link; a dispute claim for your bank.
+3. **Check it stopped:** the Ghost List checks your next statement.
+4. **Get help:** seven ghost guides, one job each. *Team up* walks you through them.
+5. **Plan:** trial tracker, calendar reminders, future spend chart, Goal path, PDF report.
+
+---
+
+## Run locally (Base44)
 
 Use this repository to run and edit the app locally, then publish changes back through Base44.
 
@@ -92,10 +117,10 @@ Not counted in the 7 platform reviews. Shown the same way as on /progress.
 | # | Date | Who | They said | What we changed | Proof |
 |---|---|---|---|---|---|
 | 1 | 2 Nov | Raj (Fetch.ai mentor) · Ghost It | "The response is not very clear on what it's trying to do. I didn't understand why it calculated $276 a year." | Every reply now says what it did, shows the maths line by line ($8.99/mo x 12 = $107.88/yr) and the exact next step, with ASI:One cards. Lists typed without commas now work. | Ghost It [f627886](https://github.com/D3lK1ch1/ghost-fees/commit/f627886) · [51c3645](https://github.com/D3lK1ch1/ghost-fees/commit/51c3645) |
-| 2 | 2 Nov | Slack user · Ghost Fees | "The web app link doesn't work for me." | Links now go on their own line in our posts and the app link shows a preview card. /try is one link for the whole test. | [#51](https://github.com/D3lK1ch1/ghost-fees/pull/51) · [#146](https://github.com/D3lK1ch1/ghost-fees/pull/146) |
+| 2 | 2 Nov | Kimberley (Slack) · Ghost Fees | "The web app link doesn't work for me." | Links now go on their own line in our posts and the app link shows a preview card. /try is one link for the whole test. | [#51](https://github.com/D3lK1ch1/ghost-fees/pull/51) · [#146](https://github.com/D3lK1ch1/ghost-fees/pull/146) |
 | 3 | 4 Nov | Raj (Fetch.ai mentor) · Ghost It | "The link 'copy and open ghost it' is taking to mobile app, I would suggest you to point it to our web app. Instead of asking to type consolidate, you could have a button for consolidate." | Phones now open the ASI:One web chat instead of the app, and every Ghost It reply has tap buttons: Consolidate, Get pack, Ghost one, Scan my statement, Mark ghosted. | [#118](https://github.com/D3lK1ch1/ghost-fees/pull/118) · [#119](https://github.com/D3lK1ch1/ghost-fees/pull/119) · [#123](https://github.com/D3lK1ch1/ghost-fees/pull/123) |
 | 4 | 4 Nov | Kingan (Tool Offer agent builder) · Ghost It | "Show the evidence. The buyer approves every payment. The agent never spends money on its own." | Every Ghost It result shows exactly what you typed next to the maths. Nothing counts as cancelled until you tap Mark ghosted. A trust line says Ghost It never touches your bank, cards or money. | [#124](https://github.com/D3lK1ch1/ghost-fees/pull/124) · [#142](https://github.com/D3lK1ch1/ghost-fees/pull/142) |
-| 5 | 7 Nov | Slack builder · Ghost Fees | "The total looked final while it was still counting up." | The big total now says Adding it up... while it counts, and Final total once it settles. | [#200](https://github.com/D3lK1ch1/ghost-fees/pull/200) |
+| 5 | 7 Nov | Diana (Slack builder) · Ghost Fees | "The total looked final while it was still counting up." | The big total now says Adding it up... while it counts, and Final total once it settles. | [#200](https://github.com/D3lK1ch1/ghost-fees/pull/200) |
 
 In-app feedback form (separate again): 12 responses, 8 said it found something real (yes or kinda), 1 would pay. Live counts on /progress.
 

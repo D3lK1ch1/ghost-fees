@@ -1279,3 +1279,8 @@ One entry per change. Newest at the bottom.
 - What: every feedback card on /progress#feedback has a "Show the evidence" drop-down: where it was left, the date (and score for platform reviews), and links to the merged PRs (or Ghost It commits) that made the change. The README's "8 rounds" table is replaced by the 7 Stranger Builds platform reviews word for word and the 5 Slack messages, each with its proof links, plus the in-app form numbers.
 - Why: so judges can check every piece of feedback and its change in one place.
 - Files: src/components/site/FeedbackBoard.jsx, src/data/testerFeedback.json, src/data/changelog.json, README.md
+
+## 2026-11-08: judges' README intro; Slack feedback named; platform reviews marked anonymous
+- What: the README opens with what Ghost Fees is, a /try link, a "For judges: where to look" table (feedback evidence, /progress, GHOST_LOG, closed PRs, CONTRIBUTORS) and what it does in 5 steps; the Base44 setup moves under "Run locally". Slack feedback shows names: Diana (Slack builder) and Kimberley (Slack), as Raj and Kingan already were. The 7 Trick or Feedback reviews are labelled "A hackathon builder (anonymous) · Trick or Feedback", and the board says the platform keeps reviewers anonymous.
+- Why: proof screenshots show Slack names, so the site matches; judges get one place to start.
+- Files: README.md, src/components/site/FeedbackBoard.jsx, src/data/changelog.json
