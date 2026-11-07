@@ -74,7 +74,7 @@ export default function FeedbackBoard() {
         <div>
           <h2 id="feedback-board" className="text-[18px] font-semibold text-foreground">Feedback board</h2>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Every review left on the Stranger Builds hackathon platform, in the tester's words. {feedback.length} testers · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
+            Every review from Trick or Feedback, where the Stranger Builds Duck assigns another hackathon builder to try our app. The platform keeps reviewers anonymous. Their words, unedited. {feedback.length} reviews · {avg.toFixed(1)} of 5 · {feedback.filter((item) => item.did).length} of {feedback.length} acted on.
           </p>
         </div>
         <a href="#leave-review" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-primary-foreground">
@@ -86,7 +86,7 @@ export default function FeedbackBoard() {
         {feedback.map((item, index) => (
           <li key={index} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
             <div className="flex items-center justify-between gap-2 text-[12.5px] text-muted-foreground">
-              <span>{fmt(item.date)} · A tester · <span className="font-semibold text-foreground/80">From the Stranger Builds platform</span></span>
+              <span>{fmt(item.date)} · A hackathon builder (anonymous) · <span className="font-semibold text-foreground/80">Trick or Feedback</span></span>
               <Stars n={item.rating} />
             </div>
             <div className="mt-2 space-y-1.5">
