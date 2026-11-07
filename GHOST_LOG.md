@@ -1294,3 +1294,8 @@ One entry per change. Newest at the bottom.
 - What: the scoreboard now shows only numbers from the 7 Trick or Feedback reviews in the Stranger Builds portal (reviews from the Duck, average score, reviews acted on) plus scans run, with one plain line saying where they come from. The in-app form numbers, Ghost It visits and both "Where these numbers come from" drop-downs are gone; nothing is counted from Slack. README matches.
 - Why: the user asked for the numbers to come from the Duck's portal feedback only, none from Slack, and to look clean.
 - Files: src/pages/Progress.jsx, src/components/site/FeedbackBoard.jsx, README.md
+
+## 2026-11-08: loose ends before submission
+- What: Build streak brought up to date: Sat 7 Nov now shows 8 merged PRs (was 6) and 3 more highlights (Adding it up..., CONTRIBUTORS.md, review labels); new Sun 8 Nov day with 3 highlights and its PR count. "Copy today's update" now says the Duck's review numbers instead of in-app form counts. A stale code comment fixed.
+- Why: a final sweep for anything missed.
+- Files: src/data/mergedPrs.json, src/data/shipped.json, src/pages/Progress.jsx, src/components/site/FeedbackBoard.jsx

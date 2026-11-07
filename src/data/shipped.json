@@ -386,5 +386,29 @@
   {
     "date": "2026-11-07",
     "title": "Honest labels: scans include the sample, Ghost It (beta)"
+  },
+  {
+    "date": "2026-11-07",
+    "title": "\"Adding it up...\" until the total settles, then \"Final total\" (Slack feedback)"
+  },
+  {
+    "date": "2026-11-07",
+    "title": "CONTRIBUTORS.md: who built Ghost Fees and every name in the git history"
+  },
+  {
+    "date": "2026-11-07",
+    "title": "Every review labelled: Trick or Feedback or Slack"
+  },
+  {
+    "date": "2026-11-08",
+    "title": "Show the evidence on every review, with links to the PRs that made the change"
+  },
+  {
+    "date": "2026-11-08",
+    "title": "README opens with a guide for judges: where to look and what it does"
+  },
+  {
+    "date": "2026-11-08",
+    "title": "Scoreboard: numbers from the Duck's reviews only"
   }
 ]

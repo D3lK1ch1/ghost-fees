@@ -57,7 +57,7 @@ export default function Progress() {
   const latestChange = (realChanges[realChanges.length - 1]?.changed || realChanges[realChanges.length - 1]?.change) || shipped[shipped.length - 1]?.title || '';
   const byDay = shipped.reduce((days, item) => ({ ...days, [item.date]: [...(days[item.date] || []), item] }), {});
 
-  const update = `Day ${dayNumber()} of Stranger Builds: ${stats?.scans ?? 0} scans, ${stats?.feedback ?? 0} feedback. Changed: ${latestChange}. hunt-ghost-fees.base44.app`;
+  const update = `Day ${dayNumber()} of Stranger Builds: ${reviews.length} reviews from the Duck, ${reviews.filter((item) => item.did).length} of ${reviews.length} acted on. Changed: ${latestChange}. hunt-ghost-fees.base44.app`;
   const copyUpdate = async () => {
     try {
       await navigator.clipboard.writeText(update);
