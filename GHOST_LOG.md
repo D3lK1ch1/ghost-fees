@@ -1326,3 +1326,7 @@ One entry per change. Newest at the bottom.
 - Why: the user asked for photo proof on every Slack message and to keep only the 4-minute video under progress.
 - Files: public/feedback/slack-diana-7nov.jpg, slack-raj-4nov.jpg, slack-kingan-4nov.jpg, src/data/changelog.json, README.md, src/pages/Progress.jsx
 - Also (final tidy patch): Thạch's 7 Nov Slack message added with its photo and exact words ("My agent request stayed processing..."); the Ghost It offer now says replies can take up to a minute and to send again if it stays processing; the 60-second video is also gone from Media (promo, demo and full journey stay); 3 more 8 Nov Build streak highlights; README says 6 Slack messages. Files: public/feedback/slack-thach-7nov.jpg, src/components/landing/GhostItOffer.jsx, src/pages/Media.jsx, src/data/shipped.json.
+## 2026-11-08: easier to read /progress
+- What: one type scale across /progress: section headings 24px bold, body and quotes 15 to 15.5px with relaxed line height, labels (One change, Trick, Treat) on their own line above each quote, roomier cards (more padding, more space between cards and sections), clearer "From" tags and bigger Build streak text.
+- Why: the user asked to tidy text spacing, size and readability overall.
+- Files: src/components/site/FeedbackBoard.jsx, src/pages/Progress.jsx
