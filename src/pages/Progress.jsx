@@ -84,6 +84,21 @@ export default function Progress() {
           <Stat label="would pay" value={stats?.wouldPay} />
           <Stat label={stats?.agentVisits === 1 ? 'visit from the Ghost It agent' : 'visits from the Ghost It agent'} value={stats?.agentVisits} />
         </section>
+        <details className="group mt-2 rounded-xl border border-border bg-card/60">
+          <summary className="cursor-pointer list-none px-3 py-2 text-[13px] font-semibold text-foreground/90 [&::-webkit-details-marker]:hidden">
+            <span className="mr-1 inline-block transition-transform group-open:rotate-90" aria-hidden="true">›</span>
+            Where these numbers come from
+          </summary>
+          <ul className="list-disc space-y-1 px-3 pb-3 pl-8 text-[13px] leading-snug text-muted-foreground">
+            <li><b className="text-foreground">Scans run:</b> counted once each time a scan finishes, including the sample. No statement data is stored, only that a scan finished.</li>
+            <li><b className="text-foreground">Feedback responses:</b> every answer to the in-app feedback form (on home, results and this page).</li>
+            <li><b className="text-foreground">Said it found something real:</b> answered &ldquo;Yes&rdquo; or &ldquo;Not sure&rdquo; to &ldquo;Did it find something real?&rdquo; after a scan. On the home page the same answer is asked as &ldquo;Is it clear what Ghost Fees does?&rdquo;, and those answers are counted here too.</li>
+            <li><b className="text-foreground">Would pay:</b> answered &ldquo;Yes&rdquo; to &ldquo;Would you pay $10 once for Pro?&rdquo;</li>
+            <li><b className="text-foreground">Found on real statements:</b> the yearly totals people sent with their feedback, added up, leaving out anyone who used the sample.</li>
+            <li><b className="text-foreground">Visits from the Ghost It agent:</b> visits that arrived through Ghost It&apos;s link in ASI:One (tagged ref=asi1).</li>
+            <li>All live from the app&apos;s own database, refreshed each time this page loads. Platform reviews and Slack messages are on the board above, not in these numbers.</li>
+          </ul>
+        </details>
 
         {/* Our users vs the research (aggregate, 3+ real scans). */}
         <section className="mt-6 rounded-3xl border border-border bg-card p-4" aria-label="Our users vs the research">
