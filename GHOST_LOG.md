@@ -1299,3 +1299,8 @@ One entry per change. Newest at the bottom.
 - What: Build streak brought up to date: Sat 7 Nov now shows 8 merged PRs (was 6) and 3 more highlights (Adding it up..., CONTRIBUTORS.md, review labels); new Sun 8 Nov day with 3 highlights and its PR count. "Copy today's update" now says the Duck's review numbers instead of in-app form counts. A stale code comment fixed.
 - Why: a final sweep for anything missed.
 - Files: src/data/mergedPrs.json, src/data/shipped.json, src/pages/Progress.jsx, src/components/site/FeedbackBoard.jsx
+
+## 2026-11-08: the original feedback, as photos
+- What: "Show the evidence" now shows a screenshot of the original feedback where we saved one: 3 Trick or Feedback reviews (2 Nov, 1 Nov, 31 Oct scrub) and 2 Slack messages (Raj 2 Nov, Kimberley). Each opens full size. Platform reviews show a plain "Score 4/5" (and "Would recommend it: 4 of 5" in the evidence) instead of stars; Slack messages have no score.
+- Why: the user asked for the actual feedback photos as evidence, not only PR links, and for scores only on the Duck's reviews.
+- Files: public/feedback/*.jpg, src/data/testerFeedback.json, src/data/changelog.json, src/components/site/FeedbackBoard.jsx
