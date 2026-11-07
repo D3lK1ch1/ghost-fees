@@ -33,7 +33,7 @@ export default function LeakTotal({ total, months, from, to, monthlyIncome, leak
       </div>
       <p className="font-heading text-2xl font-semibold text-foreground sm:text-3xl">You found</p>
       <p className="mt-1 pr-14 font-heading text-[3.6rem] font-bold leading-none text-primary [text-shadow:0_0_28px_hsl(var(--primary)/0.35)] sm:text-[5.5rem]">
-        <CountUp value={total} />
+        <CountUp value={total} status />
       </p>
       <div className="mt-3 flex flex-wrap items-center gap-2.5">
         <p className="font-heading text-xl font-semibold text-foreground sm:text-2xl">

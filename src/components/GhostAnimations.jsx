@@ -83,7 +83,9 @@ export function ScanScreen({ lastLine = 'Ghost detected', onDone, onCancel }) {
 }
 
 // Counts up in whole dollars, then settles on the exact cents.
-export function CountUp({ value, duration = COUNT_MS }) {
+// status: shows "Adding it up..." while counting and "Final total" once it settles,
+// so a number mid-count never looks final (Diana, Slack feedback).
+export function CountUp({ value, duration = COUNT_MS, status = false }) {
   const [shown, setShown] = useState(0);
   const [finished, setFinished] = useState(false);
 
@@ -112,7 +114,16 @@ export function CountUp({ value, duration = COUNT_MS }) {
     return () => cancelAnimationFrame(frame);
   }, [value, duration]);
 
-  return <span className="tabular-nums">{finished ? money(value) : moneyWhole(shown)}</span>;
+  const number = <span className="tabular-nums">{finished ? money(value) : moneyWhole(shown)}</span>;
+  if (!status) return number;
+  return (
+    <>
+      {number}
+      <span aria-live="polite" className="mt-2 block font-sans text-[13px] font-bold uppercase tracking-wide text-muted-foreground [text-shadow:none]">
+        {finished ? 'Final total' : 'Adding it up...'}
+      </span>
+    </>
+  );
 }
 
 // Faint CRT lines over the whole app.
