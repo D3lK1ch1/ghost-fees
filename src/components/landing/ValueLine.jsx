@@ -42,19 +42,19 @@ export default function ValueLine({ onSample, onUpload }) {
       {/* Pack 9: the selling lines (price, no bank login, trust) live once, in the theme
           hero below, so this card is just the headline, the 3 steps and the button. */}
 
-      {/* The promo (our story in 90 seconds) and the demo (see it work), both on the home
+      {/* The demo (see it work) first, then the promo (our story in 90 seconds), both on the home
           page (4 Nov: "embed the promo one too"; 8 Nov: "put demo, maybe even promo too"). */}
       <div className="mx-auto mt-6 max-w-xl space-y-6 text-left">
-        <div>
-          <p className="mb-2 text-center text-[12.5px] font-semibold uppercase tracking-[0.14em] text-primary">Our story in 90 seconds</p>
-          <VideoCard video={PROMO} />
-        </div>
         {DEMO?.src && (
           <div>
             <p className="mb-2 text-center text-[12.5px] font-semibold uppercase tracking-[0.14em] text-primary">See it work: the full demo</p>
             <VideoCard video={DEMO} />
           </div>
         )}
+        <div>
+          <p className="mb-2 text-center text-[12.5px] font-semibold uppercase tracking-[0.14em] text-primary">Our story in 90 seconds</p>
+          <VideoCard video={PROMO} />
+        </div>
       </div>
     </section>
   );

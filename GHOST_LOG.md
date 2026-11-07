@@ -1335,3 +1335,4 @@ One entry per change. Newest at the bottom.
 - What: the home page now shows the full demo (7:32, "See it work: the full demo") under the 90-second promo, in every theme.
 - Why: the user asked for the demo, and the promo too, on the home page.
 - Files: src/components/landing/ValueLine.jsx
+- Also: the demo now comes first on the home page, then the promo (the user asked for demo before promo).
