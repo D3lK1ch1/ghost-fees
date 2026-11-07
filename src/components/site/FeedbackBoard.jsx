@@ -18,18 +18,13 @@ const REPO = 'https://github.com/D3lK1ch1/ghost-fees';
 
 // "Show the evidence": where the feedback was left, and the merged PRs (or agent commits)
 // that made the change, each linking to GitHub so a judge can check it.
-function Evidence({ where, date, rating, photo, prs = [], commits = [] }) {
+function Evidence({ where, date, rating, prs = [], commits = [] }) {
   return (
     <details className="group mt-2 rounded-xl border border-white/[0.08] bg-white/[0.02]">
       <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2.5 text-[14.5px] font-bold text-foreground [&::-webkit-details-marker]:hidden">
         <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
         Show the evidence
       </summary>
-      {photo && (
-        <a href={photo} target="_blank" rel="noreferrer" className="mx-3 mb-2 block max-w-sm overflow-hidden rounded-lg border border-white/10">
-          <img src={photo} alt={`Screenshot of the original feedback, ${where}`} loading="lazy" className="w-full" />
-        </a>
-      )}
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pb-3 text-[13px]">
         <dt className="text-muted-foreground">Where</dt>
         <dd className="text-foreground">{where}</dd>
@@ -85,6 +80,19 @@ function Labels({ source, about, date, who, score }) {
   );
 }
 
+// The original feedback as it was left (portal or Slack), shown on the card itself.
+function Photo({ src, where }) {
+  if (!src) return null;
+  return (
+    <figure className="mt-3">
+      <figcaption className="mb-1.5 text-[13px] font-bold uppercase tracking-wide text-primary">📸 The original, as left in the {where}</figcaption>
+      <a href={src} target="_blank" rel="noreferrer" className="block max-w-md overflow-hidden rounded-xl border-2 border-white/15">
+        <img src={src} alt={`Screenshot of the original feedback in the ${where}`} loading="lazy" className="w-full" />
+      </a>
+    </figure>
+  );
+}
+
 function Line({ label, text }) {
   if (!text) return null;
   return (
@@ -120,12 +128,13 @@ export default function FeedbackBoard() {
               <Line label="Trick" text={item.trick} />
               <Line label="Treat" text={item.treat} />
             </div>
+            <Photo src={item.photo} where="hackathon portal" />
             {item.did && (
               <p className="mt-3 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[14px] leading-snug text-foreground">
                 <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.did}
               </p>
             )}
-            <Evidence where="Stranger Builds platform, Trick or Feedback review" date={item.date} rating={item.rating} photo={item.photo} prs={item.prs} />
+            <Evidence where="Stranger Builds platform, Trick or Feedback review" date={item.date} rating={item.rating} prs={item.prs} />
           </li>
         ))}
       </ul>
@@ -139,10 +148,11 @@ export default function FeedbackBoard() {
               <li key={`${item.date}-${index}`} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
                 <Labels source="Hackathon Slack message" about={item.about} date={item.date} who={item.who} />
                 <p className="mt-2 text-[14px] leading-snug text-foreground/90">&ldquo;{item.said}&rdquo;</p>
+                <Photo src={item.photo} where="hackathon Slack" />
                 <p className="mt-3 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[14px] leading-snug text-foreground">
                   <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.changed}
                 </p>
-                <Evidence where={item.where || 'Stranger Builds Slack'} date={item.date} photo={item.photo} prs={item.prs} commits={item.commits} />
+                <Evidence where={item.where || 'Stranger Builds Slack'} date={item.date} prs={item.prs} commits={item.commits} />
               </li>
             ))}
           </ul>

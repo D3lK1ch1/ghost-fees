@@ -1315,3 +1315,8 @@ One entry per change. Newest at the bottom.
 - What: each Hackathon portal review shows its score as 5 stars plus "4/5" in the score label. Slack messages still have no score.
 - Why: the user asked for the stars back on the reviews that scored the app.
 - Files: src/components/site/FeedbackBoard.jsx
+
+## 2026-11-08: feedback photos shown on the card
+- What: the screenshot of the original feedback now sits on the card itself, under the quotes, with the caption "The original, as left in the hackathon portal" (or "hackathon Slack"), instead of being hidden inside Show the evidence. 5 cards have one: the 2 Nov, 1 Nov and 31 Oct (scrub) portal reviews, Raj 2 Nov and Kimberley.
+- Why: the user couldn't see the photos on the live site because they were inside a closed drop-down.
+- Files: src/components/site/FeedbackBoard.jsx
