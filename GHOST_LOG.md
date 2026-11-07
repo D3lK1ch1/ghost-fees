@@ -1264,3 +1264,8 @@ One entry per change. Newest at the bottom.
 - What: every "You said, we changed" entry now has a source: From Slack, From the Stranger Builds platform, or Our own testing. The Feedback board labels each platform review "From the Stranger Builds platform" and adds a "From Slack" list (Diana, Raj, Kingan, the Slack user) that is not counted in the 7 platform reviews. Diana's Slack feedback is added. "A Fetch.ai mentor" is now "Raj (Fetch.ai mentor)", matching his other entry.
 - Why: the user asked that all Slack feedback sits under Feedback, labelled as from Slack or from the hackathon platform.
 - Files: src/data/changelog.json, src/components/site/FeedbackBoard.jsx, src/pages/Progress.jsx, src/pages/Evidence.jsx
+
+## 2026-11-07: CONTRIBUTORS.md says it plainly
+- What: CONTRIBUTORS.md now says Delia and Bella are the developers, and that Bella builds with Claude Code on Sanjay's Claude account with his permission (he lent the account only and is not on the team).
+- Why: Bella asked for this to be stated clearly.
+- Files: CONTRIBUTORS.md
