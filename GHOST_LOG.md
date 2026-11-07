@@ -1309,3 +1309,4 @@ One entry per change. Newest at the bottom.
 - What: every feedback card starts with big outlined labels: where it came from ("Trick or Feedback · Stranger Builds portal" or "Slack · Ghost Fees / Ghost It"), what it is about (e.g. "About: Privacy: hiding numbers", "About: Footer and menu") and, for the Duck's reviews only, "Score 4/5". The date and who sit under them. "Show the evidence" is bigger.
 - Why: the user asked for bigger, outlined labels that make clear where feedback came from and what it relates to.
 - Files: src/components/site/FeedbackBoard.jsx, src/data/testerFeedback.json, src/data/changelog.json
+- Also: the labels now read "FROM Hackathon portal review" or "FROM Hackathon Slack message", with "ABOUT ..." next to them (Slack topics name the product, e.g. "Ghost Fees: the total"). The Slack section heading is "Hackathon Slack messages", the same size as the board heading.
