@@ -1,4 +1,4 @@
-import { ChevronDown, ExternalLink, MessageSquarePlus, Star } from 'lucide-react';
+import { ChevronDown, ExternalLink, MessageSquarePlus } from 'lucide-react';
 import FeedbackPanel from '@/components/results/FeedbackPanel';
 import feedback from '@/data/testerFeedback.json';
 import changelog from '@/data/changelog.json';
@@ -18,18 +18,29 @@ const REPO = 'https://github.com/D3lK1ch1/ghost-fees';
 
 // "Show the evidence": where the feedback was left, and the merged PRs (or agent commits)
 // that made the change, each linking to GitHub so a judge can check it.
-function Evidence({ where, date, rating, prs = [], commits = [] }) {
+function Evidence({ where, date, rating, photo, prs = [], commits = [] }) {
   return (
     <details className="group mt-2 rounded-xl border border-white/[0.08] bg-white/[0.02]">
       <summary className="flex cursor-pointer list-none items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-foreground/90 [&::-webkit-details-marker]:hidden">
         <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" aria-hidden="true" />
         Show the evidence
       </summary>
+      {photo && (
+        <a href={photo} target="_blank" rel="noreferrer" className="mx-3 mb-2 block max-w-sm overflow-hidden rounded-lg border border-white/10">
+          <img src={photo} alt={`Screenshot of the original feedback, ${where}`} loading="lazy" className="w-full" />
+        </a>
+      )}
       <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 px-3 pb-3 text-[13px]">
         <dt className="text-muted-foreground">Where</dt>
         <dd className="text-foreground">{where}</dd>
         <dt className="text-muted-foreground">Date</dt>
-        <dd className="text-foreground">{fmt(date)}{rating ? ` · ${rating} of 5` : ''}</dd>
+        <dd className="text-foreground">{fmt(date)}</dd>
+        {rating ? (
+          <>
+            <dt className="text-muted-foreground">Score</dt>
+            <dd className="text-foreground">Would recommend it: {rating} of 5</dd>
+          </>
+        ) : null}
         <dt className="text-muted-foreground">Proof</dt>
         <dd className="flex flex-wrap gap-x-3 gap-y-1">
           {prs.map((n) => (
@@ -45,14 +56,6 @@ function Evidence({ where, date, rating, prs = [], commits = [] }) {
         </dd>
       </dl>
     </details>
-  );
-}
-
-function Stars({ n }) {
-  return (
-    <span className="inline-flex items-center gap-0.5" aria-label={`Would recommend it: ${n} of 5`}>
-      {[1, 2, 3, 4, 5].map((i) => <Star key={i} className={i <= n ? 'h-3.5 w-3.5 fill-primary text-primary' : 'h-3.5 w-3.5 text-white/20'} aria-hidden="true" />)}
-    </span>
   );
 }
 
@@ -87,7 +90,7 @@ export default function FeedbackBoard() {
           <li key={index} className="rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
             <div className="flex items-center justify-between gap-2 text-[12.5px] text-muted-foreground">
               <span>{fmt(item.date)} · A hackathon builder (anonymous) · <span className="font-semibold text-foreground/80">Trick or Feedback</span></span>
-              <Stars n={item.rating} />
+              <span className="shrink-0 rounded-full bg-white/10 px-2 py-0.5 text-[12px] font-semibold text-foreground">Score {item.rating}/5</span>
             </div>
             <div className="mt-2 space-y-1.5">
               <Line label="One change" text={item.change} />
@@ -99,7 +102,7 @@ export default function FeedbackBoard() {
                 <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.did}
               </p>
             )}
-            <Evidence where="Stranger Builds platform, Trick or Feedback review" date={item.date} rating={item.rating} prs={item.prs} />
+            <Evidence where="Stranger Builds platform, Trick or Feedback review" date={item.date} rating={item.rating} photo={item.photo} prs={item.prs} />
           </li>
         ))}
       </ul>
@@ -118,7 +121,7 @@ export default function FeedbackBoard() {
                 <p className="mt-3 rounded-xl border border-[#5ee6c8]/25 bg-[#5ee6c8]/[0.06] px-3 py-2 text-[14px] leading-snug text-foreground">
                   <span className="font-semibold text-[#5ee6c8]">What we changed: </span>{item.changed}
                 </p>
-                <Evidence where={item.where || 'Stranger Builds Slack'} date={item.date} prs={item.prs} commits={item.commits} />
+                <Evidence where={item.where || 'Stranger Builds Slack'} date={item.date} photo={item.photo} prs={item.prs} commits={item.commits} />
               </li>
             ))}
           </ul>
