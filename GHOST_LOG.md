@@ -1320,3 +1320,8 @@ One entry per change. Newest at the bottom.
 - What: the screenshot of the original feedback now sits on the card itself, under the quotes, with the caption "The original, as left in the hackathon portal" (or "hackathon Slack"), instead of being hidden inside Show the evidence. 5 cards have one: the 2 Nov, 1 Nov and 31 Oct (scrub) portal reviews, Raj 2 Nov and Kimberley.
 - Why: the user couldn't see the photos on the live site because they were inside a closed drop-down.
 - Files: src/components/site/FeedbackBoard.jsx
+
+## 2026-11-08: easier to read /progress
+- What: one type scale across /progress: section headings 24px bold, body and quotes 15 to 15.5px with relaxed line height, labels (One change, Trick, Treat) on their own line above each quote, roomier cards (more padding, more space between cards and sections), clearer "From" tags and bigger Build streak text.
+- Why: the user asked to tidy text spacing, size and readability overall.
+- Files: src/components/site/FeedbackBoard.jsx, src/pages/Progress.jsx

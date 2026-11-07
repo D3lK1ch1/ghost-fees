@@ -34,7 +34,7 @@ function Stat({ label, value }) {
       ) : (
         <div className="font-heading text-[1.6rem] font-bold leading-none tabular-nums text-foreground">{value}</div>
       )}
-      <div className="mt-1.5 text-[13px] text-muted-foreground">{label}</div>
+      <div className="mt-1.5 text-[14px] leading-snug text-muted-foreground">{label}</div>
     </div>
   );
 }
@@ -85,13 +85,13 @@ export default function Progress() {
           <Stat label="reviews acted on" value={`${reviews.filter((item) => item.did).length} of ${reviews.length}`} />
           <Stat label="scans run (includes the sample)" value={stats ? stats.scans : '...'} />
         </section>
-        <p className="mt-2 text-[13px] text-muted-foreground">
+        <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
           Reviews and scores come from Trick or Feedback in the Stranger Builds portal, where the Duck sends another builder to try our app. Scans are counted by the app.
         </p>
 
         {/* Our users vs the research (aggregate, 3+ real scans). */}
         <section className="mt-6 rounded-3xl border border-border bg-card p-4" aria-label="Our users vs the research">
-          <h2 className="font-heading text-[18px] font-semibold text-foreground">Our users vs the research</h2>
+          <h2 className="font-heading text-[20px] font-bold text-foreground">Our users vs the research</h2>
           {stats?.avgGuess != null ? (
             <>
               <p className="mt-1 text-[15px] text-foreground">
@@ -114,17 +114,17 @@ export default function Progress() {
           {copied ? 'Copied' : "Copy today's update"}
         </button>
 
-        <section className="mt-10" aria-label="You said, we changed">
-          <h2 className="font-heading text-[20px] font-semibold text-foreground">You said, we changed</h2>
-          <ul className="mt-3 space-y-3">
+        <section className="mt-14" aria-label="You said, we changed">
+          <h2 className="font-heading text-[24px] font-bold text-foreground">You said, we changed</h2>
+          <ul className="mt-5 space-y-4">
             {changelog.map((item, index) => (
-              <li key={`${item.date}-${index}`} className={`rounded-2xl border px-4 py-3 ${item.example ? 'border-dashed border-[#ffc27a]/60 bg-[#ffc27a]/[0.06]' : 'border-border bg-card/70'}`}>
-                <div className="flex flex-wrap items-center gap-1.5 text-[12.5px] font-bold text-muted-foreground">
+              <li key={`${item.date}-${index}`} className={`rounded-2xl border px-5 py-4 ${item.example ? 'border-dashed border-[#ffc27a]/60 bg-[#ffc27a]/[0.06]' : 'border-border bg-card/70'}`}>
+                <div className="flex flex-wrap items-center gap-2 text-[13.5px] font-semibold text-muted-foreground">
                   <span>{niceDate(item.date)}{item.who ? ` · ${item.who}` : ''}</span>
-                  {item.source && item.source !== item.who && <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11.5px] text-foreground">From {item.source}</span>}
+                  {item.source && item.source !== item.who && <span className="rounded-md border border-white/20 px-2 py-0.5 text-[12.5px] font-bold text-foreground">From {item.source}</span>}
                 </div>
-                <p className="mt-1 text-[14px] italic text-foreground">&ldquo;{item.said || item.quote}&rdquo;</p>
-                <p className="mt-1 text-[14px] text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.changed || item.change}</p>
+                <p className="mt-2 text-[15.5px] leading-relaxed text-foreground">&ldquo;{item.said || item.quote}&rdquo;</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground"><span className="font-bold text-primary">We changed:</span> {item.changed || item.change}</p>
                 {(item.beforeImg || item.afterImg) && (
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     {item.beforeImg && <img src={item.beforeImg} alt="Before" className="rounded-xl border border-border" />}
@@ -136,17 +136,17 @@ export default function Progress() {
           </ul>
         </section>
 
-        <section className="mt-10" aria-label="Build streak">
-          <h2 className="font-heading text-[20px] font-semibold text-foreground">Build streak</h2>
-          <p className="mt-1 text-[13.5px] text-muted-foreground">Every day since 31 Oct. Highlights from each day, and how many pull requests were merged that day (counted from GitHub).</p>
-          <div className="mt-3 space-y-4">
+        <section className="mt-14" aria-label="Build streak">
+          <h2 className="font-heading text-[24px] font-bold text-foreground">Build streak</h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Every day since 31 Oct. Highlights from each day, and how many pull requests were merged that day (counted from GitHub).</p>
+          <div className="mt-5 space-y-6">
             {Object.entries(byDay).map(([date, items]) => (
               <div key={date}>
-                <div className="text-[13px] font-bold text-primary">{niceDate(date)} · {items.length} shipped{mergedPrs[date] ? <span className="font-semibold text-muted-foreground"> · {mergedPrs[date]} merged PRs</span> : null}</div>
-                <ul className="mt-1.5 space-y-1">
+                <div className="text-[14.5px] font-bold text-primary">{niceDate(date)} · {items.length} shipped{mergedPrs[date] ? <span className="font-semibold text-muted-foreground"> · {mergedPrs[date]} merged PRs</span> : null}</div>
+                <ul className="mt-2 space-y-1.5">
                   {items.map((item) => (
-                    <li key={item.title} className="flex items-start gap-2 text-[14.5px] text-foreground">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5ee6c8]" />
+                    <li key={item.title} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-foreground">
+                      <Check className="mt-1 h-4 w-4 shrink-0 text-[#5ee6c8]" />
                       {item.title}
                     </li>
                   ))}
