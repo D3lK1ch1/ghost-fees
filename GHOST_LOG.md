@@ -1362,3 +1362,8 @@ One entry per change. Newest at the bottom.
 - What: Sun 8 Nov now shows 16 merged PRs (15 merged so far, counted from GitHub in Melbourne time, plus this one) and 12 highlights, adding: Slack photos with exact words, the demo on the home page, Mo's sticker-style bubble, the candy cane road with the Goal path crash fix, and easier-to-read /progress. The video highlight no longer says 4:28.
 - Why: final update before freezing the Base44 app.
 - Files: src/data/mergedPrs.json, src/data/shipped.json
+
+## 2026-11-08: progress links and honest Ghost It wording
+- What: /progress Build streak has three links: every commit, every merged pull request and the daily build log (GHOST_LOG.md) on GitHub. Ghost It copy no longer promises tap buttons or cards in ASI:One (ASI:One showed our cards blank): replies end with "Try next", the exact words to send, or a numbered menu, and you confirm a cancel by typing it (e.g. "Netflix ghosted"). Updated in the README feedback table, the Agentverse readme, the Ghost It dialog, the Slack feedback "what we changed" lines and a code comment.
+- Why: final wording check before the freeze; the site should only claim what Ghost It really does.
+- Files: src/pages/Progress.jsx, README.md, agent/agentverse-readme.md, src/components/results/GhostItDialog.jsx, src/data/changelog.json, src/lib/ghostFees/ghostItAgent.js
