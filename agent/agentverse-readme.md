@@ -5,7 +5,7 @@ The Ghost Fees app reads your statement. Ghost It fills the gap: doubles across 
 
 **Free to find. Optional $5 Cancel Pack. Human in the loop: Ghost It never touches your bank, cards or money. You decide.**
 
-Shows its working: every cost is broken down line by line next to exactly what you told it, with tap buttons in ASI:One (tap to consolidate, subscription buttons, Mark ghosted). Nothing counts as cancelled until you tap Mark ghosted.
+Shows its working: every cost is broken down line by line next to exactly what you told it, and every reply ends with Try next: the exact words to send, or a numbered menu where you reply with just a number. Nothing counts as cancelled until you say so (type Netflix ghosted).
 
 ## Ghost Packs: each one hunts a different leak
 | Pack | Hunts |
@@ -22,7 +22,7 @@ Shows its working: every cost is broken down line by line next to exactly what y
 Every pack shows the maths line by line, the pack total, the leaks with what you'd save, then the official cancel links and a ready email. Your first Ghost Pack is free.
 
 ## Try asking
-- "How does it work?" (a quick explainer on cards)
+- "How does it work?" (a quick explainer)
 - "Netflix $19, Stan $16, Disney+ $16. Which one should I keep?" (the consolidate plan: keep one, cancel or rotate the rest)
 - "packs" (see all six Ghost Packs and what each one hunts)
 - "Spotify $14, YouTube Premium $17. Am I paying twice?"
@@ -38,7 +38,7 @@ Every pack shows the maths line by line, the pack total, the leaks with what you
 
 ## New here? Ask me
 "How does it work?" · "Is it free?" · "Is my data safe?" · "How do you calculate it?"
-Each answer comes on a card with a button to try it.
+Each answer ends with what to type next.
 
 ## How to use me
 1. **List what you pay:** `Netflix $19, Stan $16, Spotify $14, gym $25 a week`

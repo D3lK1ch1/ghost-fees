@@ -8,7 +8,7 @@ const FEATURES = [
   { Icon: Sparkles, title: 'Ghost Packs hunt one kind of leak each', line: 'Screen, Sound, Tech Stack, Food, Gym and Play: doubles and overlaps a statement can’t show.' },
   { Icon: Calculator, title: 'Shows the maths', line: 'Every line worked out ($8.99/mo x 12 = $107.88/yr), the pack total and what you’d save.' },
   { Icon: Copy, title: 'Finds the hidden ones', line: 'YouTube Premium includes YouTube Music; Microsoft 365 includes OneDrive; 4 AI tools doing one job.' },
-  { Icon: MessageCircle, title: 'Lives in your chat', line: 'Message it any time in ASI:One, with tap-to-act cards. Nothing to upload.' },
+  { Icon: MessageCircle, title: 'Lives in your chat', line: 'Message it any time in ASI:One. Each reply tells you what to type next. Nothing to upload.' },
   { Icon: Scissors, title: 'Then the cancel links', line: 'Official links and steps for each pack. It never guesses a link.' },
   { Icon: ListChecks, title: 'Checks it stopped', line: 'Keeps your ghost list and asks after 7 days.' },
 ];
