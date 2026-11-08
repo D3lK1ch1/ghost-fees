@@ -18,11 +18,35 @@ const INK = '#2E1A23';
 const seen = () => { try { return window.localStorage.getItem(MO_WALK_SEEN) === '1'; } catch { return false; } };
 const markSeen = () => { try { window.localStorage.setItem(MO_WALK_SEEN, '1'); } catch { /* storage off */ } };
 
+// Styled after the white bubble in our sticker set (Image Assets/Cute Pastel Comic Bubble
+// Sticker Set): white, a dark ink outline, a soft pink band along the bottom, a curved tail
+// toward Mo and three little red "pop" marks. Drawn in CSS and SVG so any amount of text fits.
+const PINK = '#FDD9EF';
+const POP = '#F04B6D';
 function Bubble({ children }) {
   return (
-    <div className="relative w-full drop-shadow-[0_5px_0_rgba(255,143,156,0.45)]">
-      <div className="relative z-10 rounded-[26px] border-[2.6px] bg-white px-5 py-4 text-[15px] font-medium leading-[1.5] sm:px-6" style={{ borderColor: INK, color: INK }}>{children}</div>
-      <span aria-hidden="true" className="absolute -bottom-[9px] left-10 z-0 h-5 w-5 rotate-45 border-b-[2.6px] border-r-[2.6px] bg-white sm:-left-[9px] sm:bottom-6 sm:border-b-[2.6px] sm:border-l-[2.6px] sm:border-r-0" style={{ borderColor: INK }} />
+    <div className="relative w-full pt-6">
+      {/* Three pop marks above the top-right corner, like the sticker. */}
+      <svg aria-hidden="true" viewBox="0 0 40 30" className="absolute right-5 top-0 h-6 w-8">
+        <g stroke={POP} strokeWidth="4" strokeLinecap="round">
+          <path d="M6 26 L3 14" /><path d="M16 22 L20 8" /><path d="M26 25 L37 17" />
+        </g>
+      </svg>
+      <div
+        className="relative z-10 rounded-[30px] border-[3px] bg-white px-6 py-4 pb-5 text-[15.5px] font-medium leading-[1.55] sm:px-7"
+        style={{ borderColor: INK, color: INK, boxShadow: `inset 0 -9px 0 ${PINK}, 0 6px 14px rgba(0,0,0,0.28)` }}
+      >
+        {children}
+      </div>
+      {/* Curved tail: down and out toward Mo on phones (Mo sits below), left toward Mo on wider screens. */}
+      <svg aria-hidden="true" viewBox="0 0 44 40" className="absolute -bottom-[26px] left-10 z-20 h-[30px] w-[33px] sm:hidden">
+        <path d="M6 0 C8 14 4 26 0 38 C14 30 26 18 34 0 Z" fill={PINK} />
+        <path d="M7 4 C8 15 4 26 0 38 C14 30 25 18 32 4" fill="none" stroke={INK} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+      </svg>
+      <svg aria-hidden="true" viewBox="0 0 40 44" className="absolute -left-[33px] bottom-5 z-20 hidden h-[44px] w-[40px] sm:block">
+        <path d="M40 4 C26 6 14 2 2 0 C10 14 22 26 40 34 Z" fill="#fff" />
+        <path d="M34 5 C24 6 14 2 2 0 C10 14 20 25 34 31" fill="none" stroke={INK} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
+      </svg>
     </div>
   );
 }
