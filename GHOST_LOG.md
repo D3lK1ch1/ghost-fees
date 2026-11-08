@@ -1341,3 +1341,8 @@ One entry per change. Newest at the bottom.
 - What: the full journey video on /progress and Media is replaced with the new cut (5:07, was 4:28). Its label now says 5 minutes and the link has ?v=5 so browsers load the new file.
 - Why: the user sent the updated video (ghost-fees-journey-full (1).mp4, downloaded 8 Nov 11:17).
 - Files: public/videos/ghost-fees-journey-full.mp4, src/data/videos.js
+
+## 2026-11-08: final full journey video (5:22)
+- What: the full journey video is replaced with the final cut from video-final.patch (5:22, 15.2 MB): the seven ghosts, Team up, the fun bits, who gave us feedback and the 7 to 8 Nov changes at the end. Its description says so, the link is ?v=6 (v=5 was the 5:07 cut, so browsers would keep the old one), and the Build streak has an 8 Nov entry for it.
+- Why: the user sent the final progress video.
+- Files: public/videos/ghost-fees-journey-full.mp4, src/data/videos.js, src/data/shipped.json
