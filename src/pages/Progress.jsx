@@ -139,6 +139,11 @@ export default function Progress() {
         <section className="mt-14" aria-label="Build streak">
           <h2 className="font-heading text-[24px] font-bold text-foreground">Build streak</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">Every day since 31 Oct. Highlights from each day, and how many pull requests were merged that day (counted from GitHub).</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-[14.5px] font-semibold">
+            <a href="https://github.com/D3lK1ch1/ghost-fees/commits/main" target="_blank" rel="noreferrer" className="rounded-full border border-primary px-3 py-1.5 text-primary hover:bg-primary/10">See every commit on GitHub</a>
+            <a href="https://github.com/D3lK1ch1/ghost-fees/pulls?q=is%3Apr+is%3Amerged" target="_blank" rel="noreferrer" className="rounded-full border border-primary px-3 py-1.5 text-primary hover:bg-primary/10">Every merged pull request</a>
+            <a href="https://github.com/D3lK1ch1/ghost-fees/blob/main/GHOST_LOG.md" target="_blank" rel="noreferrer" className="rounded-full border border-primary px-3 py-1.5 text-primary hover:bg-primary/10">Daily build log</a>
+          </div>
           <div className="mt-5 space-y-6">
             {Object.entries(byDay).map(([date, items]) => (
               <div key={date}>
