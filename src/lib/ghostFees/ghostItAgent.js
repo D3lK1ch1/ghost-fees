@@ -2,7 +2,7 @@
 // "Chat with Agent" button that opens ASI:One already talking to Ghost It, so we
 // send people there instead of the ASI:One home page (no hunting for @ghostit).
 // 5 Nov: the self-run Ghost It (mailbox). The hosted one held replies ~40 s, past
-// ASI:One's ~30 s wait, so it showed nothing; this one replies in seconds with buttons.
+// ASI:One's ~30 s wait, so it showed nothing; this one replies in seconds (plain text; cards are off).
 export const GHOST_IT_ADDRESS = 'agent1qdaylwvrj073a2hxxjsqvm26k2cpk8sakqypncmy4e2eewn7t2wwy23w2t0';
 // 5 Nov: who copied messages are addressed to. ASI:One still sends "@ghostit" to the old
 // (stopped) agent until its index refreshes, so mention the working agent by address.
