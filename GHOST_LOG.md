@@ -1346,3 +1346,7 @@ One entry per change. Newest at the bottom.
 - What: the full journey video is replaced with the final cut from video-final.patch (5:22, 15.2 MB): the seven ghosts, Team up, the fun bits, who gave us feedback and the 7 to 8 Nov changes at the end. Its description says so, the link is ?v=6 (v=5 was the 5:07 cut, so browsers would keep the old one), and the Build streak has an 8 Nov entry for it.
 - Why: the user sent the final progress video.
 - Files: public/videos/ghost-fees-journey-full.mp4, src/data/videos.js, src/data/shipped.json
+## 2026-11-08: Mo's speech bubble matches our sticker set
+- What: Mo's 3-step bubble on Money patterns is restyled after the white bubble in our sticker set (Image Assets/Cute Pastel Comic Bubble Sticker Set): white with a dark ink outline, a soft pink band along the bottom, a curved tail toward Mo and three red "pop" marks, colours sampled from the sticker. Drawn in CSS and SVG so any length of text fits; slightly bigger text.
+- Why: the user asked to tidy up the speech bubble using the white one from our image assets.
+- Files: src/components/patterns/MoWalkthrough.jsx
