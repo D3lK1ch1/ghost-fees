@@ -1346,3 +1346,7 @@ One entry per change. Newest at the bottom.
 - What: in the Ghosts of Christmas theme (winter and summer), the Goal path road is a red and white candy cane with a darker red edge, instead of the brown or navy road. Also fixed a crash: once someone added Hattie's habit to their tasks, the Goal path went blank ("Cannot read properties of undefined (reading 'Icon')") because the path had no "habit" goal type. It now shows the habit as its own stop (sprout icon, Hattie's 3 steps), and any unknown goal type falls back safely.
 - Why: the user asked for a more Christmassy candy cane road; the crash showed up while checking it.
 - Files: src/components/results/GoalPath.jsx
+## 2026-11-08: Mo's speech bubble matches our sticker set
+- What: Mo's 3-step bubble on Money patterns is restyled after the white bubble in our sticker set (Image Assets/Cute Pastel Comic Bubble Sticker Set): white with a dark ink outline, a soft pink band along the bottom, a curved tail toward Mo and three red "pop" marks, colours sampled from the sticker. Drawn in CSS and SVG so any length of text fits; slightly bigger text.
+- Why: the user asked to tidy up the speech bubble using the white one from our image assets.
+- Files: src/components/patterns/MoWalkthrough.jsx
