@@ -1326,6 +1326,7 @@ One entry per change. Newest at the bottom.
 - Why: the user asked for photo proof on every Slack message and to keep only the 4-minute video under progress.
 - Files: public/feedback/slack-diana-7nov.jpg, slack-raj-4nov.jpg, slack-kingan-4nov.jpg, src/data/changelog.json, README.md, src/pages/Progress.jsx
 - Also (final tidy patch): Thạch's 7 Nov Slack message added with its photo and exact words ("My agent request stayed processing..."); the Ghost It offer now says replies can take up to a minute and to send again if it stays processing; the 60-second video is also gone from Media (promo, demo and full journey stay); 3 more 8 Nov Build streak highlights; README says 6 Slack messages. Files: public/feedback/slack-thach-7nov.jpg, src/components/landing/GhostItOffer.jsx, src/pages/Media.jsx, src/data/shipped.json.
+
 ## 2026-11-08: easier to read /progress
 - What: one type scale across /progress: section headings 24px bold, body and quotes 15 to 15.5px with relaxed line height, labels (One change, Trick, Treat) on their own line above each quote, roomier cards (more padding, more space between cards and sections), clearer "From" tags and bigger Build streak text.
 - Why: the user asked to tidy text spacing, size and readability overall.
@@ -1346,6 +1347,7 @@ One entry per change. Newest at the bottom.
 - What: the full journey video is replaced with the final cut from video-final.patch (5:22, 15.2 MB): the seven ghosts, Team up, the fun bits, who gave us feedback and the 7 to 8 Nov changes at the end. Its description says so, the link is ?v=6 (v=5 was the 5:07 cut, so browsers would keep the old one), and the Build streak has an 8 Nov entry for it.
 - Why: the user sent the final progress video.
 - Files: public/videos/ghost-fees-journey-full.mp4, src/data/videos.js, src/data/shipped.json
+
 ## 2026-11-08: candy cane road on the Christmas goal path; habit goal crash fixed
 - What: in the Ghosts of Christmas theme (winter and summer), the Goal path road is a red and white candy cane with a darker red edge, instead of the brown or navy road. Also fixed a crash: once someone added Hattie's habit to their tasks, the Goal path went blank ("Cannot read properties of undefined (reading 'Icon')") because the path had no "habit" goal type. It now shows the habit as its own stop (sprout icon, Hattie's 3 steps), and any unknown goal type falls back safely.
 - Why: the user asked for a more Christmassy candy cane road; the crash showed up while checking it.
