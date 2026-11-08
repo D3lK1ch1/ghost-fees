@@ -1341,3 +1341,8 @@ One entry per change. Newest at the bottom.
 - What: the full journey video on /progress and Media is replaced with the new cut (5:07, was 4:28). Its label now says 5 minutes and the link has ?v=5 so browsers load the new file.
 - Why: the user sent the updated video (ghost-fees-journey-full (1).mp4, downloaded 8 Nov 11:17).
 - Files: public/videos/ghost-fees-journey-full.mp4, src/data/videos.js
+
+## 2026-11-08: candy cane road on the Christmas goal path; habit goal crash fixed
+- What: in the Ghosts of Christmas theme (winter and summer), the Goal path road is a red and white candy cane with a darker red edge, instead of the brown or navy road. Also fixed a crash: once someone added Hattie's habit to their tasks, the Goal path went blank ("Cannot read properties of undefined (reading 'Icon')") because the path had no "habit" goal type. It now shows the habit as its own stop (sprout icon, Hattie's 3 steps), and any unknown goal type falls back safely.
+- Why: the user asked for a more Christmassy candy cane road; the crash showed up while checking it.
+- Files: src/components/results/GoalPath.jsx

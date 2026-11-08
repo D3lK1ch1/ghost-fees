@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, BellRing, Check, Landmark, Mail, TrendingUp, Undo2 } from 'lucide-react';
+import { ArrowRight, BellRing, Check, Landmark, Mail, Sprout, TrendingUp, Undo2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { money, monthsLabel } from '@/lib/ghostFees/format';
 import { downloadAllReminders } from '@/lib/ghostFees/reminder';
@@ -10,13 +10,14 @@ import { buildGoals, useGoalTasks } from '@/lib/ghostFees/goalTasks';
 import { SEASON_KEY, SEASONS, XMAS, xmasAvatar } from '@/lib/ghostFees/christmasArt';
 
 // One colour set per theme for the hill, road, house and stops. Haunted keeps its
-// purple; 💔 is charcoal with coral and mint; 🎄 is green and gold (Summer: blue).
+// purple; 💔 is charcoal with coral and mint; 🎄 is green and gold (Summer: blue), and
+// both 🎄 seasons walk a red and white candy cane road.
 const HAUNTED = { gold: '#ffcf73', goldSoft: '#ffe2a0', nodeBorder: '#6b5aa0', tree: '#2a1f45', roof: '#3a2c5c', star: '#c3b8db', wall: '#33264f', wall2: '#2f2349', door: '#22183a', sky1: '#1f1438', sky2: '#22174a', sky3: '#1b1236', moon: '#e9e2d0', hill: '#2a1d52', hill2: '#2f2160', roadEdge: '#150e2a', road: '#3d2e6b', dash: '#8f80c8', ink: '#1a1230', card: '#140c22', current: '#2a1840', node: '#2a1d47', nodeText: '#e6defa', tomb: '#3d3060', tombText: '#a99cd0', ghost: '#f4efe8' };
 const PALETTES = {
   haunted: HAUNTED,
   ex: { ...HAUNTED, gold: '#5ee6c8', goldSoft: '#a8f3e2', nodeBorder: '#5c5668', tree: '#2f2b38', roof: '#3a3444', star: '#d6d1db', wall: '#2f2b38', wall2: '#2a2632', door: '#15131a', sky1: '#2a2530', sky2: '#1d1a22', sky3: '#15131a', moon: '#f3e9f0', hill: '#221f29', hill2: '#2a2632', roadEdge: '#0f0d13', road: '#34303e', dash: '#bdb7c6', ink: '#15131a', card: '#1b1921', current: '#2a1f29', node: '#221f29', nodeText: '#fbf8fa', tomb: '#34303e', tombText: '#ff6f7d', ghost: '#fbf8fa' },
-  christmas: { ...HAUNTED, gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3f7a5e', tree: '#1f6b45', roof: '#f5f0e8', star: '#ffe08a', wall: '#a0522d', wall2: '#8b4426', door: '#c0392b', sky1: '#2b4a7a', sky2: '#2f6b5a', sky3: '#245a43', moon: '#ffe08a', hill: '#e9f1ee', hill2: '#cfe2da', roadEdge: '#6b4a2b', road: '#a37a4f', dash: '#fff6df', ink: '#15131a', card: '#1d4a37', current: '#2d6b52', node: '#245a43', nodeText: '#f5f0e8', tomb: '#2d6b52', tombText: '#f2c14e', ghost: '#f5f0e8', cozy: true },
-  summer: { gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3b4c80', tree: '#0c1222', roof: '#2c3a63', star: '#f6efe0', wall: '#1a2340', wall2: '#22305a', door: '#10172a', sky1: '#22305a', sky2: '#1a2340', sky3: '#10172a', moon: '#f6efe0', hill: '#1a2340', hill2: '#22305a', roadEdge: '#0a0f1c', road: '#2c3a63', dash: '#b8c0d8', ink: '#15131a', card: '#10172a', current: '#22305a', node: '#1a2340', nodeText: '#f6efe0', tomb: '#2c3a63', tombText: '#f2c14e', ghost: '#f6efe0' },
+  christmas: { ...HAUNTED, gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3f7a5e', tree: '#1f6b45', roof: '#f5f0e8', star: '#ffe08a', wall: '#a0522d', wall2: '#8b4426', door: '#c0392b', sky1: '#2b4a7a', sky2: '#2f6b5a', sky3: '#245a43', moon: '#ffe08a', hill: '#e9f1ee', hill2: '#cfe2da', roadEdge: '#6b4a2b', road: '#a37a4f', dash: '#fff6df', ink: '#15131a', card: '#1d4a37', current: '#2d6b52', node: '#245a43', nodeText: '#f5f0e8', tomb: '#2d6b52', tombText: '#f2c14e', ghost: '#f5f0e8', cozy: true, candy: true },
+  summer: { gold: '#f2c14e', goldSoft: '#ffe3a3', nodeBorder: '#3b4c80', tree: '#0c1222', roof: '#2c3a63', star: '#f6efe0', wall: '#1a2340', wall2: '#22305a', door: '#10172a', sky1: '#22305a', sky2: '#1a2340', sky3: '#10172a', moon: '#f6efe0', hill: '#1a2340', hill2: '#22305a', roadEdge: '#0a0f1c', road: '#2c3a63', dash: '#b8c0d8', ink: '#15131a', card: '#10172a', current: '#22305a', node: '#1a2340', nodeText: '#f6efe0', tomb: '#2c3a63', tombText: '#f2c14e', ghost: '#f6efe0', candy: true },
 };
 
 const KINDS = {
@@ -24,6 +25,8 @@ const KINDS = {
   refund: { Icon: Undo2, label: (name) => `Get your ${name} refund`, steps: ['Open the refund request', 'Send it with the extra charges listed', 'Check the refund lands'] },
   waive: { Icon: Landmark, label: (name) => `Ask the bank to waive the ${name}`, steps: ['Open the waiver email', 'Send it to your bank', 'Ask about a fee-free account if they say no'] },
   check: { Icon: TrendingUp, label: (name) => `Check ${name}`, steps: ['Look at the new price', 'Decide if it is still worth it', 'Cancel it if not'] },
+  // Hattie's habit, added from Money patterns (8 Nov: this kind was missing and the path crashed).
+  habit: { Icon: Sprout, label: (text) => `Keep your habit: ${text}`, steps: ['Do it on your start day', 'Tell Hattie a week later', 'Do it again for a second week'] },
   reminders: { Icon: BellRing, label: () => 'Add your reminders', steps: ['Tap Add all reminders', 'Open the file to add them to your calendar', 'Renewals will not sneak up on you'] },
 };
 
@@ -183,7 +186,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
   };
 
   const pct = (value, of) => `${(value / of) * 100}%`;
-  const Kind = KINDS[selected?.kind];
+  const Kind = KINDS[selected?.kind] || KINDS.check;
 
   return (
     <section className="mt-4" style={gpVars}>
@@ -210,9 +213,21 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
               <path d={`M 0 ${height} L 0 300 Q ${VIEW_W / 2} 250 ${VIEW_W} 300 L ${VIEW_W} ${height} Z`} fill={P.hill} />
               <path d={`M 0 ${height} L 0 ${height * 0.55} Q ${VIEW_W * 0.3} ${height * 0.5} ${VIEW_W} ${height * 0.6} L ${VIEW_W} ${height} Z`} fill={P.hill2} opacity="0.6" />
               {P.cozy ? <Cabin lit={allDone} P={P} /> : <House lit={allDone} P={P} />}
-              <path d={fullPath} stroke={P.roadEdge} strokeWidth="50" fill="none" strokeLinecap="round" />
-              <path d={fullPath} stroke={P.road} strokeWidth="40" fill="none" strokeLinecap="round" />
-              <path d={fullPath} stroke={P.dash} strokeWidth="2.5" strokeDasharray="7 11" fill="none" strokeLinecap="round" opacity="0.55" />
+              {P.candy ? (
+                <>
+                  {/* 🎄 A candy cane road: red and white stripes with a darker red edge (8 Nov). */}
+                  <path d={fullPath} stroke="#8e1b24" strokeWidth="50" fill="none" strokeLinecap="round" />
+                  <path d={fullPath} stroke="#fffaf3" strokeWidth="40" fill="none" strokeLinecap="round" />
+                  <path d={fullPath} stroke="#d62839" strokeWidth="40" strokeDasharray="16 16" fill="none" />
+                  <path d={fullPath} stroke="#ffffff" strokeWidth="6" fill="none" strokeLinecap="round" opacity="0.35" transform="translate(-7 -4)" />
+                </>
+              ) : (
+                <>
+                  <path d={fullPath} stroke={P.roadEdge} strokeWidth="50" fill="none" strokeLinecap="round" />
+                  <path d={fullPath} stroke={P.road} strokeWidth="40" fill="none" strokeLinecap="round" />
+                  <path d={fullPath} stroke={P.dash} strokeWidth="2.5" strokeDasharray="7 11" fill="none" strokeLinecap="round" opacity="0.55" />
+                </>
+              )}
               {donePath && (
                 <>
                   <path d={donePath} stroke={P.gold} strokeWidth="22" fill="none" strokeLinecap="round" opacity="0.18" />
@@ -231,7 +246,7 @@ export default function GoalPath({ leaks, subscriptions, cleared, onClearedChang
             {goals.map((goal, i) => {
               const point = points[i];
               const left = point.x === LEFT_X;
-              const Icon = KINDS[goal.kind].Icon;
+              const Icon = (KINDS[goal.kind] || KINDS.check).Icon;
               const isCurrent = i === currentIndex;
               const isSelected = selected?.id === goal.id;
               const sideX = left ? point.x - 110 : point.x + 110;
