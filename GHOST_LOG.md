@@ -1336,3 +1336,8 @@ One entry per change. Newest at the bottom.
 - Why: the user asked for the demo, and the promo too, on the home page.
 - Files: src/components/landing/ValueLine.jsx
 - Also: the demo now comes first on the home page, then the promo (the user asked for demo before promo).
+
+## 2026-11-08: new full journey video (5:07)
+- What: the full journey video on /progress and Media is replaced with the new cut (5:07, was 4:28). Its label now says 5 minutes and the link has ?v=5 so browsers load the new file.
+- Why: the user sent the updated video (ghost-fees-journey-full (1).mp4, downloaded 8 Nov 11:17).
+- Files: public/videos/ghost-fees-journey-full.mp4, src/data/videos.js
