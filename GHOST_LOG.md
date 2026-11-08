@@ -1357,3 +1357,8 @@ One entry per change. Newest at the bottom.
 - What: Mo's 3-step bubble on Money patterns is restyled after the white bubble in our sticker set (Image Assets/Cute Pastel Comic Bubble Sticker Set): white with a dark ink outline, a soft pink band along the bottom, a curved tail toward Mo and three red "pop" marks, colours sampled from the sticker. Drawn in CSS and SVG so any length of text fits; slightly bigger text.
 - Why: the user asked to tidy up the speech bubble using the white one from our image assets.
 - Files: src/components/patterns/MoWalkthrough.jsx
+
+## 2026-11-08: final Build streak update before the freeze
+- What: Sun 8 Nov now shows 16 merged PRs (15 merged so far, counted from GitHub in Melbourne time, plus this one) and 12 highlights, adding: Slack photos with exact words, the demo on the home page, Mo's sticker-style bubble, the candy cane road with the Goal path crash fix, and easier-to-read /progress. The video highlight no longer says 4:28.
+- Why: final update before freezing the Base44 app.
+- Files: src/data/mergedPrs.json, src/data/shipped.json
